@@ -1,2 +1,7 @@
 
 thsHack/
+*.exe
+*.jar
+*.part081
+*.part401
+data/loginParms/
