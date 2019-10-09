@@ -38,6 +38,10 @@ function getOpenQuotationTime {
     printf "%x" $halfPoint
 }
 
+
+
+
+
 #assumptions:
 #    hexTime1 >= hexTime0 
 #    both in one day

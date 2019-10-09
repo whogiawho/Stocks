@@ -30,15 +30,6 @@ function formalizeTradeDate {
 }
 
 
-function getTradeDateDist {
-    local stockCode=$1
-    local startTradeDate=$2
-    local endTradeDate=$3
-
-    local NO=`getTradeDateRange $stockCode $startTradeDate $endTradeDate|wc -l`
-
-    echo $((NO-1))
-}
 
 #consider future tradeDates
 function calTradeDateRange {
@@ -64,6 +55,21 @@ function calTradeDateRange {
     done
 }
 
+
+
+function getTradeDateList {
+    local stockCode=$1
+    local bList=$2
+
+    local stockDir="$rawDataDir\\$stockCode"
+    local tradeDateList=`ls $stockDir|sed "s@/@@g"`
+
+    [[ ! -z $bList ]] && {
+        echo $tradeDateList | sed "s/ /\n/g"
+    } || {
+        echo $tradeDateList
+    }
+}
 function getTradeDateRange {
     local stockCode=$1
     local start=$2
@@ -85,30 +91,6 @@ function getTradeDateRange {
         echo $list|sed "s@ @\n@g"|sed -n "/$start/,/$end/p"
     }
 }
-
-function getLatestTradeDate {
-    local stockCode=$1
-    local lastDate=$2
-    local lookbackNO=$3
-
-    local tmpFile=`mktemp`
-    getTradeDateList $stockCode|sed "s/ /\n/g" >$tmpFile
-
-    local lastDateLineNO=
-    lastDateLineNO=`grep -n $lastDate $tmpFile|awk -F: '{print $1}'`
-    [[ -z $lastDateLineNO ]] && {
-        printf "%s\n" "$lastDate does not exist!"
-        return 1
-    }
-    local firstDataLineNO=
-    firstDataLineNO=$((lastDateLineNO-lookbackNO+1))
-    [[ $firstDataLineNO -le 0 ]] && firstDataLineNO=1
-
-    sed -n "${firstDataLineNO},${lastDateLineNO}p" $tmpFile
-
-    rm -rf $tmpFile
-}
-
 function getTradeDateNO {
     local stockCode=$1
 
@@ -118,21 +100,15 @@ function getTradeDateNO {
 
     rm -rf $tmpFile
 }
-
-function getTradeDateList {
+function getTradeDateDist {
     local stockCode=$1
-    local bList=$2
+    local startTradeDate=$2
+    local endTradeDate=$3
 
-    local stockDir="$rawDataDir\\$stockCode"
-    local tradeDateList=`ls $stockDir|sed "s@/@@g"`
+    local NO=`getTradeDateRange $stockCode $startTradeDate $endTradeDate|wc -l`
 
-    [[ ! -z $bList ]] && {
-        echo $tradeDateList | sed "s/ /\n/g"
-    } || {
-        echo $tradeDateList
-    }
+    echo $((NO-1))
 }
-
 function getPrevTradeDate {
     local stockCode=$1
     local tradeDate=$2
@@ -168,24 +144,6 @@ function getNextTradeDate {
     echo $nextTradeDate
 
 }
-function getPrevHMS {
-    local freq=$1
-    local currentHMS=$2
-
-    local prevHMS=
-    local i=
-    for i in `cat $rootDir\\\\bin\\\\hms\\\\hms"$freq".txt`
-    do
-        [[ $i != $currentHMS ]] && {
-            prevHMS=$i
-        } || {
-            break
-        }
-    done
-
-    echo $prevHMS
-}
-
 function getNextTradeDateList {
     local stockCode=$1
     local tradeDateList=$2
@@ -199,5 +157,27 @@ function getNextTradeDateList {
     done
 
     echo $nextTradeDateList
+}
+function getLatestTradeDate {
+    local stockCode=$1
+    local lastDate=$2
+    local lookbackNO=$3
+
+    local tmpFile=`mktemp`
+    getTradeDateList $stockCode|sed "s/ /\n/g" >$tmpFile
+
+    local lastDateLineNO=
+    lastDateLineNO=`grep -n $lastDate $tmpFile|awk -F: '{print $1}'`
+    [[ -z $lastDateLineNO ]] && {
+        printf "%s\n" "$lastDate does not exist!"
+        return 1
+    }
+    local firstDataLineNO=
+    firstDataLineNO=$((lastDateLineNO-lookbackNO+1))
+    [[ $firstDataLineNO -le 0 ]] && firstDataLineNO=1
+
+    sed -n "${firstDataLineNO},${lastDateLineNO}p" $tmpFile
+
+    rm -rf $tmpFile
 }
 

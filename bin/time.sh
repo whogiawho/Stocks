@@ -68,20 +68,8 @@ function convertHex2Time {
     convertDec2Time $dec
 }
 
-function getTimeHMS {
-    local hexTime=$1
-
-    local logTime=
-    [[ ! -z $hexTime ]] && {
-        logTime=`convertHex2Time $hexTime`
-    } || {
-        logTime=`date +%H:%M:%S`
-    }
-    logTime=${logTime#* }
-
-    echo $logTime
-}
-
+#sTime format,   MM-DD hh:mm:ss
+#year format,    YYYY
 function convertTime {
     local sTime=$1                                         #in
     local year=$2                                          #in
@@ -110,44 +98,6 @@ function convertTime2Hex {
 
     echo $hexTime
 }
-
-function getExactCheckPointTime {
-    local inTime=$1
-
-    inTime=`echo $inTime|awk -F: '{print $1 ":" $2}'`
-    inTime=$inTime:00
-
-    echo $inTime
-}
-
-function getDeltaHMS {
-    local tradeDate=$1
-    local baseTimeHMS=$2
-    local delta=$3
-
-    timePt=`date --date "$tradeDate $baseTimeHMS" "+%s"`
-    timePt=$((timePt+delta))
-
-    date --date @$timePt "+%H:%M:%S"
-}
-
-function last5WorkDate {
-    local currentWeekDate=$1
-
-    #local weekDay=`date -d "$currentWeekDate" +%w`
-    #local weekNumber=`date -d "20160331" +%W`
-
-    local i=
-    for i in `seq 7`
-    do
-        local lastDay=
-        lastDay=`date -d "$currentWeekDate -${i}day" +%Y%m%d`
-
-        local lastWeekday=`date -d "$lastDay" +%w`
-        [[ $lastWeekday -ne 0 && $lastWeekday -ne 6 ]] && echo $lastDay
-    done
-}
-
 #[startDate, endDate]
 function listTradeDates {
     local startDate=$1
@@ -173,3 +123,46 @@ function listTradeDates {
         [[ $tradeDate == $endDate ]] && break
     done
 }
+
+
+
+function getTimeHMS {
+    local hexTime=$1
+
+    local logTime=
+    [[ ! -z $hexTime ]] && {
+        logTime=`convertHex2Time $hexTime`
+    } || {
+        logTime=`date +%H:%M:%S`
+    }
+    logTime=${logTime#* }
+
+    echo $logTime
+}
+function getDeltaHMS {
+    local tradeDate=$1
+    local baseTimeHMS=$2
+    local delta=$3
+
+    timePt=`date --date "$tradeDate $baseTimeHMS" "+%s"`
+    timePt=$((timePt+delta))
+
+    date --date @$timePt "+%H:%M:%S"
+}
+function last5WorkDate {
+    local currentWeekDate=$1
+
+    #local weekDay=`date -d "$currentWeekDate" +%w`
+    #local weekNumber=`date -d "20160331" +%W`
+
+    local i=
+    for i in `seq 7`
+    do
+        local lastDay=
+        lastDay=`date -d "$currentWeekDate -${i}day" +%Y%m%d`
+
+        local lastWeekday=`date -d "$lastDay" +%w`
+        [[ $lastWeekday -ne 0 && $lastWeekday -ne 6 ]] && echo $lastDay
+    done
+}
+
