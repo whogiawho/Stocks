@@ -6,6 +6,10 @@ import com.westsword.stocks.Utils;
 import com.westsword.stocks.utils.StockPaths;
 import com.westsword.stocks.utils.LineLoader;
 
+//those dates excluding:
+//  Sat&Mon,
+//  specialDates/holidays.txt
+//  specialDates/[stockCode].suspension.txt
 public class StockDates extends WorkDates {
     private boolean bDebug = false;
     private TreeSet<String> mMissingSet = new TreeSet<String>();
@@ -55,5 +59,9 @@ public class StockDates extends WorkDates {
             System.out.format("%s, mMissingSet.size = %d\n", 
                     Utils.getCallerName(getClass()), mMissingSet.size());
         }
+    }
+
+    public boolean isMissingDate(String date) {
+        return mMissingSet.contains(date); 
     }
 }

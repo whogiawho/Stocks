@@ -4,6 +4,8 @@ import java.util.*;
 
 import com.westsword.stocks.base.time.Time;
 
+//those dates excluding:
+//  Sat&Mon
 public class WorkDates extends Dates {
     public WorkDates(String start, String end) {
         Calendar cStart = getCalendar(start);
