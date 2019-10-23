@@ -14,7 +14,7 @@ public class StockDates extends WorkDates {
     private boolean bDebug = false;
     private TreeSet<String> mMissingSet = new TreeSet<String>();
 
-    public StockDates(String start, String end) {
+    public StockDates(String start, String end) {       //start&end must be of format YYYYMMDD
         super(start, end);
 
         if(bDebug) {

@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.*;
 import java.nio.charset.*;
 
+import com.westsword.stocks.base.time.Time;
+
 import org.apache.commons.io.FileUtils;
 
 public class Utils {
@@ -122,6 +124,21 @@ public class Utils {
         }
 
         return idx;
+    }
+
+
+
+    public static Calendar getCalendar(String tradeDate) {
+        tradeDate = Time.unformalizeYMD(tradeDate);
+        int year = new Integer(tradeDate.substring(0, 4));
+        int month = new Integer(tradeDate.substring(4, 6)) - 1;
+        int date = new Integer(tradeDate.substring(6, 8));
+
+        Calendar cal = Calendar.getInstance();
+        cal.clear();
+        cal.set(year, month, date);
+
+        return cal;
     }
 
 }

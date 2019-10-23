@@ -131,4 +131,12 @@ public class Dates {
             datesSet.add(sDates[i]);
         }
     }
+
+
+    public static String nextYearLastDate(String tradeDate) {
+        String y = tradeDate.substring(0, 4);
+        int iy = new Integer(y);
+        iy++;
+        return "" + iy + "1231";
+    }
 }
