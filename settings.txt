@@ -1,5 +1,5 @@
 stockCode=600030
 
-currentDate=20190930
+currentDate=20191024
 
 

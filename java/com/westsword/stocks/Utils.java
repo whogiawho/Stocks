@@ -54,42 +54,6 @@ public class Utils {
     }
 
 
-    //append pankouYear to timeMissingYear, thus forming a time of format
-    //    year-month-day hour:min:second
-    //timeMissingYear[in]
-    //    month-day hour:min:second
-    public static long convertTime(String timeMissingYear, String pankouYear) {
-        String[] list0 = timeMissingYear.split("-"); 
-        String sMonth = list0[0]; 
-        int month = new Integer(sMonth);
-        String[] list1 = list0[1].split(" "); 
-        String sDay = list1[0];
-        int day = new Integer(sDay);
-        String[] list2 = list1[1].split(":"); 
-        String sHour = list2[0];
-        int hour = new Integer(sHour);
-        String sMinute = list2[1];
-        int minute = new Integer(sMinute);
-        String sSecond = list2[2];
-        int second = new Integer(sSecond);
-
-        //Year, Month, Day, Hour, Minute, Second
-        Calendar cal = Calendar.getInstance();
-        int year;
-        if(pankouYear == null) {
-            cal.setTimeInMillis(System.currentTimeMillis());
-            year = cal.get(Calendar.YEAR);                             //get current year
-        } else {
-            year = new Integer(pankouYear);
-        }
-        cal.set(year, month-1, day, hour, minute, second);
-               
-        long millis = cal.getTimeInMillis()/1000;
-
-        return millis;
-    }
-
-
 
 
 
@@ -112,19 +76,6 @@ public class Utils {
 
 
 
-
-    public static int getIdx(String[] sArray, String s) {
-        int idx = -1;
-
-        for(int i=0; i<sArray.length; i++) {
-            if(s.equals(sArray[i])) {
-                idx = i;
-                break;
-            }
-        }
-
-        return idx;
-    }
 
 
 

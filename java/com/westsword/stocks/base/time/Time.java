@@ -121,18 +121,4 @@ public class Time {
         return getSpecificTime(year, month, date, sTime);
     }
 
-
-
-
-    //assumption:
-    //  baseTimeHMS is like 09:40:00, that is time range is split into 24
-    public static String getDeltaHMS(String tradeDate, String baseTimeHMS, int delta) {
-        String sHMS = "";
-
-        long timePt = getSpecificTime(tradeDate, baseTimeHMS);
-        timePt += delta;
-        sHMS = getTimeHMS(timePt);
-
-        return sHMS;
-    }
 }
