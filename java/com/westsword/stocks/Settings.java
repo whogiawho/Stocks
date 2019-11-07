@@ -23,6 +23,11 @@ public class Settings extends FileLoader {
         Utils.append2File(file, line);
     }
     public void setValue(String file, String key, String value) {
+        if(!Utils.existFile(file)) {
+            appendValue(file, key, value);
+            return;
+        }
+
         final File f= new File(file);    
 
         //System.out.format("key=%s, value=%s\n", key, value);
@@ -56,7 +61,10 @@ public class Settings extends FileLoader {
         }
 
         if(mKey!=null&&fields[0].equals(mKey)) {
-            mValue = fields[1];
+            if(fields.length >= 2)
+                mValue = fields[1];
+            else
+                mValue = null;
             return false;
         }
 
@@ -132,6 +140,7 @@ public class Settings extends FileLoader {
     public static String getString(String sFile, String key) {
         Settings t = new Settings();
         String sValue = t.getValue(sFile, key);
+        sValue = sValue==null?"":sValue;
 
         return sValue;
     }
