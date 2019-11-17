@@ -53,8 +53,90 @@ public class Utils {
         }
     }
 
+    public final static double MINIMUM_HANDLING_CHARGE = 5;
+    public static double getMinBuyFee(double inPrice, int amount) {
+        double cargoFee = inPrice*(double)amount;
+        double normalBHC = cargoFee*Parms.BuyStockServiceRate;
+        double bhc = normalBHC>MINIMUM_HANDLING_CHARGE ? normalBHC:MINIMUM_HANDLING_CHARGE;
+        return cargoFee + bhc;
+    }
+    //with considering amount
+    public static double getTradeCost(double buyPrice, double sellPrice, int amount) {
+        double cost = 0.0;
 
+        double normalBHC = buyPrice*amount*Parms.BuyStockServiceRate;
+        double normalSHC = sellPrice*amount*Parms.SellStockServiceRate;
+        double bhc = normalBHC>MINIMUM_HANDLING_CHARGE ? normalBHC:MINIMUM_HANDLING_CHARGE;
+        double shc = normalSHC>MINIMUM_HANDLING_CHARGE ? normalSHC:MINIMUM_HANDLING_CHARGE;
+        bhc = bhc/amount;
+        shc = shc/amount;
 
+        cost += bhc + shc;
+        cost += sellPrice*Parms.SellStockTaxRate;
+
+        return cost;
+    }
+    public static double getNetProfit(double buyPrice, double sellPrice, int amount) {
+        return sellPrice - buyPrice - getTradeCost(buyPrice, sellPrice, amount);
+    }
+
+    //without considering amount
+    public static double getTradeCost(double buyPrice, double sellPrice) {
+        double cost = 0.0;
+
+        cost += buyPrice*Parms.BuyStockServiceRate + sellPrice*Parms.SellStockServiceRate;
+        cost += sellPrice*Parms.SellStockTaxRate;
+
+        return cost;
+    }
+    public static double getNetProfit(double buyPrice, double sellPrice) {
+        return sellPrice - buyPrice - getTradeCost(buyPrice, sellPrice);
+    }
+
+    public static double getMaxBuyPrice(double sellPrice, int amount, double targetYearRate,
+            String inDate, String outDate) {
+        NatureDates dates = new NatureDates(inDate, outDate);
+        int dist = dates.getDistance(inDate, outDate);
+        double expProfit = targetYearRate*dist*sellPrice/360;
+
+        double normalSHC = sellPrice*amount*Parms.SellStockServiceRate;
+        double shc = normalSHC>MINIMUM_HANDLING_CHARGE ? normalSHC:MINIMUM_HANDLING_CHARGE;
+        shc = shc/amount;
+        double sum = sellPrice*(1 - Parms.SellStockTaxRate) - expProfit - shc;
+
+        double price0 = sum/(1 + Parms.BuyStockServiceRate);
+        double price1 = sum - MINIMUM_HANDLING_CHARGE/amount;
+
+        double tPrice = MINIMUM_HANDLING_CHARGE/(amount*Parms.BuyStockServiceRate);
+        System.out.format("%8.3f %8.3f %8.3f\n", price0, price1, tPrice);
+
+        if(price0 > tPrice)
+            return price0;
+        else
+            return Math.min(price1, tPrice);
+    }
+    public static double getMinSellPrice(double buyPrice, int amount, double targetYearRate, 
+            String inDate, String outDate) {
+        NatureDates dates = new NatureDates(inDate, outDate);
+        int dist = dates.getDistance(inDate, outDate);
+        double expProfit = targetYearRate*dist*buyPrice/360;
+
+        double normalBHC = buyPrice*amount*Parms.BuyStockServiceRate;
+        double bhc = normalBHC>MINIMUM_HANDLING_CHARGE ? normalBHC:MINIMUM_HANDLING_CHARGE;
+        bhc = bhc/amount;
+        double sum = expProfit + buyPrice + bhc;
+
+        double price0 = sum/(1-Parms.SellStockServiceRate-Parms.SellStockTaxRate);
+        double price1 = (sum+MINIMUM_HANDLING_CHARGE/amount)/(1-Parms.SellStockTaxRate);
+
+        double tPrice = MINIMUM_HANDLING_CHARGE/(amount*Parms.SellStockServiceRate);
+        //System.out.format("%8.3f %8.3f %8.3f\n", price0, price1, tPrice);
+
+        if(price1 < tPrice)
+            return price1;
+        else
+            return Math.max(price0, tPrice);
+    }
 
 
     public static String getCallerName(Class c) {
