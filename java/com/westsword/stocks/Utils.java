@@ -5,6 +5,7 @@ import java.util.*;
 import java.nio.charset.*;
 
 import com.westsword.stocks.base.time.Time;
+import com.westsword.stocks.base.time.NatureDates;
 
 import org.apache.commons.io.FileUtils;
 
