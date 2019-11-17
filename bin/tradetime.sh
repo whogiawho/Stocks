@@ -37,6 +37,16 @@ function getOpenQuotationTime {
 
     printf "%x" $halfPoint
 }
+#15:00
+function getCloseQuotationTime {
+    local hexTime=$1
+
+    local tradeDate=`convertHex2Time $hexTime|awk '{print $1}'`
+    local halfPoint=
+    halfPoint=`date --date "$tradeDate $CloseQuotationTime " "+%s"`
+
+    printf "%x" $halfPoint
+}
 
 
 

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+function getJavaBitMode {
+    which java|grep -q x86 && echo 32 || echo 64
+}
+
 function getWindowPathOfTmpFile {
     local tmpCygwinPath=$1
 

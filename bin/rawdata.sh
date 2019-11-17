@@ -15,7 +15,14 @@ function getInstantData {
     local serverType=$5
 
     local hexinProtocolJar="$rootDir\\build\\jar\\hexinprotocol.jar"
-    java -jar $hexinProtocolJar command4 $serverAddr $serverPort $serverType $stockCode $tradeDate
+    while [[ 1 ]] 
+    do
+        java -jar $hexinProtocolJar command4 $serverAddr $serverPort $serverType $stockCode $tradeDate
+
+        local hexTime=`currentHexTime`
+        local closeQuotationTime=`getCloseQuotationTime $hexTime`
+        [[ $hexTime > $closeQuotationTime ]] && break
+    done
 }
 
 #rawPankou

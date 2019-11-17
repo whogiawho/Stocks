@@ -15,6 +15,7 @@ UP=$EXT_PAN
 DOWN=$INT_PAN
 #JAVA="java -Xmx1272m -Xms1272m"
 JAVA="java -Xmx2048m -Xms1272m"
+export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
 
 
 . bin/settings.sh
@@ -24,6 +25,11 @@ JAVA="java -Xmx2048m -Xms1272m"
 . bin/hexin.sh
 . bin/rawdata.sh
 . bin/utils.sh
+javaBitMode=`getJavaBitMode`
+echo javaBitMode=$javaBitMode
+[[ $javaBitMode == 64 ]] && {
+    export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -Xmx2048m -Xms1272m"
+}
 
 
 function setupCfgFile {

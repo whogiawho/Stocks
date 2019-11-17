@@ -1,5 +1,10 @@
 #!/bin/bash
 
+function currentHexTime {
+    local hexTime=`date +%s`
+    hexTime=`printf "%x" $hexTime`
+    echo $hexTime
+}
 function getToday {
     local today=`date +%F|sed "s/-//g"`
     echo $today
