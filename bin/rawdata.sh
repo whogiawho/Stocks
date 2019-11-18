@@ -91,6 +91,18 @@ function doDailyGetRawJob {
     do
         getRaw $stockCode $tradeDate $serverAddr $serverPort $serverType
     done
+
+
+    echo 
+    for stockCode in $stockList
+    do
+        checkRawPankou $stockCode $tradeDate || {
+            echo "doDailyGetRawJob: ($stockCode, $tradeDate) rawPankou exception! "
+        }
+        checkRawTradeDetails $stockCode $tradeDate || {
+            echo "doDailyGetRawJob: ($stockCode, $tradeDate) rawTradedetails exception! "
+        }
+    done
 }
 
 

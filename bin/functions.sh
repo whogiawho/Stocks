@@ -30,6 +30,8 @@ echo javaBitMode=$javaBitMode
 [[ $javaBitMode == 64 ]] && {
     export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -Xmx2048m -Xms1272m"
 }
+. bin/pankou.sh
+. bin/tradedetails.sh
 
 
 function setupCfgFile {

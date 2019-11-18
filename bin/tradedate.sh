@@ -61,7 +61,7 @@ function getTradeDateList {
     local stockCode=$1
     local bList=$2
 
-    local stockDir="$rawDataDir\\$stockCode"
+    local stockDir="$dailyDir\\$stockCode"
     local tradeDateList=`ls $stockDir|sed "s@/@@g"`
 
     [[ ! -z $bList ]] && {
