@@ -3,6 +3,7 @@
 user=${user:-"whogi"}
 rootDir=${rootDir:-"F:\\Stocks"}
 cygwinRootDir=${cygwinRootDir:-"/cygdrive/f/Stocks"}
+thsHackRootDir=${thsHackRootDir:-"$cygwinRootDir/thsHack"}
 dataRoot=${dataRoot:-"F:\\Stocks\\data"}
 rawZuBiDataDir=${rawZuBiDataDir:-"$dataRoot\\rawTradeDetails"}
 rawPankouDataDir=${rawPankouDataDir:-"$dataRoot\\rawPankou"}

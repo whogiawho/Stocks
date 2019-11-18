@@ -95,16 +95,16 @@ function le {
 
 function getCodeStats {
     local javaLiines=
-    javaLiines=`find $cygwinRootDir/java -name *.java|xargs wc|grep -v "/cygdrive/d/stocks/"|awk '{print $1}'`
+    javaLiines=`find $cygwinRootDir/java $thsHackRootDir/java -name *.java|xargs wc|grep -v "$cygwinRootDir"|awk '{print $1}'`
 
     local cLines=
-    cLines=`find $cygwinRootDir/c -name *.c -o -name *.h|xargs wc|grep -v "/cygdrive/d/stocks/"|awk '{print $1}'`
+    cLines=`find $thsHackRootDir/getRaw $thsHackRootDir/uSleep -name *.c -o -name *.h|xargs wc|grep -v "$cygwinRootDir"|awk '{print $1}'`
 
     local scriptLines=
-    scriptLines=`find $cygwinRootDir/bin/  -name *.bat -o -name *.sh|grep -v backup|grep -v test|grep -v obso|xargs wc|grep -v "/cygdrive/d/stocks/"|awk '{print $1}'`
+    scriptLines=`find $cygwinRootDir/bin/  -name *.bat -o -name *.sh|grep -v backup|grep -v test|grep -v obso|xargs wc|grep -v "$cygwinRootDir"|awk '{print $1}'`
 
     local idcLines=
-    idcLines=`find $cygwinRootDir/scripts/  -name *.idc |grep -v backup | xargs wc|grep -v "/cygdrive/d/stocks/"|awk '{print $1}'`
+    idcLines=`find $thsHackRootDir/scripts/  -name *.idc |grep -v backup | xargs wc|grep -v "$cygwinRootDir"|awk '{print $1}'`
 
     printf "%8s %8s %12s %8s\n" "Java" "C" "bash&bat" "idc"
     printf "%8s %8s %12s %8s\n" $javaLiines $cLines $scriptLines $idcLines 
