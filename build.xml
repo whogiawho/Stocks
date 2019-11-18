@@ -19,13 +19,21 @@
     <property name="topost0-main-class"  
         value="com.westsword.stocks.tools.ToPost0"/>
 
+    <property name="splitrawtradedetails"    value="splitrawtradedetails"/>
+    <property name="splitrawtradedetails-main-class"  
+        value="com.westsword.stocks.tools.SplitRawTradeDetails"/>
+
+    <property name="splitrawpankou"    value="splitrawpankou"/>
+    <property name="splitrawpankou-main-class"  
+        value="com.westsword.stocks.tools.SplitRawPankou"/>
+
     <target name="clean">
         <delete file="${jar.dir}/${getsettings}.jar"/>
         <delete dir="${classes.dir}"/>
     </target>
 
     <target name="all" 
-        depends="getsettings,topost0,analyzetools">
+        depends="getsettings,topost0,analyzetools,splitrawpankou,splitrawtradedetails">
     </target>
 
     <target name="compile">
@@ -37,6 +45,29 @@
         </javac>
     </target>
 
+    <target name="splitrawtradedetails" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${splitrawtradedetails}.jar" basedir="${classes.dir}" 
+            includes="com/westsword/stocks/Utils.class,
+                com/westsword/stocks/utils/*.class,
+                com/westsword/stocks/tools/SplitRawTradeDetails.class">
+            <manifest>
+                <attribute name="Main-Class" value="${splitrawtradedetails-main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="splitrawpankou" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${splitrawpankou}.jar" basedir="${classes.dir}" 
+            includes="com/westsword/stocks/Utils.class,
+                com/westsword/stocks/utils/*.class,
+                com/westsword/stocks/tools/SplitRawPankou.class">
+            <manifest>
+                <attribute name="Main-Class" value="${splitrawpankou-main-class}"/>
+            </manifest>
+        </jar>
+    </target>
 
     <target name="analyzetools" depends="compile">
         <mkdir dir="${jar.dir}"/>

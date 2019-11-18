@@ -86,6 +86,15 @@ public class Settings extends FileLoader {
 
 
 
+    public static boolean getSwitchOfRawData() {
+        return getBoolean("switchOfRawData");
+    }
+
+    public static String getPriceDecimalFormat() {
+        return getString("PriceDecimalFormat");
+    }
+
+
     public static String getTradeDate() {
         return getString("currentDate");
     }

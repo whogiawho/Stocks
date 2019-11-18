@@ -1,7 +1,13 @@
 stockCode=600030
-
 currentDate=20191025
 
 
 currentDateCloseQuotationTime=5db29d70
 currentDateLastRawTradeDetailTime=5db29dac
+
+
+PriceDecimalFormat=#.##
+
+
+#switch to turn on raw data trace: RawRTPankou, RawTradeDetails
+switchOfRawData=false

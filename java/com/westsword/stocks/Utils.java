@@ -1,7 +1,9 @@
 package com.westsword.stocks;
 
 import java.io.*;
+import java.math.*;
 import java.util.*;
+import java.text.*;
 import java.nio.charset.*;
 
 import com.westsword.stocks.base.time.Time;
@@ -109,7 +111,7 @@ public class Utils {
         double price1 = sum - MINIMUM_HANDLING_CHARGE/amount;
 
         double tPrice = MINIMUM_HANDLING_CHARGE/(amount*Parms.BuyStockServiceRate);
-        System.out.format("%8.3f %8.3f %8.3f\n", price0, price1, tPrice);
+        //System.out.format("%8.3f %8.3f %8.3f\n", price0, price1, tPrice);
 
         if(price0 > tPrice)
             return price0;
@@ -140,6 +142,45 @@ public class Utils {
     }
 
 
+    //append pankouYear to timeMissingYear, thus forming a time of format
+    //    year-month-day hour:min:second
+    //timeMissingYear[in]
+    //    month-day hour:min:second
+    public static long convertTime(String timeMissingYear, String pankouYear) {
+        String[] list0 = timeMissingYear.split("-"); 
+        String sMonth = list0[0]; 
+        int month = new Integer(sMonth);
+        String[] list1 = list0[1].split(" "); 
+        String sDay = list1[0];
+        int day = new Integer(sDay);
+        String[] list2 = list1[1].split(":"); 
+        String sHour = list2[0];
+        int hour = new Integer(sHour);
+        String sMinute = list2[1];
+        int minute = new Integer(sMinute);
+        String sSecond = list2[2];
+        int second = new Integer(sSecond);
+
+        //Year, Month, Day, Hour, Minute, Second
+        Calendar cal = Calendar.getInstance();
+        int year;
+        if(pankouYear == null) {
+            cal.setTimeInMillis(System.currentTimeMillis());
+            year = cal.get(Calendar.YEAR);                             //get current year
+        } else {
+            year = new Integer(pankouYear);
+        }
+        cal.set(year, month-1, day, hour, minute, second);
+               
+        long millis = cal.getTimeInMillis()/1000;
+
+        return millis;
+    }
+
+
+
+
+
     public static String getCallerName(Class c) {
         StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
         StackTraceElement e = stacktrace[2];//maybe this number needs to be corrected
@@ -150,7 +191,14 @@ public class Utils {
 
 
 
+    //pankouAnalyzeFile format:
+    //    endTime.price hexStartTime startTime endTime.pankouSupply
+    public static String toLine(long startTime, int pankouSupply, double price) {
+        String line = String.format("%8.3f %10x %10s %8d\n", 
+                price, startTime, Time.getTimeHMS(startTime), pankouSupply);
 
+        return line;
+    }
 
 
 
@@ -173,6 +221,17 @@ public class Utils {
         cal.set(year, month, date);
 
         return cal;
+    }
+
+    public static double roundUp(double inD) {
+        String sFormat = Settings.getPriceDecimalFormat();
+        DecimalFormat df = new DecimalFormat(sFormat);
+        df.setRoundingMode(RoundingMode.CEILING);
+
+        //adjust inD to specified Decimal format
+        inD = new Double(df.format(inD));
+
+        return inD;
     }
 
 }
