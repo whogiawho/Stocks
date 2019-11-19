@@ -124,30 +124,8 @@ public class RawRTPankou {
 
         return str;
     }
-    public void write2PankouAnalyzeFile(long startTime, String sFile) {
-        String line="";
-
-        //up part 
-        for(int i=RawRTPankou.PANKOU_LEVEL_NUMBER-1; i>=0; i--) {
-            double price = getUpPrice(i);
-            //reverse upSupply
-            int supply = (int)(-getUpSupply(i));
-            line += Utils.toLine(startTime, supply, price);
-        }
-        //down part
-        for(int i=0; i<RawRTPankou.PANKOU_LEVEL_NUMBER; i++) {
-            double price = getDownPrice(i);
-            //keep supply unchanged
-            int supply = (int)getDownSupply(i);
-            line += Utils.toLine(startTime, supply, price);
-        }
-
-        //write line to pankouAnalyze.txt
-        Utils.append2File(sFile, line);
-    }
-    public void write2PankouAnalyzeFile(String sFile) {
-        write2PankouAnalyzeFile(mSecondsFrom1970Time, sFile);
-    }
+    //pankouString format
+    //sell10-sell1 buy1-buy10 sellC10-sellC1 buyC1-buyC10 hexTimePoint
     public RawRTPankou(String pankouString){
         String[] s0;
 
@@ -222,22 +200,4 @@ public class RawRTPankou {
         }
     }
 
-    public String toLine() {
-        String line = "";
-        for(int i=0; i<PANKOU_LEVEL_NUMBER; i++) {
-            line += price2Str(mSellPrice[i]) + ",";
-        }
-        for(int i=0; i<PANKOU_LEVEL_NUMBER; i++) {
-            line += price2Str(mBuyPrice[i]) + ",";
-        }
-        for(int i=0; i<PANKOU_LEVEL_NUMBER; i++) {
-            line += vol2Str(mSellVolume[i]) + ",";
-        }
-        for(int i=0; i<PANKOU_LEVEL_NUMBER; i++) {
-            line += vol2Str(mBuyVolume[i]) + ",";
-        }
-        line += mStrTime;
-
-        return line;
-    }
 }

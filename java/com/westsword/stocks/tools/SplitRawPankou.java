@@ -40,7 +40,7 @@ public class SplitRawPankou extends FileLoader {
             String[] fields=line.split(",");
             String thisTime = fields[4*RawRTPankou.PANKOU_LEVEL_NUMBER];
            
-            long millis = Utils.convertTime(thisTime, mPankouYear);
+            long millis = Utils.timeWOyear2Long(thisTime, mPankouYear);
             String sMillis = String.format("%x", millis);
 
             line = line.replaceAll(thisTime, "");
@@ -60,6 +60,8 @@ public class SplitRawPankou extends FileLoader {
 
     private static void usage() {
         System.err.println("usage: java SplitRawPankou fRawPankou dDstDir [pankouYear]");
+        System.err.println("  split a rawPankou file into small files by hexTimePoint");
+        System.err.println("  covnert 41th sTime missing year to hexTimePoint");
         System.exit(-1);
     }
 

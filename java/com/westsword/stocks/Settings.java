@@ -103,9 +103,9 @@ public class Settings extends FileLoader {
     }
 
 
-    //return MIN_VALUE if key does not exist
-    public static long getLong(String sFile, String key, int radix) {
-        long value = Long.MIN_VALUE;
+    //return null if key does not exist
+    public static Long getLong(String sFile, String key, int radix) {
+        Long value = null;
 
         Settings t = new Settings();
         String sValue = t.getValue(sFile, key);
@@ -114,12 +114,12 @@ public class Settings extends FileLoader {
 
         return value;
     }
-    public static long getLong(String key, int radix) {
+    public static Long getLong(String key, int radix) {
         return getLong(Settings.settingFile, key, radix);
     }
-    //return MIN_VALUE if key does not exist
-    public static int getInteger(String sFile, String key) {
-        int value = Integer.MIN_VALUE;
+    //return null if key does not exist
+    public static Integer getInteger(String sFile, String key) {
+        Integer value = null;
 
         Settings t = new Settings();
         String sValue = t.getValue(sFile, key);
@@ -128,12 +128,12 @@ public class Settings extends FileLoader {
 
         return value;
     }
-    public static int getInteger(String key) {
+    public static Integer getInteger(String key) {
         return getInteger(Settings.settingFile, key);
     }
-    //return Double.NaN if key does not exist
-    public static double getDouble(String sFile, String key) {
-        double value = Double.NaN;
+    //return null if key does not exist
+    public static Double getDouble(String sFile, String key) {
+        Double value = null;
 
         Settings t = new Settings();
         String sValue = t.getValue(sFile, key);
@@ -142,7 +142,7 @@ public class Settings extends FileLoader {
 
         return value;
     }
-    public static double getDouble(String key) {
+    public static Double getDouble(String key) {
         return getDouble(Settings.settingFile, key);
     }
     //return null if key does not exist
@@ -156,9 +156,9 @@ public class Settings extends FileLoader {
     public static String getString(String key) {
         return getString(Settings.settingFile, key);
     }
-    //return false if key does not exist
-    public static boolean getBoolean(String sFile, String key) {
-        boolean value=false;
+    //return null if key does not exist
+    public static Boolean getBoolean(String sFile, String key) {
+        Boolean value=null;
 
         Settings t = new Settings();
         String sValue = t.getValue(sFile, key);
@@ -167,7 +167,11 @@ public class Settings extends FileLoader {
 
         return value;
     }
-    public static boolean getBoolean(String key) {
+    public static Boolean getBoolean(String key) {
         return getBoolean(Settings.settingFile, key);
     }
+
+
+
+
 }

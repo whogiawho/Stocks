@@ -12,9 +12,9 @@ public class AnsiColor {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
-    public static final String specialStringUp=String.format("%s%s%s", ANSI_RED, "¡ü", ANSI_RESET);
-    public static final String specialStringDown=String.format("%s%s%s", ANSI_GREEN, "¡ý", ANSI_RESET);
-    public static final String specialStringUnknown=String.format("%s%s%s", ANSI_BLUE, "£¿", ANSI_RESET);
+    public static final String specialStringUp=String.format("%s%s%s", ANSI_RED, "â†‘", ANSI_RESET);
+    public static final String specialStringDown=String.format("%s%s%s", ANSI_GREEN, "â†“", ANSI_RESET);
+    public static final String specialStringUnknown=String.format("%s%s%s", ANSI_BLUE, "ï¼Ÿ", ANSI_RESET);
 
 
     public static String getColorString(String src, String sColor) {

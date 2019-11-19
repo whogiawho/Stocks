@@ -146,7 +146,7 @@ public class Utils {
     //    year-month-day hour:min:second
     //timeMissingYear[in]
     //    month-day hour:min:second
-    public static long convertTime(String timeMissingYear, String pankouYear) {
+    public static long timeWOyear2Long(String timeMissingYear, String pankouYear) {
         String[] list0 = timeMissingYear.split("-"); 
         String sMonth = list0[0]; 
         int month = new Integer(sMonth);
@@ -190,15 +190,6 @@ public class Utils {
     }
 
 
-
-    //pankouAnalyzeFile format:
-    //    endTime.price hexStartTime startTime endTime.pankouSupply
-    public static String toLine(long startTime, int pankouSupply, double price) {
-        String line = String.format("%8.3f %10x %10s %8d\n", 
-                price, startTime, Time.getTimeHMS(startTime), pankouSupply);
-
-        return line;
-    }
 
 
 
