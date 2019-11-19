@@ -103,7 +103,7 @@ public class RawRTPankou {
 
         return sum;
     }
-    public String price2String(double d) {
+    public String price2Str(double d) {
         String str; 
 
         Double d0 = new Double(d);
@@ -114,7 +114,7 @@ public class RawRTPankou {
 
         return str;
     }
-    public String volume2String(long l) {
+    public String vol2Str(long l) {
         String str;
 
         if(l == INVALID_VOLUME)
@@ -197,26 +197,26 @@ public class RawRTPankou {
         if(bSwitchOfRawData) {
             String sFormat = "%8s %8s %8s\n";
             String str = String.format("time=%s\n", mStrTime);
-            str += String.format(sFormat, "sell10", price2String(mSellPrice[SELL_10]), volume2String(mSellVolume[SELL_10]));
-            str += String.format(sFormat, "sell9",  price2String(mSellPrice[SELL_9]), volume2String(mSellVolume[SELL_9]));
-            str += String.format(sFormat, "sell8",  price2String(mSellPrice[SELL_8]), volume2String(mSellVolume[SELL_8]));
-            str += String.format(sFormat, "sell7",  price2String(mSellPrice[SELL_7]), volume2String(mSellVolume[SELL_7]));
-            str += String.format(sFormat, "sell6",  price2String(mSellPrice[SELL_6]), volume2String(mSellVolume[SELL_6]));
-            str += String.format(sFormat, "sell5",  price2String(mSellPrice[SELL_5]), volume2String(mSellVolume[SELL_5]));
-            str += String.format(sFormat, "sell4",  price2String(mSellPrice[SELL_4]), volume2String(mSellVolume[SELL_4]));
-            str += String.format(sFormat, "sell3",  price2String(mSellPrice[SELL_3]), volume2String(mSellVolume[SELL_3]));
-            str += String.format(sFormat, "sell2",  price2String(mSellPrice[SELL_2]), volume2String(mSellVolume[SELL_2]));
-            str += String.format(sFormat, "sell1",  price2String(mSellPrice[SELL_1]), volume2String(mSellVolume[SELL_1]));
-            str += String.format(sFormat, "buy1",   price2String(mBuyPrice[BUY_1]), volume2String(mBuyVolume[BUY_1]));
-            str += String.format(sFormat, "buy2",   price2String(mBuyPrice[BUY_2]), volume2String(mBuyVolume[BUY_2]));
-            str += String.format(sFormat, "buy3",   price2String(mBuyPrice[BUY_3]), volume2String(mBuyVolume[BUY_3]));
-            str += String.format(sFormat, "buy4",   price2String(mBuyPrice[BUY_4]), volume2String(mBuyVolume[BUY_4]));
-            str += String.format(sFormat, "buy5",   price2String(mBuyPrice[BUY_5]), volume2String(mBuyVolume[BUY_5]));
-            str += String.format(sFormat, "buy6",   price2String(mBuyPrice[BUY_6]), volume2String(mBuyVolume[BUY_6]));
-            str += String.format(sFormat, "buy7",   price2String(mBuyPrice[BUY_7]), volume2String(mBuyVolume[BUY_7]));
-            str += String.format(sFormat, "buy8",   price2String(mBuyPrice[BUY_8]), volume2String(mBuyVolume[BUY_8]));
-            str += String.format(sFormat, "buy9",   price2String(mBuyPrice[BUY_9]), volume2String(mBuyVolume[BUY_9]));
-            str += String.format(sFormat, "buy10",  price2String(mBuyPrice[BUY_10]), volume2String(mBuyVolume[BUY_10]));
+            str += String.format(sFormat, "sell10", price2Str(mSellPrice[SELL_10]), vol2Str(mSellVolume[SELL_10]));
+            str += String.format(sFormat, "sell9",  price2Str(mSellPrice[SELL_9]), vol2Str(mSellVolume[SELL_9]));
+            str += String.format(sFormat, "sell8",  price2Str(mSellPrice[SELL_8]), vol2Str(mSellVolume[SELL_8]));
+            str += String.format(sFormat, "sell7",  price2Str(mSellPrice[SELL_7]), vol2Str(mSellVolume[SELL_7]));
+            str += String.format(sFormat, "sell6",  price2Str(mSellPrice[SELL_6]), vol2Str(mSellVolume[SELL_6]));
+            str += String.format(sFormat, "sell5",  price2Str(mSellPrice[SELL_5]), vol2Str(mSellVolume[SELL_5]));
+            str += String.format(sFormat, "sell4",  price2Str(mSellPrice[SELL_4]), vol2Str(mSellVolume[SELL_4]));
+            str += String.format(sFormat, "sell3",  price2Str(mSellPrice[SELL_3]), vol2Str(mSellVolume[SELL_3]));
+            str += String.format(sFormat, "sell2",  price2Str(mSellPrice[SELL_2]), vol2Str(mSellVolume[SELL_2]));
+            str += String.format(sFormat, "sell1",  price2Str(mSellPrice[SELL_1]), vol2Str(mSellVolume[SELL_1]));
+            str += String.format(sFormat, "buy1",   price2Str(mBuyPrice[BUY_1]), vol2Str(mBuyVolume[BUY_1]));
+            str += String.format(sFormat, "buy2",   price2Str(mBuyPrice[BUY_2]), vol2Str(mBuyVolume[BUY_2]));
+            str += String.format(sFormat, "buy3",   price2Str(mBuyPrice[BUY_3]), vol2Str(mBuyVolume[BUY_3]));
+            str += String.format(sFormat, "buy4",   price2Str(mBuyPrice[BUY_4]), vol2Str(mBuyVolume[BUY_4]));
+            str += String.format(sFormat, "buy5",   price2Str(mBuyPrice[BUY_5]), vol2Str(mBuyVolume[BUY_5]));
+            str += String.format(sFormat, "buy6",   price2Str(mBuyPrice[BUY_6]), vol2Str(mBuyVolume[BUY_6]));
+            str += String.format(sFormat, "buy7",   price2Str(mBuyPrice[BUY_7]), vol2Str(mBuyVolume[BUY_7]));
+            str += String.format(sFormat, "buy8",   price2Str(mBuyPrice[BUY_8]), vol2Str(mBuyVolume[BUY_8]));
+            str += String.format(sFormat, "buy9",   price2Str(mBuyPrice[BUY_9]), vol2Str(mBuyVolume[BUY_9]));
+            str += String.format(sFormat, "buy10",  price2Str(mBuyPrice[BUY_10]), vol2Str(mBuyVolume[BUY_10]));
 
             System.out.println(str);
         }
@@ -225,16 +225,16 @@ public class RawRTPankou {
     public String toLine() {
         String line = "";
         for(int i=0; i<PANKOU_LEVEL_NUMBER; i++) {
-            line += price2String(mSellPrice[i]) + ",";
+            line += price2Str(mSellPrice[i]) + ",";
         }
         for(int i=0; i<PANKOU_LEVEL_NUMBER; i++) {
-            line += price2String(mBuyPrice[i]) + ",";
+            line += price2Str(mBuyPrice[i]) + ",";
         }
         for(int i=0; i<PANKOU_LEVEL_NUMBER; i++) {
-            line += volume2String(mSellVolume[i]) + ",";
+            line += vol2Str(mSellVolume[i]) + ",";
         }
         for(int i=0; i<PANKOU_LEVEL_NUMBER; i++) {
-            line += volume2String(mBuyVolume[i]) + ",";
+            line += vol2Str(mBuyVolume[i]) + ",";
         }
         line += mStrTime;
 
