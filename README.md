@@ -14,4 +14,5 @@ Another search is done to get the offset of the exact time point in the window t
 So next time when a similar segment appears, a buy should be done, and it should be sold after the offset.  
 
 # Investment and Cooperation are Welcome
+![alipay](https://github.com/whogiawho/Stocks/blob/master/doc/alipayQrCode.jpg)  
  contact me with whogiawho@gmail.com, thanks!
