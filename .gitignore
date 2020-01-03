@@ -1,7 +1,7 @@
 
 thsHack/
 *.exe
-*.jar
+build/
 *.part081
 *.part401
 data/loginParms/
