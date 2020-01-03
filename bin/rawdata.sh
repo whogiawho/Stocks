@@ -40,7 +40,7 @@ function getRawPankou {
     serverType=${serverType:-$DefaultServerType}
     local hexinProtocolJar="$rootDir\\build\\jar\\hexinprotocol.jar"
 
-    #generate "d:\stocks\data\pankoumedium\$stockCode.$tradeDate.txt"
+    #generate $dataRoot"\pankoumedium\$stockCode.$tradeDate.txt"
     java -jar $hexinProtocolJar command2 $serverAddr $serverPort $serverType \
         $stockCode $tradeDate $startHMS $endHMS
 
@@ -67,7 +67,7 @@ function getRawTradeDetails {
     local callAuctionTime=$CallAuctionEndTime
     local closeQuotationTime=$CloseQuotationTime
 
-    #generate "d:\stocks\data\zubimingximedium\$stockCode.$tradeDate.txt"
+    #generate $dataRoot"\zubimingximedium\$stockCode.$tradeDate.txt"
     java -jar $hexinProtocolJar command1 $serverAddr $serverPort $serverType \
         $stockCode $tradeDate $callAuctionTime $closeQuotationTime
 
@@ -93,14 +93,20 @@ function doDailyGetRawJob {
     done
 
 
+    local sFormat="doDailyGetRawJob: ($stockCode, $tradeDate) %20s %10s!\n"
     echo 
     for stockCode in $stockList
     do
-        checkRawPankou $stockCode $tradeDate || {
-            echo "doDailyGetRawJob: ($stockCode, $tradeDate) rawPankou exception! "
+        checkRawPankou $stockCode $tradeDate && {
+            printf "$sFormat" "rawPankou" "ok"
+        } || {
+            printf "$sFormat" "rawPankou" "exception"
         }
-        checkRawTradeDetails $stockCode $tradeDate || {
-            echo "doDailyGetRawJob: ($stockCode, $tradeDate) rawTradedetails exception! "
+
+        checkRawTradeDetails $stockCode $tradeDate && {
+            printf "$sFormat" "rawTradedetails" "ok"
+        } || {
+            printf "$sFormat" "rawTradedetails" "exception"
         }
     done
 }

@@ -1,25 +1,18 @@
 #!/bin/bash
 
-function getJavaBitMode {
-    which java|grep -q x86 && echo 32 || echo 64
-}
-
 function getWindowPathOfTmpFile {
     local tmpCygwinPath=$1
 
-    local rootTmp="D:\cygwin64\tmp"
-    echo $rootTmp\\`basename $tmpCygwinPath`
+    echo $cygwinTmpDir\\`basename $tmpCygwinPath`
 }
-
 function getWindowPathOfFile {
-    local cygwinFile=$1
+    local fileCygdrive=$1
 
-    local cygwinWinRoot="d:\cygwin64"
 
     local file=
-    file=`basename $cygwinFile`
+    file=`basename $fileCygdrive`
     local dir=
-    dir=`dirname $cygwinFile`
+    dir=`dirname $fileCygdrive`
     echo $dir|grep -q "\/cygdrive" && {
         dir=`echo $dir|sed 's@\/cygdrive@@g'`
         drive=${dir:1:1}
@@ -29,18 +22,20 @@ function getWindowPathOfFile {
     } || {
         dir=`echo $dir|sed 's@/@\\\@g'`
         [[ $dir = '\' ]] && dir=
-        echo "$cygwinWinRoot$dir\\$file"
+        echo "$cygwinRootDir\\$dir\\$file"
     }
 }
-
 
 
 function divide {
     local f0=$1
     local f1=$2
+    local scale=$3
+
+    [[ -z $scale ]] && scale=3
 
     local result=
-    result=`echo "scale=3; $f0 / $f1"|bc`
+    result=`echo "scale=$scale; $f0 / $f1"|bc`
 
     echo $result
 
@@ -95,16 +90,20 @@ function le {
 
 function getCodeStats {
     local javaLiines=
-    javaLiines=`find $cygwinRootDir/java $thsHackRootDir/java -name *.java|xargs wc|grep -v "$cygwinRootDir"|awk '{print $1}'`
+    javaLiines=`find $rootDirCygdrive/java $thsHackRootDirCygdrive/java -name *.java|xargs wc \
+        |grep -v "$rootDirCygdrive/"|awk '{print $1}'`
 
     local cLines=
-    cLines=`find $thsHackRootDir/getRaw $thsHackRootDir/uSleep -name *.c -o -name *.h|xargs wc|grep -v "$cygwinRootDir"|awk '{print $1}'`
+    cLines=`find $thsHackRootDirCygdrive/getRaw $thsHackRootDirCygdrive/uSleep -name *.c -o -name *.h|xargs wc \
+        |grep -v "$rootDirCygdrive/"|awk '{print $1}'`
 
     local scriptLines=
-    scriptLines=`find $cygwinRootDir/bin/  -name *.bat -o -name *.sh|grep -v backup|grep -v test|grep -v obso|xargs wc|grep -v "$cygwinRootDir"|awk '{print $1}'`
+    scriptLines=`find $rootDirCygdrive/bin/  -name *.bat -o -name *.sh \
+        |grep -v backup|grep -v test|grep -v obso|xargs wc|grep -v "$rootDirCygdrive/"|awk '{print $1}'`
 
     local idcLines=
-    idcLines=`find $thsHackRootDir/scripts/  -name *.idc |grep -v backup | xargs wc|grep -v "$cygwinRootDir"|awk '{print $1}'`
+    idcLines=`find $thsHackRootDirCygdrive/scripts/  -name *.idc \
+        |grep -v backup | xargs wc|grep -v "$rootDirCygdrive/"|awk '{print $1}'`
 
     printf "%8s %8s %12s %8s\n" "Java" "C" "bash&bat" "idc"
     printf "%8s %8s %12s %8s\n" $javaLiines $cLines $scriptLines $idcLines 
@@ -123,9 +122,6 @@ function abs {
 
     echo $value
 }
-
-
-
 
 function getListAvg {
     local fList=$1
