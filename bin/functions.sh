@@ -1,10 +1,10 @@
 #!/bin/bash
 
 user=${user:-"whogi"}
-rootDir=${rootDir:-"F:\\Stocks"}
-cygwinRootDir=${cygwinRootDir:-"/cygdrive/f/Stocks"}
-thsHackRootDir=${thsHackRootDir:-"$cygwinRootDir/thsHack"}
-dataRoot=${dataRoot:-"F:\\Stocks\\data"}
+rootDir=${rootDir:-"d:\\Stocks"}
+rootDirCygdrive=${rootDirCygdrive:-"/cygdrive/d/Stocks"}
+thsHackRootDirCygdrive=${thsHackRootDirCygdrive:-"$rootDirCygdrive/thsHack"}
+dataRoot=${dataRoot:-"d:\\Stocks\\data"}
 rawZuBiDataDir=${rawZuBiDataDir:-"$dataRoot\\rawTradeDetails"}
 rawPankouDataDir=${rawPankouDataDir:-"$dataRoot\\rawPankou"}
 dailyDir=${dailyDir:-"$dataRoot\\daily"}
@@ -14,10 +14,18 @@ EXT_PAN=5
 INT_PAN=1
 UP=$EXT_PAN
 DOWN=$INT_PAN
-#JAVA="java -Xmx1272m -Xms1272m"
-JAVA="java -Xmx2048m -Xms1272m"
-export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
 
+export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
+cygwin32RootDir="E:\\cygwin"
+cygwin64RootDir="E:\\cygwin64"
+cygwinRootDir=$cygwin32RootDir
+cygwinBitMode=`getCygwinBitMode`
+echo cygwinBitMode=$cygwinBitMode
+[[ $cygwinBitMode == 64 ]] && {
+    export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -Xmx2048m -Xms2048m"
+    cygwinRootDir=$cygwin64RootDir
+}
+cygwinTmpDir="$cygwinRootDir\\tmp"
 
 . bin/settings.sh
 . bin/time.sh
@@ -26,11 +34,6 @@ export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
 . bin/hexin.sh
 . bin/rawdata.sh
 . bin/utils.sh
-javaBitMode=`getJavaBitMode`
-echo javaBitMode=$javaBitMode
-[[ $javaBitMode == 64 ]] && {
-    export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -Xmx2048m -Xms1272m"
-}
 . bin/pankou.sh
 . bin/tradedetails.sh
 

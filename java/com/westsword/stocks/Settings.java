@@ -9,12 +9,12 @@ import com.westsword.stocks.utils.FileLoader;
 import org.apache.commons.io.FileUtils;
 
 public class Settings extends FileLoader {
-    public final static String rootDir="f:\\Stocks\\";
-    public final static String dailyDir="f:\\Stocks\\data\\daily\\";
+    public final static String rootDir="d:\\Stocks\\";
+    public final static String dailyDir=rootDir+"data\\daily\\";
     public final static String settingFile=rootDir+"settings.txt";
 
-    public final static String sHexinServerIni = "D:\\HexinSoftware\\Hexin\\renjiqi\\hqserver.ini";
-    public final static String sC4TradeDetailsExe = "F:\\Stocks\\bin\\c4tradedetails.exe";
+    public final static String sHexinServerIni = "e:\\HexinSoftware\\Hexin\\renjiqi\\hqserver.ini";
+    public final static String sC4TradeDetailsExe = rootDir+"bin\\c4tradedetails.exe";
 
 
 
