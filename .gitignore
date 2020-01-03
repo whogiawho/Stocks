@@ -1,8 +1,6 @@
 
 thsHack/
-*.exe
 build/
-*.part081
-*.part401
-data/loginParms/
+data/
+*.exe
 *.class
