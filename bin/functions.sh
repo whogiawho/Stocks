@@ -8,6 +8,7 @@ dataRoot=${dataRoot:-"d:\\Stocks\\data"}
 rawZuBiDataDir=${rawZuBiDataDir:-"$dataRoot\\rawTradeDetails"}
 rawPankouDataDir=${rawPankouDataDir:-"$dataRoot\\rawPankou"}
 dailyDir=${dailyDir:-"$dataRoot\\daily"}
+thsRootDirCygdrive=${thsRootDirCygdrive:-"/cygdrive/e/HexinSoftware/Hexin"}
 TYPE_BUY=0
 TYPE_SELL=1
 EXT_PAN=5
