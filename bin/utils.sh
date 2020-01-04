@@ -171,3 +171,9 @@ function getNetProfit {
 }
 
 
+function cleardmp {
+    hexinRoot=$thsRootDirCygdrive
+    set -x
+    rm -rf $hexinRoot/*.dmp
+    set +x
+}
