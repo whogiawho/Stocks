@@ -9,11 +9,12 @@ print('qsIdx = '+str(qsIdx), file=sys.stderr)
 
 WaitsAfterStartingProc=10
 headFile="d:\\cygwin64\\bin\\head.exe"
-tessractFile="d:\\cygwin64\\bin\\tesseract.exe"
 jyXiadanFile=r'd:\Program Files (x86)\jyzqths\xiadan.exe'
 zxXiadanFile=r'd:\Program Files (x86)\中信证券至胜全能版\xiadan.exe'
 jyHexinFile=r'd:\Program Files (x86)\jyzqths\hexin.exe'
 zxHexinFile=r'd:\Program Files (x86)\zxzqzs\hexin.exe'
+tesseractFile="e:\\cygwin64\\bin\\tesseract.exe"
+tesseractOptions="--oem 0 --psm 7"
 
 qsNames = ['jyzq', 'zxzq']
 qsXiadanFilePaths = [jyXiadanFile, zxXiadanFile]
