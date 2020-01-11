@@ -121,4 +121,8 @@ public class Time {
         return getSpecificTime(year, month, date, sTime);
     }
 
+    public static String currentDate() {
+        long tp = System.currentTimeMillis();
+        return getTimeYMD(tp, false);
+    }
 }
