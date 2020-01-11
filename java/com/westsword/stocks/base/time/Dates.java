@@ -50,24 +50,36 @@ public class Dates {
         }
         return next;
     }
-    //return null if workDate is the last
-    public String nextDate(String workDate) {
-        return mDatesSet.higher(workDate);
+
+    //asuumption for these methods:
+    //  1. date0&date1 of format: YYYYMMDD; 
+    //  2. both are valid members of mDatesSet
+    //     otherwise unknown result may occur
+    //methods:
+    //  nextDate
+    //  prevDate
+    //  getDistance
+    //  getDateList
+    //  getDateListExclude
+    //  lastNDates
+    
+    //return null if date is the last
+    public String nextDate(String date) {
+        return mDatesSet.higher(date);
     }
-    public String prevDate(String workDate) {
-        return mDatesSet.lower(workDate);
+    public String prevDate(String date) {
+        return mDatesSet.lower(date);
     }
-    //workData0&workDate1 of format: YYYYMMDD
-    public int getDistance(String workDate0, String workDate1) {
+    public int getDistance(String date0, String date1) {
         int dist = 0;
 
         boolean reversed = false;
-        int result = workDate0.compareTo(workDate1);
-        String startDate = workDate0;
-        String endDate = workDate1;
+        int result = date0.compareTo(date1);
+        String startDate = date0;
+        String endDate = date1;
         if(result > 0) {
-            startDate = workDate1;
-            endDate = workDate0;
+            startDate = date1;
+            endDate = date0;
             reversed = true;
             //System.out.format("%s: reversed is true!\n", Utils.getCallerName(getClass()));
         }
