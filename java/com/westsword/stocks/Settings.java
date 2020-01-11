@@ -86,6 +86,15 @@ public class Settings extends FileLoader {
 
 
 
+    public static String getSdStartDate() {
+        return getString("SdStartDate");
+    }
+    public static String getSdStartTime() {
+        return getString("SdStartTime");
+    }
+    public static Integer getSdInterval() {
+        return getInteger("SdInterval");
+    }
     public static boolean getSwitchOfRawData() {
         return getBoolean("switchOfRawData");
     }

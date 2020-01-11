@@ -11,3 +11,9 @@ PriceDecimalFormat=#.##
 
 #switch to turn on raw data trace: RawRTPankou, RawTradeDetails
 switchOfRawData=false
+
+
+SdStartDate=20090105
+SdStartTime=09:25:00
+SdInterval=3
+
