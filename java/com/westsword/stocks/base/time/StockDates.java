@@ -6,14 +6,14 @@ import com.westsword.stocks.Utils;
 import com.westsword.stocks.utils.StockPaths;
 import com.westsword.stocks.utils.LineLoader;
 
-//those dates excluding:
-//  Sat&Mon,
-//  specialDates/holidays.txt
-//  specialDates/[stockCode].suspension.txt
+
 public class StockDates extends WorkDates {
     private boolean bDebug = false;
     private TreeSet<String> mMissingSet = new TreeSet<String>();
 
+    //those dates excluding:
+    //  Sat&Mon,
+    //  specialDates/holidays.txt
     public StockDates(String start, String end) {       //start&end must be of format YYYYMMDD
         super(start, end);
 
@@ -35,6 +35,10 @@ public class StockDates extends WorkDates {
         }
     }
 
+    //those dates excluding:
+    //  Sat&Mon,
+    //  specialDates/holidays.txt
+    //  specialDates/[stockCode].suspension.txt
     public StockDates(String start, String end, String stockCode) {
         this(start, end);
 
