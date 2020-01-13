@@ -56,12 +56,10 @@ public class GetSettings{
         sdPrint(sdTime, "15:00:01");
         sdPrint(sdTime, "15:00:02");
         sdPrint(sdTime, "15:00:03");
-    }
-    public static void testAStockSdTime() {
-        System.out.format("\n testAStockSdTime: \n");
-        SdTime sdTime = new AStockSdTime();
+        sdPrint(sdTime, "15:10:03");
 
-        sdTimePrint(sdTime);
+        int length = sdTime.getLength();
+        System.out.format("length = %d\n", length);
     }
     public static void testSdTime(int interval) {
         System.out.format("\n testSdTime inerval=%d: \n", interval);
@@ -72,6 +70,32 @@ public class GetSettings{
         sdTime.addRange("13:00:00", "15:00:00");
 
         sdTimePrint(sdTime);
+    }
+    public static void testAStockSdTime() {
+        System.out.format("\n testAStockSdTime: \n");
+        SdTime sdTime = new AStockSdTime();
+
+        sdTimePrint(sdTime);
+    }
+    public static void testSdTime1() {
+        System.out.format("\n testSdTime1: \n");
+        SdTime1 sdTime = new SdTime1();
+
+        sdTimePrint(sdTime);
+
+        sdTimePrintEx(sdTime);
+    }
+    public static void sdTimePrintEx(SdTime1 sdTime) {
+        sdPrintEx(sdTime, "20090105", "10:30:00");
+        sdPrintEx(sdTime, "20090105", "15:00:00");
+        sdPrintEx(sdTime, "20090106", "10:30:00");
+        sdPrintEx(sdTime, "20090106", "15:00:00");
+        sdPrintEx(sdTime, "20200110", "15:00:00");
+        sdPrintEx(sdTime, "20200111", "15:00:00");
+    }
+    public static void sdPrintEx(SdTime1 sdTime, String tradeDate, String tradeTime) {
+        int sd = sdTime.getAbs(tradeDate, tradeTime);
+        System.out.format("%10s %10s 0x%8x,%d\n", tradeDate, tradeTime, sd, sd);
     }
 
     public static void testWorkDates(String date0, String date1) {
@@ -102,6 +126,15 @@ public class GetSettings{
         */
     }
 
+    public static void listStockDates(String stockCode, String date0, String date1) {
+        System.out.format("\n listStockDates: \n");
+        StockDates dates = new StockDates(date0, date1, stockCode);
+        String date = dates.firstDate();
+        while(date!=null) {
+            System.out.format("%s\n", date);
+            date = dates.nextDate(date);
+        }
+    }
     public static void main(String args[]) throws Exception {
         /*
         testWorkDates("20090101", "20191231");
@@ -112,20 +145,20 @@ public class GetSettings{
 
         testWorkDates("20200101", "20200108");
         testStockDates("20200101", "20200108");
-
-        testSettings();       
         */
-        testAStockSdTime();       
+
+        //testSettings();       
+
+        /*
         testSdTime(1);       
+        testSdTime(2);       
+        testSdTime(3);       
+        testAStockSdTime();       
+        */
+        //testSdTime1();
+        
+        listStockDates("600030", "20090101", "20200112");
     }
-
-
-
-
-
-
-
-
 
 
 
