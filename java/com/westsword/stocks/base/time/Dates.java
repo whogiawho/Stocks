@@ -15,6 +15,9 @@ public class Dates {
     }
 
 
+    public boolean contains(String date) {
+        return mDatesSet.contains(date);
+    }
     public void add(String date) {
         mDatesSet.add(date);
     }
