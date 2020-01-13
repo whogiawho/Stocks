@@ -6,24 +6,13 @@ import com.westsword.stocks.Utils;
 import com.westsword.stocks.Settings;
 
 public class SdTime {
-    private String mSdStartDate;
-    private String mSdStartTime;
-    private long mSdStartUTC;
-
     private int mSdInterval;
     private ArrayList<TimeRange> mRanges;
 
     public SdTime() {
-        this(Settings.getSdStartDate(), Settings.getSdStartTime(), Settings.getSdInterval());
+        this(Settings.getSdInterval());
     }
-    public SdTime(int interval) {
-        this(Settings.getSdStartDate(), Settings.getSdStartTime(), interval);
-    }
-    public SdTime(String sdStartDate, String sdStartTime, int sdInterval) {
-        mSdStartDate = sdStartDate;
-        mSdStartTime = sdStartTime;
-        mSdStartUTC = Time.getSpecificTime(sdStartDate, sdStartTime);
-
+    public SdTime(int sdInterval) {
         mSdInterval = sdInterval;
 
         mRanges = new ArrayList<TimeRange>();
@@ -33,6 +22,7 @@ public class SdTime {
         mRanges.add(new TimeRange(startHMS, endHMS));
     }
 
+    //sdTime w/o considering startDate&startTime
     public int get(String hms) {
         return get(Time.getSpecificTime(Time.currentDate(), hms));
     }
@@ -40,7 +30,7 @@ public class SdTime {
         int sdTime = 0;
         for(int i=0; i<mRanges.size(); i++) {
             TimeRange r = mRanges.get(i);
-            int sdTimeP = r.getSdTime(timepoint, mSdInterval);
+            int sdTimeP = r.getRelative(timepoint, mSdInterval);
             /*
             System.out.format("%s: i=%d sdTimeP=%d sdTime=%d\n", 
                     Utils.getCallerName(getClass()), i, sdTimeP, sdTime);
@@ -48,8 +38,8 @@ public class SdTime {
             if(sdTimeP == -2) {
                 break;
             } else if(sdTimeP == -1) {
-                //add sdTimeP to sdTime, and continue
-                sdTime += r.getSdTime(r.getEnd(timepoint), mSdInterval) + 1;
+                //add r's relative Length, and continue
+                sdTime += r.getRelative(r.getEnd(timepoint), mSdInterval) + 1;
             } else {
                 sdTime = sdTime+sdTimeP;
                 break;
@@ -59,9 +49,32 @@ public class SdTime {
         return sdTime;
     }
 
-    public int getRelative(long timepoint) {
-        int sdTime = 0;
+    public String getStartHMS() {
+        String startHMS = null;
 
-        return sdTime;
+        TimeRange r = null;
+        int s = mRanges.size();
+        if(s != 0)
+            r = mRanges.get(0);
+
+        if(r != null) {
+            startHMS = r.getStart();
+        }
+
+        return startHMS;
+    }
+    public int getLength() {
+        int length = 0;
+
+        TimeRange r = null;
+        int s = mRanges.size();
+        if(s != 0)
+            r = mRanges.get(s-1);
+
+        if(r != null) {
+            length = get(r.getEnd()) + 1;
+        }
+
+        return length;
     }
 }
