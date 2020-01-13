@@ -28,7 +28,7 @@ public class TimeRange {
     //  timepoint<start          -2
     //  start<=timepoint<=end    0,(end-start)/interval
     //  timepoint>end            -1
-    public int getSdTime(long timepoint, int interval) {
+    public int getRelative(long timepoint, int interval) {
         int sdTime = 0;
 
         long start = getStart(timepoint);
