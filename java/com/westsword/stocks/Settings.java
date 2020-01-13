@@ -87,7 +87,10 @@ public class Settings extends FileLoader {
 
 
     public static String getSdStartDate() {
-        return getString("SdStartDate");
+        return getSdStartDate(getStockCode());
+    }
+    public static String getSdStartDate(String stockCode) {
+        return getString(stockCode+".SdStartDate");
     }
     public static String getSdStartTime() {
         return getString("SdStartTime");
