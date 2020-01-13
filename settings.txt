@@ -13,7 +13,9 @@ PriceDecimalFormat=#.##
 switchOfRawData=false
 
 
-SdStartDate=20090105
 SdStartTime=09:25:00
 SdInterval=3
+
+600030.SdStartDate=20090105
+
 
