@@ -62,9 +62,6 @@ public class Dates {
     //  nextDate
     //  prevDate
     //  getDistance
-    //  getDateList
-    //  getDateListExclude
-    //  lastNDates
     
     //return null if date is the last
     public String nextDate(String date) {
@@ -95,48 +92,6 @@ public class Dates {
 
         return dist;
     }
-    //dates between [startDate, endDate] should be returned
-    public String[] getDateList(String startDate, String endDate) {
-        NavigableSet<String> set0 = mDatesSet.subSet(startDate, true, endDate, true);
-        return (String[])set0.toArray(new String[set0.size()]);
-    }
-    //dates between [firstDate, endDate] should be returned
-    public String[] getDateList(String endDate) {
-        return getDateListExclude(firstDate(), endDate);
-    }
-    //dates between [startDate, endDate) should be returned
-    public String[] getDateListExclude(String startDate, String endDate) {
-        NavigableSet<String> set0 = mDatesSet.subSet(startDate, true, endDate, false);
-        return (String[])set0.toArray(new String[set0.size()]);
-    }
-    //exclude dates which are later than or equal to endDate 
-    public String[] getDateListExclude(String endDate) {
-        return getDateListExclude(firstDate(), endDate);
-    }
-    public TreeSet<String> lastNDates(int n) {
-        return lastNDates(lastDate(), n);
-    }
-    public TreeSet<String> lastNDates(String endDate, int n) {
-        TreeSet<String> set = new TreeSet<String>();
-        if(n <= 0)
-            return set;
-
-        NavigableSet<String> set0 = mDatesSet.headSet(endDate, true);
-        if(set0 == null)
-            return set;
-
-        Iterator<String> itr = set0.descendingIterator();
-        int count=0;
-        while(itr.hasNext()) {
-            set.add(itr.next());
-            count++;
-
-            if(count >= n)
-                break;
-        }
-
-        return set;
-    }
 
 
 
@@ -147,11 +102,4 @@ public class Dates {
         }
     }
 
-
-    public static String nextYearLastDate(String tradeDate) {
-        String y = tradeDate.substring(0, 4);
-        int iy = new Integer(y);
-        iy++;
-        return "" + iy + "1231";
-    }
 }
