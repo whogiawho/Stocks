@@ -12,7 +12,7 @@ public class AnalyzeTools{
 
         System.err.println("usage: java AnalyzeTools commands");
         System.err.println("       commands are listed below:");
-        System.err.println("       [ getvalue | setvalue | decode |\n" +
+        System.err.println("       [ getvalue | setvalue | decode | makeanalysistxt |\n" +
                 "         xxx | xxx | xxx ]");
 
         System.exit(-1);
@@ -34,6 +34,8 @@ public class AnalyzeTools{
             SettingsHelper.setValue(args);
         } else if (sOption.equals("decode")) {
             CoderHelper.decode(args);
+        } else if (sOption.equals("makeanalysistxt")) {
+            AnalysisHelper.makeTxt(args);
         } else {
             usage();
         }
