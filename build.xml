@@ -76,6 +76,7 @@
                 com/westsword/stocks/utils/*.class,
                 com/westsword/stocks/tools/AnalyzeTools*.class,
                 com/westsword/stocks/tools/helper/*.class,
+                com/westsword/stocks/am/*.class,
                 com/westsword/stocks/base/*.class,
                 com/westsword/stocks/base/time/*.class">
             <zipfileset includes="**/*" src="lib/commons-io-2.4.jar"/>

@@ -35,12 +35,14 @@ public class StockPaths {
 
 
 
+    public static String getAnalysisFile() {
+        String stockCode = Settings.getStockCode();
+        String tradeDate = Settings.getTradeDate();
 
-    public static String getAmRecordDir(String stockCode) {
-        return getStockRootDir() + "data\\amseries\\"+stockCode+"\\";
+        return getAnalysisFile(stockCode, tradeDate);
     }
-    public static String getAmRecordFile(String stockCode, String tradeDate) {
-        return getAmRecordDir(stockCode) + stockCode+"."+tradeDate+".txt";
+    public static String getAnalysisFile(String stockCode, String tradeDate) {
+        return getDailyDir(stockCode, tradeDate)+"analysis.txt";
     }
 
 

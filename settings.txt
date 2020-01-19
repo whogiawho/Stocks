@@ -14,7 +14,7 @@ switchOfRawData=false
 
 
 SdStartTime=09:25:00
-SdInterval=3
+SdInterval=1
 
 600030.SdStartDate=20090105
 

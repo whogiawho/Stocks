@@ -3,6 +3,7 @@ package com.westsword.stocks.base.time;
 import java.util.*;
 
 import com.westsword.stocks.Utils;
+import com.westsword.stocks.Settings;
 import com.westsword.stocks.utils.StockPaths;
 import com.westsword.stocks.utils.LineLoader;
 
@@ -63,6 +64,12 @@ public class StockDates extends WorkDates {
             System.out.format("%s, mMissingSet.size = %d\n", 
                     Utils.getCallerName(getClass()), mMissingSet.size());
         }
+    }
+    //settings.stockCode.SdStartDate --- currentDate
+    public StockDates(String stockCode) {
+        this(Settings.getSdStartDate(stockCode),
+                Time.currentDate(),
+                stockCode);
     }
 
     public boolean isMissingDate(String date) {
