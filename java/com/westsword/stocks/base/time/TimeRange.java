@@ -48,4 +48,9 @@ public class TimeRange {
         return sdTime/interval;
     }
 
+    public String getHMS(int relsdtime, int interval) {
+        String tradeDate = Time.currentDate();
+        long startTp = Time.getSpecificTime(tradeDate, mStart);
+        return Time.getTimeHMS(startTp+relsdtime*interval);
+    }
 }
