@@ -18,6 +18,10 @@ public class SdTime {
         mRanges = new ArrayList<TimeRange>();
     }
 
+    public int getInterval() {
+        return mSdInterval;
+    }
+
     public void addRange(String startHMS, String endHMS) {
         mRanges.add(new TimeRange(startHMS, endHMS));
     }
@@ -48,6 +52,9 @@ public class SdTime {
 
         return sdTime;
     }
+    public int getAbs(long timepoint) {
+        return get(timepoint);
+    }
 
     public String getStartHMS() {
         String startHMS = null;
@@ -76,5 +83,25 @@ public class SdTime {
         }
 
         return length;
+    }
+
+    //[firstStartHMS, lastEndHMS]
+    public String getHMS(int relsdtime) {
+        String hms = null;
+
+        for(int i=0; i<mRanges.size(); i++) {
+            TimeRange r = mRanges.get(i);
+            int rSdEnd = get(r.getEnd());
+            if(rSdEnd>=relsdtime) {
+                int rSdStart = get(r.getStart());
+                hms = r.getHMS(relsdtime-rSdStart, mSdInterval);
+                break;
+            }
+        }
+        if(hms==null) {
+            TimeRange r = mRanges.get(mRanges.size()-1);
+            hms = r.getEnd();
+        }
+        return hms;
     }
 }
