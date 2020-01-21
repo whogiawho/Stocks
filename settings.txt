@@ -17,5 +17,6 @@ SdStartTime=09:25:00
 SdInterval=1
 
 600030.SdStartDate=20090105
+600030.priceStep=0.01
 
 

@@ -70,6 +70,12 @@ public class Dates {
     public String prevDate(String date) {
         return mDatesSet.lower(date);
     }
+    public String floor(String date) {
+        return mDatesSet.floor(date);
+    }
+    public String ceiling(String date) {
+        return mDatesSet.ceiling(date);
+    }
     public int getDistance(String date0, String date1) {
         int dist = 0;
 

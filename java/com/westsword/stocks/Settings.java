@@ -85,7 +85,12 @@ public class Settings extends FileLoader {
 
 
 
-
+    public static double getPriceStep() {
+        return getPriceStep(getStockCode());
+    }
+    public static double getPriceStep(String stockCode) {
+        return getDouble(stockCode+".priceStep");
+    }
     public static String getSdStartDate() {
         return getSdStartDate(getStockCode());
     }
