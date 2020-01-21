@@ -25,7 +25,10 @@ public class GetSettings{
 
 
     private static void sdPrint(SdTime sdTime, String hms) {
-        System.out.format("%s %d\n", hms, sdTime.get(hms));
+        int sd = sdTime.get(hms);
+
+        String rHMS = sdTime.getHMS(sd);
+        System.out.format("%s: %s %10d %15s\n", "sdPrint", hms, sd, rHMS);
     }
     private static void sdTimePrint(SdTime sdTime) {
         sdPrint(sdTime, "09:24:00");
@@ -88,14 +91,24 @@ public class GetSettings{
     public static void sdTimePrintEx(SdTime1 sdTime) {
         sdPrintEx(sdTime, "20090105", "10:30:00");
         sdPrintEx(sdTime, "20090105", "15:00:00");
+        sdPrintEx(sdTime, "20090105", "15:00:03");
+        sdPrintEx(sdTime, "20090106", "09:25:00");
         sdPrintEx(sdTime, "20090106", "10:30:00");
         sdPrintEx(sdTime, "20090106", "15:00:00");
         sdPrintEx(sdTime, "20200110", "15:00:00");
-        sdPrintEx(sdTime, "20200111", "15:00:00");
+
+        //invalid tradeDate
+        //sdPrintEx(sdTime, "20200111", "15:00:00");
     }
     public static void sdPrintEx(SdTime1 sdTime, String tradeDate, String tradeTime) {
         int sd = sdTime.getAbs(tradeDate, tradeTime);
-        System.out.format("%10s %10s 0x%8x,%d\n", tradeDate, tradeTime, sd, sd);
+
+        long tp = sdTime.getAbsTimePoint(sd);
+        String rTradeDate = Time.getTimeYMD(tp, false);
+        String rTradeTime = Time.getTimeHMS(tp);
+
+        System.out.format("%s: %10s %10s %10d %8x %10s %10s\n", "sdPrintEx", 
+                tradeDate, tradeTime, sd, tp, rTradeDate, rTradeTime);
     }
 
     public static void testWorkDates(String date0, String date1) {
@@ -155,9 +168,9 @@ public class GetSettings{
         testSdTime(3);       
         testAStockSdTime();       
         */
-        //testSdTime1();
+        testSdTime1();
         
-        listStockDates("600030", "20090101", "20200112");
+        //listStockDates("600030", "20090101", "20200112");
     }
 
 

@@ -122,7 +122,7 @@ public class Time {
     }
 
     public static String currentDate() {
-        long tp = System.currentTimeMillis();
+        long tp = System.currentTimeMillis()/1000;
         return getTimeYMD(tp, false);
     }
 }
