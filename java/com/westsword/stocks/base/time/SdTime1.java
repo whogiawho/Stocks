@@ -11,16 +11,13 @@ public class SdTime1 extends AStockSdTime {
     private StockDates mStockDates;
 
     public SdTime1() {
-        this(Settings.getStockCode(), 
-                Settings.getSdStartDate(Settings.getStockCode()), 
+        this(Settings.getStockCode()); 
+    }
+    public SdTime1(String stockCode) {
+        this(stockCode, 
+                Settings.getSdStartDate(stockCode), 
                 Settings.getSdStartTime(), 
                 Settings.getSdInterval());
-    }
-    public SdTime1(int interval) {
-        this(Settings.getStockCode(), 
-                Settings.getSdStartDate(Settings.getStockCode()), 
-                Settings.getSdStartTime(), 
-                interval);
     }
     public SdTime1(String stockCode, int interval) {
         this(stockCode, 
@@ -67,9 +64,22 @@ public class SdTime1 extends AStockSdTime {
 
         return sdTime;
     }
-
     public int getAbs(String tradeDate, String tradeTime) {
         long tp = Time.getSpecificTime(tradeDate, tradeTime);
         return getAbs(tp);
+    }
+
+    public long getAbsTimePoint(int sdtime) {
+        long tp = 0;
+
+        int length = getLength();
+        int datesDist = sdtime/length;
+        int relsdtime = sdtime%length;
+
+        String tradeDate = mStockDates.nextDate(mSdStartDate, datesDist);
+
+        String hms = getHMS(relsdtime);
+
+        return Time.getSpecificTime(tradeDate, hms);
     }
 }
