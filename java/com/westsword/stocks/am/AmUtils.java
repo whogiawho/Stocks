@@ -19,21 +19,32 @@ public class AmUtils {
         mStockDates = new StockDates(stockCode);
     }
 
+    public void writeAllAmRecords() {
+        writeAmRecords(mStockDates.firstDate(), mStockDates.lastDate());
+    }
+    public void writeAmRecords(String tradeDate1, String tradeDate2) {
+        tradeDate1 = mStockDates.ceiling(tradeDate1);
+        tradeDate2= mStockDates.floor(tradeDate2);
+        long startAm = loadPrevLastAm(tradeDate1);
+        while(tradeDate1!=null&&tradeDate2!=null&&tradeDate1.compareTo(tradeDate2)<=0) {
+            if(!mStockDates.isMissingDate(tradeDate1)) {
+                startAm = writeAmRecords(startAm, tradeDate1);
+            }
+
+            tradeDate1 = mStockDates.nextDate(tradeDate1);
+        }
+    }
     public long writeAmRecords(long startAm, String tradeDate) {
-        //load rawTradeDetails to rawDetailsList
-        String sRawTradeDetailsFile = StockPaths.getRawTradeDetailsFile(mStockCode, tradeDate);
-        RawTradeDetailsList rtdList = new RawTradeDetailsList();
-        ArrayList<RawTradeDetails> rawDetailsList = new ArrayList<RawTradeDetails>();
-        rtdList.load(rawDetailsList, sRawTradeDetailsFile);
+        ArrayList<RawTradeDetails> rawDetailsList = loadRawTradeDetails(tradeDate);
         int lSize = rawDetailsList.size();
+        TrackExtreme ter = new TrackExtreme(rawDetailsList);
+
         //reset sAnalysisFile
         String sAnalysisFile = StockPaths.getAnalysisFile(mStockCode, tradeDate);
         Utils.deleteFile(sAnalysisFile);
 
-        double maxUpPrice=Double.NEGATIVE_INFINITY;
-        double minDownPrice=Double.POSITIVE_INFINITY;
         long am = startAm;
-        long caeTp = Time.getSpecificTime(tradeDate, mSdTime.getCallAuctionEndTime());
+        long caeTp = Time.getSpecificTime(tradeDate, mSdTime.getCallAuctionEndTime0());
         int caeSd = mSdTime.getAbs(caeTp);
         int prevSd = caeSd;
         for(int i=0; i<lSize; i++) {
@@ -41,40 +52,45 @@ public class AmUtils {
             int rSd = mSdTime.getAbs(r.time);
             if(rSd != prevSd) {
                 //write AmRecords between [prevSd, rSd) to sAnalysisFile
-                writeRange(prevSd, rSd, am, maxUpPrice, minDownPrice, sAnalysisFile);
+                writeRange(prevSd, rSd, am, ter, sAnalysisFile);
 
                 prevSd = rSd;
-                maxUpPrice=Double.NEGATIVE_INFINITY;
-                minDownPrice=Double.POSITIVE_INFINITY;
+                ter.resetEx();
             }
             if(r.type == Stock.TRADE_TYPE_UP) {
                 am += r.count;
-                maxUpPrice = r.price>=maxUpPrice? r.price:maxUpPrice;
+                ter.traceUp(r.price);
             } else {
                 am -= r.count;
-                minDownPrice = r.price<=minDownPrice? r.price:minDownPrice;
+                ter.traceDown(r.price);
             }
         }
         //last record
         if(lSize!=0)
-            writeRange(prevSd, prevSd+1, am, maxUpPrice, minDownPrice, sAnalysisFile);
+            writeRange(prevSd, prevSd+1, am, ter, sAnalysisFile);
 
         return am;
     }
-    private void writeRange(int start, int end, long am, double maxUpPrice, double minDownPrice, 
-            String sAnalysisFile) {
+    private void writeRange(int start, int end, long am, 
+            TrackExtreme ter, String sAnalysisFile) {
+        ter.setEx2Prev();
         for(int i=start; i<end; i++) {
             long tp = mSdTime.getAbsTimePoint(i);
             //String tradeDate = Time.getTimeYMD(tp);
             //String tradeTime = Time.getTimeHMS(tp);
             String sFormat = "%-10x %8d %20d %8.3f %8.3f\n";
-            if(maxUpPrice==Double.NEGATIVE_INFINITY)
-                maxUpPrice = Double.NaN;
-            if(minDownPrice==Double.POSITIVE_INFINITY)
-                minDownPrice = Double.NaN;
-            String line = String.format(sFormat, tp, i, am, maxUpPrice, minDownPrice);
+            String line = String.format(sFormat, tp, i, am, ter.maxUP, ter.minDP);
             Utils.append2File(sAnalysisFile, line);
         }
+    }
+    private ArrayList<RawTradeDetails> loadRawTradeDetails(String tradeDate) {
+        //load rawTradeDetails to rawDetailsList
+        String sRawTradeDetailsFile = StockPaths.getRawTradeDetailsFile(mStockCode, tradeDate);
+        RawTradeDetailsList rtdList = new RawTradeDetailsList();
+        ArrayList<RawTradeDetails> rawDetailsList = new ArrayList<RawTradeDetails>();
+        rtdList.load(rawDetailsList, sRawTradeDetailsFile);
+
+        return rawDetailsList;
     }
 
     public long loadPrevLastAm(String tradeDate) {
@@ -108,4 +124,43 @@ public class AmUtils {
     private String mStockCode;
     private StockDates mStockDates;
     private SdTime1 mSdTime;
+
+    public static class TrackExtreme {
+        public double maxUP;
+        public double minDP;
+        public double prevMaxUP;
+        public double prevMinDP;
+
+        public TrackExtreme(ArrayList<RawTradeDetails> rawDetailsList) {
+            maxUP=Double.NEGATIVE_INFINITY; 
+            prevMaxUP=Double.NaN;
+            minDP=Double.POSITIVE_INFINITY; 
+            prevMinDP=Double.NaN;
+            if(rawDetailsList.size()>0) {
+                RawTradeDetails r = rawDetailsList.get(0);
+                prevMaxUP=r.price; prevMinDP=r.price;
+            }
+        }
+        public void traceUp(double price) {
+                if(price>=maxUP) {
+                    maxUP = price;
+                    prevMaxUP = maxUP;
+                }
+        }
+        public void traceDown(double price) {
+                if(price<=minDP) {
+                    minDP = price;
+                    prevMinDP = minDP;
+                }
+        }
+        public void resetEx() {
+                maxUP = Double.NEGATIVE_INFINITY;
+                minDP = Double.POSITIVE_INFINITY;
+        }
+        public void setEx2Prev() {
+            maxUP = maxUP==Double.NEGATIVE_INFINITY? prevMaxUP:maxUP;
+            minDP = minDP==Double.POSITIVE_INFINITY? prevMinDP:minDP;
+        }
+    }
+
 }
