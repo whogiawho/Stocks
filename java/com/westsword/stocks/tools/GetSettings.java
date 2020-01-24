@@ -27,7 +27,7 @@ public class GetSettings{
     private static void sdPrint(SdTime sdTime, String hms) {
         int sd = sdTime.get(hms);
 
-        String rHMS = sdTime.getHMS(sd);
+        String rHMS = sdTime.rget(sd);
         System.out.format("%s: %s %10d %15s\n", "sdPrint", hms, sd, rHMS);
     }
     private static void sdTimePrint(SdTime sdTime) {
@@ -103,7 +103,7 @@ public class GetSettings{
     public static void sdPrintEx(SdTime1 sdTime, String tradeDate, String tradeTime) {
         int sd = sdTime.getAbs(tradeDate, tradeTime);
 
-        long tp = sdTime.getAbsTimePoint(sd);
+        long tp = sdTime.rgetAbs(sd);
         String rTradeDate = Time.getTimeYMD(tp, false);
         String rTradeTime = Time.getTimeHMS(tp);
 

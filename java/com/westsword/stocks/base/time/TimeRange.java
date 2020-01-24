@@ -1,7 +1,8 @@
 package com.westsword.stocks.base.time;
 
+import com.westsword.stocks.base.time.Time;
 
-public class TimeRange {
+public class TimeRange implements ISdTime {
     private String mStart;
     private String mEnd;
 
@@ -24,11 +25,27 @@ public class TimeRange {
         return Time.getSpecificTime(timepoint, mEnd);
     }
 
+
+    //interface implementation
+    public int get(String hms, int interval) {
+        String tradeDate = Time.currentDate();
+        long tp = Time.getSpecificTime(tradeDate, hms);
+        return get(tp, interval);
+    }
+    public String rget(int relsdtime, int interval) {
+        String tradeDate = Time.currentDate();
+        long startTp = Time.getSpecificTime(tradeDate, mStart);
+        return Time.getTimeHMS(startTp+relsdtime*interval);
+    }
+
+
+
+
     //3 scenarios:
     //  timepoint<start          -2
     //  start<=timepoint<=end    0,(end-start)/interval
     //  timepoint>end            -1
-    public int getRelative(long timepoint, int interval) {
+    public int get(long timepoint, int interval) {
         int sdTime = 0;
 
         long start = getStart(timepoint);
@@ -46,11 +63,5 @@ public class TimeRange {
             sdTime=-interval*2;
 
         return sdTime/interval;
-    }
-
-    public String getHMS(int relsdtime, int interval) {
-        String tradeDate = Time.currentDate();
-        long startTp = Time.getSpecificTime(tradeDate, mStart);
-        return Time.getTimeHMS(startTp+relsdtime*interval);
     }
 }

@@ -3,7 +3,7 @@ package com.westsword.stocks.base.time;
 
 import com.westsword.stocks.Settings;
 
-public class SdTime1 extends AStockSdTime {
+public class SdTime1 extends AStockSdTime implements ISdTimeAbs {
     private String mStockCode;
 
     private String mSdStartDate;
@@ -34,20 +34,9 @@ public class SdTime1 extends AStockSdTime {
         mStockDates = new StockDates(mSdStartDate, Time.currentDate(), stockCode);
     }
 
-    //below 1 cond must be met:
-    //1. timepoint's tradeDate is in mStockDates
-    public void check(long timepoint) {
-        String tradeDate = Time.getTimeYMD(timepoint, false);
-        if(!mStockDates.contains(tradeDate)) {
-            String msg = String.format("(0x%x,%s) is not valid for %s\n", 
-                    timepoint, tradeDate, mStockCode);
-            throw new RuntimeException(msg);
-        }
-    }
 
-    //sdTime considering startDate&startTime with below conditions:
-    //1. based on (mSdStartDate, mSdStartTime)
-    public int getAbs(long timepoint) {
+    //interface implementation
+    public int getAbs(long timepoint, int interval) {
         int sdTime = 0;
 
         check(timepoint);
@@ -60,26 +49,51 @@ public class SdTime1 extends AStockSdTime {
 
             date = mStockDates.nextDate(date);
         }
-        sdTime += get(timepoint);
+        sdTime += get(timepoint, interval);
 
         return sdTime;
+    }
+    public long rgetAbs(int abssdtime, int interval) {
+        long tp = 0;
+
+        int length = getLength();
+        int datesDist = abssdtime/length;
+        int relsdtime = abssdtime%length;
+
+        String tradeDate = mStockDates.nextDate(mSdStartDate, datesDist);
+
+        String hms = rget(relsdtime, interval);
+
+        return Time.getSpecificTime(tradeDate, hms);
+    }
+
+
+
+    //sdTime considering startDate&startTime with below conditions:
+    //1. based on (mSdStartDate, mSdStartTime)
+    public int getAbs(long timepoint) {
+        return getAbs(timepoint, getInterval());
     }
     public int getAbs(String tradeDate, String tradeTime) {
         long tp = Time.getSpecificTime(tradeDate, tradeTime);
         return getAbs(tp);
     }
 
-    public long getAbsTimePoint(int sdtime) {
-        long tp = 0;
+    public long rgetAbs(int abssdtime) {
+        return rgetAbs(abssdtime, getInterval());
+    }
 
-        int length = getLength();
-        int datesDist = sdtime/length;
-        int relsdtime = sdtime%length;
 
-        String tradeDate = mStockDates.nextDate(mSdStartDate, datesDist);
 
-        String hms = getHMS(relsdtime);
 
-        return Time.getSpecificTime(tradeDate, hms);
+    //below 1 cond must be met:
+    //1. timepoint's tradeDate is in mStockDates
+    private void check(long timepoint) {
+        String tradeDate = Time.getTimeYMD(timepoint, false);
+        if(!mStockDates.contains(tradeDate)) {
+            String msg = String.format("(0x%x,%s) is not valid for %s\n", 
+                    timepoint, tradeDate, mStockCode);
+            throw new RuntimeException(msg);
+        }
     }
 }

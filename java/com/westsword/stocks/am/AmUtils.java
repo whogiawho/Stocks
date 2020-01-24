@@ -75,7 +75,7 @@ public class AmUtils {
             TrackExtreme ter, String sAnalysisFile) {
         ter.setEx2Prev();
         for(int i=start; i<end; i++) {
-            long tp = mSdTime.getAbsTimePoint(i);
+            long tp = mSdTime.rgetAbs(i);
             //String tradeDate = Time.getTimeYMD(tp);
             //String tradeTime = Time.getTimeHMS(tp);
             String sFormat = "%-10x %8d %20d %8.3f %8.3f\n";
