@@ -14,10 +14,7 @@ public class SdTime1 extends AStockSdTime implements ISdTimeAbs {
         this(Settings.getStockCode()); 
     }
     public SdTime1(String stockCode) {
-        this(stockCode, 
-                Settings.getSdStartDate(stockCode), 
-                Settings.getSdStartTime(), 
-                Settings.getSdInterval());
+        this(stockCode, Settings.getSdInterval());
     }
     public SdTime1(String stockCode, int interval) {
         this(stockCode, 

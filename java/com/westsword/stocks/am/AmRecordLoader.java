@@ -6,7 +6,7 @@ import com.westsword.stocks.utils.FileLoader;
 
 public class AmRecordLoader extends FileLoader {
     private ArrayList<AmRecord> mAmRecordList = null;
-    private TreeMap<Integer, Long> mAmMap = null;
+    private TreeMap<Integer, AmRecord> mAmMap = null;
 
 
     public boolean onLineRead(String line, int counter) {
@@ -23,12 +23,12 @@ public class AmRecordLoader extends FileLoader {
             mAmRecordList.add(r);
 
         if(mAmMap != null)
-            mAmMap.put(sdTime, am);
+            mAmMap.put(sdTime, r);
 
         return true;
     }
 
-    public void load(ArrayList<AmRecord> amRecordList, TreeMap<Integer, Long> amMap, 
+    public void load(ArrayList<AmRecord> amRecordList, TreeMap<Integer, AmRecord> amMap, 
             String sAmRecordFile) {
         mAmRecordList = amRecordList;
         mAmMap = amMap;

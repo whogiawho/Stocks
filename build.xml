@@ -95,8 +95,9 @@
             includes="com/westsword/stocks/*.class,
                 com/westsword/stocks/utils/*.class,
                 com/westsword/stocks/tools/*.class,
-                com/westsword/stocks/base/time/*.class,
+                com/westsword/stocks/am/*.class,
                 com/westsword/stocks/base/*.class,
+                com/westsword/stocks/base/time/*.class,
                 ">
             <zipfileset includes="**/*" src="lib/commons-io-2.4.jar"/>
             <zipfileset includes="**/*" src="lib/commons-lang3-3.5.jar"/>
