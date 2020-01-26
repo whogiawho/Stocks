@@ -7,6 +7,7 @@ import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
 
 import com.westsword.stocks.*;
+import com.westsword.stocks.am.*;
 import com.westsword.stocks.utils.*;
 
 import org.apache.commons.io.FilenameUtils;
@@ -148,7 +149,26 @@ public class GetSettings{
             date = dates.nextDate(date);
         }
     }
+    private static void amcorrelPrint(AmManager m, 
+            String tradeDate0, String tradeDate1, String startHMS, String endHMS) {
+        double amcorrel = m.getAmCorrel(tradeDate0, tradeDate1, startHMS, endHMS);
+        System.out.format("%s %s %s %s amcorrel=%-8.3f\n", 
+                tradeDate0, tradeDate1, startHMS, endHMS, amcorrel);
+    }
+    public static void testAmManager(String stockCode) {
+        System.out.format("\n testAmManager: \n");
+        AmManager m = new AmManager(stockCode);
+
+        amcorrelPrint(m, "20090115", "20090116", "09:30:00", "14:30:00");
+        amcorrelPrint(m, "20090115", "20090119", "09:30:00", "14:30:00");
+        amcorrelPrint(m, "20090115", "20090120", "09:30:00", "14:30:00");
+        amcorrelPrint(m, "20090115", "20090121", "09:30:00", "14:30:00");
+        amcorrelPrint(m, "20090115", "20090122", "09:30:00", "14:30:00");
+        amcorrelPrint(m, "20090115", "20090123", "09:30:00", "14:30:00");
+    }
+
     public static void main(String args[]) throws Exception {
+        String stockCode="600030";
         /*
         testWorkDates("20090101", "20191231");
         testStockDates("20090101", "20191231");
@@ -168,9 +188,11 @@ public class GetSettings{
         testSdTime(3);       
         testAStockSdTime();       
         */
-        testSdTime1();
+        //testSdTime1();
+
+        testAmManager(stockCode);
         
-        //listStockDates("600030", "20090101", "20200112");
+        //listStockDates(stockCode, "20090101", "20200112");
     }
 
 
