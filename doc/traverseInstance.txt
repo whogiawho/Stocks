@@ -1,0 +1,10 @@
+stockCode
+thresHold
+startDate
+sT=1
+tradeType=5
+
+tradeDate
+<m, n>
+maxCycle
+targetRate

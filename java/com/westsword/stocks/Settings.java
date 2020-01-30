@@ -13,8 +13,8 @@ public class Settings extends FileLoader {
     public final static String dailyDir=rootDir+"data\\daily\\";
     public final static String settingFile=rootDir+"settings.txt";
 
-    public final static String sHexinServerIni = "e:\\HexinSoftware\\Hexin\\renjiqi\\hqserver.ini";
     public final static String sC4TradeDetailsExe = rootDir+"bin\\c4tradedetails.exe";
+
 
 
 
