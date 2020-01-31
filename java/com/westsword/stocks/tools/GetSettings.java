@@ -190,9 +190,9 @@ public class GetSettings{
         */
         //testSdTime1();
 
-        testAmManager(stockCode);
+        //testAmManager(stockCode);
         
-        //listStockDates(stockCode, "20090101", "20200112");
+        listStockDates(stockCode, "20090101", "20200112");
     }
 
 
