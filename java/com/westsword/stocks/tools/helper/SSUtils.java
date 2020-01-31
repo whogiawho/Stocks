@@ -1,5 +1,11 @@
 package com.westsword.stocks.tools.helper;
 
+
+import java.util.*;
+
+import com.westsword.stocks.am.AmManager;
+import com.westsword.stocks.base.time.*;
+
 import org.apache.commons.cli.*;
 
 public class SSUtils {
@@ -47,5 +53,26 @@ public class SSUtils {
     }
     public static int getTradeType(CommandLine cmd) {
         return getInteger(cmd, "s", Default_TradeType);
+    }
+
+    public static ArrayList<String> getSimilarTradeDates(String stockCode, String sPair, double threshold, String startDate, String tradeDate, AmManager am) {
+        ArrayList<String> tradeDateList = new ArrayList<String>();
+
+        String[] hms = sPair.split("_");
+        hms[0] = HMS.formalize(hms[0]);
+        hms[1] = HMS.formalize(hms[1]);
+        TradeDates tradeDates = new TradeDates(stockCode);
+        String tradeDate0 = startDate;
+        while(tradeDate0 != null) {
+            double amcorrel = am.getAmCorrel(tradeDate0, tradeDate, hms[0], hms[1]);
+            if(amcorrel >= threshold)
+                tradeDateList.add(tradeDate0);
+            System.out.format("%s %s %s %s %8.3f\n", 
+                    tradeDate0, tradeDate, hms[0], hms[1], amcorrel);
+
+            tradeDate0 = tradeDates.nextDate(tradeDate0);
+        }
+
+        return tradeDateList;
     }
 }

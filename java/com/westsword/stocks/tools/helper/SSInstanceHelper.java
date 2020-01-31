@@ -1,8 +1,10 @@
 package com.westsword.stocks.tools.helper;
 
-
 import java.util.*;
 import org.apache.commons.cli.*;
+
+import com.westsword.stocks.am.AmManager;
+import com.westsword.stocks.base.time.StockDates;
 
 public class SSInstanceHelper {
     public static void run(String args[]) {
@@ -27,12 +29,16 @@ public class SSInstanceHelper {
         System.out.format("%8s %8.3f %8s %4d %4d %8s %8s %4d %8.3f\n",
                 stockCode, threshold, startDate, distance, tradeType,
                 tradeDate, sPair, maxCycle, targetRate);
+
+        StockDates stockDates = new StockDates(stockCode);
+        AmManager am = new AmManager(stockCode);
+        SSUtils.getSimilarTradeDates(stockCode, sPair, threshold, startDate, tradeDate, am);
     }
 
 
 
     private static CommandLine getCommandLine(String[] args) {
-       CommandLine cmd = null;
+        CommandLine cmd = null;
         try {
             String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
             Options options = new Options();

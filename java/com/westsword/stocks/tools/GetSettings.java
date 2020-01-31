@@ -114,11 +114,11 @@ public class GetSettings{
 
     public static void testWorkDates(String date0, String date1) {
         System.out.format("\n testWorkDates: \n");
-        WorkDates dates = new WorkDates(date0, date1);
-        String[] sTradeDates = dates.getAllDates();
+        WorkDates workDates = new WorkDates(date0, date1);
+        String[] sTradeDates = workDates.getAllDates();
         System.out.format("testWorkDates: length=%d\n", sTradeDates.length);
         System.out.format("testWorkDates: distance of (%s, %s)=%d\n", 
-                date0, date1, dates.getDistance(date0, date1));
+                date0, date1, workDates.getDistance(date0, date1));
         /*
         for(int i=0; i<sTradeDates.length; i++) {
             System.out.format("%s\n", sTradeDates[i]);
@@ -128,11 +128,11 @@ public class GetSettings{
     public static void testStockDates(String date0, String date1) {
         System.out.format("\n testStockDates: \n");
         String stockCode="600030";
-        StockDates dates = new StockDates(date0, date1, stockCode);
-        String[] sTradeDates = dates.getAllDates();
+        StockDates stockDates = new StockDates(date0, date1, stockCode);
+        String[] sTradeDates = stockDates.getAllDates();
         System.out.format("testStockDates: length=%d\n", sTradeDates.length);
         System.out.format("testStockDates: distance of (%s, %s)=%d\n", 
-                date0, date1, dates.getDistance(date0, date1));
+                date0, date1, stockDates.getDistance(date0, date1));
         /*
         for(int i=0; i<sTradeDates.length; i++) {
             System.out.format("%s\n", sTradeDates[i]);
@@ -142,11 +142,11 @@ public class GetSettings{
 
     public static void listStockDates(String stockCode, String date0, String date1) {
         System.out.format("\n listStockDates: \n");
-        StockDates dates = new StockDates(date0, date1, stockCode);
-        String date = dates.firstDate();
+        StockDates stockDates = new StockDates(date0, date1, stockCode);
+        String date = stockDates.firstDate();
         while(date!=null) {
             System.out.format("%s\n", date);
-            date = dates.nextDate(date);
+            date = stockDates.nextDate(date);
         }
     }
     private static void amcorrelPrint(AmManager m, 
@@ -194,7 +194,5 @@ public class GetSettings{
         
         listStockDates(stockCode, "20090101", "20200112");
     }
-
-
 
 }
