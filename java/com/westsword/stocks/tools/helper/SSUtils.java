@@ -48,31 +48,47 @@ public class SSUtils {
     public static String getStartDate(CommandLine cmd) {
         return getString(cmd, "d", Default_StartDate);
     }
-    public static int getNearestDist(CommandLine cmd) {
+    public static int getNearestOutDist(CommandLine cmd) {
         return getInteger(cmd, "t", Default_Nearest_Day_To_End_TradeSession);
     }
     public static int getTradeType(CommandLine cmd) {
         return getInteger(cmd, "s", Default_TradeType);
     }
 
-    public static ArrayList<String> getSimilarTradeDates(String stockCode, String sPair, double threshold, String startDate, String tradeDate, AmManager am) {
+    public static ArrayList<String> getSimilarTradeDates(String stockCode, String hmsList, double threshold, String startDate, String tradeDate, AmManager am) {
         ArrayList<String> tradeDateList = new ArrayList<String>();
 
-        String[] hms = sPair.split("_");
+        String[] hms = hmsList.split("_");
         hms[0] = HMS.formalize(hms[0]);
-        hms[1] = HMS.formalize(hms[1]);
         TradeDates tradeDates = new TradeDates(stockCode);
         String tradeDate0 = startDate;
         while(tradeDate0 != null) {
-            double amcorrel = am.getAmCorrel(tradeDate0, tradeDate, hms[0], hms[1]);
-            if(amcorrel >= threshold)
+            String sAmCorrels = "";
+            boolean bHMSMatched = true;
+            for(int i=1; i<hms.length; i++) {
+                hms[i] = HMS.formalize(hms[i]);
+                double amcorrel = am.getAmCorrel(tradeDate0, tradeDate, hms[0], hms[i]);
+                sAmCorrels += String.format("%8.3f ", amcorrel);
+                if(amcorrel < threshold) {
+                    bHMSMatched = false;
+                    break;
+                }
+            }
+            if(bHMSMatched)
                 tradeDateList.add(tradeDate0);
-            System.out.format("%s %s %s %s %8.3f\n", 
-                    tradeDate0, tradeDate, hms[0], hms[1], amcorrel);
+            System.out.format("%s %s %s %s\n", 
+                    tradeDate0, tradeDate, hmsList, sAmCorrels);
 
             tradeDate0 = tradeDates.nextDate(tradeDate0);
         }
 
         return tradeDateList;
+    }
+
+    public static String getInHMS(String hmsList) {
+        String[] fields = HMS.getHMSArray(hmsList);
+        String inHMS = fields[fields.length-1];
+
+        return inHMS;
     }
 }
