@@ -18,24 +18,40 @@ public class SSInstanceHelper {
         String stockCode = SSUtils.getStockCode(cmd);
         double threshold = SSUtils.getThreshold(cmd);
         String startDate = SSUtils.getStartDate(cmd);
-        int distance = SSUtils.getNearestDist(cmd);
+        int sTDistance = SSUtils.getNearestOutDist(cmd);
         int tradeType = SSUtils.getTradeType(cmd);
 
         String tradeDate = newArgs[0];
-        String sPair = newArgs[1];
+        String hmsList = newArgs[1];
+        String inHMS = SSUtils.getInHMS(hmsList);
         int maxCycle = new Integer(newArgs[2]);
         double targetRate = new Double(newArgs[3]);
 
         System.out.format("%8s %8.3f %8s %4d %4d %8s %8s %4d %8.3f\n",
-                stockCode, threshold, startDate, distance, tradeType,
-                tradeDate, sPair, maxCycle, targetRate);
+                stockCode, threshold, startDate, sTDistance, tradeType,
+                tradeDate, hmsList, maxCycle, targetRate);
 
         StockDates stockDates = new StockDates(stockCode);
         AmManager am = new AmManager(stockCode);
-        SSUtils.getSimilarTradeDates(stockCode, sPair, threshold, startDate, tradeDate, am);
+        ArrayList<String> similarTradeDates = SSUtils.getSimilarTradeDates(stockCode, hmsList, threshold, startDate, tradeDate, am);
+        for(int i=0; i<similarTradeDates.size(); i++) {
+            String tradeDate1 = similarTradeDates.get(i);
+            String nextTradeDateN = stockDates.nextDate(tradeDate1, maxCycle);
+            int distance = stockDates.getDistance(tradeDate1, nextTradeDateN);
+
+            //search to get tradeDate1 inHMS's inPrice stats for next N day
+            String[] outParms = new String[8];
+            getTradeParms(tradeDate1, inHMS, nextTradeDateN, 
+                    sTDistance, tradeType, targetRate,
+                    am, stockDates, outParms);
+        }
     }
 
 
+    public static void getTradeParms(String tradeDate1, String inHMS, String nextTradeDateN, 
+            int sTDistance, int tradeType, double targetRate, 
+            AmManager am, StockDates stockDates, String[] outParms) {
+    }
 
     private static CommandLine getCommandLine(String[] args) {
         CommandLine cmd = null;

@@ -140,6 +140,18 @@ public class GetSettings{
         */
     }
 
+    public static void testStockDatesDistance(String stockCode, int maxCycle) {
+        System.out.format("\n testStockDatesDistance: \n");
+        StockDates stockDates = new StockDates(stockCode);
+        String date = stockDates.firstDate();
+        while(date!=null) {
+            String nextNDate = stockDates.nextDate(date, maxCycle);
+            int distance = stockDates.getDistance(date, nextNDate);
+            System.out.format("%8s %8s %8d %8d\n", date, nextNDate, maxCycle, distance);
+
+            date = stockDates.nextDate(date);
+        }
+    }
     public static void listStockDates(String stockCode, String date0, String date1) {
         System.out.format("\n listStockDates: \n");
         StockDates stockDates = new StockDates(date0, date1, stockCode);
@@ -192,7 +204,8 @@ public class GetSettings{
 
         //testAmManager(stockCode);
         
-        listStockDates(stockCode, "20090101", "20200112");
+        //listStockDates(stockCode, "20090101", "20200112");
+        testStockDatesDistance(stockCode, 10);
     }
 
 }
