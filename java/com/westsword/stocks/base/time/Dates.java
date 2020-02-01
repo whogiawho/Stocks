@@ -39,19 +39,29 @@ public class Dates {
     public String lastDate() {
         return mDatesSet.last();
     }
-    //return the date whose distance is n from tradeDate if possible
-    //when the distance is <n, the last tradedate is returned
-    //note: null will never be returned
-    public String nextDate(String tradeDate, int n) {
+
+
+    //bNullReturned=true:  null will be returned if distance is < n
+    //bNullReturned=false: null will never be returned
+    public String nextDate(String tradeDate, int n, boolean bNullReturned) {
         String last = lastDate();
 
         String next = tradeDate;
         for(int i=0; i<n; i++) {
-            if(next.equals(last))
+            if(next.equals(last)) {
+                if(bNullReturned)
+                    next=null;
                 break;
+            }
             next = nextDate(next);
         }
         return next;
+    }
+    //return the date whose distance is n from tradeDate if possible
+    //when the distance is <n, the last tradedate is returned
+    //note: null will never be returned
+    public String nextDate(String tradeDate, int n) {
+        return nextDate(tradeDate, n, false);
     }
 
     //asuumption for these methods:

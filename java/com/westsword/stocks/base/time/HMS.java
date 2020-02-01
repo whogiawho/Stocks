@@ -57,4 +57,12 @@ public class HMS {
         return sHMSList;
     }
 
+
+    public static String[] getHMSArray(String hmsList) {
+        hmsList = formalizeList(hmsList);
+        String[] fields = hmsList.split(" +");
+
+        return fields;
+    }
+
 }
