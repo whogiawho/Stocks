@@ -12,8 +12,8 @@ public class SSUtils {
     public final static String Default_StockCode = "600030";
     public final static double Default_Threshold = 0.9;
     public final static String Default_StartDate = "20160108";
-    public final static int Default_Nearest_Day_To_End_TradeSession = 1;
-    public final static int Default_TradeType = 5;
+    public final static int Default_Nearest_Day_To_End_TradeSession = 1;          //t0|t1
+    public final static int Default_TradeType = 5;                                //Long(5)|Short(1)
 
 
     public static String getString(CommandLine cmd, String sSwitch, String sDefault) {
@@ -54,8 +54,16 @@ public class SSUtils {
     public static int getTradeType(CommandLine cmd) {
         return getInteger(cmd, "s", Default_TradeType);
     }
+    public static boolean getSwitchLog2File(CommandLine cmd) {
+        boolean bLog2Files = true;
+        if(cmd.hasOption("n"))
+            bLog2Files = false;
 
-    public static ArrayList<String> getSimilarTradeDates(String stockCode, String hmsList, double threshold, String startDate, String tradeDate, AmManager am) {
+        return bLog2Files;
+    }
+
+    public static ArrayList<String> getSimilarTradeDates(String stockCode, String startDate, double threshold, 
+            String tradeDate, String hmsList, AmManager am) {
         ArrayList<String> tradeDateList = new ArrayList<String>();
 
         String[] hms = hmsList.split("_");

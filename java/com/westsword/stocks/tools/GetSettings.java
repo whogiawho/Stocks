@@ -22,6 +22,14 @@ public class GetSettings{
         String tradeDate = Settings.getTradeDate();
         System.out.format("tradeDate=%s\n", tradeDate);
     }
+    public static void testMisc() {
+        System.out.format("\n testMisc: \n");
+
+        //test mkdir "a\b\c"
+        String sDir = StockPaths.getDailyDir() + "a\\b\\c";
+        System.out.format("mkdir %s\n", sDir);
+        Utils.mkDir(sDir);
+    }
 
 
 
@@ -193,6 +201,7 @@ public class GetSettings{
         */
 
         //testSettings();       
+        testMisc();       
 
         /*
         testSdTime(1);       
@@ -205,7 +214,7 @@ public class GetSettings{
         //testAmManager(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
-        testStockDatesDistance(stockCode, 10);
+        //testStockDatesDistance(stockCode, 10);
     }
 
 }

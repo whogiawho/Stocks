@@ -105,8 +105,13 @@ function getCodeStats {
     idcLines=`find $thsHackRootDirCygdrive/scripts/  -name *.idc \
         |grep -v backup | xargs wc|grep -v "$rootDirCygdrive/"|awk '{print $1}'`
 
-    printf "%8s %8s %12s %8s\n" "Java" "C" "bash&bat" "idc"
-    printf "%8s %8s %12s %8s\n" $javaLiines $cLines $scriptLines $idcLines 
+    local pyLines=
+    pyLines=`find $rootDirCygdrive/python/  -name *.py \
+        |grep -v backup | xargs wc|grep -v "$rootDirCygdrive/"|awk '{print $1}'`
+
+    local sFormat="%8s %8s %12s %8s %8s\n"
+    printf "$sFormat" "Java" "C" "bash&bat" "idc" "python"
+    printf "$sFormat" $javaLiines $cLines $scriptLines $idcLines $pyLines
 }
 
 function killHexin {
