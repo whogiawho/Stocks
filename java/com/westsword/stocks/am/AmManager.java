@@ -32,6 +32,33 @@ public class AmManager {
         }
     }
 
+
+    public NavigableMap<Integer, AmRecord> getItemMap(String startDate, String startHMS,
+            String endDate, String endHMS) {
+        long startTp = Time.getSpecificTime(startDate, startHMS);
+        int startIdx = mSdTime.getAbs(startTp);
+        long endTp = Time.getSpecificTime(endDate, endHMS);
+        int endIdx = mSdTime.getAbs(endTp);
+
+        NavigableMap<Integer, AmRecord> itemMap = mAmRecordMap.subMap(startIdx, true, endIdx, true);
+
+        return itemMap;
+    }
+    public double getInPrice(int tradeType, long inTime) {
+        AmRecord r = getFloorItem(inTime);
+        return r.getInPrice(tradeType);
+    }
+    public AmRecord getFloorItem(long tp) {
+        int idx = mSdTime.getAbs(tp);
+        idx = mAmRecordMap.floorKey(idx);
+        return mAmRecordMap.get(idx);
+    }
+    public AmRecord getCeilingItem(long tp) {
+        int idx = mSdTime.getAbs(tp);
+        idx = mAmRecordMap.ceilingKey(idx);
+        return mAmRecordMap.get(idx);
+    }
+
     //startDate0,startHMS0 endDate0,endHMS0
     //startDate1,startHMS1 endDate1,endHMS1
     public double getAmCorrel(String startDate0, String startHMS0, String endDate0, String endHMS0, 
