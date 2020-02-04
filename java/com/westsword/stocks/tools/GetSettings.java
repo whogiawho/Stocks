@@ -186,6 +186,17 @@ public class GetSettings{
         amcorrelPrint(m, "20090115", "20090122", "09:30:00", "14:30:00");
         amcorrelPrint(m, "20090115", "20090123", "09:30:00", "14:30:00");
     }
+    public static void testTreeMap(String stockCode) {
+        System.out.format("\n testTreeMap: \n");
+        TreeMap<Integer, Integer> map = new TreeMap<Integer, Integer>();
+        map.put(0, 0);
+        map.put(1, 1);
+        map.put(6, 6);
+        map.put(7, 7);
+
+        NavigableMap<Integer, Integer> subMap = map.subMap(2, true, 5, true);
+        System.out.format("subMap.size = %d\n", subMap.size());
+    }
 
     public static void main(String args[]) throws Exception {
         String stockCode="600030";
@@ -201,7 +212,7 @@ public class GetSettings{
         */
 
         //testSettings();       
-        testMisc();       
+        //testMisc();       
 
         /*
         testSdTime(1);       
@@ -212,6 +223,7 @@ public class GetSettings{
         //testSdTime1();
 
         //testAmManager(stockCode);
+        testTreeMap(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
