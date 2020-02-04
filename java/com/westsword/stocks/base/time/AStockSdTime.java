@@ -19,10 +19,17 @@ public class AStockSdTime extends SdTime {
         addRange("13:00:00", "15:00:00");
     }
 
-    public String getCallAuctionEndTime0() {
+    public static String getCallAuctionEndTime0() {
         return Settings.getSdStartTime();           //09:25:00
     }
-    public String getCallAuctionEndTime1() {
+    public static String getCallAuctionEndTime1() {
         return "09:25:02";
+    }
+
+    public static String getCallAuctionEndTime() {
+        return "09:25:00"; 
+    }
+    public static String getCloseQuotationTime() {
+        return "15:00:00";
     }
 }
