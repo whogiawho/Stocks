@@ -7,9 +7,7 @@ import com.westsword.stocks.Utils;
 import com.westsword.stocks.RawTradeDetails;
 import com.westsword.stocks.RawTradeDetailsList;
 import com.westsword.stocks.utils.StockPaths;
-import com.westsword.stocks.base.time.Time;
-import com.westsword.stocks.base.time.SdTime1;
-import com.westsword.stocks.base.time.StockDates;
+import com.westsword.stocks.base.time.*;
 
 
 public class AmUtils {
@@ -35,6 +33,9 @@ public class AmUtils {
         }
     }
     public long writeAmRecords(long startAm, String tradeDate) {
+        //any tp later than tradeDate's close_quotation_time is not written
+        long closeTP = Time.getSpecificTime(tradeDate, AStockSdTime.getCloseQuotationTime());
+        
         ArrayList<RawTradeDetails> rawDetailsList = loadRawTradeDetails(tradeDate);
         int lSize = rawDetailsList.size();
         TrackExtreme ter = new TrackExtreme(rawDetailsList);
@@ -52,7 +53,7 @@ public class AmUtils {
             int rSd = mSdTime.getAbs(r.time);
             if(rSd != prevSd) {
                 //write AmRecords between [prevSd, rSd) to sAnalysisFile
-                writeRange(prevSd, rSd, am, ter, sAnalysisFile);
+                writeRange(prevSd, rSd, am, ter, sAnalysisFile, closeTP);
 
                 prevSd = rSd;
                 ter.resetEx();
@@ -67,20 +68,22 @@ public class AmUtils {
         }
         //last record
         if(lSize!=0)
-            writeRange(prevSd, prevSd+1, am, ter, sAnalysisFile);
+            writeRange(prevSd, prevSd+1, am, ter, sAnalysisFile, closeTP);
 
         return am;
     }
     private void writeRange(int start, int end, long am, 
-            TrackExtreme ter, String sAnalysisFile) {
+            TrackExtreme ter, String sAnalysisFile, long closeTP) {
         ter.setEx2Prev();
         for(int i=start; i<end; i++) {
             long tp = mSdTime.rgetAbs(i);
-            //String tradeDate = Time.getTimeYMD(tp);
-            //String tradeTime = Time.getTimeHMS(tp);
-            String sFormat = "%-10x %8d %20d %8.3f %8.3f\n";
-            String line = String.format(sFormat, tp, i, am, ter.maxUP, ter.minDP);
-            Utils.append2File(sAnalysisFile, line);
+            if(tp<=closeTP) {
+                //String tradeDate = Time.getTimeYMD(tp);
+                //String tradeTime = Time.getTimeHMS(tp);
+                String sFormat = "%-10x %8d %20d %8.3f %8.3f\n";
+                String line = String.format(sFormat, tp, i, am, ter.maxUP, ter.minDP);
+                Utils.append2File(sAnalysisFile, line);
+            }
         }
     }
     private ArrayList<RawTradeDetails> loadRawTradeDetails(String tradeDate) {
