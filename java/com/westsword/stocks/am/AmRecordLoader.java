@@ -13,10 +13,10 @@ public class AmRecordLoader extends FileLoader {
         String[] fields=line.split(" +");
         //[0] time; [1] sdTime; [2] am; [3] upPrice; [4] downPrice;
         long time = Long.parseLong(fields[0], 16);
-        int sdTime = new Integer(fields[1]);
-        long am = Long.parseLong(fields[2]);
-        double upPrice = Double.parseDouble(fields[3]);
-        double downPrice = Double.parseDouble(fields[4]);
+        int sdTime = Integer.valueOf(fields[1]);
+        long am = Long.valueOf(fields[2]);
+        double upPrice = Double.valueOf(fields[3]);
+        double downPrice = Double.valueOf(fields[4]);
                 
         AmRecord r = new AmRecord(time, sdTime, am, upPrice, downPrice);
         if(mAmRecordList != null)

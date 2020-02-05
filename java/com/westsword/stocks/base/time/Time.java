@@ -87,9 +87,9 @@ public class Time {
     //sTime:           must be of format "HH:MM:SS"
     public static long getSpecificTime(int year, int month, int date, String sTime) {
         String[] fields=sTime.split(":");
-        int hour = new Integer(fields[0]);
-        int minute = new Integer(fields[1]);
-        int second = new Integer(fields[2]);
+        int hour = Integer.valueOf(fields[0]);
+        int minute = Integer.valueOf(fields[1]);
+        int second = Integer.valueOf(fields[2]);
 
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, date, hour, minute, second);
@@ -102,10 +102,10 @@ public class Time {
     //sTime:           must be of format "HH:MM:SS"
     public static long getSpecificTime(String tradeDate, String sTime) {
         //System.out.format("tradeDate=%s\n", tradeDate);
-        int year = new Integer(tradeDate.substring(0, 4));
-        int month = new Integer(tradeDate.substring(4, 6));
+        int year = Integer.valueOf(tradeDate.substring(0, 4));
+        int month = Integer.valueOf(tradeDate.substring(4, 6));
         month -= 1;
-        int date = new Integer(tradeDate.substring(6, 8));
+        int date = Integer.valueOf(tradeDate.substring(6, 8));
 
         return getSpecificTime(year, month, date, sTime);
     }
@@ -113,10 +113,10 @@ public class Time {
     public static long getSpecificTime(long timepoint, String sTime) {
         String ymd = Time.getTimeYMD(timepoint);
         String[] fields = ymd.split("-");
-        int year = new Integer(fields[0]);
-        int month = new Integer(fields[1]);
+        int year = Integer.valueOf(fields[0]);
+        int month = Integer.valueOf(fields[1]);
         month -= 1;
-        int date = new Integer(fields[2]);
+        int date = Integer.valueOf(fields[2]);
 
         return getSpecificTime(year, month, date, sTime);
     }

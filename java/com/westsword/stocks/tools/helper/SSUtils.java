@@ -26,16 +26,23 @@ public class SSUtils {
     public static int getInteger(CommandLine cmd, String sSwitch, int sDefault) {
         int i = sDefault;
         if(cmd.hasOption(sSwitch))
-            i = new Integer(cmd.getOptionValue(sSwitch));
+            i = Integer.valueOf(cmd.getOptionValue(sSwitch));
 
         return i;
     }
     public static double getDouble(CommandLine cmd, String sSwitch, double sDefault) {
         double d = sDefault;
         if(cmd.hasOption(sSwitch))
-            d = new Double(cmd.getOptionValue(sSwitch));
+            d = Double.valueOf(cmd.getOptionValue(sSwitch));
 
         return d;
+    }
+    public static boolean getBoolean(CommandLine cmd, String sSwitch, boolean sDefault) {
+        boolean bSwitch = sDefault;
+        if(cmd.hasOption(sSwitch))
+            bSwitch = !sDefault;
+
+        return bSwitch;
     }
 
 
@@ -55,11 +62,10 @@ public class SSUtils {
         return getInteger(cmd, "s", Default_TradeType);
     }
     public static boolean getSwitchLog2File(CommandLine cmd) {
-        boolean bLog2Files = true;
-        if(cmd.hasOption("n"))
-            bLog2Files = false;
-
-        return bLog2Files;
+        return getBoolean(cmd, "n", true);
+    }
+    public static boolean getSwitchResetLog(CommandLine cmd) {
+        return getBoolean(cmd, "r", false);
     }
 
     public static ArrayList<String> getSimilarTradeDates(String stockCode, String startDate, double threshold, 

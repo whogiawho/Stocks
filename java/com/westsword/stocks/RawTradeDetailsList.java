@@ -20,8 +20,8 @@ public class RawTradeDetailsList extends FileLoader {
                 //[0] time; [1] price; [2] count; [3] type
                 long time = Long.parseLong(fields[0], 16);
                 double price = cDD.sub_48A0D0(fields[1]);
-                int count = new Integer(fields[2]);
-                int type = new Integer(fields[3]);
+                int count = Integer.valueOf(fields[2]);
+                int type = Integer.valueOf(fields[3]);
                 
                 RawTradeDetails rawTradeDetails = new RawTradeDetails(time, price, count, type);
                 if(mRawTradeDetailsList!=null)
@@ -57,7 +57,7 @@ public class RawTradeDetailsList extends FileLoader {
         Collections.sort(mRawTradeDetailsList, new Comparator<RawTradeDetails>(){
                 @Override
                 public int compare(RawTradeDetails s1, RawTradeDetails s2) {
-                    return new Long(s1.time).compareTo(s2.time);
+                    return Long.valueOf(s1.time).compareTo(s2.time);
                 }
         });
     }

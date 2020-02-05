@@ -39,12 +39,19 @@ public class StockPaths {
     public static String getSimilarStackDir(String stockCode) {
         return getSSRootDir() + stockCode + "\\";
     }
-    public static String getSSTradeDetailsLogDir(String stockCode, String startDate, 
-            double threshold, int tradeType, int sTDistance,
-            String tradeDate, int maxCycle, double targetRate) {
+    public static String getSSTradeDetailsLogDir0(String stockCode, String startDate, 
+            double threshold, int tradeType, int sTDistance) {
         String sDir = "";
         sDir += getSimilarStackDir(stockCode) + startDate + "_" + String.format("%.2f", threshold);
         sDir += "_" + "T" + sTDistance + getTradeTypeSymbol(tradeType) + "\\";
+
+        return sDir;
+    }
+    public static String getSSTradeDetailsLogDir(String stockCode, String startDate, 
+            double threshold, int tradeType, int sTDistance,
+            String tradeDate, int maxCycle, double targetRate) {
+        String sDir = getSSTradeDetailsLogDir0(stockCode, startDate,
+                threshold, tradeType, sTDistance);
 
         sDir += tradeDate + "_" + String.format("%03d_%.3f", maxCycle, targetRate);
         sDir += "\\";
@@ -59,6 +66,16 @@ public class StockPaths {
                 tradeDate, maxCycle, targetRate);
 
         return sDir + hmsList + ".txt";
+    }
+    public static String getSSTradeSumLogFile(String stockCode, String startDate, 
+            double threshold, int tradeType, int sTDistance,
+            String tradeDate, int maxCycle, double targetRate) {
+        String sDir = getSSTradeDetailsLogDir0(stockCode, startDate,
+                threshold, tradeType, sTDistance);
+
+        sDir += tradeDate + "_" + String.format("%03d_%.3f", maxCycle, targetRate);
+
+        return sDir+".txt";
     }
     private static String getTradeTypeSymbol(int tradeType) {
         String sTradeType = "L";

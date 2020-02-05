@@ -106,7 +106,7 @@ public class RawRTPankou {
     public String price2Str(double d) {
         String str; 
 
-        Double d0 = new Double(d);
+        Double d0 = Double.valueOf(d);
         if(d0.equals(INVALID_PRICE))
             str = "--";
         else
@@ -133,7 +133,7 @@ public class RawRTPankou {
 
         for(int i=0; i<PANKOU_LEVEL_NUMBER; i++) {
             try {
-                mSellPrice[i] = new Double(s0[i]);
+                mSellPrice[i] = Double.valueOf(s0[i]);
             } catch (NumberFormatException e) {
                 mSellPrice[i] = INVALID_PRICE;
             }
@@ -141,7 +141,7 @@ public class RawRTPankou {
 
         for(int i=0; i<PANKOU_LEVEL_NUMBER; i++) {
             try {
-                mBuyPrice[i] = new Double(s0[i+PANKOU_LEVEL_NUMBER]);   //buy1 buy2 buy3
+                mBuyPrice[i] = Double.valueOf(s0[i+PANKOU_LEVEL_NUMBER]);   //buy1 buy2 buy3
             } catch (NumberFormatException e){
                 mBuyPrice[i] = INVALID_PRICE;
             }
@@ -149,7 +149,7 @@ public class RawRTPankou {
 
         for(int i=0; i<PANKOU_LEVEL_NUMBER; i++) {
             try {
-                mSellVolume[i] = new Long(s0[i+2*PANKOU_LEVEL_NUMBER]);
+                mSellVolume[i] = Long.valueOf(s0[i+2*PANKOU_LEVEL_NUMBER]);
             } catch (NumberFormatException e) {
                 mSellVolume[i] = INVALID_VOLUME;
             }
@@ -157,7 +157,7 @@ public class RawRTPankou {
 
         for(int i=0; i<PANKOU_LEVEL_NUMBER; i++) {
             try {
-                mBuyVolume[i] = new Long(s0[i+3*PANKOU_LEVEL_NUMBER]);
+                mBuyVolume[i] = Long.valueOf(s0[i+3*PANKOU_LEVEL_NUMBER]);
             } catch (NumberFormatException e) {
                 mBuyVolume[i] = INVALID_VOLUME;
             }

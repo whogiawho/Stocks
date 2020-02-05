@@ -37,7 +37,8 @@ public class AnalyzeTools{
         } else if (sOption.equals("makeanalysistxt")) {
             AnalysisHelper.makeTxt(args);
         } else if (sOption.equals("ssinstance")) {
-            SSInstanceHelper.run(args);
+            SSInstanceHelper ssih = new SSInstanceHelper();
+            ssih.run(args);
         } else {
             usage();
         }

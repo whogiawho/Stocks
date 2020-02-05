@@ -149,17 +149,17 @@ public class Utils {
     public static long timeWOyear2Long(String timeMissingYear, String pankouYear) {
         String[] list0 = timeMissingYear.split("-"); 
         String sMonth = list0[0]; 
-        int month = new Integer(sMonth);
+        int month = Integer.valueOf(sMonth);
         String[] list1 = list0[1].split(" "); 
         String sDay = list1[0];
-        int day = new Integer(sDay);
+        int day = Integer.valueOf(sDay);
         String[] list2 = list1[1].split(":"); 
         String sHour = list2[0];
-        int hour = new Integer(sHour);
+        int hour = Integer.valueOf(sHour);
         String sMinute = list2[1];
-        int minute = new Integer(sMinute);
+        int minute = Integer.valueOf(sMinute);
         String sSecond = list2[2];
-        int second = new Integer(sSecond);
+        int second = Integer.valueOf(sSecond);
 
         //Year, Month, Day, Hour, Minute, Second
         Calendar cal = Calendar.getInstance();
@@ -168,7 +168,7 @@ public class Utils {
             cal.setTimeInMillis(System.currentTimeMillis());
             year = cal.get(Calendar.YEAR);                             //get current year
         } else {
-            year = new Integer(pankouYear);
+            year = Integer.valueOf(pankouYear);
         }
         cal.set(year, month-1, day, hour, minute, second);
                
@@ -203,9 +203,9 @@ public class Utils {
 
     public static Calendar getCalendar(String tradeDate) {
         tradeDate = Time.unformalizeYMD(tradeDate);
-        int year = new Integer(tradeDate.substring(0, 4));
-        int month = new Integer(tradeDate.substring(4, 6)) - 1;
-        int date = new Integer(tradeDate.substring(6, 8));
+        int year = Integer.valueOf(tradeDate.substring(0, 4));
+        int month = Integer.valueOf(tradeDate.substring(4, 6)) - 1;
+        int date = Integer.valueOf(tradeDate.substring(6, 8));
 
         Calendar cal = Calendar.getInstance();
         cal.clear();
@@ -220,9 +220,21 @@ public class Utils {
         df.setRoundingMode(RoundingMode.CEILING);
 
         //adjust inD to specified Decimal format
-        inD = new Double(df.format(inD));
+        inD = Double.valueOf(df.format(inD));
 
         return inD;
     }
 
+    //2 kinds of scenratios:
+    //  targetRate<=1
+    //  targetRate>1
+    public static double getTargetProfit(double targetRate, double inPrice) {
+        double targetProfit = inPrice*targetRate;
+
+        if(targetRate>1) {
+            targetProfit = targetRate - 1;
+        }
+
+        return targetProfit;
+    }
 }
