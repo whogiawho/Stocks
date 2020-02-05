@@ -15,6 +15,8 @@ public class SSUtils {
     public final static int Default_Nearest_Day_To_End_TradeSession = 1;          //t0|t1
     public final static int Default_TradeType = 5;                                //Long(5)|Short(1)
 
+    public final static double MINIMUM_AVG_NET_REVENUE = 0.000;
+
 
     public static String getString(CommandLine cmd, String sSwitch, String sDefault) {
         String string = sDefault;
