@@ -84,8 +84,9 @@ public class Time {
 
 
 
-    //sTime:           must be of format "HH:MM:SS"
     public static long getSpecificTime(int year, int month, int date, String sTime) {
+        sTime = HMS.formalize(sTime);
+
         String[] fields=sTime.split(":");
         int hour = Integer.valueOf(fields[0]);
         int minute = Integer.valueOf(fields[1]);
@@ -99,8 +100,9 @@ public class Time {
         return millis;
     }
     //tradeDate:       must be of format "YYYYMMDD"
-    //sTime:           must be of format "HH:MM:SS"
     public static long getSpecificTime(String tradeDate, String sTime) {
+        sTime = HMS.formalize(sTime);
+
         //System.out.format("tradeDate=%s\n", tradeDate);
         int year = Integer.valueOf(tradeDate.substring(0, 4));
         int month = Integer.valueOf(tradeDate.substring(4, 6));
@@ -109,8 +111,9 @@ public class Time {
 
         return getSpecificTime(year, month, date, sTime);
     }
-    //sTime:           must be of format "HH:MM:SS"
     public static long getSpecificTime(long timepoint, String sTime) {
+        sTime = HMS.formalize(sTime);
+
         String ymd = Time.getTimeYMD(timepoint);
         String[] fields = ymd.split("-");
         int year = Integer.valueOf(fields[0]);

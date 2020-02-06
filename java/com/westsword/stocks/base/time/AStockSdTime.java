@@ -29,6 +29,15 @@ public class AStockSdTime extends SdTime {
     public static String getCallAuctionEndTime() {
         return "09:25:00"; 
     }
+    public static String getOpenQuotationTime() {
+        return "09:30:00";
+    }
+    public static String getMidSuspensionTime() {
+        return "11:30:00";
+    }
+    public static String getMidOpenQuotationTime() {
+        return "13:00:00";
+    }
     public static String getCloseQuotationTime() {
         return "15:00:00";
     }
