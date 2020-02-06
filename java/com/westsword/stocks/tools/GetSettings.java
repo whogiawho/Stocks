@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
+import com.westsword.stocks.base.ckpt.*;
 
 import com.westsword.stocks.*;
 import com.westsword.stocks.am.*;
@@ -197,6 +198,12 @@ public class GetSettings{
         NavigableMap<Integer, Integer> subMap = map.subMap(2, true, 5, true);
         System.out.format("subMap.size = %d\n", subMap.size());
     }
+    public static void testCkpt(String stockCode) {
+        System.out.format("\n testCkpt: \n");
+
+        CheckPoint0 ckpt = new CheckPoint0(60, "14:55:00");
+        ckpt.print();
+    }
 
     public static void main(String args[]) throws Exception {
         String stockCode="600030";
@@ -223,7 +230,8 @@ public class GetSettings{
         //testSdTime1();
 
         //testAmManager(stockCode);
-        testTreeMap(stockCode);
+        //testTreeMap(stockCode);
+        testCkpt(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
