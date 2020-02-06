@@ -32,6 +32,27 @@ function getRawPankou {
     local serverAddr=$3
     local serverPort=$4
     local serverType=$5
+    local noCheck=$6
+
+    local sFormat="getRawPankou: ($stockCode, $tradeDate) %20s\n"
+    while [[ 1 ]]
+    do
+        _getRawPankou $stockCode $tradeDate $serverAddr $serverPort $serverType
+        [[ ! -z $noCheck ]] && break
+        checkRawPankou $stockCode $tradeDate && {
+            printf "$sFormat" "ok!"
+            break
+        } || {
+            printf "$sFormat" "exception! retrying ..."
+        }
+    done
+}
+function _getRawPankou {
+    local stockCode=$1
+    local tradeDate=$2
+    local serverAddr=$3
+    local serverPort=$4
+    local serverType=$5
     local startHMS=$6
     local endHMS=$7
 
@@ -54,6 +75,27 @@ function getRawPankou {
 
 #rawTradeDetails
 function getRawTradeDetails {
+    local stockCode=$1
+    local tradeDate=$2
+    local serverAddr=$3
+    local serverPort=$4
+    local serverType=$5
+    local noCheck=$6
+
+    local sFormat="getRawTradeDetails: ($stockCode, $tradeDate) %20s\n"
+    while [[ 1 ]]
+    do
+        _getRawTradeDetails $stockCode $tradeDate $serverAddr $serverPort $serverType
+        [[ ! -z $noCheck ]] && break
+        checkRawTradeDetails $stockCode $tradeDate && {
+            printf "$sFormat" "ok!"
+            break
+        } || {
+            printf "$sFormat" "exception! retrying ..."
+        }
+    done
+}
+function _getRawTradeDetails {
     local stockCode=$1
     local tradeDate=$2
     local serverAddr=$3
@@ -84,14 +126,16 @@ function doDailyGetRawJob {
     local serverAddr=$2
     local serverPort=$3
     local serverType=$4
+    local noCheck=$5
 
     local stockList="600030 600036 601318 510300 510900"
     local stockCode=
     for stockCode in $stockList
     do
-        getRaw $stockCode $tradeDate $serverAddr $serverPort $serverType
+        getRaw $stockCode $tradeDate $serverAddr $serverPort $serverType $noCheck
     done
 
+    [[ ! -z $noCheck ]] && return 
 
     local sFormat="doDailyGetRawJob: ($stockCode, $tradeDate) %20s %10s!\n"
     echo 
@@ -118,9 +162,10 @@ function getRaw {
     local serverAddr=$3
     local serverPort=$4
     local serverType=$5
+    local noCheck=$6
 
-    getRawPankou $stockCode $tradeDate $serverAddr $serverPort $serverType
-    getRawTradeDetails $stockCode $tradeDate $serverAddr $serverPort $serverType
+    getRawPankou $stockCode $tradeDate $serverAddr $serverPort $serverType $noCheck
+    getRawTradeDetails $stockCode $tradeDate $serverAddr $serverPort $serverType $noCheck
 }
 
 
