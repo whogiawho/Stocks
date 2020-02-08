@@ -12,6 +12,7 @@ public class CheckPoint {
         hms = HMS.unformalize(hms);
         mCkptList.add(hms);
     }
+    //[start, end]
     public void add(long start, long end, int interval) {
         long tp = start;
         while(tp <= end) {

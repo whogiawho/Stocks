@@ -107,4 +107,20 @@ public class SSUtils {
 
         return inHMS;
     }
+
+    public static boolean checkTargetRateList(String sTargetRateList) {
+        boolean bCheck = true;
+        String[] fields = sTargetRateList.split(" +");
+        for(int i=0; i<fields.length; i++) {
+            if(!checkTargetRate(fields[i]))
+                return false;
+        }
+
+        return bCheck;
+    }
+    public static boolean checkTargetRate(String sTargetRate) {
+        String regEx = "[0-9]{1,}.[0-9]{1,3}";
+        return sTargetRate.matches(regEx);
+    }
+
 }

@@ -13,7 +13,7 @@ public class AnalyzeTools{
         System.err.println("usage: java AnalyzeTools commands");
         System.err.println("       commands are listed below:");
         System.err.println("       [ getvalue | setvalue | decode | makeanalysistxt |\n" +
-                "         ssinstance | xxx | xxx ]");
+                "         ssinstance | getfullss | xxx ]");
 
         System.exit(-1);
     }
@@ -39,6 +39,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("ssinstance")) {
             SSInstanceHelper ssih = new SSInstanceHelper();
             ssih.run(args);
+        } else if (sOption.equals("getfullss")) {
+            FullSSHelper fullssh = new FullSSHelper();
+            fullssh.run(args);
         } else {
             usage();
         }
