@@ -10,13 +10,7 @@ import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.Regression;
 
-public class SSInstanceHelper extends FileLoader {
-    private String mText = "";
-    private String mHMSList;
-
-    public void setHMSList(String hmsList) {
-        mHMSList = hmsList;
-    }
+public class SSInstanceHelper {
 
     public void run(String args[]) {
         CommandLine cmd = getCommandLine(args);
@@ -35,12 +29,14 @@ public class SSInstanceHelper extends FileLoader {
         boolean bResetLog = SSUtils.getSwitchResetLog(cmd);
         boolean bLog2Files = SSUtils.getSwitchLog2File(cmd);
         boolean bPrintTradeDetails = true;
+        AmManager am = new AmManager(stockCode);
+        StockDates stockDates = new StockDates(stockCode);
 
         String tradeDate0 = newArgs[0];
         String hmsList = newArgs[1];
         int maxCycle = Integer.valueOf(newArgs[2]);
         double targetRate = Double.valueOf(newArgs[3]);
-        if(!checkTargetRate(newArgs[3])) {
+        if(!SSUtils.checkTargetRate(newArgs[3])) {
             usage();
             return;
         }
@@ -48,6 +44,16 @@ public class SSInstanceHelper extends FileLoader {
                 stockCode, startDate, threshold, sTDistance, tradeType,
                 tradeDate0, hmsList, maxCycle, targetRate);
 
+        _run(stockCode, startDate, threshold, sTDistance, tradeType,
+                tradeDate0, hmsList, maxCycle, targetRate,
+                am, stockDates, 
+                bLog2Files, bResetLog, bPrintTradeDetails);
+    }
+
+    public void _run(String stockCode, String startDate, double threshold, int sTDistance, int tradeType,
+            String tradeDate0, String hmsList, int maxCycle, double targetRate,
+            AmManager am, StockDates stockDates, 
+            boolean bLog2Files, boolean bResetLog, boolean bPrintTradeDetails) {
         String[] sPaths = getPaths(stockCode, startDate,
                 threshold, tradeType, sTDistance,
                 tradeDate0, hmsList, maxCycle, targetRate);
@@ -55,13 +61,13 @@ public class SSInstanceHelper extends FileLoader {
         // sPaths[1] - sTradeDetailsFile
         // sPaths[2] - sTradeSumFile
         resetPaths(bLog2Files, sPaths[0], sPaths[1]);
-        setHMSList(hmsList);
-        resetLogFile(bResetLog, sPaths[1], sPaths[2]);
+        resetLogFile(bResetLog, hmsList, sPaths[1], sPaths[2]);
 
         BufR br = new BufR();
-        _run(stockCode, startDate, threshold, sTDistance, tradeType,
+        __run(stockCode, startDate, threshold, sTDistance, tradeType,
                 tradeDate0, hmsList, maxCycle, targetRate,
-                bLog2Files, bPrintTradeDetails, sPaths[1], br);
+                am, stockDates, sPaths[1],
+                bLog2Files, bPrintTradeDetails, br);
 
         //delete the tradeDetails log file by the filter criteria
         boolean bFilterTradeDetails = bLog2Files && filterIt(br);
@@ -73,15 +79,13 @@ public class SSInstanceHelper extends FileLoader {
         writeTradeSumLog(tradeDate0, sPaths[2],
                 hmsList, br, bLog2TradeSumFile);
     }
-
-    public void _run(String stockCode, String startDate, double threshold, int sTDistance, int tradeType,
+    public void __run(String stockCode, String startDate, double threshold, int sTDistance, int tradeType,
             String tradeDate0, String hmsList, int maxCycle, double targetRate,
-            boolean bLog2Files, boolean bPrintTradeDetails, String sTradeDetailsFile, BufR br) {
+            AmManager am, StockDates stockDates, String sTradeDetailsFile, 
+            boolean bLog2Files, boolean bPrintTradeDetails, BufR br) {
         //
         String inHMS = SSUtils.getInHMS(hmsList);
 
-        StockDates stockDates = new StockDates(stockCode);
-        AmManager am = new AmManager(stockCode);
         ArrayList<String> similarTradeDates = SSUtils.getSimilarTradeDates(stockCode, startDate, threshold, 
                 tradeDate0, hmsList, am);
 
@@ -265,7 +269,7 @@ public class SSInstanceHelper extends FileLoader {
 
 
 
-    private static CommandLine getCommandLine(String[] args) {
+    public static CommandLine getCommandLine(String[] args) {
         CommandLine cmd = null;
         try {
             String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
@@ -303,10 +307,6 @@ public class SSInstanceHelper extends FileLoader {
     }
 
 
-    private static boolean checkTargetRate(String sTargetRate) {
-        String regEx = "[0-9]{1,}.[0-9]{1,3}";
-        return sTargetRate.matches(regEx);
-    }
     public static class BufR {
         public double netRevenue=0.0;
         public double maxRevenue=0.0;
@@ -364,18 +364,10 @@ public class SSInstanceHelper extends FileLoader {
         double avgNetRevenue = br.netRevenue/matchedCnt;
         double avgMaxRevenue = br.maxRevenue/matchedCnt;
 
-        return avgNetRevenue <= SSUtils.MINIMUM_AVG_NET_REVENUE || (matchedCnt<=3&&avgMaxRevenue<0.50);
-    }
-    public boolean onLineRead(String line, int count) {
-        if(line.matches("^ *#.*")||line.matches("^ *$"))
-            return true;
+        boolean bCond0 = avgNetRevenue <= SSUtils.MINIMUM_AVG_NET_REVENUE;
+        boolean bCond1 = matchedCnt<40;
 
-        String[] fields=line.split(" +");
-        if(!fields[8].equals(mHMSList)) {
-            mText += line + "\n";
-        } 
-
-        return true;
+        return  bCond0||bCond1;
     }
     private void resetPaths(boolean bLog2Files, String sTradeDetailsDir, String sTradeDetailsFile) {
         if(bLog2Files) {
@@ -385,15 +377,18 @@ public class SSInstanceHelper extends FileLoader {
             Utils.deleteFile(sTradeDetailsFile);
         }
     }
-    private void resetLogFile(boolean bResetLog, String sTradeDetailsFile, String sTradeSumFile) {
+    private void resetLogFile(boolean bResetLog, 
+            String hmsList, String sTradeDetailsFile, String sTradeSumFile) {
         if(bResetLog) {
             //reset the tradeDetailsLogFile
             Utils.deleteFile(sTradeDetailsFile);
 
             //remove the item from tradeSumLogFile 
-            load(sTradeSumFile);
+            TradeSumLoader l = new TradeSumLoader();
+            String[] out = new String[1];
+            l.load(sTradeSumFile, hmsList, out);
             //write sText back to tradeSum log file
-            Utils.append2File(sTradeSumFile, mText, false);
+            Utils.append2File(sTradeSumFile, out[0], false);
         }
     }
 }
