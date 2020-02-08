@@ -12,6 +12,7 @@ import com.westsword.stocks.am.*;
 import com.westsword.stocks.utils.*;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.math3.util.Combinations;
 
 public class GetSettings{
     public static void testSettings() {
@@ -204,6 +205,16 @@ public class GetSettings{
         CheckPoint0 ckpt = new CheckPoint0(60, "14:55:00");
         ckpt.print();
     }
+    public static void testCombination(String stockCode) {
+        System.out.format("\n testCombination: \n");
+
+        Combinations c = new Combinations(5, 2);
+        Iterator<int[]> itr = c.iterator();
+        while(itr.hasNext()) {
+            int[] e = itr.next();
+            System.out.format("%s\n", Arrays.toString(e));
+        }
+    }
 
     public static void main(String args[]) throws Exception {
         String stockCode="600030";
@@ -231,7 +242,8 @@ public class GetSettings{
 
         //testAmManager(stockCode);
         //testTreeMap(stockCode);
-        testCkpt(stockCode);
+        //testCkpt(stockCode);
+        testCombination(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
