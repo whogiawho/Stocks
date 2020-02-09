@@ -135,9 +135,8 @@ public class GetSettings{
         }
         */
     }
-    public static void testStockDates(String date0, String date1) {
+    public static void testStockDates(String stockCode, String date0, String date1) {
         System.out.format("\n testStockDates: \n");
-        String stockCode="600030";
         StockDates stockDates = new StockDates(date0, date1, stockCode);
         String[] sTradeDates = stockDates.getAllDates();
         System.out.format("testStockDates: length=%d\n", sTradeDates.length);
@@ -148,6 +147,15 @@ public class GetSettings{
             System.out.format("%s\n", sTradeDates[i]);
         }
         */
+    }
+    public static void testTradeDates(String stockCode, String date0, String date1) {
+        System.out.format("\n testTradeDates: \n");
+        TradeDates tradeDates = new TradeDates(stockCode, date0, date1);
+        String date = tradeDates.firstDate();
+        while(date!=null) {
+            System.out.format("%s\n", date);
+            date = tradeDates.nextDate(date);
+        }
     }
 
     public static void testStockDatesDistance(String stockCode, int maxCycle) {
@@ -220,14 +228,15 @@ public class GetSettings{
         String stockCode="600030";
         /*
         testWorkDates("20090101", "20191231");
-        testStockDates("20090101", "20191231");
+        testStockDates(stockCode, "20090101", "20191231");
 
         testWorkDates("20200104", "20200108");
-        testStockDates("20200104", "20200108");
+        testStockDates(stockCode, "20200104", "20200108");
 
         testWorkDates("20200101", "20200108");
-        testStockDates("20200101", "20200108");
+        testStockDates(stockCode, "20200101", "20200108");
         */
+        testTradeDates(stockCode, "20090105", "20191231");
 
         //testSettings();       
         //testMisc();       
@@ -243,7 +252,7 @@ public class GetSettings{
         //testAmManager(stockCode);
         //testTreeMap(stockCode);
         //testCkpt(stockCode);
-        testCombination(stockCode);
+        //testCombination(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
