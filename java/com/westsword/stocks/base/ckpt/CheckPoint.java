@@ -3,11 +3,15 @@ package com.westsword.stocks.base.ckpt;
 
 import java.util.*;
 
+import com.westsword.stocks.Utils;
 import com.westsword.stocks.base.time.*;
 
 public class CheckPoint {
     private TreeSet<String> mCkptList = new TreeSet<String>();
 
+    public int getLength() {
+        return mCkptList.size();
+    }
     public void add(String hms) {
         hms = HMS.unformalize(hms);
         mCkptList.add(hms);
@@ -28,23 +32,20 @@ public class CheckPoint {
     }
 
     public String[][] getPairs() {
-        return getPairs(mCkptList.toArray(new String[0]));
+        return Utils.getPairs(mCkptList.toArray(new String[0]));
     }
 
+    public String getHMSList(int[] idxs) {
+        String sHMSList = "";
 
-    public static String[][] getPairs(String[] array) {
-        String[][] pairs = new String[array.length*(array.length-1)/2][2];
-
-        int k=0;
-        for(int i=0; i<array.length; i++) {
-            for(int j=i+1; j<array.length; j++) {
-                pairs[k][0] = array[i];
-                pairs[k][1] = array[j];
-
-                k++;
-            }
+        String[] sCkpt = mCkptList.toArray(new String[0]);
+        for(int i=0; i<idxs.length; i++) {
+            sHMSList += sCkpt[idxs[i]] + " ";
         }
+        sHMSList = sHMSList.trim();
+        sHMSList = sHMSList.replace(" ", "_");
 
-        return pairs;
+        return sHMSList;
     }
+
 }

@@ -237,4 +237,20 @@ public class Utils {
 
         return targetProfit;
     }
+
+    public static String[][] getPairs(String[] array) {
+        String[][] pairs = new String[array.length*(array.length-1)/2][2];
+
+        int k=0;
+        for(int i=0; i<array.length; i++) {
+            for(int j=i+1; j<array.length; j++) {
+                pairs[k][0] = array[i];
+                pairs[k][1] = array[j];
+
+                k++;
+            }
+        }
+
+        return pairs;
+    }
 }
