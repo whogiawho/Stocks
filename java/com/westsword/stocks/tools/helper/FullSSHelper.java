@@ -4,11 +4,13 @@ import java.util.*;
 import org.apache.commons.cli.*;
 
 import com.westsword.stocks.Stock;
-import com.westsword.stocks.Utils;
 import com.westsword.stocks.utils.*;
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.Regression;
+import com.westsword.stocks.base.ckpt.*;
+
+import org.apache.commons.math3.util.Combinations;
 
 public class FullSSHelper {
     public void run(String args[]) {
@@ -38,18 +40,39 @@ public class FullSSHelper {
             return;
         }
 
-        SSInstanceHelper ssi = new SSInstanceHelper();
-        //loop tradeDates [startDate, lastTradeDate]
-        //loop hmsList combination(n,2)
         String[] fields0 = sMaxCycleList.split(" +");
         String[] fields1 = sTargetRateList.split(" +");
-        for(int i=0; i<fields0.length; i++) {
-            int maxCycle = Integer.valueOf(fields0[i]);
-            for(int j=0; j<fields1.length; j++) {
-                double sTargetRate = Double.valueOf(fields1[j]);
+        CheckPoint0 ckpt = new CheckPoint0();
+        int length = ckpt.getLength();
+        Combinations c = new Combinations(length, 2);
+        SSInstanceHelper ssih = new SSInstanceHelper();
+        String[] sTradeDates = TradeDates.getTradeDateList(stockCode);
+        TradeDates tradeDates = new TradeDates(stockCode, startDate, sTradeDates[sTradeDates.length-1]);
+
+        //loop tradeDates [startDate, lastTradeDate]
+        String tradeDate0 = tradeDates.firstDate();
+        while(tradeDate0!=null) {
+            tradeDate0 = tradeDates.nextDate(tradeDate0);                //
+            //loop hmsList combination(n,2)
+            Iterator<int[]> itr = c.iterator();
+            while(itr.hasNext()) {
+                int[] e = itr.next();
+                String hmsList = ckpt.getHMSList(e);                     //
+                //loop maxCycleList
+                for(int i=0; i<fields0.length; i++) {
+                    int maxCycle = Integer.valueOf(fields0[i]);          //
+                    //loop targetRateList
+                    for(int j=0; j<fields1.length; j++) {
+                        double targetRate = Double.valueOf(fields1[j]);  //
+
+                        ssih._run(stockCode, startDate, threshold, sTDistance, tradeType,
+                                tradeDate0, hmsList, maxCycle, targetRate,
+                                am, stockDates,
+                                bLog2Files, bResetLog, bPrintTradeDetails);
+                    }
+                }
             }
         }
-
     }
 
 

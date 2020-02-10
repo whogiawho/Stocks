@@ -210,17 +210,19 @@ public class GetSettings{
     public static void testCkpt(String stockCode) {
         System.out.format("\n testCkpt: \n");
 
-        CheckPoint0 ckpt = new CheckPoint0(60, "14:55:00");
+        CheckPoint0 ckpt = new CheckPoint0();
         ckpt.print();
     }
     public static void testCombination(String stockCode) {
         System.out.format("\n testCombination: \n");
 
+        CheckPoint0 ckpt = new CheckPoint0();
         Combinations c = new Combinations(5, 2);
         Iterator<int[]> itr = c.iterator();
         while(itr.hasNext()) {
             int[] e = itr.next();
-            System.out.format("%s\n", Arrays.toString(e));
+            String hmsList = ckpt.getHMSList(e);
+            System.out.format("%s %s\n", Arrays.toString(e), hmsList);
         }
     }
 
@@ -252,7 +254,7 @@ public class GetSettings{
         //testAmManager(stockCode);
         //testTreeMap(stockCode);
         //testCkpt(stockCode);
-        //testCombination(stockCode);
+        testCombination(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);

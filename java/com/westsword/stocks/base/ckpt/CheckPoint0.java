@@ -4,6 +4,7 @@ package com.westsword.stocks.base.ckpt;
 import java.util.*;
 
 import com.westsword.stocks.base.time.*;
+import com.westsword.stocks.base.ckpt.*;
 
 public class CheckPoint0 extends CheckPoint {
     //interval - in seconds
@@ -25,5 +26,8 @@ public class CheckPoint0 extends CheckPoint {
         endTp = Time.getSpecificTime(currentDate, endHMS);
         add(startTp, endTp, interval);
     }
-    
+
+    public CheckPoint0() {
+        this(60, "14:55:00");
+    }
 }
