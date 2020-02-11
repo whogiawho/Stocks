@@ -110,4 +110,12 @@ public class StockPaths {
     public static String getHolidaysFile() {
         return getSpecialDatesDir() + "holidays.txt";
     }
+
+
+    public static String getLogDir() {
+        return getStockRootDir() + "data\\log\\";
+    }
+    public static String getPerformanceLogFile() {
+        return getLogDir() + "performance.log";
+    }
 }

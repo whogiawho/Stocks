@@ -20,3 +20,5 @@ SdInterval=1
 600030.priceStep=0.01
 
 
+noPerformanceLog=true
+

@@ -23,7 +23,7 @@ cygwinRootDir=$cygwin32RootDir
 cygwinBitMode=`getCygwinBitMode`
 echo cygwinBitMode=$cygwinBitMode
 [[ $cygwinBitMode == 64 ]] && {
-    export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -Xmx2048m -Xms2048m"
+    export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -Xmx8192m -Xms8192m"
     cygwinRootDir=$cygwin64RootDir
 }
 cygwinTmpDir="$cygwinRootDir\\tmp"
