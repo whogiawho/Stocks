@@ -3,7 +3,7 @@ package com.westsword.stocks.am;
 import java.util.*;
 
 import com.westsword.stocks.Utils;
-import com.westsword.stocks.utils.AnsiColor;
+import com.westsword.stocks.utils.*;
 import com.westsword.stocks.utils.StockPaths;
 import com.westsword.stocks.base.time.*;
 
@@ -12,24 +12,32 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 public class AmManager {
 
     public AmManager(String stockCode) {
+        this(stockCode, TradeDates.getTradeDateList(stockCode)[0]);
+    }
+    public AmManager(String stockCode, String startDate) {
         mStockCode = stockCode;
         mSdTime = new SdTime1(stockCode);
         mStockDates = new StockDates(stockCode);
 
         mAmRecordMap = new TreeMap<Integer, AmRecord>();
-        String[] sTradeDates = TradeDates.getTradeDateList(stockCode);
+        String[] sTradeDates = TradeDates.getTradeDateList(stockCode, startDate);
         load(mAmRecordMap, sTradeDates);
     }
 
     public void load(TreeMap<Integer, AmRecord> rMap, String[] sTradeDates) {
+        long tStart = PerformanceLog.start();
         AmRecordLoader amLoader = new AmRecordLoader();
         for(int i=0; i<sTradeDates.length; i++) {
             String tradeDate = sTradeDates[i];
             String sAmRecordFile = StockPaths.getAnalysisFile(mStockCode, tradeDate);
             amLoader.load(null, rMap, sAmRecordFile);
+            /*
             System.out.format("%s: loading %s complete\n", 
                     Utils.getCallerName(getClass()), tradeDate);
+            */
         }
+        PerformanceLog.end(tStart, "%s: loading analysis.txt = %d\n", 
+                Utils.getCallerName(getClass()));
     }
 
 

@@ -92,8 +92,10 @@ public class SSUtils {
             }
             if(bHMSMatched)
                 tradeDateList.add(tradeDate0);
+            /*
             System.out.format("%s %s %s %s\n", 
                     tradeDate0, tradeDate, hmsList, sAmCorrels);
+            */
 
             tradeDate0 = tradeDates.nextDate(tradeDate0);
         }
