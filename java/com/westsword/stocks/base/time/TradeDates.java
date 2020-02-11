@@ -18,12 +18,12 @@ public class TradeDates extends Dates {
         super(getTradeDateList(stockCode));
         mStockCode = stockCode;
     }
+    public TradeDates() {
+        this(Settings.getStockCode());
+    }
     public TradeDates(String stockCode, String startDate, String endDate) {     //including endDate
         super(getTradeDateList(stockCode, startDate, endDate));
         mStockCode = stockCode;
-    }
-    public TradeDates() {
-        this(Settings.getStockCode());
     }
     //2. tradeDates from a defined array
     public TradeDates(String stockCode, String[] sTradeDates) {
@@ -43,6 +43,10 @@ public class TradeDates extends Dates {
         String[] list = getTradeDateList(""+stockCode);
         TreeSet<String> trSet = new TreeSet<String>(Arrays.asList(list));
         return trSet.headSet(endDate, true).tailSet(startDate, true).toArray(new String[0]);
+    }
+    public static String[] getTradeDateList(String stockCode, String startDate) {
+        String[] list = getTradeDateList(""+stockCode);
+        return getTradeDateList(stockCode, startDate, list[list.length-1]);
     }
 
     //get all tradeDates

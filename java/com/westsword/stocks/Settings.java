@@ -189,6 +189,13 @@ public class Settings extends FileLoader {
     }
 
 
+    public final static int NO_PERFORMANCE_LOG = 0;
+    public final static String[] OutputFileKey = {
+        "noPerformanceLog",
+    };
 
-
+    public static boolean getSwitch(int idx) {
+        String key = OutputFileKey[idx];
+        return getBoolean(key);
+    }
 }
