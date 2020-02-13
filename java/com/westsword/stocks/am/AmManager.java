@@ -11,18 +11,24 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 public class AmManager {
 
+    //all tradeDaes
     public AmManager(String stockCode) {
         this(stockCode, TradeDates.getTradeDateList(stockCode)[0]);
     }
+    //tradeDates between [startDate, ]
     public AmManager(String stockCode, String startDate) {
+        this(stockCode, TradeDates.getTradeDateList(stockCode, startDate));
+    }
+    //tradeDates[]
+    public AmManager(String stockCode, String[] tradeDates) {
         mStockCode = stockCode;
         mSdTime = new SdTime1(stockCode);
         mStockDates = new StockDates(stockCode);
-
         mAmRecordMap = new TreeMap<Integer, AmRecord>();
-        String[] sTradeDates = TradeDates.getTradeDateList(stockCode, startDate);
-        load(mAmRecordMap, sTradeDates);
+
+        load(mAmRecordMap, tradeDates);
     }
+
 
     public void load(TreeMap<Integer, AmRecord> rMap, String[] sTradeDates) {
         long tStart = PerformanceLog.start();

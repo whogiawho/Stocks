@@ -9,9 +9,6 @@ currentDateLastRawTradeDetailTime=5e0ee6ac
 PriceDecimalFormat=#.##
 
 
-#switch to turn on raw data trace: RawRTPankou, RawTradeDetails
-switchOfRawData=false
-
 
 SdStartTime=09:25:00
 SdInterval=1
@@ -20,5 +17,10 @@ SdInterval=1
 600030.priceStep=0.01
 
 
+
+
+#switch to turn on raw data trace: RawRTPankou, RawTradeDetails
+switchOfRawData=false
+#switch to turn on performance tuning
 noPerformanceLog=true
 

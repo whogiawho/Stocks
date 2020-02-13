@@ -228,14 +228,18 @@ public class Utils {
     //2 kinds of scenratios:
     //  targetRate<=1
     //  targetRate>1
-    public static double getTargetProfit(double targetRate, double inPrice) {
-        double targetProfit = inPrice*targetRate;
+    public static double getTargetProfit(double targetRate, double inPrice, int dist) {
+        double targetProfit = inPrice*targetRate*dist/360;
 
         if(targetRate>1) {
             targetProfit = targetRate - 1;
         }
 
         return targetProfit;
+    }
+    //in one year
+    public static double getTargetProfit(double targetRate, double inPrice) {
+        return getTargetProfit(targetRate, inPrice, 360);
     }
 
     public static String[][] getPairs(String[] array) {

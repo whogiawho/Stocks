@@ -238,7 +238,8 @@ public class GetSettings{
         testWorkDates("20200101", "20200108");
         testStockDates(stockCode, "20200101", "20200108");
         */
-        testTradeDates(stockCode, "20090105", "20191231");
+        //testTradeDates(stockCode, "20090105", "20191231");
+        testTradeDates(stockCode, "20160108", "20191231");
 
         //testSettings();       
         //testMisc();       
