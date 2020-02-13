@@ -25,21 +25,27 @@ public class SSInstanceHelper {
         double threshold = SSUtils.getThreshold(cmd);
         int sTDistance = SSUtils.getNearestOutDist(cmd);
         int tradeType = SSUtils.getTradeType(cmd);
-        //
-        boolean bResetLog = SSUtils.getSwitchResetLog(cmd);
-        boolean bLog2Files = SSUtils.getSwitchLog2File(cmd);
-        boolean bPrintTradeDetails = true;
-        AmManager am = new AmManager(stockCode);
-        StockDates stockDates = new StockDates(stockCode);
 
-        String tradeDate0 = newArgs[0];
-        String hmsList = newArgs[1];
-        int maxCycle = Integer.valueOf(newArgs[2]);
+        String tradeDate0 = newArgs[0];              //tradeDate0 must >= startDate
+        if(!checkDates(startDate, tradeDate0)) {
+            usage();
+            return;
+        }
         double targetRate = Double.valueOf(newArgs[3]);
         if(!SSUtils.checkTargetRate(newArgs[3])) {
             usage();
             return;
         }
+
+        //
+        boolean bResetLog = SSUtils.getSwitchResetLog(cmd);
+        boolean bLog2Files = SSUtils.getSwitchLog2File(cmd);
+        boolean bPrintTradeDetails = true;
+        AmManager am = new AmManager(stockCode, startDate);
+        StockDates stockDates = new StockDates(stockCode);
+
+        String hmsList = newArgs[1];
+        int maxCycle = Integer.valueOf(newArgs[2]);
         System.out.format("%8s %8s %8.2f %4d %4d %8s %8s %4d %8.3f\n",
                 stockCode, startDate, threshold, sTDistance, tradeType,
                 tradeDate0, hmsList, maxCycle, targetRate);
@@ -293,6 +299,7 @@ public class SSInstanceHelper {
     private static void usage() {
         String sPrefix = "usage: java AnalyzeTools ";
         System.err.println(sPrefix+"ssinstance [-rncdhts] tradeDate hmsList maxCycle targetRate");
+        System.err.println("       tradeDate   ; tradeDate>=startDate");
         System.err.println("       targetRate  ; something like [0-9]{1,}.[0-9]{1,3}");
         System.err.println("                       relative(<=1): targetRate"); 
         System.err.println("                       absolute(>1) : targetRate-1");
@@ -390,5 +397,16 @@ public class SSInstanceHelper {
             //write sText back to tradeSum log file
             Utils.append2File(sTradeSumFile, out[0], false);
         }
+    }
+    private boolean checkDates(String startDate, String tradeDate) {
+        boolean bCheck = true;
+        if(tradeDate.compareTo(startDate)<0) {
+            String line = String.format("tradeDate=%s < startDate=%s", tradeDate, startDate);
+            line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);
+            System.out.format("%s\n", line);
+            bCheck = false;
+        }
+
+        return bCheck;
     }
 }
