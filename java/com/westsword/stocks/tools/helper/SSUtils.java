@@ -69,6 +69,9 @@ public class SSUtils {
     public static boolean getSwitchResetLog(CommandLine cmd) {
         return getBoolean(cmd, "r", false);
     }
+    public static String getTradeDateList(CommandLine cmd) {
+        return getString(cmd, "l", null);
+    }
 
     public static ArrayList<String> getSimilarTradeDates(String stockCode, String startDate, double threshold, 
             String tradeDate, String hmsList, AmManager am) {
