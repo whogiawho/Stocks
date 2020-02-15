@@ -10,6 +10,7 @@ import com.westsword.stocks.base.ckpt.*;
 import com.westsword.stocks.*;
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.utils.*;
+import com.westsword.stocks.tools.helper.*;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.math3.util.Combinations;
@@ -225,6 +226,14 @@ public class GetSettings{
             System.out.format("%s %s\n", Arrays.toString(e), hmsList);
         }
     }
+    public static void testTradeSumLoader(String stockCode) {
+        System.out.format("\n testTradeSumLoader: \n");
+        
+        String sTradeSumFile = "d:\\stocks\\data\\similarStack\\600030\\20160108_0.90_T1L\\20160108_001_1.100.txt";
+        TradeSumLoader l = new TradeSumLoader();
+        ArrayList<TradeSum> list = new ArrayList<TradeSum>();
+        l.load(sTradeSumFile, list);
+    }
 
     public static void main(String args[]) throws Exception {
         String stockCode="600030";
@@ -239,7 +248,7 @@ public class GetSettings{
         testStockDates(stockCode, "20200101", "20200108");
         */
         //testTradeDates(stockCode, "20090105", "20191231");
-        testTradeDates(stockCode, "20160108", "20191231");
+        //testTradeDates(stockCode, "20160108", "20191231");
 
         //testSettings();       
         //testMisc();       
@@ -255,7 +264,8 @@ public class GetSettings{
         //testAmManager(stockCode);
         //testTreeMap(stockCode);
         //testCkpt(stockCode);
-        testCombination(stockCode);
+        //testCombination(stockCode);
+        testTradeSumLoader(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
