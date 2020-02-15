@@ -262,7 +262,7 @@ public class SSInstanceHelper {
             expRisk1 = br.okCount==0?Double.NaN:br.risk1/br.okCount;
             hmsList = hmsList.replaceAll(":", "");
             hmsList = hmsList.replaceAll(" ", "_");
-            String sFormat = "%s %4d %8.0f%% %8.3f %8.3f %8.3f %8.3f %s %s %8.3f\n";
+            String sFormat = "%s %4d %8.1f%% %8.3f %8.3f %8.3f %8.3f %s %s %8.3f\n";
             String line = String.format(sFormat, 
                     tradeDate, matchedCnt, winRate*100, avgNetRevenue, avgMaxRevenue, expRisk0, expRisk1, 
                     sMatchedTradeDates, hmsList, br.netRevenue/br.maxHangCount);
@@ -398,7 +398,7 @@ public class SSInstanceHelper {
             Utils.append2File(sTradeSumFile, out[0], false);
         }
     }
-    private boolean checkDates(String startDate, String tradeDate) {
+    public static boolean checkDates(String startDate, String tradeDate) {
         boolean bCheck = true;
         if(tradeDate.compareTo(startDate)<0) {
             String line = String.format("tradeDate=%s < startDate=%s", tradeDate, startDate);

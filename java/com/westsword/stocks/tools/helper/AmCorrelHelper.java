@@ -40,7 +40,7 @@ public class AmCorrelHelper {
 
 
     private static void usage() {
-        System.err.println("usage: java AnalyzeTools getamcorrel stockCode tradeDate1 tradeDate2 startHMS endHMS");
+        System.err.println("usage: java AnalyzeTools getamcorrel stockCode tradeDate1 tradeDate2 hmsList");
         System.exit(-1);
     }
 }

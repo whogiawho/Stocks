@@ -13,7 +13,7 @@ public class AnalyzeTools{
         System.err.println("usage: java AnalyzeTools commands");
         System.err.println("       commands are listed below:");
         System.err.println("       [ getvalue | setvalue | decode | makeanalysistxt |\n" +
-                "         ssinstance | getfullss | getamcorrel ]");
+                "         ssinstance | getfullss | getamcorrel | getrel ]");
 
         System.exit(-1);
     }
@@ -39,12 +39,18 @@ public class AnalyzeTools{
         } else if (sOption.equals("ssinstance")) {
             SSInstanceHelper ssih = new SSInstanceHelper();
             ssih.run(args);
+        } else if (sOption.equals("ssinstances")) {
+            SSInstancesHelper ssih = new SSInstancesHelper();
+            ssih.run(args);
         } else if (sOption.equals("getfullss")) {
             FullSSHelper fullssh = new FullSSHelper();
             fullssh.run(args);
         } else if (sOption.equals("getamcorrel")) {
             AmCorrelHelper ach = new AmCorrelHelper();
             ach.getAmCorrel(args);
+        } else if (sOption.equals("getrel")) {
+            SdTime1Helper sth = new SdTime1Helper();
+            sth.getrel(args);
         } else {
             usage();
         }

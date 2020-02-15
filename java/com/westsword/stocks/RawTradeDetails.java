@@ -26,7 +26,6 @@ public class RawTradeDetails {
         strTime += hour+":"+minute+":"+second;
 
         boolean bSwitchOfRawData = Settings.getSwitchOfRawData();
-
         if(bSwitchOfRawData) {
             String str = String.format("%20s %20f %8d %8d", strTime, price, count, type);
             System.out.println(str);

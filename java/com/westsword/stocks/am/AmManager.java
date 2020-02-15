@@ -42,6 +42,8 @@ public class AmManager {
                     Utils.getCallerName(getClass()), tradeDate);
             */
         }
+        System.err.format("%s: loading complete\n", 
+                Utils.getCallerName(getClass()));
         PerformanceLog.end(tStart, "%s: loading analysis.txt = %d\n", 
                 Utils.getCallerName(getClass()));
     }
