@@ -234,6 +234,14 @@ public class GetSettings{
         ArrayList<TradeSum> list = new ArrayList<TradeSum>();
         l.load(sTradeSumFile, list);
     }
+    public static void testSSiManager(String stockCode) {
+        System.out.format("\n testSSiManager: \n");
+
+        SSiManager m = new SSiManager();
+        while(true) {
+            m.run();
+        }
+    }
 
     public static void main(String args[]) throws Exception {
         String stockCode="600030";
@@ -265,7 +273,8 @@ public class GetSettings{
         //testTreeMap(stockCode);
         //testCkpt(stockCode);
         //testCombination(stockCode);
-        testTradeSumLoader(stockCode);
+        //testTradeSumLoader(stockCode);
+        testSSiManager(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
