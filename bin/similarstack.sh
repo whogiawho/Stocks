@@ -8,7 +8,7 @@ function getFullWinList {
 
     local file=$dir.txt; 
     local i=
-    for i in `sort -nk3,3 $file |grep "100.*%"|awk '{print $9}'`; 
+    for i in `sort -nk3,3 $file |grep "100.*%"|awk '{print $9}'`;     #get those 100% winning hmsList
     do 
         local allg=0; 
         local j=
@@ -20,9 +20,9 @@ function getFullWinList {
             }; 
         done; 
         [[ $allg == 0 ]] && { 
-            local c=`wc $dir/$i.txt|awk '{print $1}'`; 
-            local m1=`awk '{print $12}' $dir/$i.txt|sort -nu|tail -n 1`; 
-            local m2=`awk '{print $13}' $dir/$i.txt|sort -nu|tail -n 1`; 
+            local c=`wc $dir/$i.txt|awk '{print $1}'`;                      #matchedTradeDates
+            local m1=`awk '{print $12}' $dir/$i.txt|sort -nu|tail -n 1`;    #max tradeLength
+            local m2=`awk '{print $13}' $dir/$i.txt|sort -nu|tail -n 1`;    #max currentHangCount
             printf "%s %4d %4d %4d\n" $i $c $m1 $m2; 
         }; 
     done

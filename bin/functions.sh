@@ -37,6 +37,7 @@ cygwinTmpDir="$cygwinRootDir\\tmp"
 . bin/utils.sh
 . bin/pankou.sh
 . bin/tradedetails.sh
+. bin/similarstack.sh
 
 
 function setupCfgFile {
