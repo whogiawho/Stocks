@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.westsword.stocks.am.AmManager;
 import com.westsword.stocks.base.time.*;
+import com.westsword.stocks.utils.AnsiColor;
 
 import org.apache.commons.cli.*;
 
@@ -69,10 +70,17 @@ public class SSUtils {
     public static boolean getSwitchResetLog(CommandLine cmd) {
         return getBoolean(cmd, "r", false);
     }
+    public static boolean getSwitchStdout(CommandLine cmd) {
+        return getBoolean(cmd, "o", true);
+    }
     public static String getTradeDateList(CommandLine cmd) {
         return getString(cmd, "l", null);
     }
 
+    public static ArrayList<String> getSimilarTradeDates(SSInstance r, AmManager am) {
+        return getSimilarTradeDates(r.stockCode, r.startDate, r.threshold,
+                r.tradeDate, r.hmsList, am);
+    }
     public static ArrayList<String> getSimilarTradeDates(String stockCode, String startDate, double threshold, 
             String tradeDate, String hmsList, AmManager am) {
         ArrayList<String> tradeDateList = new ArrayList<String>();
@@ -126,6 +134,18 @@ public class SSUtils {
     public static boolean checkTargetRate(String sTargetRate) {
         String regEx = "[0-9]{1,}.[0-9]{1,3}";
         return sTargetRate.matches(regEx);
+    }
+
+    public static boolean checkDates(String startDate, String tradeDate) {
+        boolean bCheck = true;
+        if(tradeDate.compareTo(startDate)<0) {
+            String line = String.format("tradeDate=%s < startDate=%s", tradeDate, startDate);
+            line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);
+            System.out.format("%s\n", line);
+            bCheck = false;
+        }
+
+        return bCheck;
     }
 
 }

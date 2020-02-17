@@ -239,7 +239,7 @@ public class GetSettings{
 
         SSiManager m = new SSiManager();
         while(true) {
-            m.run();
+            m.run(null);
         }
     }
 

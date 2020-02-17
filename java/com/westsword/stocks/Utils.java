@@ -12,6 +12,12 @@ import com.westsword.stocks.base.time.NatureDates;
 import org.apache.commons.io.FileUtils;
 
 public class Utils {
+    private static boolean bSwitchOfRawData;
+    static {
+        bSwitchOfRawData = Settings.getSwitchOfRawData();
+    }
+
+
     public static boolean existFile(String path) {
         File f = new File(path);
         return f .exists();
@@ -27,10 +33,11 @@ public class Utils {
         try{
             File file = new File(path);
             
-            if(file.delete()){
+            if(file.delete()&&bSwitchOfRawData){
                 System.out.format("%s\n", file.getName() + " is deleted!");
             }else{
-                System.out.format("Delete(%s) operation is failed.\n", path);
+                if(bSwitchOfRawData)
+                    System.out.format("Delete(%s) operation is failed.\n", path);
             }
         }catch(Exception e){
             e.printStackTrace();

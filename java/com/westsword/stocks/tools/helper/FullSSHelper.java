@@ -1,15 +1,17 @@
 package com.westsword.stocks.tools.helper;
 
+
 import java.util.*;
-import org.apache.commons.cli.*;
 
 import com.westsword.stocks.Stock;
 import com.westsword.stocks.utils.*;
-import com.westsword.stocks.am.*;
-import com.westsword.stocks.base.time.*;
-import com.westsword.stocks.base.Regression;
 import com.westsword.stocks.base.ckpt.*;
+import com.westsword.stocks.am.AmManager;
+import com.westsword.stocks.base.Regression;
+import com.westsword.stocks.base.time.StockDates;
+import com.westsword.stocks.base.time.TradeDates;
 
+import org.apache.commons.cli.*;
 import org.apache.commons.math3.util.Combinations;
 
 public class FullSSHelper {
@@ -37,7 +39,7 @@ public class FullSSHelper {
         //
         boolean bResetLog = SSUtils.getSwitchResetLog(cmd);
         boolean bLog2Files = SSUtils.getSwitchLog2File(cmd);
-        boolean bPrintTradeDetails = true;
+        boolean bStdout = SSUtils.getSwitchStdout(cmd);
         AmManager am = new AmManager(stockCode, startDate);
         StockDates stockDates = new StockDates(stockCode);
 
@@ -48,8 +50,8 @@ public class FullSSHelper {
         CheckPoint0 ckpt = new CheckPoint0();
         int length = ckpt.getLength();
         Combinations c = new Combinations(length, 2);
-        SSInstanceHelper ssih = new SSInstanceHelper();
 
+        SSiManager ssim = new SSiManager();
         TradeDates tradeDates = getTradeDates(stockCode, startDate, sTradeDateList);
         //loop tradeDates [startDate, lastTradeDate]
         String tradeDate0 = tradeDates.firstDate();
@@ -66,10 +68,10 @@ public class FullSSHelper {
                     for(int j=0; j<fields1.length; j++) {
                         double targetRate = Double.valueOf(fields1[j]);  //
 
-                        ssih._run(stockCode, startDate, threshold, sTDistance, tradeType,
-                                tradeDate0, hmsList, maxCycle, targetRate,
-                                am, stockDates,
-                                bLog2Files, bResetLog, bPrintTradeDetails);
+                       SSInstance r = new SSInstance(stockCode, startDate, threshold, sTDistance, tradeType,
+                               tradeDate0, hmsList, maxCycle, targetRate);
+                       ssim.run(r, am, stockDates,
+                                bLog2Files, bResetLog, bStdout);
                     }
                 }
             }
@@ -92,12 +94,14 @@ public class FullSSHelper {
         return tradeDates;
     }
 
+
     private static void usage() {
         String sPrefix = "usage: java AnalyzeTools ";
-        System.err.println(sPrefix+"getfullss [-rncdhts] maxCycleList targetRateList");
+        System.err.println(sPrefix+"getfullss [-rnocdhtsl] maxCycleList targetRateList");
         System.err.println("       targetRateList  ; see ssinstance usage for details");
         System.err.println("       -r              ; reset tradeDetails log file and tradeSum item");
         System.err.println("       -n              ; does not log to files");
+        System.err.println("       -o              ; does not write message to stdout");
         System.err.println("       -c stockCode    ;");
         System.err.println("       -d startDate    ;");
         System.err.println("       -h threshold    ;");
@@ -114,6 +118,7 @@ public class FullSSHelper {
             Options options = new Options();
             options.addOption("r", false, "reset tradeDetails log file and tradeSum item");
             options.addOption("n", false, "does not log to files");
+            options.addOption("o", false, "does not write message to stdout");
             options.addOption("c", true,  "a stock's code");
             options.addOption("d", true,  "a tradeDate from which a ss search is started");
             options.addOption("h", true,  "a threshold value to get ss for tradeDates");
