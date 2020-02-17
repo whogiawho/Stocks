@@ -1,14 +1,14 @@
 #!/bin/bash
 
 #dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
-#maxwait=180
+#maxwait=180              exclude those tradeLength>=maxwait
 function getSSHMSListFullWin {
     local dir=$1
     local maxwait=$2
 
     local file=$dir.txt; 
     local i=
-    for i in `sort -nk3,3 $file |grep "100.*%"|awk '{print $9}'`;     #get those 100% winning hmsList
+    for i in `sort -nk3,3 $file |grep "100\.\?[0-9]*%"|awk '{print $9}'`; #get those 100% winning hmsList
     do 
         local allg=0; 
         local maxPeriod=`awk '{print $12}' $dir/$i.txt|sort -n|tail -n 1`
@@ -25,6 +25,7 @@ function getSSHMSListFullWin {
     done
 }
 
+#maxwait            include those tradeLength<=maxwait
 function getSSHMSList {
     local dir=$1
     local maxwait=$2
@@ -81,3 +82,21 @@ function baseGetSSCommon {
 
     rm -rf $fTmp1
 }
+
+function baseGetSSCommonTradeDetails {
+    local dir1=$1
+    local hmsList1=$2
+    local maxwait=$3
+    local dir2=$4
+    local hmsList2=$5
+
+    local i=
+    for i in `awk "\\$12<=$maxwait{print \\$0}" $dir1/$hmsList1.txt |awk '{print $1}'`; 
+    do 
+        grep "^$i" $dir2/$hmsList2.txt ; 
+    done
+}
+
+
+
+
