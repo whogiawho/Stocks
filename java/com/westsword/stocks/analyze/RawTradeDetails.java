@@ -1,6 +1,9 @@
-package com.westsword.stocks;
+package com.westsword.stocks.analyze;
+
 
 import java.util.*;
+
+import com.westsword.stocks.Settings;
 
 public class RawTradeDetails {
     public long time;
