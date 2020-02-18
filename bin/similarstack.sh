@@ -1,5 +1,9 @@
 #!/bin/bash
 
+MinMatchedCount=${MinMatchedCount:-100}
+
+
+#parms samples:
 #dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 #maxwait=180              exclude those tradeLength>=maxwait
 function getSSHMSListFullWin {
@@ -39,16 +43,17 @@ function getSSHMSList {
     done
 }
 
+#only considering those hmsList with matchedTradeDates>=100
 function getSSCommon {
     local dir1=$1
     local maxwait=$2
     local dir2=$3
 
     local file1=$dir1.txt; 
-    local list1=`awk '{print $9}' $file1`
+    local list1=`awk '\\$2>=$MinMatchedCount{print \\$9}' $file1`
 
     local file2=$dir2.txt; 
-    local list2=`awk '{print $9}' $file2`
+    local list2=`awk '\\$2>=$MinMatchedCount{print \\$9}' $file2`
 
     local i=
     local j=
@@ -68,6 +73,12 @@ function baseGetSSCommon {
     local dir2=$4
     local hmsList2=$5
 
+    #local a= last1= last2=
+    #IFS=_ read a last1 <<<`echo $hmsList1`
+    #IFS=_ read a last2 <<<`echo $hmsList1`
+    #[[ $last1 > $last2 ]] && return
+
+    [[ $dir1 == $dir2 && $hmsList1 == $hmsList2 ]] && return
 
     local fTmp1=`mktemp`
     local file1=$dir1/$hmsList1.txt
@@ -78,9 +89,9 @@ function baseGetSSCommon {
     awk "{print \$1}" $file2 >$fTmp2
 
     local count=`comm -12 $fTmp1 $fTmp2|wc|awk '{print $1}'`
-    echo $dir1 $hmsList1 $dir2 $hmsList2 $count
+    echo $dir1 $hmsList1 $maxwait $dir2 $hmsList2 $count
 
-    rm -rf $fTmp1
+    rm -rf $fTmp1 $fTmp2
 }
 
 function baseGetSSCommonTradeDetails {
