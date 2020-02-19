@@ -34,8 +34,8 @@ public class SSiManager {
         return mConcurrent;
     }
 
-    public void run(SSInstance ssi) {
-        run(ssi, null, null, false, false, false);
+    public void run() {
+        run(null, null, null, false, false, false);
     }
     public void run(SSInstance ssi, AmManager am, StockDates stockDates,
             boolean bLog2Files, boolean bResetLog, boolean bPrintTradeDetails) {
@@ -90,7 +90,8 @@ public class SSiManager {
                 pseduoTask();
 
             //run ssinstance
-            mSSi.run(am, stockDates, bLog2Files, bResetLog, bPrintTradeDetails);
+            if(mSSi!=null)
+                mSSi.run(am, stockDates, bLog2Files, bResetLog, bPrintTradeDetails);
         }
         
         private void pseduoTask() {
