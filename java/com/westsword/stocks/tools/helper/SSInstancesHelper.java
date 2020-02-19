@@ -50,6 +50,7 @@ public class SSInstancesHelper {
         l.load(sTradeSumFile, list);
         SSiManager ssim = new SSiManager();
 
+        //loop hmsList
         for(int i=0; i<list.size(); i++) {
             TradeSum ts = list.get(i);
             String hmsList = ts.hmsList;

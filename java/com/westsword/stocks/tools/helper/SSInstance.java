@@ -18,7 +18,7 @@ public class SSInstance {
     public int tradeType;
 
     public String tradeDate;
-    public String hmsList;
+    public String hmsList;                       //
     public int maxCycle;
     public double targetRate;
 

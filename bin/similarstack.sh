@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MinMatchedCount=${MinMatchedCount:-100}
+MinMatchedCount=${MinMatchedCount:-500}
 
 
 #parms samples:
@@ -50,10 +50,10 @@ function getSSCommon {
     local dir2=$3
 
     local file1=$dir1.txt; 
-    local list1=`awk '\\$2>=$MinMatchedCount{print \\$9}' $file1`
+    local list1=`awk "\\$2>=$MinMatchedCount{print \\$9}" $file1`
 
     local file2=$dir2.txt; 
-    local list2=`awk '\\$2>=$MinMatchedCount{print \\$9}' $file2`
+    local list2=`awk "\\$2>=$MinMatchedCount{print \\$9}" $file2`
 
     local i=
     local j=
