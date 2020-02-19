@@ -48,15 +48,18 @@ public class SSInstance {
         resetLogFile(bResetLog, hmsList, sPaths[1], sPaths[2]);
 
         BufR br = new BufR();
-        _run(am, stockDates, sPaths[1],
-                bLog2Files, bStdout, br);
+        _run(am, stockDates, sPaths[1], br);
 
-        //delete the tradeDetails log file by the filter criteria
+        //log tradeDetails by the filter criteria
         boolean bFilterTradeDetails = bLog2Files && filterIt(br);
-        if(bFilterTradeDetails) {
-            Utils.deleteFile(sPaths[1]);
+        if(!bFilterTradeDetails) {
+            Utils.append2File(sPaths[1], br.sTradeDetails);
         }
+        //write tradeDetails to stdout
+        if(bStdout)
+            System.out.format("%s", br.sTradeDetails);
 
+        //log tradeSum
         boolean bLog2TradeSumFile = bLog2Files && !filterIt(br);
         TradeSumLogThread.write(tradeDate, sPaths[2],
                 hmsList, br, bLog2TradeSumFile, bStdout);
@@ -67,8 +70,7 @@ public class SSInstance {
         t.start();
         */
     }
-    public void _run(AmManager am, StockDates stockDates, String sTradeDetailsFile, 
-            boolean bLog2Files, boolean bStdout, BufR br) {
+    public void _run(AmManager am, StockDates stockDates, String sTradeDetailsFile, BufR br) {
         //
         String inHMS = SSUtils.getInHMS(hmsList);
 
@@ -94,9 +96,8 @@ public class SSInstance {
                 br.handleParms(outParms, tradeType, outTimeList.size()+1);
                 br.sMatchedTradeDates += tradeDate1 + " ";
 
-                writeTradeDetailsLog(stockDates, outTimeList.size()+1,
-                        tradeDate1, tradeType, inHMS, br.netRevenue, outParms, 
-                        bLog2Files, bStdout, sTradeDetailsFile);
+                br.sTradeDetails += getTradeDetailsLine(stockDates, outTimeList.size()+1,
+                        tradeDate1, tradeType, inHMS, br.netRevenue, outParms);
             }
 
             //add outTime to outTimeList
@@ -204,9 +205,8 @@ public class SSInstance {
         outParms[6] = "" + out[2];
         outParms[7] = "" + out[0];
     }
-    private static void writeTradeDetailsLog(StockDates stockDates, int currentHangCount,
-            String tradeDate1, int tradeType, String inHMS, double netRevenue, String[] outParms, 
-            boolean bLog2Files, boolean bStdout, String sTradeDetailsFile) {
+    private static String getTradeDetailsLine(StockDates stockDates, int currentHangCount,
+            String tradeDate1, int tradeType, String inHMS, double netRevenue, String[] outParms) {
         String sFormat = "%s %s %s %s " + 
             "%8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %4d %4d\n";
 
@@ -224,10 +224,7 @@ public class SSInstance {
                 inPrice, outPrice, profit, netRevenue, maxPosDelta, risk0, risk1, 
                 stockDates.getDistance(tradeDate1, outDate), currentHangCount);
 
-        if(bStdout)
-            System.out.format("%s", line);
-        if(bLog2Files)
-            Utils.append2File(sTradeDetailsFile, line);
+        return line;
     }
     private static void removeQuitedItems(ArrayList<Long> outTimeList, long inTime) {
         ArrayList<Integer> removedIdxList = new ArrayList<Integer>();
@@ -300,6 +297,8 @@ public class SSInstance {
         public int failCount=0;
         public int maxHangCount=0;
         public String sMatchedTradeDates="";
+
+        public String sTradeDetails = "";
 
         public void handleParms(String[] outParms, int tradeType, int currentHangCount) {
             if(outParms[0].equals("true")) {
