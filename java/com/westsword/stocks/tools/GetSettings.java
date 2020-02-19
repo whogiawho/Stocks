@@ -242,6 +242,12 @@ public class GetSettings{
             m.run();
         }
     }
+    public static void testCheck(String stockCode, String hmsList) {
+        System.out.format("\n testCheck: \n");
+
+        String sOut = SSUtils.checkHMSList(hmsList)? "Pass": "Fail";
+        System.out.format("%s %s\n", hmsList, sOut);
+    }
 
     public static void main(String args[]) throws Exception {
         String stockCode="600030";
@@ -269,12 +275,18 @@ public class GetSettings{
         */
         //testSdTime1();
 
+        testCheck(stockCode, "111000_123000_143000_145000l");
+        testCheck(stockCode, "111000_123000_143000_145000f");
+        testCheck(stockCode, "111000_123000_143000_145000");
+        testCheck(stockCode, "111000_123000");
+        testCheck(stockCode, "111000");
+
         //testAmManager(stockCode);
         //testTreeMap(stockCode);
         //testCkpt(stockCode);
         //testCombination(stockCode);
         //testTradeSumLoader(stockCode);
-        testSSiManager(stockCode);
+        //testSSiManager(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
