@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MinMatchedCount=${MinMatchedCount:-500}
+MinMatchedCount=${MinMatchedCount:-100}
 
 
 #parms samples:
@@ -80,18 +80,19 @@ function baseGetSSCommon {
 
     [[ $dir1 == $dir2 && $hmsList1 == $hmsList2 ]] && return
 
-    local fTmp1=`mktemp`
     local file1=$dir1/$hmsList1.txt
-    awk "\$12<=$maxwait{print \$1}" $file1 >$fTmp1
-
-    local fTmp2=`mktemp`
     local file2=$dir2/$hmsList2.txt
-    awk "{print \$1}" $file2 >$fTmp2
 
-    local count=`comm -12 $fTmp1 $fTmp2|wc|awk '{print $1}'`
-    echo $dir1 $hmsList1 $maxwait $dir2 $hmsList2 $count
+    local fTmp3=`mktemp`
+    comm -12 <(awk "{print \$1}" $file1) <(awk "{print \$1}" $file2) >$fTmp3
+    sed -i "s/^/\^/g" $fTmp3
 
-    rm -rf $fTmp1 $fTmp2
+    local countTotal=`wc $fTmp3|awk '{print $1}'`
+    local count0=`grep -f $fTmp3 $file1|awk "\\$12<=$maxwait{print \\$0}"|wc|awk '{print $1}'`
+
+    echo $dir1 $hmsList1 $maxwait $dir2 $hmsList2 $countTotal $count0
+
+    rm -rf $fTmp3
 }
 
 function baseGetSSCommonTradeDetails {
@@ -101,11 +102,16 @@ function baseGetSSCommonTradeDetails {
     local dir2=$4
     local hmsList2=$5
 
-    local i=
-    for i in `awk "\\$12<=$maxwait{print \\$0}" $dir1/$hmsList1.txt |awk '{print $1}'`; 
-    do 
-        grep "^$i" $dir2/$hmsList2.txt ; 
-    done
+    [[ $dir1 == $dir2 && $hmsList1 == $hmsList2 ]] && return
+
+    local file1=$dir1/$hmsList1.txt
+    local file2=$dir2/$hmsList2.txt
+
+    local fTmp3=`mktemp`
+    comm -12 <(awk "{print \$1}" $file1) <(awk "{print \$1}" $file2) >$fTmp3
+    sed -i "s/^/\^/g" $fTmp3
+
+    grep -f $fTmp3 $file1|awk "\$12<=$maxwait{print \$0}"
 }
 
 
