@@ -51,15 +51,15 @@ public class SSInstance {
         _run(am, stockDates, sPaths[1], br);
 
         //log tradeDetails by the filter criteria
-        boolean bFilterTradeDetails = bLog2Files && filterIt(br);
-        if(!bFilterTradeDetails) {
+        boolean bLogTradeDetails = bLog2Files && !filterIt(br);
+        if(bLogTradeDetails) {
             Utils.append2File(sPaths[1], br.sTradeDetails);
         }
         //write tradeDetails to stdout
         if(bStdout)
             System.out.format("%s", br.sTradeDetails);
 
-        //log tradeSum
+        //log tradeSum by the filter criteria
         boolean bLog2TradeSumFile = bLog2Files && !filterIt(br);
         TradeSumLogThread.write(tradeDate, sPaths[2],
                 hmsList, br, bLog2TradeSumFile, bStdout);
