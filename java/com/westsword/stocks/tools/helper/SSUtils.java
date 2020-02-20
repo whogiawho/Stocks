@@ -148,7 +148,7 @@ public class SSUtils {
         return bCheck;
     }
     public static boolean checkHMSList(String hmsList) {
-        String regEx = "^[0-9]{6}(_[0-9]{6}){1,}[fl]?$";
+        String regEx = "^[0-9]{6}(_[0-9]{6}){1,}[flFL]?$";
         return hmsList.matches(regEx);
     }
 
