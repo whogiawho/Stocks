@@ -13,7 +13,7 @@ public class AnalyzeTools{
         System.err.println("usage: java AnalyzeTools commands");
         System.err.println("       commands are listed below:");
         System.err.println("       [ getvalue | setvalue | decode | makeanalysistxt |\n" +
-                "         getamcorrel | getrel |\n" +
+                "         getamcorrel | getrel | getupprice | getdownprice |\n" +
                 "         ssinstance | ssinstances | getfullss ]");
 
         System.exit(-1);
@@ -37,6 +37,10 @@ public class AnalyzeTools{
             CoderHelper.decode(args);
         } else if (sOption.equals("makeanalysistxt")) {
             AnalysisHelper.makeTxt(args);
+        } else if(sOption.equals("getupprice")) {
+            AnalysisTxtHelper.getPrice(args);
+        } else if(sOption.equals("getdownprice")) {
+            AnalysisTxtHelper.getPrice(args);
         } else if (sOption.equals("getamcorrel")) {
             AmCorrelHelper ach = new AmCorrelHelper();
             ach.getAmCorrel(args);

@@ -3,6 +3,7 @@ package com.westsword.stocks.am;
 import java.util.*;
 
 import com.westsword.stocks.Utils;
+import com.westsword.stocks.Stock;
 import com.westsword.stocks.utils.*;
 import com.westsword.stocks.utils.StockPaths;
 import com.westsword.stocks.base.time.*;
@@ -63,6 +64,12 @@ public class AmManager {
     public double getInPrice(int tradeType, long inTime) {
         AmRecord r = getFloorItem(inTime);
         return r.getInPrice(tradeType);
+    }
+    public double getUpPrice(long inTime) {
+        return getInPrice(Stock.TRADE_TYPE_UP, inTime);
+    }
+    public double getDownPrice(long inTime) {
+        return getInPrice(Stock.TRADE_TYPE_DOWN, inTime);
     }
     public AmRecord getFloorItem(long tp) {
         int idx = mSdTime.getAbs(tp);
