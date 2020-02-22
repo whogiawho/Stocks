@@ -42,7 +42,11 @@ public class TradeDates extends Dates {
     public static String[] getTradeDateList(String stockCode, String startDate, String endDate) {
         String[] list = getTradeDateList(""+stockCode);
         TreeSet<String> trSet = new TreeSet<String>(Arrays.asList(list));
-        return trSet.headSet(endDate, true).tailSet(startDate, true).toArray(new String[0]);
+	    //System.out.format("trSet.size = %d, startDate=%s, endDate=%s\n", trSet.size(), startDate, endDate);
+	    TreeSet<String> sub = new TreeSet<String>(trSet.headSet(endDate, true));
+	    sub = new TreeSet<String>(sub.tailSet(startDate, true));
+	    return sub.toArray(new String[0]);
+        //return trSet.headSet(endDate, true).tailSet(startDate, true).toArray(new String[0]);
     }
     public static String[] getTradeDateList(String stockCode, String startDate) {
         String[] list = getTradeDateList(""+stockCode);
@@ -57,11 +61,14 @@ public class TradeDates extends Dates {
         File fStockData= new File(stockData);
         String[] sTradeDates = fStockData.list();
         //System.out.format("size=%d\n", sTradeDates.length);
-        /*
+	    TreeSet<String> trSet = new TreeSet<String>(Arrays.asList(sTradeDates));
+	    sTradeDates = trSet.toArray(new String[0]);
+
+	    /*
         for(int i=0; i<sTradeDates.length; i++) {
             System.out.format("%s\n", sTradeDates[i]);
         }
-        */
+	    */
 
         return sTradeDates;
     }
