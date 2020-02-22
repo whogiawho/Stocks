@@ -3,6 +3,7 @@ package com.westsword.stocks.analyze;
 
 import java.util.*;
 
+import com.westsword.stocks.Utils;
 import com.westsword.stocks.Settings;
 
 public class RawTradeDetails {
@@ -17,7 +18,7 @@ public class RawTradeDetails {
         this.count=count;
         this.type=type;
 
-        Calendar c =  Calendar.getInstance();
+        Calendar c = Utils.getCalendar();
         c.setTimeInMillis(time*1000);
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH)+1;

@@ -19,8 +19,12 @@ SdInterval=1
 
 
 
-#switch to turn on raw data trace: RawRTPankou, RawTradeDetails
+#switch to turn on raw data trace: RawRTPankou, RawTradeDetails, and others
 switchOfRawData=false
 #switch to turn on performance tuning
 noPerformanceLog=true
+
+
+TimeZone=GMT+08:00
+Locale=zh_CN
 

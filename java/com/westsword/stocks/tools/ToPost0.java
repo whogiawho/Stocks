@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.util.Calendar;
 
 import com.westsword.stocks.Stock;
+import com.westsword.stocks.Utils;
 import com.westsword.stocks.utils.FileLoader;
 import com.westsword.stocks.base.ConvertDD2Double;
 
@@ -43,7 +44,7 @@ public class ToPost0 extends FileLoader {
     public void write2HumanFile(BufferedWriter w, long thisTime, double thisPrice, int count, int type) {
         thisTime = thisTime*1000;
 
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Utils.getCalendar();
         cal.setTimeInMillis(thisTime);
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);

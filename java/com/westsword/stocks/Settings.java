@@ -85,6 +85,12 @@ public class Settings extends FileLoader {
 
 
 
+    public static String getLocale() {
+        return getString("Locale");
+    }
+    public static String getTimeZone() {
+        return getString("TimeZone");
+    }
     public static double getPriceStep() {
         return getPriceStep(getStockCode());
     }

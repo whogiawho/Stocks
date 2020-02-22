@@ -13,7 +13,11 @@ import org.apache.commons.io.FileUtils;
 
 public class Utils {
     private static boolean bSwitchOfRawData;
+    private static String sTz;
+    private static String sLc;
     static {
+        sTz = Settings.getTimeZone();
+        sLc = Settings.getLocale();
         bSwitchOfRawData = Settings.getSwitchOfRawData();
     }
 
@@ -33,8 +37,9 @@ public class Utils {
         try{
             File file = new File(path);
             
-            if(file.delete()&&bSwitchOfRawData){
-                System.out.format("%s\n", file.getName() + " is deleted!");
+            if(file.delete()){
+                if(bSwitchOfRawData)
+                    System.out.format("%s\n", file.getName() + " is deleted!");
             }else{
                 if(bSwitchOfRawData)
                     System.out.format("Delete(%s) operation is failed.\n", path);
@@ -169,7 +174,7 @@ public class Utils {
         int second = Integer.valueOf(sSecond);
 
         //Year, Month, Day, Hour, Minute, Second
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = getCalendar();
         int year;
         if(pankouYear == null) {
             cal.setTimeInMillis(System.currentTimeMillis());
@@ -207,14 +212,17 @@ public class Utils {
 
 
 
-
+    public static Calendar getCalendar() {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(sTz), new Locale(sLc));
+        return cal;
+    }
     public static Calendar getCalendar(String tradeDate) {
         tradeDate = Time.unformalizeYMD(tradeDate);
         int year = Integer.valueOf(tradeDate.substring(0, 4));
         int month = Integer.valueOf(tradeDate.substring(4, 6)) - 1;
         int date = Integer.valueOf(tradeDate.substring(6, 8));
 
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = getCalendar();
         cal.clear();
         cal.set(year, month, date);
 
@@ -233,8 +241,10 @@ public class Utils {
     }
 
     //2 kinds of scenratios:
-    //  targetRate<=1
-    //  targetRate>1
+    //  targetRate<=1          [0, 1], percent >100% is not allowed
+    //  targetRate>1           (0, ...)
+    //Parms:
+    //  dist - distance by days
     public static double getTargetProfit(double targetRate, double inPrice, int dist) {
         double targetProfit = inPrice*targetRate*dist/360;
 
@@ -264,4 +274,5 @@ public class Utils {
 
         return pairs;
     }
+
 }

@@ -197,8 +197,17 @@ public class GetSettings{
         amcorrelPrint(m, "20090115", "20090122", "09:30:00", "14:30:00");
         amcorrelPrint(m, "20090115", "20090123", "09:30:00", "14:30:00");
     }
-    public static void testTreeMap(String stockCode) {
-        System.out.format("\n testTreeMap: \n");
+    public static void testTreeMap0(String stockCode) {
+        TreeMap<Double, Integer> tm = new TreeMap<Double, Integer>();
+        
+        Double d0 = Double.valueOf("1.0");
+        Double d1 = Double.valueOf("1.0000000000000000000000000000000000001");
+        tm.put(d0, 1);
+        tm.put(d1, 2);
+
+        System.out.format("tm.size=%d\n", tm.size());
+    }
+    public static void testTreeMap1(String stockCode) {
         TreeMap<Integer, Integer> map = new TreeMap<Integer, Integer>();
         map.put(0, 0);
         map.put(1, 1);
@@ -207,6 +216,13 @@ public class GetSettings{
 
         NavigableMap<Integer, Integer> subMap = map.subMap(2, true, 5, true);
         System.out.format("subMap.size = %d\n", subMap.size());
+    }
+
+    public static void testTreeMap(String stockCode) {
+        System.out.format("\n testTreeMap: \n");
+
+        testTreeMap0(stockCode);
+        testTreeMap1(stockCode);
     }
     public static void testCkpt(String stockCode) {
         System.out.format("\n testCkpt: \n");
@@ -248,6 +264,18 @@ public class GetSettings{
         String sOut = SSUtils.checkHMSList(hmsList)? "Pass": "Fail";
         System.out.format("%s %s\n", hmsList, sOut);
     }
+    public static void testCalendar(String stockCode) {
+        System.out.format("\n testCalendar: \n");
+        Calendar cal = Calendar.getInstance();
+        TimeZone tz = cal.getTimeZone();
+        Locale lc = Locale.getDefault();
+        System.out.format("TimeZone=%s Locale=%s\n", tz.toString(), lc.toString());
+
+        cal = Utils.getCalendar();
+        tz = cal.getTimeZone();
+        lc = Locale.getDefault();
+        System.out.format("TimeZone=%s Locale=%s\n", tz.toString(), lc.toString());
+    }
 
     public static void main(String args[]) throws Exception {
         String stockCode="600030";
@@ -275,11 +303,13 @@ public class GetSettings{
         */
         //testSdTime1();
 
-        testCheck(stockCode, "111000_123000_143000_145000l");
-        testCheck(stockCode, "111000_123000_143000_145000f");
-        testCheck(stockCode, "111000_123000_143000_145000");
-        testCheck(stockCode, "111000_123000");
-        testCheck(stockCode, "111000");
+        //testCheck(stockCode, "111000_123000_143000_145000l");
+        //testCheck(stockCode, "111000_123000_143000_145000f");
+        //testCheck(stockCode, "111000_123000_143000_145000");
+        //testCheck(stockCode, "111000_123000");
+        //testCheck(stockCode, "111000");
+        testCalendar(stockCode);
+        testTreeMap(stockCode);
 
         //testAmManager(stockCode);
         //testTreeMap(stockCode);

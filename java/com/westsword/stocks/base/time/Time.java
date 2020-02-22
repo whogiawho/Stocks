@@ -1,6 +1,9 @@
 package com.westsword.stocks.base.time;
 
+
 import java.util.*;
+
+import com.westsword.stocks.Utils;
 
 public class Time {
     public static String unformalizeYMD(String tradeDate) {
@@ -41,7 +44,7 @@ public class Time {
         return sYMD + "_" +sHMS;
     }
     public static String getTimeYMD(long time, boolean bWithMinus) {
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Utils.getCalendar();
         cal.setTimeInMillis(time*1000);
 
         String sYear, sMonth, sDay;
@@ -68,7 +71,7 @@ public class Time {
     }
 
     public static String getTimeHMS(long time) {
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Utils.getCalendar();
         cal.setTimeInMillis(time*1000);
 
         String sHour, sMinute, sSecond;
@@ -92,7 +95,7 @@ public class Time {
         int minute = Integer.valueOf(fields[1]);
         int second = Integer.valueOf(fields[2]);
 
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Utils.getCalendar();
         cal.set(year, month, date, hour, minute, second);
 
         long millis = cal.getTimeInMillis()/1000;
