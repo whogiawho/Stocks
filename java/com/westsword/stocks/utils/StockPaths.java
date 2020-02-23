@@ -1,9 +1,12 @@
 package com.westsword.stocks.utils;
 
 import com.westsword.stocks.Stock;
+import com.westsword.stocks.Utils;
 import com.westsword.stocks.Settings;
 
 public class StockPaths {
+    private final static String sSep = Utils.getSeperator();
+
     public static String getStockRootDir() {
         return Settings.rootDir;
     }
@@ -11,19 +14,23 @@ public class StockPaths {
         return Settings.dailyDir;
     }
     public static String getDailyDir(String stockCode) {
-        return getDailyDir()+stockCode+"\\";
+        return getDailyDir()+stockCode+sSep;
     }
     public static String getDailyDir(String stockCode, String tradeDate) {
-        return getDailyDir()+stockCode+"\\"+tradeDate+"\\";
+        return getDailyDir()+stockCode+sSep+tradeDate+sSep;
     }
 
     //raw tradeDetails.txt
     public static String getRawTradeDetailsFile(String stockCode, String tradeDate) {
-        return getStockRootDir() + "data\\rawTradeDetails\\"+stockCode+"\\"+stockCode+"."+tradeDate+".txt";
+        String sPath = getStockRootDir() + "data"+sSep+"rawTradeDetails";
+        sPath += sSep+stockCode+sSep+stockCode+"."+tradeDate+".txt";
+        return sPath;
     }
     //raw pankou.txt
     public static String getPankouTxt(String stockCode, String tradeDate) {
-        return getStockRootDir() + "data\\rawPankou\\"+stockCode+"\\"+tradeDate+"\\"+"pankou"+"\\"+"pankou.txt";
+        String sPath = getStockRootDir() + "data"+sSep+"rawPankou";
+        sPath += sSep+stockCode+sSep+tradeDate+sSep+"pankou"+sSep+"pankou.txt";
+        return sPath;
     }
 
 
@@ -34,16 +41,16 @@ public class StockPaths {
 
     
     public static String getSSRootDir() {
-        return getStockRootDir() + "\\data\\similarStack\\";
+        return getStockRootDir() + sSep + "data" + sSep + "similarStack" + sSep;
     }
     public static String getSimilarStackDir(String stockCode) {
-        return getSSRootDir() + stockCode + "\\";
+        return getSSRootDir() + stockCode + sSep;
     }
     public static String getSSTradeDetailsLogDir0(String stockCode, String startDate, 
             double threshold, int tradeType, int sTDistance) {
         String sDir = "";
         sDir += getSimilarStackDir(stockCode) + startDate + "_" + String.format("%.2f", threshold);
-        sDir += "_" + "T" + sTDistance + getTradeTypeSymbol(tradeType) + "\\";
+        sDir += "_" + "T" + sTDistance + getTradeTypeSymbol(tradeType) + sSep;
 
         return sDir;
     }
@@ -54,7 +61,7 @@ public class StockPaths {
                 threshold, tradeType, sTDistance);
 
         sDir += tradeDate + "_" + String.format("%03d_%.3f", maxCycle, targetRate);
-        sDir += "\\";
+        sDir += sSep;
 
         return sDir;
     }
@@ -99,7 +106,7 @@ public class StockPaths {
 
 
     public static String getSpecialDatesDir() {
-        return getStockRootDir() + "specialDates\\";
+        return getStockRootDir() + "specialDates" + sSep;
     }
     public static String getSuspensionDatesFile(String stockCode) {
         return getSpecialDatesDir() + stockCode + ".suspension.txt";
@@ -113,7 +120,7 @@ public class StockPaths {
 
 
     public static String getLogDir() {
-        return getStockRootDir() + "data\\log\\";
+        return getStockRootDir() + "data" + sSep + "log" + sSep;
     }
     public static String getPerformanceLogFile() {
         return getLogDir() + "performance.log";

@@ -276,6 +276,12 @@ public class GetSettings{
         lc = Locale.getDefault();
         System.out.format("TimeZone=%s Locale=%s\n", tz.toString(), lc.toString());
     }
+    public static void testSystem(String stockCode) {
+        System.out.format("\n testSystem: \n");
+
+        String sOS = System.getProperty("os.name");
+        System.out.format("sOS=%s\n", sOS);
+    }
 
     public static void main(String args[]) throws Exception {
         String stockCode="600030";
@@ -293,7 +299,7 @@ public class GetSettings{
         //testTradeDates(stockCode, "20160108", "20191231");
 
         //testSettings();       
-        //testMisc();       
+        testMisc();       
 
         /*
         testSdTime(1);       
@@ -308,8 +314,9 @@ public class GetSettings{
         //testCheck(stockCode, "111000_123000_143000_145000");
         //testCheck(stockCode, "111000_123000");
         //testCheck(stockCode, "111000");
-        testCalendar(stockCode);
-        testTreeMap(stockCode);
+        //testCalendar(stockCode);
+        //testTreeMap(stockCode);
+        testSystem(stockCode);
 
         //testAmManager(stockCode);
         //testTreeMap(stockCode);

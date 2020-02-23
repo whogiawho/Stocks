@@ -12,14 +12,9 @@ import com.westsword.stocks.base.time.NatureDates;
 import org.apache.commons.io.FileUtils;
 
 public class Utils {
-    private static boolean bSwitchOfRawData;
-    private static String sTz;
-    private static String sLc;
-    static {
-        sTz = Settings.getTimeZone();
-        sLc = Settings.getLocale();
-        bSwitchOfRawData = Settings.getSwitchOfRawData();
-    }
+    private final static boolean bSwitchOfRawData = Settings.getSwitch(Settings.SWITCH_OF_RAW_DATA);
+    private final static String sTz = Settings.getTimeZone();
+    private final static String sLc = Settings.getLocale();
 
 
     public static boolean existFile(String path) {
@@ -275,4 +270,15 @@ public class Utils {
         return pairs;
     }
 
+    public static boolean isWindows()
+    {
+        return System.getProperty("os.name").startsWith("Windows");
+    }
+    public static boolean isLinux()
+    {
+        return  System.getProperty("os.name").startsWith("Linux");
+    }
+    public static String getSeperator() {
+        return Utils.isWindows()? "\\":"/";
+    }
 }

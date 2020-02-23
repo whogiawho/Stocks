@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import com.westsword.stocks.Settings;
+import com.westsword.stocks.utils.StockPaths;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -55,7 +56,7 @@ public class TradeDates extends Dates {
 
     //get all tradeDates
     public static String[] getTradeDateList(String stockCode) {
-        String stockData = Settings.dailyDir + stockCode;
+        String stockData = StockPaths.getDailyDir(stockCode);
         //System.out.format("stockData=%s\n", stockData);
 
         File fStockData= new File(stockData);

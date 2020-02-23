@@ -9,8 +9,7 @@ public class SettingsHelper {
             return;
         }
 
-        Settings t = new Settings();
-        String value = t.getValue(Settings.settingFile, args[1]);
+        String value = Settings.getString(args[1]);
         System.out.format("%s", value);
     }
     public static void setValue(String args[]) {
@@ -20,7 +19,7 @@ public class SettingsHelper {
         }
 
         Settings t = new Settings();
-        t.setValue(Settings.settingFile, args[1], args[2]);
+        t.setValue(args[1], args[2]);
     }
 
 
