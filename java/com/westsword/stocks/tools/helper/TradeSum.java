@@ -26,7 +26,7 @@ public class TradeSum {
         hmsList = fields[8];
         actualAvgNetRevenue = Double.valueOf(fields[9]);
 
-        boolean bSwitchOfRawData = Settings.getSwitchOfRawData();
+        boolean bSwitchOfRawData = Settings.getSwitch(Settings.SWITCH_OF_RAW_DATA);
         if(bSwitchOfRawData) {
             String sFormat = "%s %4d %8.0f%% %8.3f %8.3f %8.3f %8.3f %s %s %8.3f\n";
             System.out.format(sFormat, 

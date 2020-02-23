@@ -170,7 +170,7 @@ public class RawRTPankou {
         String hms = Time.getTimeHMS(mSecondsFrom1970Time);
         mStrTime += hms;
 
-        boolean bSwitchOfRawData = Settings.getSwitchOfRawData();
+        boolean bSwitchOfRawData = Settings.getSwitch(Settings.SWITCH_OF_RAW_DATA);
 
         if(bSwitchOfRawData) {
             String sFormat = "%8s %8s %8s\n";

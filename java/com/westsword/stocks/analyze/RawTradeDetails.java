@@ -29,7 +29,7 @@ public class RawTradeDetails {
         int second = c.get(Calendar.SECOND);
         strTime += hour+":"+minute+":"+second;
 
-        boolean bSwitchOfRawData = Settings.getSwitchOfRawData();
+        boolean bSwitchOfRawData = Settings.getSwitch(Settings.SWITCH_OF_RAW_DATA);
         if(bSwitchOfRawData) {
             String str = String.format("%20s %20f %8d %8d", strTime, price, count, type);
             System.out.println(str);

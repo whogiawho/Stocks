@@ -9,18 +9,28 @@ import com.westsword.stocks.utils.FileLoader;
 import org.apache.commons.io.FileUtils;
 
 public class Settings extends FileLoader {
-    public final static String rootDir="d:\\Stocks\\";
-    public final static String dailyDir=rootDir+"data\\daily\\";
-    public final static String settingFile=rootDir+"settings.txt";
+    public final static String rootDir = getValueWOS("d:\\Stocks\\", "/root/Stocks/");
+    public final static String dailyDir = rootDir + getValueWOS("data\\daily\\", "data/daily/");
+    public final static String settingFile = rootDir + "settings.txt";
+    public final static String sC4TradeDetailsExe = rootDir +
+        getValueWOS("bin\\c4tradedetails.exe", "bin/c4tradedetails.exe");
 
-    public final static String sC4TradeDetailsExe = rootDir+"bin\\c4tradedetails.exe";
 
-
+    private static String getValueWOS(String sWin, String sLinux) {
+        String sValue = sWin;
+        if(Utils.isLinux()) {
+            sValue = sLinux;
+        }
+        return sValue;
+    }
 
 
     private void appendValue(String file, String key, String value) {
         String line = String.format("%s=%s\r\n", key, value);
         Utils.append2File(file, line);
+    }
+    public void setValue(String key, String value) {
+        setValue(settingFile, key, value);
     }
     public void setValue(String file, String key, String value) {
         if(!Utils.existFile(file)) {
@@ -109,9 +119,6 @@ public class Settings extends FileLoader {
     public static Integer getSdInterval() {
         return getInteger("SdInterval");
     }
-    public static boolean getSwitchOfRawData() {
-        return getBoolean("switchOfRawData");
-    }
 
     public static String getPriceDecimalFormat() {
         return getString("PriceDecimalFormat");
@@ -196,8 +203,10 @@ public class Settings extends FileLoader {
 
 
     public final static int NO_PERFORMANCE_LOG = 0;
+    public final static int SWITCH_OF_RAW_DATA = 1;
     public final static String[] OutputFileKey = {
         "noPerformanceLog",
+        "switchOfRawData",
     };
 
     public static boolean getSwitch(int idx) {
