@@ -8,6 +8,7 @@ public class StockPaths {
     private final static String sSep = Utils.getSeperator();
 
     private static String getValueWOS(String sWin, String sLinux) {
+        //System.out.format("StockPaths.getValueWOS: %s %s\n", sWin, sLinux);
         String sValue = sWin;
         if(Utils.isLinux()) {
             sValue = sLinux;
@@ -28,6 +29,7 @@ public class StockPaths {
     public static String getSettingFile() {
         return StockPaths.getStockRootDir() + "settings.txt";
     }
+
     public static String getDailyDir(String stockCode) {
         return getDailyDir()+stockCode+sSep;
     }

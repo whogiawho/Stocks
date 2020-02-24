@@ -261,7 +261,7 @@ public class GetSettings{
     public static void testCheck(String stockCode, String hmsList) {
         System.out.format("\n testCheck: \n");
 
-        String sOut = SSUtils.checkHMSList(hmsList)? "Pass": "Fail";
+        String sOut = SSUtils.checkHMSList(hmsList, 2)? "Pass": "Fail";
         System.out.format("%s %s\n", hmsList, sOut);
     }
     public static void testCalendar(String stockCode) {

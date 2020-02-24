@@ -77,6 +77,24 @@ public class SSUtils {
         return getString(cmd, "l", null);
     }
 
+
+    //in case that false is returned, out[0] is not a complete amcorrel for hms[]
+    public static boolean isHMSMatched(String tradeDate0, String tradeDate1, String[] hms, AmManager am, 
+            double threshold, String[] out) {
+        String sAmCorrels = "";
+        boolean bHMSMatched = true;
+        for(int i=1; i<hms.length; i++) {
+            double amcorrel = am.getAmCorrel(tradeDate0, tradeDate1, hms[0], hms[i]);
+            sAmCorrels += String.format("%8.3f ", amcorrel);
+            if(amcorrel==Double.NaN || amcorrel<threshold) {
+                bHMSMatched = false;
+                break;
+            }
+        }
+        out[0] = sAmCorrels;
+
+        return bHMSMatched;
+    }
     public static ArrayList<String> getSimilarTradeDates(SSInstance r, AmManager am) {
         return getSimilarTradeDates(r.stockCode, r.startDate, r.threshold,
                 r.tradeDate, r.hmsList, am);
@@ -86,21 +104,11 @@ public class SSUtils {
         ArrayList<String> tradeDateList = new ArrayList<String>();
 
         String[] hms = hmsList.split("_");
-        hms[0] = HMS.formalize(hms[0]);
         TradeDates tradeDates = new TradeDates(stockCode);
         String tradeDate0 = startDate;
         while(tradeDate0 != null) {
-            String sAmCorrels = "";
-            boolean bHMSMatched = true;
-            for(int i=1; i<hms.length; i++) {
-                hms[i] = HMS.formalize(hms[i]);
-                double amcorrel = am.getAmCorrel(tradeDate0, tradeDate, hms[0], hms[i]);
-                sAmCorrels += String.format("%8.3f ", amcorrel);
-                if(amcorrel < threshold) {
-                    bHMSMatched = false;
-                    break;
-                }
-            }
+            String[] out = new String[1]; 
+            boolean bHMSMatched = isHMSMatched(tradeDate0, tradeDate, hms, am, threshold, out);
             if(bHMSMatched)
                 tradeDateList.add(tradeDate0);
             /*
@@ -113,6 +121,7 @@ public class SSUtils {
 
         return tradeDateList;
     }
+
 
     public static String getInHMS(String hmsList) {
         String[] fields = HMS.getHMSArray(hmsList);
@@ -147,9 +156,16 @@ public class SSUtils {
 
         return bCheck;
     }
-    public static boolean checkHMSList(String hmsList) {
-        String regEx = "^[0-9]{6}(_[0-9]{6}){1,}[flFL]?$";
+    //minHMS>=2
+    //maxHMS<=100
+    public static boolean checkHMSList(String hmsList, int minHMS, int maxHMS) {
+        minHMS -= 1;
+        maxHMS -= 1;
+        String regEx = "^[0-9]{6}(_[0-9]{6}){" + minHMS + "," + maxHMS + "}[flFL]?$";
         return hmsList.matches(regEx);
+    }
+    public static boolean checkHMSList(String hmsList, int minHMS) {
+        return checkHMSList(hmsList, minHMS, 100);
     }
 
 }

@@ -14,6 +14,7 @@ public class AnalyzeTools{
         System.err.println("       commands are listed below:");
         System.err.println("       [ getvalue | setvalue | decode | makeanalysistxt |\n" +
                 "         getamcorrel | getrel | getupprice | getdownprice |\n" +
+                "         ssgroupchar | ssgroupchars |\n" +
                 "         ssinstance | ssinstances | getfullss ]");
 
         System.exit(-1);
@@ -53,6 +54,12 @@ public class AnalyzeTools{
         } else if (sOption.equals("ssinstances")) {
             SSInstancesHelper ssih = new SSInstancesHelper();
             ssih.run(args);
+        } else if (sOption.equals("ssgroupchar")) {
+            SSGroupHelper ssgh = new SSGroupHelper();
+            ssgh.listChar(args);
+        } else if (sOption.equals("ssgroupchars")) {
+            SSGroupHelper ssgh = new SSGroupHelper();
+            ssgh.listChars(args);
         } else if (sOption.equals("getfullss")) {
             FullSSHelper fullssh = new FullSSHelper();
             fullssh.run(args);
