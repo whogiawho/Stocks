@@ -29,6 +29,9 @@ public class AmManager {
 
         load(mAmRecordMap, tradeDates);
     }
+    public AmManager(String stockCode, ArrayList<String> tradeDateList) {
+        this(stockCode, tradeDateList.toArray(new String[0]));
+    }
 
 
     public void load(TreeMap<Integer, AmRecord> rMap, String[] sTradeDates) {
@@ -119,6 +122,7 @@ public class AmManager {
             y[j] = map1.get(key).am;
             j++;
         }
+        //System.out.format("%d %d %s %s\n", size0, size1, Arrays.toString(x), Arrays.toString(y));
         
         amCorrel = new PearsonsCorrelation().correlation(x, y);
 

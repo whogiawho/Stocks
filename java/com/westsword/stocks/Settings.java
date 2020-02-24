@@ -5,24 +5,11 @@ import java.nio.charset.*;
 import java.util.regex.*;
 
 import com.westsword.stocks.utils.FileLoader;
+import com.westsword.stocks.utils.StockPaths;
 
 import org.apache.commons.io.FileUtils;
 
 public class Settings extends FileLoader {
-    public final static String rootDir = getValueWOS("d:\\Stocks\\", "/root/Stocks/");
-    public final static String dailyDir = rootDir + getValueWOS("data\\daily\\", "data/daily/");
-    public final static String settingFile = rootDir + "settings.txt";
-    public final static String sC4TradeDetailsExe = rootDir +
-        getValueWOS("bin\\c4tradedetails.exe", "bin/c4tradedetails.exe");
-
-
-    private static String getValueWOS(String sWin, String sLinux) {
-        String sValue = sWin;
-        if(Utils.isLinux()) {
-            sValue = sLinux;
-        }
-        return sValue;
-    }
 
 
     private void appendValue(String file, String key, String value) {
@@ -30,7 +17,7 @@ public class Settings extends FileLoader {
         Utils.append2File(file, line);
     }
     public void setValue(String key, String value) {
-        setValue(settingFile, key, value);
+        setValue(StockPaths.getSettingFile(), key, value);
     }
     public void setValue(String file, String key, String value) {
         if(!Utils.existFile(file)) {
@@ -145,7 +132,7 @@ public class Settings extends FileLoader {
         return value;
     }
     public static Long getLong(String key, int radix) {
-        return getLong(Settings.settingFile, key, radix);
+        return getLong(StockPaths.getSettingFile(), key, radix);
     }
     //return null if key does not exist
     public static Integer getInteger(String sFile, String key) {
@@ -159,7 +146,7 @@ public class Settings extends FileLoader {
         return value;
     }
     public static Integer getInteger(String key) {
-        return getInteger(Settings.settingFile, key);
+        return getInteger(StockPaths.getSettingFile(), key);
     }
     //return null if key does not exist
     public static Double getDouble(String sFile, String key) {
@@ -173,7 +160,7 @@ public class Settings extends FileLoader {
         return value;
     }
     public static Double getDouble(String key) {
-        return getDouble(Settings.settingFile, key);
+        return getDouble(StockPaths.getSettingFile(), key);
     }
     //return null if key does not exist
     public static String getString(String sFile, String key) {
@@ -184,7 +171,7 @@ public class Settings extends FileLoader {
         return sValue;
     }
     public static String getString(String key) {
-        return getString(Settings.settingFile, key);
+        return getString(StockPaths.getSettingFile(), key);
     }
     //return null if key does not exist
     public static Boolean getBoolean(String sFile, String key) {
@@ -198,7 +185,7 @@ public class Settings extends FileLoader {
         return value;
     }
     public static Boolean getBoolean(String key) {
-        return getBoolean(Settings.settingFile, key);
+        return getBoolean(StockPaths.getSettingFile(), key);
     }
 
 

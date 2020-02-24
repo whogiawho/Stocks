@@ -6,7 +6,6 @@ import java.util.*;
 import com.westsword.stocks.Settings;
 import com.westsword.stocks.utils.StockPaths;
 
-import org.apache.commons.lang3.ArrayUtils;
 
 
 //the class to get dates from stockCode's daily dir

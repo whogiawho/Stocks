@@ -7,11 +7,26 @@ import com.westsword.stocks.Settings;
 public class StockPaths {
     private final static String sSep = Utils.getSeperator();
 
+    private static String getValueWOS(String sWin, String sLinux) {
+        String sValue = sWin;
+        if(Utils.isLinux()) {
+            sValue = sLinux;
+        }
+        return sValue;
+    }
+
+
     public static String getStockRootDir() {
-        return Settings.rootDir;
+        return getValueWOS("d:\\Stocks\\", "/root/Stocks/");
     }
     public static String getDailyDir() {
-        return Settings.dailyDir;
+        return getStockRootDir() + getValueWOS("data\\daily\\", "data/daily/");
+    }
+    public static String getC4TradeDetailsExe() {
+        return getStockRootDir() + getValueWOS("bin\\c4tradedetails.exe", "bin/c4tradedetails.exe");
+    }
+    public static String getSettingFile() {
+        return StockPaths.getStockRootDir() + "settings.txt";
     }
     public static String getDailyDir(String stockCode) {
         return getDailyDir()+stockCode+sSep;

@@ -8,7 +8,7 @@ import com.westsword.stocks.am.AmManager;
 import com.westsword.stocks.base.time.StockDates;
 
 public class SSiManager {
-    public final static int MaxThreads = 30;
+    public final static int MaxThreads = 8;
 
     private boolean mRunPseudoTask = false;
     private volatile int mConcurrent;
