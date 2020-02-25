@@ -74,6 +74,7 @@
         <jar destfile="${jar.dir}/${analyzetools}.jar" basedir="${classes.dir}" 
             includes="com/westsword/stocks/*.class,
                 com/westsword/stocks/utils/*.class,
+                com/westsword/stocks/analyze/*.class,
                 com/westsword/stocks/tools/AnalyzeTools*.class,
                 com/westsword/stocks/tools/helper/*.class,
                 com/westsword/stocks/am/*.class,

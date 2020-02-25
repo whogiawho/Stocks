@@ -94,24 +94,4 @@ public class SSInstanceHelper {
         return cmd;
     }
 
-
-
-
-
-    private TreeMap<String, String> getTradeDate2InHmsMap(String stockCode, String startDate, double threshold, 
-            String tradeDate0, String hmsList, AmManager am) {
-        TreeMap<String, String> td2ihMap = new TreeMap<String, String>();
-
-        String[] fields = hmsList.split("o");
-        for(int i=0; i<fields.length; i++) {
-            String inHMS = SSUtils.getInHMS(fields[i]);
-            ArrayList<String> similarTradeDates = SSUtils.getSimilarTradeDates(stockCode, startDate, threshold, 
-                    tradeDate0, fields[i], am);
-            for(int j=0; j<similarTradeDates.size(); j++) {
-                td2ihMap.put(similarTradeDates.get(j), inHMS);
-            }
-        }
-
-        return td2ihMap;
-    }
 }

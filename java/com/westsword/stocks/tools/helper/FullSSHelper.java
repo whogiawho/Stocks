@@ -80,6 +80,9 @@ public class FullSSHelper {
     }
 
 
+    //2 possibilities:
+    //  only sTradeDateList
+    //  [startDate, lastTradeDate]
     private TradeDates getTradeDates(String stockCode, String startDate, String sTradeDateList) {
         TradeDates tradeDates;
         String[] sTradeDates;

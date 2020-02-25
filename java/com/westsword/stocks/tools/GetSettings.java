@@ -250,10 +250,10 @@ public class GetSettings{
         ArrayList<TradeSum> list = new ArrayList<TradeSum>();
         l.load(sTradeSumFile, list);
     }
-    public static void testSSiManager(String stockCode) {
-        System.out.format("\n testSSiManager: \n");
+    public static void testTaskManager(String stockCode) {
+        System.out.format("\n testTaskManager: \n");
 
-        SSiManager m = new SSiManager();
+        TaskManager m = new TaskManager();
         while(true) {
             m.run();
         }
@@ -316,14 +316,14 @@ public class GetSettings{
         //testCheck(stockCode, "111000");
         //testCalendar(stockCode);
         //testTreeMap(stockCode);
-        testSystem(stockCode);
+        //testSystem(stockCode);
 
         //testAmManager(stockCode);
         //testTreeMap(stockCode);
         //testCkpt(stockCode);
         //testCombination(stockCode);
         //testTradeSumLoader(stockCode);
-        //testSSiManager(stockCode);
+        testTaskManager(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
