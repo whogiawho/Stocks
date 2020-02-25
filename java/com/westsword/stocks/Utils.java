@@ -281,4 +281,13 @@ public class Utils {
     public static String getSeperator() {
         return Utils.isWindows()? "\\":"/";
     }
+
+    public static String getAmcKey(String tradeDate0, String tradeDate1, String startHMS, String endHMS) {
+        String sHMSPair = startHMS + "," + endHMS;
+        String key = tradeDate0 + ",";
+        key += tradeDate1 + ",";
+        key += sHMSPair;
+
+        return key;
+    }
 }

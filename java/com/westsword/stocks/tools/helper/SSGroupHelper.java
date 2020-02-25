@@ -143,9 +143,7 @@ public class SSGroupHelper {
             for(int j=0; j<tradeDateList.size(); j++) {
                 String tradeDate1 = tradeDateList.get(j);
 
-                String[] out = new String[1]; 
-                SSUtils.isHMSMatched(tradeDate0, tradeDate1, hms, am, 0.90, out);
-                Double amcorrel = Double.valueOf(out[0]);
+                Double amcorrel = getAmCorrel(tradeDate0, tradeDate1, hms[0], hms[1], am);
                 if(amcorrel != Double.NaN) {
                     avgAmCorrel += amcorrel;
                     count++;
@@ -158,4 +156,8 @@ public class SSGroupHelper {
         }
     }
 
+    public static double getAmCorrel(String tradeDate0, String tradeDate1, String startHMS, String endHMS, 
+            AmManager am) {
+        return am.getAmCorrel(tradeDate0, tradeDate1, startHMS, endHMS);
+    }
 }
