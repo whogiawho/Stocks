@@ -2,7 +2,7 @@ package com.westsword.stocks.am;
 
 import java.util.*;
 
-import com.westsword.stocks.utils.FileLoader;
+import com.westsword.stocks.base.utils.FileLoader;
 
 public class AmRecordLoader extends FileLoader {
     private ArrayList<AmRecord> mAmRecordList = null;

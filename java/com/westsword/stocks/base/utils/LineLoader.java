@@ -1,8 +1,7 @@
-package com.westsword.stocks.utils;
+package com.westsword.stocks.base.utils;
+
 
 import java.util.*;
-
-import com.westsword.stocks.utils.FileLoader;
 
 public class LineLoader extends FileLoader {
     private ArrayList<String> mLines = null;

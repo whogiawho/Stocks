@@ -5,7 +5,7 @@ import java.util.*;
 
 import com.westsword.stocks.am.AmManager;
 import com.westsword.stocks.base.time.*;
-import com.westsword.stocks.utils.AnsiColor;
+import com.westsword.stocks.base.utils.AnsiColor;
 
 import org.apache.commons.cli.*;
 
@@ -113,7 +113,7 @@ public class SSUtils {
                 tradeDateList.add(tradeDate0);
             /*
             System.out.format("%s %s %s %s\n", 
-                    tradeDate0, tradeDate, hmsList, sAmCorrels);
+                    tradeDate0, tradeDate, hmsList, out[0]);
             */
 
             tradeDate0 = tradeDates.nextDate(tradeDate0);

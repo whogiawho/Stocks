@@ -1,4 +1,4 @@
-package com.westsword.stocks.utils;
+package com.westsword.stocks.base.utils;
 
 public class AnsiColor {
     //something like \\uxxxx is a Unicode char with hex value xxxx

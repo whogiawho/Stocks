@@ -49,7 +49,7 @@
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/${splitrawtradedetails}.jar" basedir="${classes.dir}" 
             includes="com/westsword/stocks/Utils.class,
-                com/westsword/stocks/utils/*.class,
+                com/westsword/stocks/base/utils/*.class,
                 com/westsword/stocks/tools/SplitRawTradeDetails.class">
             <manifest>
                 <attribute name="Main-Class" value="${splitrawtradedetails-main-class}"/>
@@ -61,7 +61,7 @@
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/${splitrawpankou}.jar" basedir="${classes.dir}" 
             includes="com/westsword/stocks/Utils.class,
-                com/westsword/stocks/utils/*.class,
+                com/westsword/stocks/base/utils/*.class,
                 com/westsword/stocks/tools/SplitRawPankou.class">
             <manifest>
                 <attribute name="Main-Class" value="${splitrawpankou-main-class}"/>
@@ -73,7 +73,7 @@
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/${analyzetools}.jar" basedir="${classes.dir}" 
             includes="com/westsword/stocks/*.class,
-                com/westsword/stocks/utils/*.class,
+                com/westsword/stocks/base/utils/*.class,
                 com/westsword/stocks/analyze/*.class,
                 com/westsword/stocks/tools/AnalyzeTools*.class,
                 com/westsword/stocks/tools/helper/*.class,
@@ -95,7 +95,7 @@
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/${getsettings}.jar" basedir="${classes.dir}" 
             includes="com/westsword/stocks/*.class,
-                com/westsword/stocks/utils/*.class,
+                com/westsword/stocks/base/utils/*.class,
                 com/westsword/stocks/tools/*.class,
                 com/westsword/stocks/tools/helper/*.class,
                 com/westsword/stocks/am/*.class,
@@ -117,7 +117,7 @@
         <jar destfile="${jar.dir}/${topost0}.jar" basedir="${classes.dir}" 
             includes="com/westsword/stocks/base/ConvertDD2Double.class,
                 com/westsword/stocks/tools/ToPost0.class,
-                com/westsword/stocks/utils/*.class,
+                com/westsword/stocks/base/utils/*.class,
                 com/westsword/stocks/Stock.class">
             <manifest>
                 <attribute name="Main-Class" value="${topost0-main-class}"/>

@@ -7,8 +7,8 @@ import org.apache.commons.math3.util.Combinations;
 import org.apache.commons.math3.stat.descriptive.moment.*;
 
 import com.westsword.stocks.am.AmManager;
-import com.westsword.stocks.utils.AnsiColor;
-import com.westsword.stocks.utils.LineLoader;
+import com.westsword.stocks.base.utils.AnsiColor;
+import com.westsword.stocks.base.utils.LineLoader;
 import com.westsword.stocks.base.ckpt.CheckPoint0;
 
 public class SSGroupHelper {

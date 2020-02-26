@@ -1,4 +1,5 @@
-package com.westsword.stocks.utils;
+package com.westsword.stocks.base.utils;
+
 
 import com.westsword.stocks.Stock;
 import com.westsword.stocks.Utils;
@@ -141,5 +142,13 @@ public class StockPaths {
     }
     public static String getPerformanceLogFile() {
         return getLogDir() + "performance.log";
+    }
+
+
+    public static String getAmCorrelMapDir(String stockCode, String tradeDate) {
+        return getDailyDir(stockCode, tradeDate) + "amcorrelmap" + sSep;
+    }
+    public static String getAmCorrelMapFile(String stockCode, String tradeDate0, String tradeDate1) {
+        return getAmCorrelMapDir(stockCode, tradeDate0) + tradeDate1 + ".txt";
     }
 }

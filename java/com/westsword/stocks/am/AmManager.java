@@ -1,14 +1,13 @@
 package com.westsword.stocks.am;
 
+
 import java.util.*;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import com.westsword.stocks.Utils;
 import com.westsword.stocks.Stock;
-import com.westsword.stocks.utils.*;
-import com.westsword.stocks.utils.StockPaths;
 import com.westsword.stocks.base.time.*;
-
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import com.westsword.stocks.base.utils.*;
 
 public class AmManager {
 
@@ -84,6 +83,7 @@ public class AmManager {
         idx = mAmRecordMap.ceilingKey(idx);
         return mAmRecordMap.get(idx);
     }
+
 
     //startDate0,startHMS0 endDate0,endHMS0
     //startDate1,startHMS1 endDate1,endHMS1

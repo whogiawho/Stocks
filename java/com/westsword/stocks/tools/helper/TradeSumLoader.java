@@ -3,7 +3,7 @@ package com.westsword.stocks.tools.helper;
 
 import java.util.*;
 
-import com.westsword.stocks.utils.*;
+import com.westsword.stocks.base.utils.*;
 
 public class TradeSumLoader extends FileLoader {
     private String mText = null;

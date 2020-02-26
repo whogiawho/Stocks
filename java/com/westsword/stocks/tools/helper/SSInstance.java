@@ -7,8 +7,8 @@ import com.westsword.stocks.Stock;
 import com.westsword.stocks.Utils;
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.time.*;
-import com.westsword.stocks.base.Regression;
-import com.westsword.stocks.utils.StockPaths;
+import com.westsword.stocks.base.utils.StockPaths;
+import com.westsword.stocks.analyze.Regression;
 
 public class SSInstance {
     public String stockCode;

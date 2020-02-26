@@ -1,4 +1,4 @@
-package com.westsword.stocks.base;
+package com.westsword.stocks.analyze;
 
 
 import java.util.*;

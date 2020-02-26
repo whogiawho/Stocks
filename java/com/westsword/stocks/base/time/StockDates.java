@@ -4,8 +4,8 @@ import java.util.*;
 
 import com.westsword.stocks.Utils;
 import com.westsword.stocks.Settings;
-import com.westsword.stocks.utils.StockPaths;
-import com.westsword.stocks.utils.LineLoader;
+import com.westsword.stocks.base.utils.StockPaths;
+import com.westsword.stocks.base.utils.LineLoader;
 
 
 public class StockDates extends WorkDates {

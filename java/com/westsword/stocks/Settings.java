@@ -4,8 +4,8 @@ import java.io.*;
 import java.nio.charset.*;
 import java.util.regex.*;
 
-import com.westsword.stocks.utils.FileLoader;
-import com.westsword.stocks.utils.StockPaths;
+import com.westsword.stocks.base.utils.FileLoader;
+import com.westsword.stocks.base.utils.StockPaths;
 
 import org.apache.commons.io.FileUtils;
 

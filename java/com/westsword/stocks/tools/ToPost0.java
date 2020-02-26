@@ -9,7 +9,7 @@ import java.util.Calendar;
 
 import com.westsword.stocks.Stock;
 import com.westsword.stocks.Utils;
-import com.westsword.stocks.utils.FileLoader;
+import com.westsword.stocks.base.utils.FileLoader;
 import com.westsword.stocks.base.ConvertDD2Double;
 
 public class ToPost0 extends FileLoader {

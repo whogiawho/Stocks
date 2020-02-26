@@ -5,7 +5,7 @@ import java.util.*;
 import com.westsword.stocks.Stock;
 import com.westsword.stocks.Utils;
 import com.westsword.stocks.base.time.*;
-import com.westsword.stocks.utils.StockPaths;
+import com.westsword.stocks.base.utils.StockPaths;
 import com.westsword.stocks.analyze.RawTradeDetails;
 import com.westsword.stocks.analyze.RawTradeDetailsList;
 
