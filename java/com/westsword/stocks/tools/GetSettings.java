@@ -6,10 +6,9 @@ import java.util.*;
 import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.ckpt.*;
+import com.westsword.stocks.base.utils.*;
 
-import com.westsword.stocks.*;
 import com.westsword.stocks.am.*;
-import com.westsword.stocks.utils.*;
 import com.westsword.stocks.tools.helper.*;
 
 import org.apache.commons.io.FilenameUtils;
@@ -258,6 +257,75 @@ public class GetSettings{
             m.run();
         }
     }
+    public static void testFinal(String stockCode) {
+        System.out.format("\n testFinal: \n");
+
+
+        Boolean bSwitchOfRawData = Settings.booleanValues[Settings.SWITCH_OF_RAW_DATA];
+        System.out.format("bSwitchOfRawData = %s\n", bSwitchOfRawData);
+        
+        bSwitchOfRawData = Settings.getSwitch(Settings.SWITCH_OF_RAW_DATA);
+        System.out.format("bSwitchOfRawData = %s\n", bSwitchOfRawData);
+
+        bSwitchOfRawData = Settings.booleanValues[Settings.SWITCH_OF_RAW_DATA];
+        System.out.format("bSwitchOfRawData = %s\n", bSwitchOfRawData);
+    }
+    public static void testGetAmCorrel(String stockCode) {
+        System.out.format("\n testGetAmCorrel: \n");
+
+        String tradeDate0 = "20090115";
+        String tradeDate1 = "20090116";
+        String[] sTradeDates = {
+            tradeDate0,
+            tradeDate1,
+        };
+        AmManager m = new AmManager(stockCode, sTradeDates);
+        HashMap<String, Double> amcMap = new HashMap<String, Double>();
+
+        String hms0 = "09:30:00";
+        String hms1 = "15:00:00";
+        double amcorrel = getAmCorrel0(m, tradeDate0, tradeDate1, hms0, hms1);
+        String key = Utils.getAmcKey(tradeDate0, tradeDate1, hms0, hms1);
+        amcMap.put(key, amcorrel);
+        //
+        getAmCorrel1(amcMap, tradeDate0, tradeDate1, hms0, hms1);
+
+        hms0 = "09:30:00";
+        hms1 = "11:30:00";
+        amcorrel = getAmCorrel0(m, tradeDate0, tradeDate1, hms0, hms1);
+        key = Utils.getAmcKey(tradeDate0, tradeDate1, hms0, hms1);
+        amcMap.put(key, amcorrel);
+        //
+        getAmCorrel1(amcMap, tradeDate0, tradeDate1, hms0, hms1);
+
+        hms0 = "13:00:00";
+        hms1 = "15:00:00";
+        amcorrel = getAmCorrel0(m, tradeDate0, tradeDate1, hms0, hms1);
+        key = Utils.getAmcKey(tradeDate0, tradeDate1, hms0, hms1);
+        amcMap.put(key, amcorrel);
+        //
+        getAmCorrel1(amcMap, tradeDate0, tradeDate1, hms0, hms1);
+    }
+    //get amcorrel by AmManager
+    private static double getAmCorrel0(AmManager m, 
+            String tradeDate0, String tradeDate1, String hms0, String hms1) {
+        long start = System.currentTimeMillis();
+        double amcorrel = m.getAmCorrel(tradeDate0, tradeDate1, hms0, hms1);
+        long end = System.currentTimeMillis();
+        System.out.format("0: instant calculation(%s,%s) duration = %d\n", hms0, hms1, end-start);
+        return amcorrel;
+    }
+    //get amcorrel by a hashmap
+    private static double getAmCorrel1(HashMap<String, Double> amcMap, 
+            String tradeDate0, String tradeDate1, String hms0, String hms1) {
+        long start = System.currentTimeMillis();
+        String key = Utils.getAmcKey(tradeDate0, tradeDate1, hms0, hms1);
+        double amcorrel = amcMap.get(key);
+        long end = System.currentTimeMillis();
+        System.out.format("1: table get duration(%s,%s) = %d\n", hms0, hms1, end-start);
+
+        return amcorrel;
+    }
     public static void testCheck(String stockCode, String hmsList) {
         System.out.format("\n testCheck: \n");
 
@@ -271,7 +339,7 @@ public class GetSettings{
         Locale lc = Locale.getDefault();
         System.out.format("TimeZone=%s Locale=%s\n", tz.toString(), lc.toString());
 
-        cal = Utils.getCalendar();
+        cal = Time.getCalendar();
         tz = cal.getTimeZone();
         lc = Locale.getDefault();
         System.out.format("TimeZone=%s Locale=%s\n", tz.toString(), lc.toString());
@@ -299,7 +367,7 @@ public class GetSettings{
         //testTradeDates(stockCode, "20160108", "20191231");
 
         //testSettings();       
-        testMisc();       
+        //testMisc();       
 
         /*
         testSdTime(1);       
@@ -323,7 +391,9 @@ public class GetSettings{
         //testCkpt(stockCode);
         //testCombination(stockCode);
         //testTradeSumLoader(stockCode);
-        testTaskManager(stockCode);
+        //testTaskManager(stockCode);
+        //testGetAmCorrel(stockCode);
+        testFinal(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);

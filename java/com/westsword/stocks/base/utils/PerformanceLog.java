@@ -3,15 +3,15 @@ package com.westsword.stocks.base.utils;
 
 import java.util.*;
 
-import com.westsword.stocks.Utils;
-import com.westsword.stocks.Settings;
+import com.westsword.stocks.base.Utils;
+import com.westsword.stocks.base.Settings;
 
 public class PerformanceLog {
-    public final static boolean bNoPerformanceLog = Settings.getSwitch(Settings.NO_PERFORMANCE_LOG);
 
     public static long start() {
         long tStart = 0;
 
+        boolean bNoPerformanceLog = Settings.getSwitch(Settings.NO_PERFORMANCE_LOG);
         if(!bNoPerformanceLog) {
             tStart = System.currentTimeMillis();
         }
@@ -20,6 +20,7 @@ public class PerformanceLog {
     }
 
     public static void end(long tStart, String sFormat, Object... args) {
+        boolean bNoPerformanceLog = Settings.getSwitch(Settings.NO_PERFORMANCE_LOG);
         if(!bNoPerformanceLog) {
             long tEnd = System.currentTimeMillis();
 
