@@ -93,7 +93,6 @@ public class AmManager {
             String startDate1, String startHMS1, String endDate1, String endHMS1) {
         double amCorrel = Double.NaN;
 
-
         long startTp0 = Time.getSpecificTime(startDate0, startHMS0);
         long endTp0 = Time.getSpecificTime(endDate0, endHMS0);
         int startIdx0 = mSdTime.getAbs(startTp0);
@@ -113,6 +112,11 @@ public class AmManager {
                     startDate1, startHMS1, endDate1, endHMS1))
             return amCorrel;
 
+        return getAmCorrel(map0, map1);
+    }
+    private double getAmCorrel(NavigableMap<Integer, AmRecord> map0, NavigableMap<Integer, AmRecord> map1) {
+        int size0 = map0.size(); 
+        int size1 = map1.size(); 
         double[] x = new double[size0];
         double[] y = new double[size1];
         int i=0,j=0;
@@ -126,9 +130,7 @@ public class AmManager {
         }
         //System.out.format("%d %d %s %s\n", size0, size1, Arrays.toString(x), Arrays.toString(y));
         
-        amCorrel = new PearsonsCorrelation().correlation(x, y);
-
-        return amCorrel;
+        return new PearsonsCorrelation().correlation(x, y);
     }
     //support 2 kinds:
     //  startHMS<endHMS - f0&f1 is in one day
