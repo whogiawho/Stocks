@@ -3,7 +3,7 @@ package com.westsword.stocks.base.time;
 
 import java.util.*;
 
-import com.westsword.stocks.Settings;
+import com.westsword.stocks.base.Settings;
 
 public class Time {
     private final static String sTz = Settings.getTimeZone();

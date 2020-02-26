@@ -3,7 +3,7 @@ package com.westsword.stocks.analyze;
 
 import java.util.*;
 
-import com.westsword.stocks.Settings;
+import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.time.Time;
 
 public class RawTradeDetails {

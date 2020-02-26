@@ -3,8 +3,8 @@ package com.westsword.stocks.analyze;
 import java.io.*;
 import java.util.*;
 
-import com.westsword.stocks.Utils;
-import com.westsword.stocks.Settings;
+import com.westsword.stocks.base.Utils;
+import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.time.Time;
 
 public class RawRTPankou {

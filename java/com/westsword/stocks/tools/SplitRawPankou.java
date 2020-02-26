@@ -3,7 +3,7 @@ package com.westsword.stocks.tools;
 import java.io.*;
 import java.util.*;
 
-import com.westsword.stocks.Utils;
+import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.time.Time;
 import com.westsword.stocks.base.utils.ILoadFile;
 import com.westsword.stocks.base.utils.FileLoader;

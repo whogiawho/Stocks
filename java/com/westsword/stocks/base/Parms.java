@@ -1,6 +1,5 @@
-package com.westsword.stocks;
+package com.westsword.stocks.base;
 
-import java.util.*;
 
 public class Parms {
     public final static double BuyStockServiceRate = 0.0003;

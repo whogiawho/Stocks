@@ -3,7 +3,7 @@ package com.westsword.stocks.analyze;
 import java.io.*;
 import java.util.*;
 
-import com.westsword.stocks.Utils;
+import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.utils.FileLoader;
 import com.westsword.stocks.base.ConvertDD2Double;
 

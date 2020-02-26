@@ -1,6 +1,7 @@
 package com.westsword.stocks.base.time;
 
-import com.westsword.stocks.Utils;
+
+import com.westsword.stocks.base.Utils;
 
 public class HMS {
     //hhmmss --> hh:mm:ss

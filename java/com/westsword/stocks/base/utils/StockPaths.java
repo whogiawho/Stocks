@@ -1,9 +1,9 @@
 package com.westsword.stocks.base.utils;
 
 
-import com.westsword.stocks.Stock;
-import com.westsword.stocks.Utils;
-import com.westsword.stocks.Settings;
+import com.westsword.stocks.base.Stock;
+import com.westsword.stocks.base.Utils;
+import com.westsword.stocks.base.Settings;
 
 public class StockPaths {
     private final static String sSep = Utils.getSeperator();

@@ -1,4 +1,4 @@
-package com.westsword.stocks;
+package com.westsword.stocks.base;
 
 public class Stock {
     public final static int TRADE_TYPE_INVALID = 0;

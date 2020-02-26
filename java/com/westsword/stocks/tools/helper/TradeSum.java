@@ -1,6 +1,7 @@
 package com.westsword.stocks.tools.helper;
 
-import com.westsword.stocks.Settings;
+
+import com.westsword.stocks.base.Settings;
 
 public class TradeSum {
     public String tradeDate;

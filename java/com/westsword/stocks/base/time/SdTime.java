@@ -2,8 +2,8 @@ package com.westsword.stocks.base.time;
 
 import java.util.*;
 
-import com.westsword.stocks.Utils;
-import com.westsword.stocks.Settings;
+import com.westsword.stocks.base.Utils;
+import com.westsword.stocks.base.Settings;
 
 public class SdTime implements ISdTime {
     private int mSdInterval;

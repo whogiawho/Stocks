@@ -5,7 +5,6 @@ import java.util.*;
 import org.apache.commons.cli.*;
 import org.apache.commons.math3.util.Combinations;
 
-import com.westsword.stocks.Stock;
 import com.westsword.stocks.base.utils.*;
 import com.westsword.stocks.base.ckpt.*;
 import com.westsword.stocks.am.AmManager;

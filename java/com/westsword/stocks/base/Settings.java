@@ -1,13 +1,13 @@
-package com.westsword.stocks;
+package com.westsword.stocks.base;
+
 
 import java.io.*;
 import java.nio.charset.*;
 import java.util.regex.*;
+import org.apache.commons.io.FileUtils;
 
 import com.westsword.stocks.base.utils.FileLoader;
 import com.westsword.stocks.base.utils.StockPaths;
-
-import org.apache.commons.io.FileUtils;
 
 public class Settings extends FileLoader {
 
@@ -191,13 +191,21 @@ public class Settings extends FileLoader {
 
     public final static int NO_PERFORMANCE_LOG = 0;
     public final static int SWITCH_OF_RAW_DATA = 1;
-    public final static String[] OutputFileKey = {
+    public final static String[] booleanKeys = {
         "noPerformanceLog",
         "switchOfRawData",
     };
+    public final static Boolean[] booleanValues = {
+        null,
+        null,
+    };
 
     public static boolean getSwitch(int idx) {
-        String key = OutputFileKey[idx];
-        return getBoolean(key);
+        if(booleanValues[idx] == null) {
+            String key = booleanKeys[idx];
+            booleanValues[idx] = getBoolean(key);
+        }
+
+        return booleanValues[idx];
     }
 }

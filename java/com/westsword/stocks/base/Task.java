@@ -1,8 +1,7 @@
 package com.westsword.stocks.base;
 
-import java.util.*;
 
-import com.westsword.stocks.Utils;
+import java.util.*;
 
 //override runTask() to do your own things
 public class Task extends Thread {

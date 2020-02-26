@@ -1,7 +1,7 @@
 package com.westsword.stocks.base.time;
 
 
-import com.westsword.stocks.Settings;
+import com.westsword.stocks.base.Settings;
 
 public class AStockSdTime extends SdTime {
     public AStockSdTime() {

@@ -4,7 +4,7 @@ package com.westsword.stocks.base.time;
 import java.io.*;
 import java.util.*;
 
-import com.westsword.stocks.Settings;
+import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.utils.StockPaths;
 
 //the class to get dates from stockCode's daily dir

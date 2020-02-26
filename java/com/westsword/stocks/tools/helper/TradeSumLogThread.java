@@ -3,7 +3,7 @@ package com.westsword.stocks.tools.helper;
 
 import java.util.*;
 
-import com.westsword.stocks.Utils;
+import com.westsword.stocks.base.Utils;
 
 public class TradeSumLogThread extends Thread {
     private String tradeDate;

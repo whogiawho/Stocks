@@ -1,8 +1,9 @@
 package com.westsword.stocks.base.utils;
 
+
 import java.io.*;
 
-import com.westsword.stocks.Utils;
+import com.westsword.stocks.base.Utils;
 
 public class FileLoader implements ILoadFile {
 

@@ -2,8 +2,8 @@ package com.westsword.stocks.am;
 
 import java.util.*;
 
-import com.westsword.stocks.Stock;
-import com.westsword.stocks.Utils;
+import com.westsword.stocks.base.Stock;
+import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.StockPaths;
 import com.westsword.stocks.analyze.RawTradeDetails;

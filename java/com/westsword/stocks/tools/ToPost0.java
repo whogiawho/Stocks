@@ -7,7 +7,7 @@ import java.io.BufferedWriter;
 import java.io.BufferedReader;
 import java.util.Calendar;
 
-import com.westsword.stocks.Stock;
+import com.westsword.stocks.base.Stock;
 import com.westsword.stocks.base.time.Time;
 import com.westsword.stocks.base.utils.FileLoader;
 import com.westsword.stocks.base.ConvertDD2Double;

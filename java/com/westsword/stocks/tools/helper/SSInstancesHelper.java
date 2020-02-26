@@ -1,11 +1,12 @@
 package com.westsword.stocks.tools.helper;
 
+
 import java.util.*;
 import org.apache.commons.cli.*;
 
-import com.westsword.stocks.Stock;
-import com.westsword.stocks.Utils;
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.base.Stock;
+import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.time.*;
 
 public class SSInstancesHelper {
