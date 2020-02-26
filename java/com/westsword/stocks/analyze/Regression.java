@@ -3,9 +3,9 @@ package com.westsword.stocks.analyze;
 
 import java.util.*;
 
-import com.westsword.stocks.Stock;
-import com.westsword.stocks.Utils;
+import com.westsword.stocks.base.Stock;
 import com.westsword.stocks.am.AmRecord;
+import com.westsword.stocks.base.utils.Trade;
 
 public class Regression {
 
@@ -22,7 +22,7 @@ public class Regression {
         AmRecord rItem = null;
         double maxDeltaPriceBias = 0.0;
 
-        double targetProfit = Utils.getTargetProfit(targetRate, inPrice);
+        double targetProfit = Trade.getTargetProfit(targetRate, inPrice);
         if(tradeType == Stock.TRADE_TYPE_LONG) {
             for(Integer key: itemMap.keySet()) {
                 AmRecord item = itemMap.get(key);

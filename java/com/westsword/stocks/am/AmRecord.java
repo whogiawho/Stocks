@@ -1,7 +1,7 @@
 package com.westsword.stocks.am;
 
-import com.westsword.stocks.Stock;
-import com.westsword.stocks.Utils;
+import com.westsword.stocks.base.Stock;
+import com.westsword.stocks.base.utils.Trade;
 
 public class AmRecord {
     public long hexTimePoint;
@@ -41,10 +41,10 @@ public class AmRecord {
 
         if(tradeType == Stock.TRADE_TYPE_LONG) {
             outPrice = downPrice;
-            profit = Utils.getNetProfit(inPrice, outPrice);
+            profit = Trade.getNetProfit(inPrice, outPrice);
         } else {
             outPrice = upPrice;
-            profit = Utils.getNetProfit(outPrice, inPrice);
+            profit = Trade.getNetProfit(outPrice, inPrice);
         }
 
         return profit;
