@@ -1,20 +1,18 @@
 package com.westsword.stocks;
 
+
 import java.io.*;
 import java.math.*;
 import java.util.*;
 import java.text.*;
 import java.nio.charset.*;
 
-import com.westsword.stocks.base.time.Time;
 import com.westsword.stocks.base.time.NatureDates;
 
 import org.apache.commons.io.FileUtils;
 
 public class Utils {
     private final static boolean bSwitchOfRawData = Settings.getSwitch(Settings.SWITCH_OF_RAW_DATA);
-    private final static String sTz = Settings.getTimeZone();
-    private final static String sLc = Settings.getLocale();
 
 
     public static boolean existFile(String path) {
@@ -149,41 +147,6 @@ public class Utils {
     }
 
 
-    //append pankouYear to timeMissingYear, thus forming a time of format
-    //    year-month-day hour:min:second
-    //timeMissingYear[in]
-    //    month-day hour:min:second
-    public static long timeWOyear2Long(String timeMissingYear, String pankouYear) {
-        String[] list0 = timeMissingYear.split("-"); 
-        String sMonth = list0[0]; 
-        int month = Integer.valueOf(sMonth);
-        String[] list1 = list0[1].split(" "); 
-        String sDay = list1[0];
-        int day = Integer.valueOf(sDay);
-        String[] list2 = list1[1].split(":"); 
-        String sHour = list2[0];
-        int hour = Integer.valueOf(sHour);
-        String sMinute = list2[1];
-        int minute = Integer.valueOf(sMinute);
-        String sSecond = list2[2];
-        int second = Integer.valueOf(sSecond);
-
-        //Year, Month, Day, Hour, Minute, Second
-        Calendar cal = getCalendar();
-        int year;
-        if(pankouYear == null) {
-            cal.setTimeInMillis(System.currentTimeMillis());
-            year = cal.get(Calendar.YEAR);                             //get current year
-        } else {
-            year = Integer.valueOf(pankouYear);
-        }
-        cal.set(year, month-1, day, hour, minute, second);
-               
-        long millis = cal.getTimeInMillis()/1000;
-
-        return millis;
-    }
-
 
 
 
@@ -207,22 +170,6 @@ public class Utils {
 
 
 
-    public static Calendar getCalendar() {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(sTz), new Locale(sLc));
-        return cal;
-    }
-    public static Calendar getCalendar(String tradeDate) {
-        tradeDate = Time.unformalizeYMD(tradeDate);
-        int year = Integer.valueOf(tradeDate.substring(0, 4));
-        int month = Integer.valueOf(tradeDate.substring(4, 6)) - 1;
-        int date = Integer.valueOf(tradeDate.substring(6, 8));
-
-        Calendar cal = getCalendar();
-        cal.clear();
-        cal.set(year, month, date);
-
-        return cal;
-    }
 
     public static double roundUp(double inD) {
         String sFormat = Settings.getPriceDecimalFormat();
@@ -254,21 +201,6 @@ public class Utils {
         return getTargetProfit(targetRate, inPrice, 360);
     }
 
-    public static String[][] getPairs(String[] array) {
-        String[][] pairs = new String[array.length*(array.length-1)/2][2];
-
-        int k=0;
-        for(int i=0; i<array.length; i++) {
-            for(int j=i+1; j<array.length; j++) {
-                pairs[k][0] = array[i];
-                pairs[k][1] = array[j];
-
-                k++;
-            }
-        }
-
-        return pairs;
-    }
 
     public static boolean isWindows()
     {

@@ -2,7 +2,6 @@ package com.westsword.stocks.base.time;
 
 import java.util.*;
 
-import com.westsword.stocks.Utils;
 import com.westsword.stocks.base.time.Time;
 
 
@@ -10,8 +9,8 @@ import com.westsword.stocks.base.time.Time;
 //  Sat&Mon
 public class WorkDates extends Dates {
     public WorkDates(String start, String end) {        //start&end must be of format YYYYMMDD
-        Calendar cStart = Utils.getCalendar(start);
-        Calendar cEnd = Utils.getCalendar(end);
+        Calendar cStart = Time.getCalendar(start);
+        Calendar cEnd = Time.getCalendar(end);
 
         while(cStart.compareTo(cEnd)<=0) {
             int day = cStart.get(Calendar.DAY_OF_WEEK);

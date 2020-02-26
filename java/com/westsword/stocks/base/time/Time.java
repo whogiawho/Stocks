@@ -3,9 +3,13 @@ package com.westsword.stocks.base.time;
 
 import java.util.*;
 
-import com.westsword.stocks.Utils;
+import com.westsword.stocks.Settings;
 
 public class Time {
+    private final static String sTz = Settings.getTimeZone();
+    private final static String sLc = Settings.getLocale();
+
+
     public static String unformalizeYMD(String tradeDate) {
         return tradeDate.replace("-", "");
     }
@@ -37,6 +41,7 @@ public class Time {
         return sHMS;
     }
 
+
     public static String getTimeYMDHMS(long time) {
         String sYMD = getTimeYMD(time);
         String sHMS = getTimeHMS(time);
@@ -44,7 +49,7 @@ public class Time {
         return sYMD + "_" +sHMS;
     }
     public static String getTimeYMD(long time, boolean bWithMinus) {
-        Calendar cal = Utils.getCalendar();
+        Calendar cal = getCalendar();
         cal.setTimeInMillis(time*1000);
 
         String sYear, sMonth, sDay;
@@ -69,9 +74,8 @@ public class Time {
     public static String getTimeYMD(long time) {
         return getTimeYMD(time, true);
     }
-
     public static String getTimeHMS(long time) {
-        Calendar cal = Utils.getCalendar();
+        Calendar cal = getCalendar();
         cal.setTimeInMillis(time*1000);
 
         String sHour, sMinute, sSecond;
@@ -95,7 +99,7 @@ public class Time {
         int minute = Integer.valueOf(fields[1]);
         int second = Integer.valueOf(fields[2]);
 
-        Calendar cal = Utils.getCalendar();
+        Calendar cal = getCalendar();
         cal.set(year, month, date, hour, minute, second);
 
         long millis = cal.getTimeInMillis()/1000;
@@ -127,8 +131,26 @@ public class Time {
         return getSpecificTime(year, month, date, sTime);
     }
 
+
     public static String currentDate() {
         long tp = System.currentTimeMillis()/1000;
         return getTimeYMD(tp, false);
+    }
+
+
+    public static Calendar getCalendar() {
+        return Calendar.getInstance(TimeZone.getTimeZone(sTz), new Locale(sLc));
+    }
+    public static Calendar getCalendar(String tradeDate) {
+        tradeDate = unformalizeYMD(tradeDate);
+        int year = Integer.valueOf(tradeDate.substring(0, 4));
+        int month = Integer.valueOf(tradeDate.substring(4, 6)) - 1;
+        int date = Integer.valueOf(tradeDate.substring(6, 8));
+
+        Calendar cal = getCalendar();
+        cal.clear();
+        cal.set(year, month, date);
+
+        return cal;
     }
 }

@@ -35,6 +35,7 @@ public class AmManager {
 
     public void load(TreeMap<Integer, AmRecord> rMap, String[] sTradeDates) {
         long tStart = PerformanceLog.start();
+
         AmRecordLoader amLoader = new AmRecordLoader();
         for(int i=0; i<sTradeDates.length; i++) {
             String tradeDate = sTradeDates[i];
@@ -47,6 +48,7 @@ public class AmManager {
         }
         System.err.format("%s: loading complete\n", 
                 Utils.getCallerName(getClass()));
+
         PerformanceLog.end(tStart, "%s: loading analysis.txt = %d\n", 
                 Utils.getCallerName(getClass()));
     }

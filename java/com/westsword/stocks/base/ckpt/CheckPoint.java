@@ -3,7 +3,6 @@ package com.westsword.stocks.base.ckpt;
 
 import java.util.*;
 
-import com.westsword.stocks.Utils;
 import com.westsword.stocks.base.time.*;
 
 public class CheckPoint {
@@ -30,11 +29,6 @@ public class CheckPoint {
             System.out.format("%8d %s\n", idx++, ckpt);
         }
     }
-
-    public String[][] getPairs() {
-        return Utils.getPairs(mCkptList.toArray(new String[0]));
-    }
-
     public String getHMSList(int[] idxs) {
         String sHMSList = "";
 
@@ -48,4 +42,27 @@ public class CheckPoint {
         return sHMSList;
     }
 
+
+    public String[][] getPairs() {
+        return getPairs(mCkptList.toArray(new String[0]));
+    }
+
+
+
+
+    public static String[][] getPairs(String[] array) {
+        String[][] pairs = new String[array.length*(array.length-1)/2][2];
+
+        int k=0;
+        for(int i=0; i<array.length; i++) {
+            for(int j=i+1; j<array.length; j++) {
+                pairs[k][0] = array[i];
+                pairs[k][1] = array[j];
+
+                k++;
+            }
+        }
+
+        return pairs;
+    }
 }
