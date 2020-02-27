@@ -392,8 +392,8 @@ public class GetSettings{
         //testCombination(stockCode);
         //testTradeSumLoader(stockCode);
         //testTaskManager(stockCode);
-        //testGetAmCorrel(stockCode);
-        testFinal(stockCode);
+        //testFinal(stockCode);
+        testGetAmCorrel(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);

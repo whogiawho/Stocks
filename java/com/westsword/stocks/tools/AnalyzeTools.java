@@ -12,8 +12,8 @@ public class AnalyzeTools{
 
         System.err.println("usage: java AnalyzeTools commands");
         System.err.println("       commands are listed below:");
-        System.err.println("       [ getvalue | setvalue | decode | makeanalysistxt |\n" +
-                "         getamcorrel | getrel | getupprice | getdownprice |\n" +
+        System.err.println("       [ getvalue | setvalue | make1mamcmap | makeanalysistxt |\n" +
+                "         getamcorrel | getrel | getupprice | getdownprice | decode |\n" +
                 "         ssgroupchar | ssgroupchars |\n" +
                 "         ssinstance | ssinstances | getfullss ]");
 
@@ -38,6 +38,9 @@ public class AnalyzeTools{
             CoderHelper.decode(args);
         } else if (sOption.equals("makeanalysistxt")) {
             AnalysisHelper.makeTxt(args);
+        } else if (sOption.equals("make1mamcmap")) {
+            Amc1mMapHelper amcmh = new Amc1mMapHelper();
+            amcmh.make(args);
         } else if(sOption.equals("getupprice")) {
             AnalysisTxtHelper.getPrice(args);
         } else if(sOption.equals("getdownprice")) {
