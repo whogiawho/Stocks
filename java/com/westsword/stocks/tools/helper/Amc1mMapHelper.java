@@ -2,6 +2,7 @@ package com.westsword.stocks.tools.helper;
 
 
 import java.util.*;
+import java.util.concurrent.*;
 import org.apache.commons.math3.util.Combinations;
 
 import com.westsword.stocks.am.*;
@@ -35,7 +36,7 @@ public class Amc1mMapHelper {
         String amcorrelMapDir = StockPaths.getAmCorrelMapDir(stockCode, tradeDate0);
         Utils.mkDir(amcorrelMapDir);
 
-        HashMap<String, Double> amCorrelMap0 = AmcMap.load(stockCode, tradeDate0);
+        ConcurrentHashMap<String, Double> amCorrelMap0 = AmcMap.load(stockCode, tradeDate0);
 
         CheckPoint0 ckpt0 = new CheckPoint0();
         int length = ckpt0.getLength();
@@ -43,7 +44,7 @@ public class Amc1mMapHelper {
 
         for(int i=0; i<sTradeDates.length; i++) {
             String tradeDate1 = sTradeDates[i];
-            HashMap<String, Double> amCorrelMap1 = AmcMap.load(stockCode, tradeDate1, tradeDate0);
+            ConcurrentHashMap<String, Double> amCorrelMap1 = AmcMap.load(stockCode, tradeDate1, tradeDate0);
             String sOutFile = StockPaths.getAmCorrelMapFile(stockCode, tradeDate0, tradeDate1);
 
             Iterator<int[]> itr = c.iterator();
@@ -58,7 +59,7 @@ public class Amc1mMapHelper {
     }
     private void setAmCorrel2File(String stockCode, String tradeDate0, String tradeDate1,
             String startHMS, String endHMS, AmManager am, String sOutFile,
-            HashMap<String, Double> amCorrelMap0, HashMap<String, Double> amCorrelMap1) {
+            ConcurrentHashMap<String, Double> amCorrelMap0, ConcurrentHashMap<String, Double> amCorrelMap1) {
         //<tradeDate0,tradeDate1>'s check
         String key0 = Utils.getAmcKey(tradeDate0, tradeDate1, startHMS, endHMS);
         if(amCorrelMap0.get(key0)!=null)

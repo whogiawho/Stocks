@@ -2,6 +2,7 @@ package com.westsword.stocks.tools;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
@@ -280,49 +281,59 @@ public class GetSettings{
             tradeDate1,
         };
         AmManager m = new AmManager(stockCode, sTradeDates);
-        HashMap<String, Double> amcMap = new HashMap<String, Double>();
+        ConcurrentHashMap<String, Double> amcMap = new ConcurrentHashMap<String, Double>();
 
         String hms0 = "09:30:00";
         String hms1 = "15:00:00";
-        double amcorrel = getAmCorrel0(m, tradeDate0, tradeDate1, hms0, hms1);
+        double amcorrel = getAmCorrel0(m, stockCode, "1st", tradeDate0, tradeDate1, hms0, hms1);//1st time
         String key = Utils.getAmcKey(tradeDate0, tradeDate1, hms0, hms1);
         amcMap.put(key, amcorrel);
+        amcorrel = getAmCorrel0(m, stockCode, "2nd", tradeDate0, tradeDate1, hms0, hms1);       //2nd time
+        amcorrel = getAmCorrel0(m, stockCode, "3rd", tradeDate1, tradeDate0, hms0, hms1);       //3rd time
         //
         getAmCorrel1(amcMap, tradeDate0, tradeDate1, hms0, hms1);
 
+
+
         hms0 = "09:30:00";
         hms1 = "11:30:00";
-        amcorrel = getAmCorrel0(m, tradeDate0, tradeDate1, hms0, hms1);
+        amcorrel = getAmCorrel0(m, stockCode, "1st", tradeDate0, tradeDate1, hms0, hms1);       //1st time
         key = Utils.getAmcKey(tradeDate0, tradeDate1, hms0, hms1);
         amcMap.put(key, amcorrel);
+        amcorrel = getAmCorrel0(m, stockCode, "2nd", tradeDate0, tradeDate1, hms0, hms1);       //2nd time
+        amcorrel = getAmCorrel0(m, stockCode, "3rd", tradeDate1, tradeDate0, hms0, hms1);       //3rd time
         //
         getAmCorrel1(amcMap, tradeDate0, tradeDate1, hms0, hms1);
 
         hms0 = "13:00:00";
         hms1 = "15:00:00";
-        amcorrel = getAmCorrel0(m, tradeDate0, tradeDate1, hms0, hms1);
+        amcorrel = getAmCorrel0(m, stockCode, "1st", tradeDate0, tradeDate1, hms0, hms1);       //1st time
         key = Utils.getAmcKey(tradeDate0, tradeDate1, hms0, hms1);
         amcMap.put(key, amcorrel);
+        amcorrel = getAmCorrel0(m, stockCode, "2nd", tradeDate0, tradeDate1, hms0, hms1);       //2nd time
+        amcorrel = getAmCorrel0(m, stockCode, "3rd", tradeDate1, tradeDate0, hms0, hms1);       //3rd time
         //
         getAmCorrel1(amcMap, tradeDate0, tradeDate1, hms0, hms1);
     }
     //get amcorrel by AmManager
-    private static double getAmCorrel0(AmManager m, 
+    private static double getAmCorrel0(AmManager m, String stockCode, String note,
             String tradeDate0, String tradeDate1, String hms0, String hms1) {
         long start = System.currentTimeMillis();
-        double amcorrel = m.getAmCorrel(tradeDate0, tradeDate1, hms0, hms1);
+        double amcorrel = AmcMap.getAmCorrel(tradeDate0, tradeDate1, hms0, hms1, m, stockCode);
         long end = System.currentTimeMillis();
-        System.out.format("0: instant calculation(%s,%s) duration = %d\n", hms0, hms1, end-start);
+        System.out.format("getAmCorrel0: %s (%s,%s,%s,%s) duration=%4d, correl=%8.3f\n", 
+                note, tradeDate0, tradeDate1, hms0, hms1, end-start, amcorrel);
         return amcorrel;
     }
     //get amcorrel by a hashmap
-    private static double getAmCorrel1(HashMap<String, Double> amcMap, 
+    private static double getAmCorrel1(ConcurrentHashMap<String, Double> amcMap, 
             String tradeDate0, String tradeDate1, String hms0, String hms1) {
         long start = System.currentTimeMillis();
         String key = Utils.getAmcKey(tradeDate0, tradeDate1, hms0, hms1);
         double amcorrel = amcMap.get(key);
         long end = System.currentTimeMillis();
-        System.out.format("1: table get duration(%s,%s) = %d\n", hms0, hms1, end-start);
+        System.out.format("getAmCorrel1: table get duration(%s,%s,%s,%s)=%4d, correl=%8.3f\n\n", 
+                tradeDate0, tradeDate1, hms0, hms1, end-start, amcorrel);
 
         return amcorrel;
     }

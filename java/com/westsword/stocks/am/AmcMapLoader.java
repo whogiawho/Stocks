@@ -1,13 +1,13 @@
 package com.westsword.stocks.am;
 
 
-import java.util.*;
+import java.util.concurrent.*;
 
 import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.utils.FileLoader;
 
 public class AmcMapLoader extends FileLoader {
-    private HashMap<String, Double> mAmCorrelMap = null;
+    private ConcurrentHashMap<String, Double> mAmCorrelMap = null;
 
     public boolean onLineRead(String line, int count) {
         try {
@@ -26,7 +26,7 @@ public class AmcMapLoader extends FileLoader {
         return true;
     }
     //load amCorrelMap from sFile
-    public void load(HashMap<String, Double> map, String sFile) {
+    public void load(ConcurrentHashMap<String, Double> map, String sFile) {
         mAmCorrelMap = map;
 
         load(sFile);

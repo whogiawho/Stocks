@@ -6,6 +6,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Combinations;
 import org.apache.commons.math3.stat.descriptive.moment.*;
 
+import com.westsword.stocks.am.AmcMap;
 import com.westsword.stocks.am.AmManager;
 import com.westsword.stocks.base.utils.AnsiColor;
 import com.westsword.stocks.base.utils.LineLoader;
@@ -120,7 +121,8 @@ public class SSGroupHelper {
                 String tradeDate0 = tradeDateList.get(i);
                 amcorrelList.clear();
 
-                double avgAmCorrel = getAmCorrels(tradeDate0, tradeDateList, hms, am, amcorrelList);
+                double avgAmCorrel = getAmCorrels(tradeDate0, tradeDateList, hms, 
+                        am, stockCode, amcorrelList);
 
                 Double[] sds = amcorrelList.toArray(new Double[0]);
                 double stddev = sd.evaluate(ArrayUtils.toPrimitive(sds));
@@ -137,13 +139,14 @@ public class SSGroupHelper {
         //return an avg of amcorrelList
         //amcorrelList: [out]
         private double getAmCorrels(String tradeDate0, ArrayList<String> tradeDateList, String[] hms, 
-                AmManager am, ArrayList<Double> amcorrelList) {
+                AmManager am, String stockCode, ArrayList<Double> amcorrelList) {
             double avgAmCorrel = 0;
             int count = 0;
             for(int j=0; j<tradeDateList.size(); j++) {
                 String tradeDate1 = tradeDateList.get(j);
 
-                Double amcorrel = getAmCorrel(tradeDate0, tradeDate1, hms[0], hms[1], am);
+                Double amcorrel = AmcMap.getAmCorrel(tradeDate0, tradeDate1, hms[0], hms[1], 
+                        am, stockCode);
                 if(amcorrel != Double.NaN) {
                     avgAmCorrel += amcorrel;
                     count++;
@@ -154,10 +157,5 @@ public class SSGroupHelper {
 
             return avgAmCorrel;
         }
-    }
-
-    public static double getAmCorrel(String tradeDate0, String tradeDate1, String startHMS, String endHMS, 
-            AmManager am) {
-        return am.getAmCorrel(tradeDate0, tradeDate1, startHMS, endHMS);
     }
 }
