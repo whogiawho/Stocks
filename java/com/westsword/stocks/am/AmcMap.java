@@ -40,7 +40,11 @@ public class AmcMap {
         return map;
     }
 
-
+    public static void removeAmCorrel(String tradeDate0, String tradeDate1, 
+            String startHMS, String endHMS) {
+        String key01 = Utils.getAmcKey(tradeDate0, tradeDate1, startHMS, endHMS);
+        bufAmcMap.remove(key01);
+    }
     private static boolean CONSIDER10 = true;
     //three levels of getting amcorrel:
     //  bufAmcMap 

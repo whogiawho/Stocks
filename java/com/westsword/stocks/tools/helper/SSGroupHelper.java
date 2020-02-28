@@ -2,11 +2,8 @@ package com.westsword.stocks.tools.helper;
 
 
 import java.util.*;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Combinations;
-import org.apache.commons.math3.stat.descriptive.moment.*;
 
-import com.westsword.stocks.am.AmcMap;
 import com.westsword.stocks.am.AmManager;
 import com.westsword.stocks.base.utils.AnsiColor;
 import com.westsword.stocks.base.utils.LineLoader;
@@ -29,14 +26,14 @@ public class SSGroupHelper {
         String[] hms = hmsList.split("_");
 
 
+        SSgmsdrManager m = new SSgmsdrManager();
         LineLoader loader = new LineLoader();
         ArrayList<String> tradeDateList= new ArrayList<String>();
         loader.load(tradeDateList, args[3]);
         AmManager am = new AmManager(stockCode, tradeDateList);
 
         MinStdDevR r = new MinStdDevR(stockCode, hmsList);
-        r.get(tradeDateList, hms, am);
-        r.print();
+        m.run(r, tradeDateList, hms, am);
     }
 
 
@@ -55,6 +52,7 @@ public class SSGroupHelper {
         AmManager am = new AmManager(stockCode, tradeDateList);
 
 
+        SSgmsdrManager m = new SSgmsdrManager();
         CheckPoint0 ckpt = new CheckPoint0();
         int length = ckpt.getLength();
         Combinations c = new Combinations(length, 2);
@@ -65,8 +63,7 @@ public class SSGroupHelper {
             String[] hms = hmsList.split("_");
 
             MinStdDevR r = new MinStdDevR(stockCode, hmsList);
-            r.get(tradeDateList, hms, am);
-            r.print();
+            m.run(r, tradeDateList, hms, am);
         }
     }
 
@@ -92,70 +89,4 @@ public class SSGroupHelper {
     }
 
 
-    public static class MinStdDevR {
-        public String stockCode;
-        public String hmsList;
-
-        public String minTradeDate;
-        public double minAvgAmCorrel;
-        public double minStdDev;
-
-        public MinStdDevR(String stockCode, String hmsList) {
-            this.stockCode = stockCode;
-            this.hmsList = hmsList;
-
-            minTradeDate = "";
-            minAvgAmCorrel = Double.NaN;
-            minStdDev = Double.POSITIVE_INFINITY;
-        }
-
-        public void print() {
-            System.out.format("%s %s %s %8.3f %8.3f\n", 
-                    stockCode, hmsList, minTradeDate, minAvgAmCorrel, minStdDev);
-        }
-
-        public void get(ArrayList<String> tradeDateList, String[] hms, AmManager am) {
-            StandardDeviation sd = new StandardDeviation();
-            ArrayList<Double> amcorrelList = new ArrayList<Double>();
-            for(int i=0; i<tradeDateList.size(); i++) {
-                String tradeDate0 = tradeDateList.get(i);
-                amcorrelList.clear();
-
-                double avgAmCorrel = getAmCorrels(tradeDate0, tradeDateList, hms, 
-                        am, stockCode, amcorrelList);
-
-                Double[] sds = amcorrelList.toArray(new Double[0]);
-                double stddev = sd.evaluate(ArrayUtils.toPrimitive(sds));
-                if(stddev<this.minStdDev) {
-                    this.minStdDev = stddev;
-                    this.minAvgAmCorrel = avgAmCorrel;
-                    this.minTradeDate = tradeDate0;
-                }
-            }
-        }
-
-        //for each tradeDate1 in tradeDateList
-        //  get a series of amcorrel for [tradeDate0, tradeDate1], and save to amcorrelList
-        //return an avg of amcorrelList
-        //amcorrelList: [out]
-        private double getAmCorrels(String tradeDate0, ArrayList<String> tradeDateList, String[] hms, 
-                AmManager am, String stockCode, ArrayList<Double> amcorrelList) {
-            double avgAmCorrel = 0;
-            int count = 0;
-            for(int j=0; j<tradeDateList.size(); j++) {
-                String tradeDate1 = tradeDateList.get(j);
-
-                Double amcorrel = AmcMap.getAmCorrel(tradeDate0, tradeDate1, hms[0], hms[1], 
-                        am, stockCode);
-                if(amcorrel != Double.NaN) {
-                    avgAmCorrel += amcorrel;
-                    count++;
-                    amcorrelList.add(amcorrel);
-                }
-            }
-            avgAmCorrel = avgAmCorrel/count;
-
-            return avgAmCorrel;
-        }
-    }
 }
