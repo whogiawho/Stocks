@@ -54,7 +54,7 @@ public class RawTradeDetailsList extends FileLoader {
         }
 
         //sort mRawTradeDetailsList
-        Collections.sort(mRawTradeDetailsList, new Comparator<RawTradeDetails>(){
+        Collections.sort(mRawTradeDetailsList, new Comparator<RawTradeDetails>() {
                 @Override
                 public int compare(RawTradeDetails s1, RawTradeDetails s2) {
                     return Long.valueOf(s1.time).compareTo(s2.time);
