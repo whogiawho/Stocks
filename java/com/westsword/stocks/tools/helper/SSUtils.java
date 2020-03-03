@@ -86,7 +86,7 @@ public class SSUtils {
         for(int i=1; i<hms.length; i++) {
             double amcorrel = am.getAmCorrel(tradeDate0, tradeDate1, hms[0], hms[i]);
             sAmCorrels += String.format("%8.3f ", amcorrel);
-            if(amcorrel==Double.NaN || amcorrel<threshold) {
+            if(Double.isNaN(amcorrel) || amcorrel<threshold) {
                 bHMSMatched = false;
                 break;
             }

@@ -258,6 +258,14 @@ public class GetSettings{
             m.run();
         }
     }
+    public static void testDouble(String stockCode) {
+        System.out.format("\n testDouble: \n");
+
+        double a = Double.NaN;
+        if(Double.isNaN(a)) {
+            System.out.format("a=%8.3f\n", a);
+        }
+    }
     public static void testFinal(String stockCode) {
         System.out.format("\n testFinal: \n");
 
@@ -404,7 +412,8 @@ public class GetSettings{
         //testTradeSumLoader(stockCode);
         //testTaskManager(stockCode);
         //testFinal(stockCode);
-        testGetAmCorrel(stockCode);
+        //testGetAmCorrel(stockCode);
+        testDouble(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);

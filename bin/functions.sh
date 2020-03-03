@@ -23,7 +23,9 @@ cygwinRootDir=$cygwin32RootDir
 cygwinBitMode=`getCygwinBitMode`
 echo cygwinBitMode=$cygwinBitMode
 [[ $cygwinBitMode == 64 ]] && {
-    export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -Xmx6144m -Xms6144m"
+    export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -Xmx12288m -Xms12288m"
+    #export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -Xmx10240m -Xms10240m"
+    #export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -Xmx6144m -Xms6144m"
     cygwinRootDir=$cygwin64RootDir
 }
 cygwinTmpDir="$cygwinRootDir\\tmp"
@@ -38,6 +40,7 @@ cygwinTmpDir="$cygwinRootDir\\tmp"
 . bin/pankou.sh
 . bin/tradedetails.sh
 . bin/similarstack.sh
+. bin/amcorrel.sh
 
 
 function setupCfgFile {

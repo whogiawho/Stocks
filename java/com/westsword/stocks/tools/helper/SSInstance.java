@@ -36,7 +36,6 @@ public class SSInstance {
         this.targetRate = targetRate;
     }
 
-    
 
 
     public void run(AmManager am, StockDates stockDates, 
@@ -77,6 +76,7 @@ public class SSInstance {
 
         ArrayList<String> similarTradeDates = SSUtils.getSimilarTradeDates(this, am);
 
+        ISearchAmRecord w = new LoopWay();
         ArrayList<Long> outTimeList = new ArrayList<Long>();
         for(int i=0; i<similarTradeDates.size(); i++) {
             String tradeDate1 = similarTradeDates.get(i);
@@ -85,7 +85,7 @@ public class SSInstance {
 
             //search to get tradeDate1 inHMS's inPrice stats for next N day
             String[] outParms = new String[8];
-            getTradeParms(tradeDate1, inHMS, nextTradeDateN, 
+            w.getTradeParms(tradeDate1, inHMS, nextTradeDateN, 
                     sTDistance, tradeType, targetRate,
                     am, stockDates, outParms);
 
@@ -157,7 +157,6 @@ public class SSInstance {
             Utils.append2File(sTradeSumFile, out[0], false);
         }
     }
-
     private static boolean filterIt(BufR br) {
         int matchedCnt = br.getMatchedCount();
         double avgNetRevenue = br.netRevenue/matchedCnt;
@@ -168,45 +167,7 @@ public class SSInstance {
 
         return  bCond0||bCond1;
     }
-    //outParms[0] - bOK
-    //outParms[1] - inPrice
-    //outParms[2] - outPrice
-    //outParms[3] - profit
-    //outParms[4] - outTime
-    //outParms[5] - maxPosPrice
-    //outParms[6] - riskDelta
-    //outParms[7] - maxDeltaPriceBias 
-    //search to get tradeDate1 inHMS's stats(sTDistance, tradeType, targetRate) for next N day
-    public static void getTradeParms(String tradeDate1, String inHMS, String nextTradeDateN, 
-            int sTDistance, int tradeType, double targetRate, 
-            AmManager am, StockDates stockDates, String[] outParms) {
-        boolean bOK = true;
-
-        long inTime = Time.getSpecificTime(tradeDate1, inHMS);
-        double inPrice = am.getInPrice(tradeType, inTime);
-        //t0 or t1
-        NavigableMap<Integer, AmRecord> itemMap = getItemMap(am, stockDates, 
-                tradeDate1, inHMS, nextTradeDateN, sTDistance);
-
-        double[] out = new double[3];
-        AmRecord outItem = Regression.getTradeResult(itemMap, 
-                tradeType, inPrice, targetRate, out);
-        if(outItem == null) {
-            long outTime = Time.getSpecificTime(nextTradeDateN, AStockSdTime.getCloseQuotationTime());
-            outItem = am.getFloorItem(outTime);
-            bOK = false;
-        }
-
-        outParms[0] = "" + bOK;
-        outParms[1] = "" + inPrice;
-        outParms[2] = "" + outItem.getOutPrice(tradeType);
-        outParms[3] = "" + outItem.getProfit(tradeType, inPrice);
-        outParms[4] = "" + outItem.hexTimePoint;
-        outParms[5] = "" + out[1];
-        outParms[6] = "" + out[2];
-        outParms[7] = "" + out[0];
-    }
-    private static String getTradeDetailsLine(StockDates stockDates, int currentHangCount,
+    private String getTradeDetailsLine(StockDates stockDates, int currentHangCount,
             String tradeDate1, int tradeType, String inHMS, double netRevenue, String[] outParms) {
         String sFormat = "%s %s %s %s " + 
             "%8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %4d %4d\n";
@@ -244,6 +205,20 @@ public class SSInstance {
             outTimeList.remove(idx);
         } 
     }
+    private static double getMaxPosDelta(int tradeType, double inPrice, String[] outParms) {
+        double maxPosDelta;
+
+        double maxPosPrice = Double.valueOf(outParms[5]);
+        if(tradeType == Stock.TRADE_TYPE_LONG)
+            maxPosDelta =  maxPosPrice - inPrice;
+        else
+            maxPosDelta =  inPrice - maxPosPrice;
+
+        return maxPosDelta;
+    }
+
+
+
     private static double getMaxRevenue(String[] outParms, int tradeType) {
         double buyPrice, sellPrice;
         if(tradeType == Stock.TRADE_TYPE_LONG) {
@@ -257,38 +232,6 @@ public class SSInstance {
 
         return maxRevenue;
     }
-    private static double getMaxPosDelta(int tradeType, double inPrice, String[] outParms) {
-        double maxPosDelta;
-
-        double maxPosPrice = Double.valueOf(outParms[5]);
-        if(tradeType == Stock.TRADE_TYPE_LONG)
-            maxPosDelta =  maxPosPrice - inPrice;
-        else
-            maxPosDelta =  inPrice - maxPosPrice;
-
-        return maxPosDelta;
-    }
-    private static NavigableMap<Integer, AmRecord> getItemMap(AmManager am, StockDates stockDates, 
-            String tradeDate, String inHMS, String nextTradeDateN, int sTDistance) {
-        NavigableMap<Integer, AmRecord> itemMap = new TreeMap<Integer, AmRecord>();
-
-        if(sTDistance==0) {                                                        //t+0
-            itemMap = am.getItemMap(tradeDate, inHMS, 
-                    nextTradeDateN, AStockSdTime.getCloseQuotationTime());
-        } else if(sTDistance==1) {                                                 //t+1
-            String nextTradeDate1 = stockDates.nextDate(tradeDate);
-            if(nextTradeDate1 != null) 
-                itemMap = am.getItemMap(nextTradeDate1, AStockSdTime.getCallAuctionEndTime(), 
-                        nextTradeDateN, AStockSdTime.getCloseQuotationTime());
-        } else {
-            String msg = String.format("%d is not a valid N for T+N!\n", sTDistance); 
-            throw new RuntimeException(msg);
-        }
-
-        return itemMap;
-    }
-
-
     public static class BufR {
         public double netRevenue=0.0;
         public double maxRevenue=0.0;
@@ -319,6 +262,5 @@ public class SSInstance {
             return okCount+failCount;
         }
     }
-
 
 }
