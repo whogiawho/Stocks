@@ -28,3 +28,6 @@ noPerformanceLog=true
 TimeZone=GMT+08:00
 Locale=zh_CN
 
+#0 - LoopWay
+#1 - HashWay
+Way2SearchAmRecord=1

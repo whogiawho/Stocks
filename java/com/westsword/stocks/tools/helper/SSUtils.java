@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.westsword.stocks.am.AmManager;
 import com.westsword.stocks.base.time.*;
+import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.utils.AnsiColor;
 
 import org.apache.commons.cli.*;
@@ -168,4 +169,17 @@ public class SSUtils {
         return checkHMSList(hmsList, minHMS, 100);
     }
 
+    private static ISearchAmRecord way = null;
+    public static ISearchAmRecord getWay2SearchAmRecord() {
+        if(way!=null)
+            return way;
+
+        int w = Settings.getWay2SearchAmRecord();
+        if(w==0)
+            way = new LoopWay();
+        else
+            way = new HashWay();
+
+        return way;
+    }
 }

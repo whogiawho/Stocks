@@ -82,6 +82,9 @@ public class Settings extends FileLoader {
 
 
 
+    public static Integer getWay2SearchAmRecord() {
+        return getInteger("Way2SearchAmRecord");
+    }
     public static String getLocale() {
         return getString("Locale");
     }

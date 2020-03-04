@@ -76,7 +76,7 @@ public class SSInstance {
 
         ArrayList<String> similarTradeDates = SSUtils.getSimilarTradeDates(this, am);
 
-        ISearchAmRecord w = new LoopWay();
+        ISearchAmRecord w = SSUtils.getWay2SearchAmRecord();
         ArrayList<Long> outTimeList = new ArrayList<Long>();
         for(int i=0; i<similarTradeDates.size(); i++) {
             String tradeDate1 = similarTradeDates.get(i);
