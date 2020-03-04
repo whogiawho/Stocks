@@ -25,32 +25,12 @@ public class AmManager {
         mSdTime = new SdTime1(stockCode);
         mStockDates = new StockDates(stockCode);
         mAmRecordMap = new TreeMap<Integer, AmRecord>();
+        mAmrTable = new AmrHashtable();
 
-        load(mAmRecordMap, tradeDates);
+        load(mAmRecordMap, mAmrTable, tradeDates);
     }
     public AmManager(String stockCode, ArrayList<String> tradeDateList) {
         this(stockCode, tradeDateList.toArray(new String[0]));
-    }
-
-
-    public void load(TreeMap<Integer, AmRecord> rMap, String[] sTradeDates) {
-        long tStart = PerformanceLog.start();
-
-        AmRecordLoader amLoader = new AmRecordLoader();
-        for(int i=0; i<sTradeDates.length; i++) {
-            String tradeDate = sTradeDates[i];
-            String sAmRecordFile = StockPaths.getAnalysisFile(mStockCode, tradeDate);
-            amLoader.load(null, rMap, sAmRecordFile);
-            /*
-            System.out.format("%s: loading %s complete\n", 
-                    Utils.getCallerName(getClass()), tradeDate);
-            */
-        }
-        System.err.format("%s: loading complete\n", 
-                Utils.getCallerName(getClass()));
-
-        PerformanceLog.end(tStart, "%s: loading analysis.txt = %d\n", 
-                Utils.getCallerName(getClass()));
     }
 
 
@@ -87,6 +67,38 @@ public class AmManager {
     }
 
 
+    //replace Regression.getTradeResult; 
+    //Two ways to return out[]: 
+    //  always NaN
+    //  just as Regression.getTradeResult
+    public AmRecord getTradeResult(long inTime, int tradeType, double targetRate, 
+            String nextTradeDateN, int sTDistance, StockDates stockDates, double[] out) {
+        double inPrice = getInPrice(tradeType, inTime);
+        double targetProfit = Trade.getTargetProfit(targetRate, inPrice);
+        double outPrice = getOutPrice(inPrice, targetProfit, tradeType);
+        AmrHashtable.AmrKey k = new AmrHashtable.AmrKey(inTime, outPrice);
+
+        AmRecord outItem = mAmrTable.getOutItem(inTime, tradeType, k, 
+                nextTradeDateN, sTDistance, stockDates);
+        if(out!=null) {
+            out[0] = Double.NaN;
+            out[1] = Double.NaN;
+            out[2] = Double.NaN;
+        }
+
+        return outItem;
+    }
+    private double getOutPrice(double inPrice, double targetProfit, int tradeType) {
+        double outPrice;
+        if(tradeType == Stock.TRADE_TYPE_LONG)
+            outPrice = inPrice + targetProfit;
+        else
+            outPrice = inPrice - targetProfit;
+
+        return outPrice;
+    }
+
+    
     //startDate0,startHMS0 endDate0,endHMS0
     //startDate1,startHMS1 endDate1,endHMS1
     public double getAmCorrel(String startDate0, String startHMS0, String endDate0, String endHMS0, 
@@ -161,6 +173,7 @@ public class AmManager {
     private StockDates mStockDates;
 
     private TreeMap<Integer, AmRecord> mAmRecordMap;
+    private AmrHashtable mAmrTable;
 
     public String getStockCode() {
         return mStockCode;
@@ -215,4 +228,25 @@ public class AmManager {
                 startDate0, startHMS0, endDate0, endHMS0, sSize0, 
                 startDate1, startHMS1, endDate1, endHMS1, sSize1);
     }
+
+    private void load(TreeMap<Integer, AmRecord> rMap, AmrHashtable hTable, String[] sTradeDates) {
+        long tStart = PerformanceLog.start();
+
+        AmRecordLoader amLoader = new AmRecordLoader();
+        for(int i=0; i<sTradeDates.length; i++) {
+            String tradeDate = sTradeDates[i];
+            String sAmRecordFile = StockPaths.getAnalysisFile(mStockCode, tradeDate);
+            amLoader.load(null, rMap, hTable, sAmRecordFile);
+            /*
+            System.out.format("%s: loading %s complete\n", 
+                    Utils.getCallerName(getClass()), tradeDate);
+            */
+        }
+        System.err.format("%s: loading complete\n", 
+                Utils.getCallerName(getClass()));
+
+        PerformanceLog.end(tStart, "%s: loading analysis.txt = %d\n", 
+                Utils.getCallerName(getClass()));
+    }
+
 }
