@@ -27,6 +27,7 @@ public class AmRecordLoader extends FileLoader {
         if(mAmMap != null)
             mAmMap.put(sdTime, r);
         if(mAmrTable != null) {
+            //put r to mAmrTable's two table per its upPrice&downPrice
             mAmrTable.put(r, Stock.TRADE_TYPE_LONG);
             mAmrTable.put(r, Stock.TRADE_TYPE_SHORT);
         }

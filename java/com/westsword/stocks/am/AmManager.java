@@ -80,9 +80,8 @@ public class AmManager {
         double inPrice = getInPrice(tradeType, inTime);
         double targetProfit = Trade.getTargetProfit(targetRate, inPrice);
         double outPrice = getOutPrice(inPrice, targetProfit, tradeType);
-        AmrHashtable.AmrKey k = new AmrHashtable.AmrKey(inTime, outPrice);
 
-        AmRecord outItem = mAmrTable.getOutItem(inTime, tradeType, k, 
+        AmRecord outItem = mAmrTable.getOutItem(inTime, tradeType, outPrice, 
                 nextTradeDateN, sTDistance, stockDates);
         if(out!=null) {
             out[0] = Double.NaN;

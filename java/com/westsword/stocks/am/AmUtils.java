@@ -112,7 +112,7 @@ public class AmUtils {
         String sAnalysisFile = StockPaths.getAnalysisFile(mStockCode, tradeDate);
         AmRecordLoader amLoader = new AmRecordLoader();
         ArrayList<AmRecord> amList = new ArrayList<AmRecord>();
-        amLoader.load(amList, null, sAnalysisFile);
+        amLoader.load(amList, null, null, sAnalysisFile);
 
         AmRecord r = amList.get(amList.size()-1);
         lastAm = r.am;

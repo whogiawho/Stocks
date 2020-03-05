@@ -10,7 +10,7 @@ import com.westsword.stocks.base.time.StockDates;
 public class AmrHashtable {
     private TreeMap<AmrKey, TreeSet<AmRecord>> mOutTable4Long;
     private TreeMap<AmrKey, TreeSet<AmRecord>> mOutTable4Short;
-    private TreeMap<String, TreeSet<Double>>   mTdPriceMap;
+    private TreeMap<String, TreeSet<Double>>   mTdPriceMap;    //including both upPrice&downPrice
 
     public AmrHashtable() {
         mOutTable4Long = new TreeMap<AmrKey, TreeSet<AmRecord>>(new AkComparator());
@@ -57,10 +57,11 @@ public class AmrHashtable {
         e.add(price);
     }
 
-    //get the nearest AmRecord>=k meeting below conditions:
+    //get the nearest AmRecord meeting below conditions:
     //  tradeDate<=nextTradeDateN 
     //  tp>=inTime depending on sTDistance
-    public AmRecord getOutItem(long inTime, int tradeType, AmrKey k,
+    //  upPrice|downPrice exceeds outPrice depending on tradeType
+    public AmRecord getOutItem(long inTime, int tradeType, double outPrice,
             String nextTradeDateN, int sTDistance, StockDates stockDates) {
         AmRecord item = null;
 
@@ -75,8 +76,9 @@ public class AmrHashtable {
         while(tradeDate!=null && tradeDate.compareTo(nextTradeDateN)<=0) {
             TreeSet<Double> e = mTdPriceMap.get(tradeDate);
             if(e!=null) {
+                //loop tradeDate's all possible prices to get the nearest out AmRecord
                 for(Double price: e) {
-                    if(skipPrice(tradeType, price, k))
+                    if(skipPrice(tradeType, price, outPrice))
                         continue;
     
                     item = searchAmRecord(item, outTable, tradeDate, price, inTime, out);
@@ -90,9 +92,9 @@ public class AmrHashtable {
 
         return item;
     }
-    private boolean skipPrice(int tradeType, double price, AmrKey k) {
-        return tradeType==Stock.TRADE_TYPE_LONG&&price<k.price || 
-            tradeType==Stock.TRADE_TYPE_SHORT&&price>k.price;
+    private boolean skipPrice(int tradeType, double price, double outPrice) {
+        return tradeType==Stock.TRADE_TYPE_LONG&&price<outPrice || 
+            tradeType==Stock.TRADE_TYPE_SHORT&&price>outPrice;
     }
     private TreeMap<AmrKey, TreeSet<AmRecord>> getOutTable(int tradeType) {
         return tradeType==Stock.TRADE_TYPE_LONG?mOutTable4Long:mOutTable4Short;
