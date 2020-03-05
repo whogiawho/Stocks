@@ -30,4 +30,4 @@ Locale=zh_CN
 
 #0 - LoopWay
 #1 - HashWay
-Way2SearchAmRecord=1
+Way2SearchAmRecord=0

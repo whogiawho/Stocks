@@ -6,6 +6,7 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import com.westsword.stocks.base.Stock;
 import com.westsword.stocks.base.Utils;
+import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 
@@ -27,6 +28,9 @@ public class AmManager {
         mAmRecordMap = new TreeMap<Integer, AmRecord>();
         mAmrTable = new AmrHashtable();
 
+        //for LoopWay, mAmrTable is useless
+        if(Settings.getWay2SearchAmRecord()==0)
+            mAmrTable = null;
         load(mAmRecordMap, mAmrTable, tradeDates);
     }
     public AmManager(String stockCode, ArrayList<String> tradeDateList) {

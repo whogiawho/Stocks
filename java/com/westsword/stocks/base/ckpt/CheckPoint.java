@@ -43,13 +43,11 @@ public class CheckPoint {
     }
 
 
+
+
     public String[][] getPairs() {
         return getPairs(mCkptList.toArray(new String[0]));
     }
-
-
-
-
     public static String[][] getPairs(String[] array) {
         String[][] pairs = new String[array.length*(array.length-1)/2][2];
 
