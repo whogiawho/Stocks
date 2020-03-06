@@ -11,17 +11,33 @@ public class CheckPoint {
     public int getLength() {
         return mCkptList.size();
     }
+
+    public boolean contains(String hms) {
+        hms = HMS.unformalize(hms);
+        return mCkptList.contains(hms);
+    }
+    public boolean contains(long tp) {
+        return contains(Time.getTimeHMS(tp));
+    }
     public void add(String hms) {
         hms = HMS.unformalize(hms);
         mCkptList.add(hms);
     }
+    public void add(long tp) {
+        add(Time.getTimeHMS(tp));
+    }
+
     //[start, end]
     public void add(long start, long end, int interval) {
         long tp = start;
         while(tp <= end) {
-            add(Time.getTimeHMS(tp));
+            add(tp);
             tp += interval;
         }
+        
+        //last element
+        if(!contains(end))
+            add(end);
     }
     public void print() {
         int idx = 0;
@@ -43,24 +59,4 @@ public class CheckPoint {
     }
 
 
-
-
-    public String[][] getPairs() {
-        return getPairs(mCkptList.toArray(new String[0]));
-    }
-    public static String[][] getPairs(String[] array) {
-        String[][] pairs = new String[array.length*(array.length-1)/2][2];
-
-        int k=0;
-        for(int i=0; i<array.length; i++) {
-            for(int j=i+1; j<array.length; j++) {
-                pairs[k][0] = array[i];
-                pairs[k][1] = array[j];
-
-                k++;
-            }
-        }
-
-        return pairs;
-    }
 }

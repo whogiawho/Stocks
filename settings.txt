@@ -12,6 +12,7 @@ PriceDecimalFormat=#.##
 
 SdStartTime=09:25:00
 SdInterval=1
+CkptInterval=60
 
 600030.SdStartDate=20090105
 600030.priceStep=0.01
@@ -30,4 +31,6 @@ Locale=zh_CN
 
 #0 - LoopWay
 #1 - HashWay
-Way2SearchAmRecord=0
+Way2SearchAmRecord=1
+
+

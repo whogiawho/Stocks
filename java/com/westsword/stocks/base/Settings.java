@@ -109,6 +109,9 @@ public class Settings extends FileLoader {
     public static Integer getSdInterval() {
         return getInteger("SdInterval");
     }
+    public static Integer getCkptInterval() {
+        return getInteger("CkptInterval");
+    }
 
     public static String getPriceDecimalFormat() {
         return getString("PriceDecimalFormat");
