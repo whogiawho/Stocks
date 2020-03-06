@@ -266,9 +266,16 @@ public class GetSettings{
             System.out.format("a=%8.3f\n", a);
         }
     }
+    public static void testString(String stockCode) {
+        System.out.format("\n testString: \n");
+
+        String s = "[20090105, 20120320, 20120709, 20131223, 20141106, 20180829]";
+        System.out.format("%s\n", s);
+        s = s.replaceAll("[\\[\\] ]", "");
+        System.out.format("%s\n", s);
+    }
     public static void testFinal(String stockCode) {
         System.out.format("\n testFinal: \n");
-
 
         Boolean bSwitchOfRawData = Settings.booleanValues[Settings.SWITCH_OF_RAW_DATA];
         System.out.format("bSwitchOfRawData = %s\n", bSwitchOfRawData);
@@ -413,7 +420,8 @@ public class GetSettings{
         //testTaskManager(stockCode);
         //testFinal(stockCode);
         //testGetAmCorrel(stockCode);
-        testDouble(stockCode);
+        //testDouble(stockCode);
+        testString(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
