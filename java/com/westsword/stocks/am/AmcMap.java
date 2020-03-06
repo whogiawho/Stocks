@@ -21,9 +21,10 @@ public class AmcMap {
         if(sFiles != null) {
             for(int i=0; i<sFiles.length; i++) {
                 String sFile = sFiles[i];
+                String tradeDate1 = sFile.substring(0,8);
                 sFile = amcorrelMapDir + sFile;
                 ConcurrentHashMap<String, Double> map = new ConcurrentHashMap<String, Double>();
-                l.load(map, sFile);
+                l.load(map, sFile, tradeDate0, tradeDate1);
                 amcMap.putAll(map);
             }
         }
@@ -35,7 +36,7 @@ public class AmcMap {
         String sFile = StockPaths.getAmCorrelMapFile(stockCode, tradeDate0, tradeDate1);
         ConcurrentHashMap<String, Double> map = new ConcurrentHashMap<String, Double>();
         AmcMapLoader l = new AmcMapLoader();
-        l.load(map, sFile);
+        l.load(map, sFile, tradeDate0, tradeDate1);
 
         return map;
     }

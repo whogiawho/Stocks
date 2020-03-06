@@ -73,8 +73,8 @@ public class Amc1mMapHelper {
             amCorrel = am.getAmCorrel(tradeDate0, tradeDate1, startHMS, endHMS);
         }
 
-        String sFormat = "%35s %8.3f\n";
-        String line = String.format(sFormat, key0, amCorrel);
+        String sFormat = "%s %6.3f\n";
+        String line = String.format(sFormat, startHMS+","+endHMS, amCorrel);
         Utils.append2File(sOutFile, line);
     }
 
