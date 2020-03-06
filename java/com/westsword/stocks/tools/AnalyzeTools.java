@@ -14,7 +14,7 @@ public class AnalyzeTools{
         System.err.println("       commands are listed below:");
         System.err.println("       [ getvalue | setvalue | make1mamcmap | makeanalysistxt |\n" +
                 "         getamcorrel | getrel | getupprice | getdownprice | decode |\n" +
-                "         ssgroupchar | ssgroupchars |\n" +
+                "         ssgroupchar | ssgroupchars | makessdates |\n" +
                 "         ssinstance | ssinstances | getfullss ]");
 
         System.exit(-1);
@@ -63,6 +63,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("ssgroupchars")) {
             SSGroupHelper ssgh = new SSGroupHelper();
             ssgh.listChars(args);
+        } else if (sOption.equals("makessdates")) {
+            SSDatesHelper ssdh = new SSDatesHelper();
+            ssdh.make(args);
         } else if (sOption.equals("getfullss")) {
             FullSSHelper fullssh = new FullSSHelper();
             fullssh.run(args);

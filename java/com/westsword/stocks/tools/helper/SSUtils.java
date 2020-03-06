@@ -2,13 +2,12 @@ package com.westsword.stocks.tools.helper;
 
 
 import java.util.*;
+import org.apache.commons.cli.*;
 
 import com.westsword.stocks.am.AmManager;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.utils.AnsiColor;
-
-import org.apache.commons.cli.*;
 
 public class SSUtils {
     public final static String Default_StockCode = "600030";

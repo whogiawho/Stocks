@@ -58,6 +58,24 @@ public class StockPaths {
 
 
     
+    public static String getSSDatesRootDir() {
+        return getStockRootDir() + sSep + "data" + sSep + "ssdates" + sSep;
+    }
+    public static String getSSDatesDir(String stockCode, double threshold, String tradeDate) {
+        String sDir = "";
+        sDir += getSSDatesRootDir() + stockCode + "_" + String.format("%.2f", threshold) + sSep;
+        sDir += tradeDate + sSep;
+
+        return sDir;
+    }
+    public static String getSSDatesFile(String stockCode, double threshold, String tradeDate, 
+            String hmsList) {
+
+        return getSSDatesDir(stockCode, threshold, tradeDate) + hmsList + ".txt";
+    }
+
+
+
     public static String getSSRootDir() {
         return getStockRootDir() + sSep + "data" + sSep + "similarStack" + sSep;
     }
