@@ -74,16 +74,16 @@ public class Dates {
     //  getDistance
     
     //return null if date is the last
-    public String nextDate(String date) {
+    public String nextDate(String date) {    //>
         return mDatesSet.higher(date);
     }
-    public String prevDate(String date) {
+    public String prevDate(String date) {    //<
         return mDatesSet.lower(date);
     }
-    public String floor(String date) {
+    public String floor(String date) {       //<=
         return mDatesSet.floor(date);
     }
-    public String ceiling(String date) {
+    public String ceiling(String date) {     //>=
         return mDatesSet.ceiling(date);
     }
     public int getDistance(String date0, String date1) {
@@ -107,6 +107,12 @@ public class Dates {
             dist=-dist;
 
         return dist;
+    }
+    public int getIndex(String tradeDate) {
+        return getDistance(firstDate(), tradeDate);
+    }
+    public String getDate(int idx) {
+        return getAllDates()[idx];
     }
 
 

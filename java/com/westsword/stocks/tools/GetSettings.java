@@ -187,16 +187,16 @@ public class GetSettings{
         System.out.format("%s %s %s %s amcorrel=%-8.3f\n", 
                 tradeDate0, tradeDate1, startHMS, endHMS, amcorrel);
     }
-    public static void testMatlabConsoleDemo(String stockCode) {
-        System.out.format("\n testMatlabConsoleDemo: \n");
+    public static void testMatlab(String stockCode) {
+        System.out.format("\n testMatlab: \n");
 
-        MatlabConsoleDemo.run();
-        MatlabConsoleDemo.runA();
+        MatlabAsync.run();
+        MatlabSync.run();
     }
-    public static double[][] getAmMatrix(String stockCode, String hmsList, String startDate) {
+    public static double[][] getAmMatrix(String stockCode, String startDate, String hmsList) {
         AmManager am = new AmManager(stockCode);
 
-        String[] sTradeDates = TradeDates.getTradeDateList(stockCode, startDate);
+        String[] sTradeDates = new TradeDates(stockCode, startDate).getAllDates();
         double[][] m = am.getAmMatrix(hmsList, sTradeDates);
 
         return m;
@@ -204,7 +204,7 @@ public class GetSettings{
     public static void testAmMatrix(String stockCode) {
         System.out.format("\n testAmMatrix: \n");
 
-        double[][] m = getAmMatrix(stockCode, "092500_094000", "20090105");
+        double[][] m = getAmMatrix(stockCode, "20090105", "092500_094000");
         System.out.format("m.height=%d m.width=%d\n", m.length, m[0].length);
         /*
         for(int i=0; i<h; i++) {
@@ -446,7 +446,7 @@ public class GetSettings{
 
         //testAmManager(stockCode);
         //testAmMatrix(stockCode);
-        testMatlabConsoleDemo(stockCode);
+        testMatlab(stockCode);
         //testTreeMap(stockCode);
         //testCkpt(stockCode);
         //testCombination(stockCode);
