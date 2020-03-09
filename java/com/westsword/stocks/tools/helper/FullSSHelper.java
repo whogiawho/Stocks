@@ -100,14 +100,9 @@ public class FullSSHelper {
         String sPrefix = "usage: java AnalyzeTools ";
         System.err.println(sPrefix+"getfullss [-rnocdhtsl] maxCycleList targetRateList");
         System.err.println("       targetRateList  ; see ssinstance usage for details");
-        System.err.println("       -r              ; reset tradeDetails log file and tradeSum item");
-        System.err.println("       -n              ; does not log to files");
-        System.err.println("       -o              ; does not write message to stdout");
-        System.err.println("       -c stockCode    ;");
-        System.err.println("       -d startDate    ;");
-        System.err.println("       -h threshold    ;");
-        System.err.println("       -t       0|1    ; nearest day to end trade session");
-        System.err.println("       -s tradeType    ;");
+        SSInstanceHelper.commonUsageInfo();
+
+
         System.err.println("       -l tradeDateList;");
         System.exit(-1);
     }
@@ -116,15 +111,8 @@ public class FullSSHelper {
         CommandLine cmd = null;
         try {
             String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
-            Options options = new Options();
-            options.addOption("r", false, "reset tradeDetails log file and tradeSum item");
-            options.addOption("n", false, "does not log to files");
-            options.addOption("o", false, "does not write message to stdout");
-            options.addOption("c", true,  "a stock's code");
-            options.addOption("d", true,  "a tradeDate from which a ss search is started");
-            options.addOption("h", true,  "a threshold value to get ss for tradeDates");
-            options.addOption("t", true,  "0|1; nearest tradeDate distance to end trade session");
-            options.addOption("s", true,  "1|5; tradeType");
+            Options options = SSInstanceHelper.getOptions();
+
             options.addOption("l", true,  "tradeDate list");
             CommandLineParser parser = new DefaultParser();
             cmd = parser.parse(options, newArgs);
