@@ -13,9 +13,9 @@ public class MatlabSync {
             MatlabEngine eng = MatlabEngine.startMatlab();
 
             String stockCode = "600030";
-            String hmsList = "113000_130000";
             String startDate = "20090105";
-            double[][] m = GetSettings.getAmMatrix(stockCode, hmsList, startDate);
+            String hmsList = "113000_130000";
+            double[][] m = GetSettings.getAmMatrix(stockCode, startDate, hmsList);
             System.out.format("m.height=%d m.width=%d\n", m.length, m[0].length);
 
             long start = System.currentTimeMillis();
@@ -35,7 +35,7 @@ public class MatlabSync {
     public static void listMatchedTradeDates(String stockCode, String startDate, String hmsList, 
         String tradeDate, double[][] rm) {
         TradeDates tradeDates = new TradeDates(stockCode, startDate);
-        int idx = tradeDates.getIndex(startDate);
+        int idx = tradeDates.getIndex(tradeDate);
         int h = rm.length;
         int w = rm[0].length;
         String sMatchedDates = "";

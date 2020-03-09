@@ -83,12 +83,10 @@ public class FullSSHelper {
     //  [startDate, lastTradeDate]
     private TradeDates getTradeDates(String stockCode, String startDate, String sTradeDateList) {
         TradeDates tradeDates;
-        String[] sTradeDates;
         if(sTradeDateList == null) {
-            sTradeDates = TradeDates.getTradeDateList(stockCode);
-            tradeDates = new TradeDates(stockCode, startDate, sTradeDates[sTradeDates.length-1]);
+            tradeDates = new TradeDates(stockCode, startDate);
         } else {
-            sTradeDates = sTradeDateList.split(" +");
+            String[] sTradeDates = sTradeDateList.split(" +");
             tradeDates = new TradeDates(stockCode, sTradeDates);
         }
 

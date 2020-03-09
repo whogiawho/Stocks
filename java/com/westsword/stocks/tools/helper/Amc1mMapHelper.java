@@ -20,7 +20,7 @@ public class Amc1mMapHelper {
         }
 
         String stockCode = args[1];
-        String[] sTradeDates = TradeDates.getTradeDateList(stockCode);
+        String[] sTradeDates = new TradeDates(stockCode).getAllDates();
         AmManager am = new AmManager(stockCode);
 
         String tradeDateList = args[2];
