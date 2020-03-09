@@ -109,6 +109,7 @@ public class Utils {
         return Utils.isWindows()? "\\":"/";
     }
 
+
     public static String getAmcKey(String tradeDate0, String tradeDate1, String startHMS, String endHMS) {
         String sHMSPair = startHMS + "," + endHMS;
         String key = tradeDate0 + ",";
@@ -116,5 +117,16 @@ public class Utils {
         key += sHMSPair;
 
         return key;
+    }
+
+
+    public static double getOutPrice(double inPrice, double targetProfit, int tradeType) {
+        double outPrice;
+        if(tradeType == Stock.TRADE_TYPE_LONG)
+            outPrice = inPrice + targetProfit;
+        else
+            outPrice = inPrice - targetProfit;
+
+        return outPrice;
     }
 }

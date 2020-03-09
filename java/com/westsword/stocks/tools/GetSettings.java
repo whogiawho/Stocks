@@ -3,6 +3,10 @@ package com.westsword.stocks.tools;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.math3.util.Combinations;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
@@ -11,9 +15,6 @@ import com.westsword.stocks.base.utils.*;
 
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.tools.helper.*;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.math3.util.Combinations;
 
 public class GetSettings{
     public static void testSettings() {
@@ -180,22 +181,53 @@ public class GetSettings{
             date = stockDates.nextDate(date);
         }
     }
-    private static void amcorrelPrint(AmManager m, 
+    private static void amcorrelPrint(AmManager am, 
             String tradeDate0, String tradeDate1, String startHMS, String endHMS) {
-        double amcorrel = m.getAmCorrel(tradeDate0, tradeDate1, startHMS, endHMS);
+        double amcorrel = am.getAmCorrel(tradeDate0, tradeDate1, startHMS, endHMS);
         System.out.format("%s %s %s %s amcorrel=%-8.3f\n", 
                 tradeDate0, tradeDate1, startHMS, endHMS, amcorrel);
     }
+    public static void testMatlabConsoleDemo(String stockCode) {
+        System.out.format("\n testMatlabConsoleDemo: \n");
+
+        MatlabConsoleDemo.run();
+        MatlabConsoleDemo.runA();
+    }
+    public static double[][] getAmMatrix(String stockCode, String hmsList, String startDate) {
+        AmManager am = new AmManager(stockCode);
+
+        String[] sTradeDates = TradeDates.getTradeDateList(stockCode, startDate);
+        double[][] m = am.getAmMatrix(hmsList, sTradeDates);
+
+        return m;
+    }
+    public static void testAmMatrix(String stockCode) {
+        System.out.format("\n testAmMatrix: \n");
+
+        double[][] m = getAmMatrix(stockCode, "092500_094000", "20090105");
+        System.out.format("m.height=%d m.width=%d\n", m.length, m[0].length);
+        /*
+        for(int i=0; i<h; i++) {
+            System.out.format("%d\n", m[i][0]);
+        }
+        */
+        long start = System.currentTimeMillis();
+        RealMatrix rm = new PearsonsCorrelation().computeCorrelationMatrix(m);
+        System.out.format("rm.height=%d rm.width=%d\n", rm.getRowDimension(), rm.getColumnDimension());
+        long end = System.currentTimeMillis();
+        System.out.format("testAmMatrix: computeCorrelationMatrix duration=%4d\n", 
+                end-start);
+    }
     public static void testAmManager(String stockCode) {
         System.out.format("\n testAmManager: \n");
-        AmManager m = new AmManager(stockCode);
+        AmManager am = new AmManager(stockCode);
 
-        amcorrelPrint(m, "20090115", "20090116", "09:30:00", "14:30:00");
-        amcorrelPrint(m, "20090115", "20090119", "09:30:00", "14:30:00");
-        amcorrelPrint(m, "20090115", "20090120", "09:30:00", "14:30:00");
-        amcorrelPrint(m, "20090115", "20090121", "09:30:00", "14:30:00");
-        amcorrelPrint(m, "20090115", "20090122", "09:30:00", "14:30:00");
-        amcorrelPrint(m, "20090115", "20090123", "09:30:00", "14:30:00");
+        amcorrelPrint(am, "20090115", "20090116", "09:30:00", "14:30:00");
+        amcorrelPrint(am, "20090115", "20090119", "09:30:00", "14:30:00");
+        amcorrelPrint(am, "20090115", "20090120", "09:30:00", "14:30:00");
+        amcorrelPrint(am, "20090115", "20090121", "09:30:00", "14:30:00");
+        amcorrelPrint(am, "20090115", "20090122", "09:30:00", "14:30:00");
+        amcorrelPrint(am, "20090115", "20090123", "09:30:00", "14:30:00");
     }
     public static void testTreeMap0(String stockCode) {
         TreeMap<Double, Integer> tm = new TreeMap<Double, Integer>();
@@ -253,9 +285,9 @@ public class GetSettings{
     public static void testTaskManager(String stockCode) {
         System.out.format("\n testTaskManager: \n");
 
-        TaskManager m = new TaskManager();
+        TaskManager tm = new TaskManager();
         while(true) {
-            m.run();
+            tm.run();
         }
     }
     public static void testDouble(String stockCode) {
@@ -295,16 +327,16 @@ public class GetSettings{
             tradeDate0,
             tradeDate1,
         };
-        AmManager m = new AmManager(stockCode, sTradeDates);
+        AmManager am = new AmManager(stockCode, sTradeDates);
         ConcurrentHashMap<String, Double> amcMap = new ConcurrentHashMap<String, Double>();
 
         String hms0 = "09:30:00";
         String hms1 = "15:00:00";
-        double amcorrel = getAmCorrel0(m, stockCode, "1st", tradeDate0, tradeDate1, hms0, hms1);//1st time
+        double amcorrel = getAmCorrel0(am, stockCode, "1st", tradeDate0, tradeDate1, hms0, hms1);//1st time
         String key = Utils.getAmcKey(tradeDate0, tradeDate1, hms0, hms1);
         amcMap.put(key, amcorrel);
-        amcorrel = getAmCorrel0(m, stockCode, "2nd", tradeDate0, tradeDate1, hms0, hms1);       //2nd time
-        amcorrel = getAmCorrel0(m, stockCode, "3rd", tradeDate1, tradeDate0, hms0, hms1);       //3rd time
+        amcorrel = getAmCorrel0(am, stockCode, "2nd", tradeDate0, tradeDate1, hms0, hms1);       //2nd time
+        amcorrel = getAmCorrel0(am, stockCode, "3rd", tradeDate1, tradeDate0, hms0, hms1);       //3rd time
         //
         getAmCorrel1(amcMap, tradeDate0, tradeDate1, hms0, hms1);
 
@@ -312,29 +344,29 @@ public class GetSettings{
 
         hms0 = "09:30:00";
         hms1 = "11:30:00";
-        amcorrel = getAmCorrel0(m, stockCode, "1st", tradeDate0, tradeDate1, hms0, hms1);       //1st time
+        amcorrel = getAmCorrel0(am, stockCode, "1st", tradeDate0, tradeDate1, hms0, hms1);       //1st time
         key = Utils.getAmcKey(tradeDate0, tradeDate1, hms0, hms1);
         amcMap.put(key, amcorrel);
-        amcorrel = getAmCorrel0(m, stockCode, "2nd", tradeDate0, tradeDate1, hms0, hms1);       //2nd time
-        amcorrel = getAmCorrel0(m, stockCode, "3rd", tradeDate1, tradeDate0, hms0, hms1);       //3rd time
+        amcorrel = getAmCorrel0(am, stockCode, "2nd", tradeDate0, tradeDate1, hms0, hms1);       //2nd time
+        amcorrel = getAmCorrel0(am, stockCode, "3rd", tradeDate1, tradeDate0, hms0, hms1);       //3rd time
         //
         getAmCorrel1(amcMap, tradeDate0, tradeDate1, hms0, hms1);
 
         hms0 = "13:00:00";
         hms1 = "15:00:00";
-        amcorrel = getAmCorrel0(m, stockCode, "1st", tradeDate0, tradeDate1, hms0, hms1);       //1st time
+        amcorrel = getAmCorrel0(am, stockCode, "1st", tradeDate0, tradeDate1, hms0, hms1);       //1st time
         key = Utils.getAmcKey(tradeDate0, tradeDate1, hms0, hms1);
         amcMap.put(key, amcorrel);
-        amcorrel = getAmCorrel0(m, stockCode, "2nd", tradeDate0, tradeDate1, hms0, hms1);       //2nd time
-        amcorrel = getAmCorrel0(m, stockCode, "3rd", tradeDate1, tradeDate0, hms0, hms1);       //3rd time
+        amcorrel = getAmCorrel0(am, stockCode, "2nd", tradeDate0, tradeDate1, hms0, hms1);       //2nd time
+        amcorrel = getAmCorrel0(am, stockCode, "3rd", tradeDate1, tradeDate0, hms0, hms1);       //3rd time
         //
         getAmCorrel1(amcMap, tradeDate0, tradeDate1, hms0, hms1);
     }
     //get amcorrel by AmManager
-    private static double getAmCorrel0(AmManager m, String stockCode, String note,
+    private static double getAmCorrel0(AmManager am, String stockCode, String note,
             String tradeDate0, String tradeDate1, String hms0, String hms1) {
         long start = System.currentTimeMillis();
-        double amcorrel = AmcMap.getAmCorrel(tradeDate0, tradeDate1, hms0, hms1, m, stockCode);
+        double amcorrel = AmcMap.getAmCorrel(tradeDate0, tradeDate1, hms0, hms1, am, stockCode);
         long end = System.currentTimeMillis();
         System.out.format("getAmCorrel0: %s (%s,%s,%s,%s) duration=%4d, correl=%8.3f\n", 
                 note, tradeDate0, tradeDate1, hms0, hms1, end-start, amcorrel);
@@ -413,6 +445,8 @@ public class GetSettings{
         //testSystem(stockCode);
 
         //testAmManager(stockCode);
+        //testAmMatrix(stockCode);
+        testMatlabConsoleDemo(stockCode);
         //testTreeMap(stockCode);
         //testCkpt(stockCode);
         //testCombination(stockCode);
@@ -421,7 +455,7 @@ public class GetSettings{
         //testFinal(stockCode);
         //testGetAmCorrel(stockCode);
         //testDouble(stockCode);
-        testString(stockCode);
+        //testString(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
