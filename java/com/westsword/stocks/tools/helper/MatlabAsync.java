@@ -1,33 +1,11 @@
 package com.westsword.stocks.tools.helper;
 
 
-import java.text.DecimalFormat;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import com.mathworks.engine.MatlabEngine;
 
-import com.westsword.stocks.tools.GetSettings;
-
-public class MatlabConsoleDemo {
-    public static void runA() {
-        try {
-            MatlabEngine eng = MatlabEngine.startMatlab();
-
-            double[][] m = GetSettings.getAmMatrix("600030", "092500_145500", "20090105");
-            System.out.format("m.height=%d m.width=%d\n", m.length, m[0].length);
-
-            long start = System.currentTimeMillis();
-            double[][] rm = eng.feval("corrcoef", (Object)m);
-            System.out.format("rm.height=%d rm.width=%d\n", rm.length, rm[0].length);
-            long end = System.currentTimeMillis();
-            System.out.format("MatlabEngine.runA: matlab.corrcoef duration=%4d\n", 
-                    end-start);
-
-            eng.close();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+public class MatlabAsync {
 
     public static void run() {
         try {
