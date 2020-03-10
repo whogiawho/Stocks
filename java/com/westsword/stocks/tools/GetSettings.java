@@ -193,18 +193,10 @@ public class GetSettings{
         MatlabAsync.run();
         MatlabSync.run();
     }
-    public static double[][] getAmMatrix(String stockCode, String startDate, String hmsList) {
-        AmManager am = new AmManager(stockCode);
-
-        String[] sTradeDates = new TradeDates(stockCode, startDate).getAllDates();
-        double[][] m = am.getAmMatrix(hmsList, sTradeDates);
-
-        return m;
-    }
     public static void testAmMatrix(String stockCode) {
         System.out.format("\n testAmMatrix: \n");
 
-        double[][] m = getAmMatrix(stockCode, "20090105", "092500_094000");
+        double[][] m = AmUtils.getAmMatrix(stockCode, "20090105", "092500_094000");
         System.out.format("m.height=%d m.width=%d\n", m.length, m[0].length);
         /*
         for(int i=0; i<h; i++) {
@@ -491,12 +483,12 @@ public class GetSettings{
         //testCheck(stockCode, "111000_123000");
         //testCheck(stockCode, "111000");
         //testCalendar(stockCode);
-        testTreeMap(stockCode);
+        //testTreeMap(stockCode);
         //testSystem(stockCode);
 
         //testAmManager(stockCode);
         //testAmMatrix(stockCode);
-        //testMatlab(stockCode);
+        testMatlab(stockCode);
         //testCkpt(stockCode);
         //testCombination(stockCode);
         //testTradeSumLoader(stockCode);

@@ -35,4 +35,9 @@ public class TradeSum {
                     sMatchedTradeDates, hmsList, actualAvgNetRevenue);
         }
     }
+
+    public TradeSum(String tradeDate, String hmsList) {
+        this.tradeDate = tradeDate;
+        this.hmsList = hmsList;
+    }
 }

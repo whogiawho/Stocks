@@ -2,6 +2,8 @@ package com.westsword.stocks.am;
 
 
 import java.util.*;
+import com.mathworks.engine.MatlabEngine;
+import java.util.concurrent.ExecutionException;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import com.westsword.stocks.base.Stock;
@@ -14,11 +16,11 @@ public class AmManager {
 
     //all tradeDaes
     public AmManager(String stockCode) {
-        this(stockCode, TradeDates.getTradeDateList(stockCode)[0]);
+        this(stockCode, new TradeDates(stockCode).getAllDates());
     }
     //tradeDates between [startDate, ]
     public AmManager(String stockCode, String startDate) {
-        this(stockCode, TradeDates.getTradeDateList(stockCode, startDate));
+        this(stockCode, new TradeDates(stockCode, startDate).getAllDates());
     }
     //tradeDates[]
     public AmManager(String stockCode, String[] tradeDates) {
@@ -71,6 +73,44 @@ public class AmManager {
     }
 
 
+    public double[][] getCorrMatrix(String hmsList, String[] sTradeDates, MatlabEngine eng) {
+        double[][] rm = null;
+
+        try {
+            double [][] m = getAmMatrix(hmsList, sTradeDates);
+            rm = eng.feval("corrcoef", (Object)m);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return rm;
+    }
+    //
+    public double[][] getAmMatrix(String hmsList, String[] sTradeDates) {
+        int w = sTradeDates.length;
+
+        String[] fields = hmsList.split("_");
+        String startHMS = fields[0];
+        String endHMS = fields[1];
+        int start = mSdTime.get(startHMS);
+        int end = mSdTime.get(endHMS);
+        int h = end-start+1;
+
+        double[][] m = new double[h][w];
+        //set values to m
+        for(int i=0; i<w; i++) {
+            String tradeDate = sTradeDates[i];
+            start = mSdTime.getAbs(tradeDate, startHMS);
+            for(int j=0; j<h; j++) {
+                AmRecord r = mAmRecordMap.get(start+j);
+                m[j][i] = (double)r.am;
+            }
+        }
+
+        return m;
+    }
+
+
     //replace Regression.getTradeResult; 
     //Two ways to return out[]: 
     //  always NaN
@@ -79,7 +119,7 @@ public class AmManager {
             String nextTradeDateN, int sTDistance, StockDates stockDates, double[] out) {
         double inPrice = getInPrice(tradeType, inTime);
         double targetProfit = Trade.getTargetProfit(targetRate, inPrice);
-        double outPrice = getOutPrice(inPrice, targetProfit, tradeType);
+        double outPrice = Utils.getOutPrice(inPrice, targetProfit, tradeType);
 
         AmRecord outItem = mAmrTable.getOutItem(inTime, tradeType, outPrice, 
                 nextTradeDateN, sTDistance, stockDates);
@@ -90,15 +130,6 @@ public class AmManager {
         }
 
         return outItem;
-    }
-    private double getOutPrice(double inPrice, double targetProfit, int tradeType) {
-        double outPrice;
-        if(tradeType == Stock.TRADE_TYPE_LONG)
-            outPrice = inPrice + targetProfit;
-        else
-            outPrice = inPrice - targetProfit;
-
-        return outPrice;
     }
 
     

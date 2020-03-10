@@ -76,6 +76,12 @@ public class SSUtils {
     public static String getTradeDateList(CommandLine cmd) {
         return getString(cmd, "l", null);
     }
+    public static String getTradeSumFile(CommandLine cmd) {
+        return getString(cmd, "f", null);
+    }
+    public static String getHMSList(CommandLine cmd) {
+        return getString(cmd, "m", null);
+    }
 
 
     //in case that false is returned, out[0] is not a complete amcorrel for hms[]
@@ -120,6 +126,20 @@ public class SSUtils {
         }
 
         return tradeDateList;
+    }
+    public static String getSimilarTradeDates(String stockCode, String startDate, String hmsList, 
+        String tradeDate, double[][] rm) {
+        TradeDates tradeDates = new TradeDates(stockCode, startDate);
+        int idx = tradeDates.getIndex(tradeDate);
+        int h = rm.length;
+        int w = rm[0].length;
+        String sMatchedDates = "";
+        for(int i=0; i<w; i++) {
+            if(rm[idx][i] >= SSUtils.Default_Threshold)
+                sMatchedDates += tradeDates.getDate(i) + ",";
+        }
+
+        return sMatchedDates.substring(0, sMatchedDates.length()-1);
     }
 
 

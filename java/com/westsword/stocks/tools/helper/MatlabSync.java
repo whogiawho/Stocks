@@ -1,11 +1,10 @@
 package com.westsword.stocks.tools.helper;
 
 
-import java.util.concurrent.ExecutionException;
 import com.mathworks.engine.MatlabEngine;
+import java.util.concurrent.ExecutionException;
 
-import com.westsword.stocks.tools.GetSettings;
-import com.westsword.stocks.base.time.TradeDates;
+import com.westsword.stocks.am.AmUtils;
 
 public class MatlabSync {
     public static void run() {
@@ -15,7 +14,8 @@ public class MatlabSync {
             String stockCode = "600030";
             String startDate = "20090105";
             String hmsList = "113000_130000";
-            double[][] m = GetSettings.getAmMatrix(stockCode, startDate, hmsList);
+
+            double[][] m = AmUtils.getAmMatrix(stockCode, startDate, hmsList);
             System.out.format("m.height=%d m.width=%d\n", m.length, m[0].length);
 
             long start = System.currentTimeMillis();
@@ -25,26 +25,13 @@ public class MatlabSync {
             System.out.format("MatlabSync.run: matlab.corrcoef duration=%4d\n", 
                     end-start);
 
-            listMatchedTradeDates(stockCode, startDate, hmsList, startDate, rm);
+            String sMatchedDates = SSUtils.getSimilarTradeDates(stockCode, startDate, hmsList, startDate, rm);
+            System.out.format("%s\n", sMatchedDates);
             
             eng.close();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
     }
-    public static void listMatchedTradeDates(String stockCode, String startDate, String hmsList, 
-        String tradeDate, double[][] rm) {
-        TradeDates tradeDates = new TradeDates(stockCode, startDate);
-        int idx = tradeDates.getIndex(tradeDate);
-        int h = rm.length;
-        int w = rm[0].length;
-        String sMatchedDates = "";
-        for(int i=0; i<w; i++) {
-            if(rm[idx][i] >= SSUtils.Default_Threshold)
-                sMatchedDates += tradeDates.getDate(i) + ",";
-        }
-        System.out.format("%s\n", sMatchedDates);
-    }
-
 
 }
