@@ -229,16 +229,42 @@ public class GetSettings{
         amcorrelPrint(am, "20090115", "20090122", "09:30:00", "14:30:00");
         amcorrelPrint(am, "20090115", "20090123", "09:30:00", "14:30:00");
     }
-    //TreeMap's key is not compared by an obj ref, instead it is compared by value
+    private static void testAmObject(AmRecord r0, AmRecord r1) {
+        if(r0.compareTo(r1)==0)
+            System.out.format("  testAmObject: r0&r1 are equal\n");
+        if(r0==r1)
+            System.out.format("  testAmObject: r0&r1 are just one object!\n");
+        else
+            System.out.format("  testAmObject: r0&r1 are different objects!\n");
+    }
+    private static void listKeys(TreeMap<AmRecord, Integer> map) {
+        for(AmRecord r: map.keySet()) {
+            System.out.format("  listKeys: %s\n", r);
+        }
+    }
+    //TreeMap's key is not compared by an obj ref, instead the key must implement Comparable interface
     public static void testTreeMap0(String stockCode) {
-        TreeMap<Double, Integer> tm = new TreeMap<Double, Integer>();
-        
+        TreeMap<Double, Integer> tm0 = new TreeMap<Double, Integer>();
         Double d0 = Double.valueOf("1.0");
         Double d1 = Double.valueOf("1.0000000000000000000000000000000000001");
-        tm.put(d0, 1);
-        tm.put(d1, 2);
+        tm0.put(d0, 1);
+        tm0.put(d1, 2);
+        System.out.format("testTreeMap0: tm0.size=%d\n", tm0.size());
 
-        System.out.format("testTreeMap0: tm.size=%d\n", tm.size());
+        TreeMap<AmRecord, Integer> tm1 = new TreeMap<AmRecord, Integer>();
+        AmRecord r0 = new AmRecord(0, 1, 2, 0.1, 0.2);
+        AmRecord r1 = new AmRecord(0, 1, 2, 0.1, 0.2);
+        System.out.format("testTreeMap0: r0=%s r1=%s\n", r0, r1);
+        testAmObject(r0, r1);
+
+        tm1.put(r0, 0);
+        System.out.format("testTreeMap0: tm1.size=%d tm1[r0]=%d tm1[r1]=%d\n", 
+                tm1.size(), tm1.get(r0), tm1.get(r1));
+        listKeys(tm1);
+        tm1.put(r1, 1);
+        System.out.format("testTreeMap0: tm1.size=%d tm1[r0]=%d tm1[r1]=%d\n", 
+                tm1.size(), tm1.get(r0), tm1.get(r1));
+        listKeys(tm1);
     }
     //submap
     public static void testTreeMap1(String stockCode) {

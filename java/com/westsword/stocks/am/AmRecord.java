@@ -3,7 +3,7 @@ package com.westsword.stocks.am;
 import com.westsword.stocks.base.Stock;
 import com.westsword.stocks.base.utils.Trade;
 
-public class AmRecord {
+public class AmRecord implements Comparable<AmRecord> {
     public long hexTimePoint;
     public int  timeIndex;
     public long am;
@@ -48,5 +48,9 @@ public class AmRecord {
         }
 
         return profit;
+    }
+
+    public int compareTo(AmRecord r) {
+        return Long.compare(hexTimePoint, r.hexTimePoint);
     }
 }
