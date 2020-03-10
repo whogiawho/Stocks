@@ -229,6 +229,7 @@ public class GetSettings{
         amcorrelPrint(am, "20090115", "20090122", "09:30:00", "14:30:00");
         amcorrelPrint(am, "20090115", "20090123", "09:30:00", "14:30:00");
     }
+    //TreeMap's key is not compared by an obj ref, instead it is compared by value
     public static void testTreeMap0(String stockCode) {
         TreeMap<Double, Integer> tm = new TreeMap<Double, Integer>();
         
@@ -237,8 +238,9 @@ public class GetSettings{
         tm.put(d0, 1);
         tm.put(d1, 2);
 
-        System.out.format("tm.size=%d\n", tm.size());
+        System.out.format("testTreeMap0: tm.size=%d\n", tm.size());
     }
+    //submap
     public static void testTreeMap1(String stockCode) {
         TreeMap<Integer, Integer> map = new TreeMap<Integer, Integer>();
         map.put(0, 0);
@@ -247,7 +249,28 @@ public class GetSettings{
         map.put(7, 7);
 
         NavigableMap<Integer, Integer> subMap = map.subMap(2, true, 5, true);
-        System.out.format("subMap.size = %d\n", subMap.size());
+        System.out.format("testTreeMap1: [2,5] for elements[0,1,6,7] subMap.size = %d\n", 
+                subMap.size());
+
+        subMap = map.subMap(2, true, 6, true);
+        System.out.format("testTreeMap1: [2,6] for elements[0,1,6,7] subMap.size = %d\n", 
+                subMap.size());
+    }
+    //TreeMap value is an object ref
+    public static void testTreeMap2(String stockCode) {
+        TreeMap<Integer, AmRecord> map0 = new TreeMap<Integer, AmRecord>();
+        TreeMap<Integer, AmRecord> map1 = new TreeMap<Integer, AmRecord>();
+
+        AmRecord r = new AmRecord(0, 1, 2, 0.1, 0.2);
+        map0.put(0, r);
+        map1.put(1, r);
+        System.out.format("testTreeMap2: map0.size=%d map1.size=%d\n", 
+                map0.size(), map1.size());
+        r.upPrice = 0.3;
+        AmRecord r0 = map0.get(0);
+        AmRecord r1 = map1.get(1);
+        System.out.format("testTreeMap2: r0.upPrice=%.3f r1.upPrice=%.3f\n", 
+                r0.upPrice, r1.upPrice);
     }
 
     public static void testTreeMap(String stockCode) {
@@ -255,6 +278,7 @@ public class GetSettings{
 
         testTreeMap0(stockCode);
         testTreeMap1(stockCode);
+        testTreeMap2(stockCode);
     }
     public static void testCkpt(String stockCode) {
         System.out.format("\n testCkpt: \n");
@@ -441,13 +465,12 @@ public class GetSettings{
         //testCheck(stockCode, "111000_123000");
         //testCheck(stockCode, "111000");
         //testCalendar(stockCode);
-        //testTreeMap(stockCode);
+        testTreeMap(stockCode);
         //testSystem(stockCode);
 
         //testAmManager(stockCode);
         //testAmMatrix(stockCode);
-        testMatlab(stockCode);
-        //testTreeMap(stockCode);
+        //testMatlab(stockCode);
         //testCkpt(stockCode);
         //testCombination(stockCode);
         //testTradeSumLoader(stockCode);
