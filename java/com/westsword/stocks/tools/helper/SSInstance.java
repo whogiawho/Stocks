@@ -9,7 +9,6 @@ import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.Trade;
 import com.westsword.stocks.base.utils.StockPaths;
-import com.westsword.stocks.analyze.Regression;
 
 public class SSInstance {
     public String stockCode;
@@ -35,10 +34,14 @@ public class SSInstance {
         this.maxCycle = maxCycle;
         this.targetRate = targetRate;
     }
+    public SSInstance(SSInstance r) {
+        this(r.stockCode, r.startDate, r.threshold, r.sTDistance, r.tradeType,
+                r.tradeDate, r.hmsList, r.maxCycle, r.targetRate);
+    }
 
 
 
-    public void run(AmManager am, StockDates stockDates, 
+    public void run(AmManager am, StockDates stockDates, double[][] corrM, 
             boolean bLog2Files, boolean bResetLog, boolean bStdout) {
         String[] sPaths = getPaths();
         // sPaths[0] - sTradeDetailsDir
@@ -48,7 +51,7 @@ public class SSInstance {
         resetLogFile(bResetLog, hmsList, sPaths[1], sPaths[2]);
 
         BufR br = new BufR();
-        _run(am, stockDates, sPaths[1], br);
+        _run(am, stockDates, corrM, sPaths[1], br);
 
         //log tradeDetails by the filter criteria
         boolean bLogTradeDetails = bLog2Files && !filterIt(br);
@@ -70,11 +73,12 @@ public class SSInstance {
         t.start();
         */
     }
-    public void _run(AmManager am, StockDates stockDates, String sTradeDetailsFile, BufR br) {
+    public void _run(AmManager am, StockDates stockDates, double[][] corrM, 
+            String sTradeDetailsFile, BufR br) {
         //
         String inHMS = SSUtils.getInHMS(hmsList);
 
-        ArrayList<String> similarTradeDates = SSUtils.getSimilarTradeDates(this, am);
+        ArrayList<String> similarTradeDates = SSUtils.getSimilarTradeDates(this, am, corrM);
 
         ISearchAmRecord w = SSUtils.getWay2SearchAmRecord();
         ArrayList<Long> outTimeList = new ArrayList<Long>();
@@ -89,6 +93,7 @@ public class SSInstance {
                     sTDistance, tradeType, targetRate,
                     am, stockDates, outParms);
 
+            //skip those outParms when (outParms[0]==false&&distance!=maxCycle)
             if(distance == maxCycle||outParms[0].equals("true")) {
                 long inTime = Time.getSpecificTime(tradeDate1, inHMS);
                 //remove those that are smaller than inTime from outTimeList, for getting maxHangCount
@@ -99,10 +104,10 @@ public class SSInstance {
 
                 br.sTradeDetails += getTradeDetailsLine(stockDates, outTimeList.size()+1,
                         tradeDate1, tradeType, inHMS, br.netRevenue, outParms);
-            }
 
-            //add outTime to outTimeList
-            outTimeList.add(Long.valueOf(outParms[4]));
+                //add outTime to outTimeList
+                outTimeList.add(Long.valueOf(outParms[4]));
+            }
         }
     }
 

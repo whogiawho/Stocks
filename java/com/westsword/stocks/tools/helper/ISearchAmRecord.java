@@ -14,6 +14,10 @@ public interface ISearchAmRecord {
     //outParms[6] - riskDelta
     //outParms[7] - maxDeltaPriceBias 
     //search to get tradeDate1 inHMS's stats(sTDistance, tradeType, targetRate) for next N day
+    //outParms shall be used for 2 scenarios:
+    //  bOK == true
+    //  bOK == false && distance == maxCycle
+    //the scenario bOK==false && distance != maxCycle will be skipped
     public void getTradeParms(String tradeDate1, String inHMS, String nextTradeDateN, 
             int sTDistance, int tradeType, double targetRate, 
             AmManager am, StockDates stockDates, String[] outParms);

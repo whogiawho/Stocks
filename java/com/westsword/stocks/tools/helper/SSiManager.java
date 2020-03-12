@@ -13,9 +13,14 @@ public class SSiManager extends TaskManager {
 
     public void run(SSInstance ssi, AmManager am, StockDates stockDates,
             boolean bLog2Files, boolean bResetLog, boolean bPrintTradeDetails) {
+        run(ssi, am, stockDates, null,
+                bLog2Files, bResetLog, bPrintTradeDetails);
+    }
+    public void run(SSInstance ssi, AmManager am, StockDates stockDates, double[][] corrM, 
+            boolean bLog2Files, boolean bResetLog, boolean bPrintTradeDetails) {
         maxThreadsCheck();
 
-        Thread t = new SSiTask(this, ssi, am, stockDates, 
+        Thread t = new SSiTask(this, ssi, am, stockDates, corrM, 
                 bLog2Files, bResetLog, bPrintTradeDetails);
         t.start();
     }
@@ -25,11 +30,12 @@ public class SSiManager extends TaskManager {
 
         private AmManager am;
         private StockDates stockDates;
+        double[][] corrM;
         private boolean bLog2Files;
         private boolean bResetLog;
         private boolean bPrintTradeDetails;
 
-        public SSiTask(SSiManager m, SSInstance ssi, AmManager am, StockDates stockDates, 
+        public SSiTask(SSiManager m, SSInstance ssi, AmManager am, StockDates stockDates, double[][] corrM, 
                 boolean bLog2Files, boolean bResetLog, boolean bPrintTradeDetails) {
             super(m);
 
@@ -37,6 +43,7 @@ public class SSiManager extends TaskManager {
 
             this.am = am;
             this.stockDates = stockDates;
+            this.corrM = corrM;
             this.bLog2Files = bLog2Files;
             this.bResetLog = bResetLog;
             this.bPrintTradeDetails = bPrintTradeDetails;
@@ -46,7 +53,8 @@ public class SSiManager extends TaskManager {
         public void runTask() {
             //run ssinstance
             if(mSSi!=null)
-                mSSi.run(am, stockDates, bLog2Files, bResetLog, bPrintTradeDetails);
+                mSSi.run(am, stockDates, corrM, 
+                        bLog2Files, bResetLog, bPrintTradeDetails);
         }
     }
 }

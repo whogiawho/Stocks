@@ -2,15 +2,15 @@ package com.westsword.stocks.tools.helper;
 
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import org.apache.commons.cli.*;
 import com.mathworks.engine.MatlabEngine;
-import java.util.concurrent.ExecutionException;
+import org.apache.commons.math3.util.Combinations;
 
 import com.westsword.stocks.am.*;
-import com.westsword.stocks.base.Stock;
-import com.westsword.stocks.base.Utils;
-import com.westsword.stocks.base.utils.AnsiColor;
 import com.westsword.stocks.base.time.*;
+import com.westsword.stocks.base.ckpt.*;
+import com.westsword.stocks.base.utils.AnsiColor;
 
 public class SSInstancesHelper {
 
@@ -36,8 +36,8 @@ public class SSInstancesHelper {
         int maxCycle = Integer.valueOf(newArgs[0]);
 
         String sTradeSumFile = SSUtils.getTradeSumFile(cmd);
-        String hmsList0 = SSUtils.getHMSList(cmd);
-        if(sTradeSumFile==null&&hmsList0==null||sTradeSumFile!=null&&hmsList0!=null) {
+        String hmsList = SSUtils.getHMSList(cmd);
+        if(sTradeSumFile!=null&&hmsList!=null) {
             usage();
             return;
         }
@@ -48,54 +48,101 @@ public class SSInstancesHelper {
         boolean bStdout = SSUtils.getSwitchStdout(cmd);
         AmManager am = new AmManager(stockCode, startDate);
         StockDates stockDates = new StockDates(stockCode);
-
-        ArrayList<TradeSum> list = getTradeSumList(stockCode, startDate, sTradeSumFile, hmsList0);
-        double[][] corrM = getCorrMatrix(stockCode, startDate, sTradeSumFile, hmsList0, am);
-
         SSiManager ssim = new SSiManager();
+        SSInstance template = new SSInstance(stockCode, startDate, threshold, sTDistance, tradeType,
+                    "", "", maxCycle, targetRate);
+
+        if(sTradeSumFile != null) {
+            ArrayList<TradeSum> list = getTradeSumList(sTradeSumFile);
+            handle01(template, list,
+                    bLog2Files, bResetLog, bStdout,
+                    stockDates, am, ssim);
+        } else {
+            handleX0(template, hmsList, 
+                    bLog2Files, bResetLog, bStdout,
+                    stockDates, am, ssim);
+        }
+    }
+
+    private static void handle01(SSInstance template, ArrayList<TradeSum> list, 
+            boolean bLog2Files, boolean bResetLog, boolean bStdout,
+            StockDates stockDates, AmManager am, SSiManager ssim) {
         //loop the tradeSumList 
         for(int i=0; i<list.size(); i++) {
             TradeSum ts = list.get(i);
-            String hmsList = ts.hmsList;
 
+            SSInstance r = new SSInstance(template);
+            r.tradeDate = ts.tradeDate;
+            r.hmsList = ts.hmsList;
             System.out.format("%8s %8s %8.2f %4d %4d %8s %8s %4d %8.3f\n",
-                    stockCode, startDate, threshold, sTDistance, tradeType,
-                    ts.tradeDate, hmsList, maxCycle, targetRate);
-            SSInstance r = new SSInstance(stockCode, startDate, threshold, sTDistance, tradeType, 
-                    ts.tradeDate, hmsList, maxCycle, targetRate);
+                    r.stockCode, r.startDate, r.threshold, r.sTDistance, r.tradeType,
+                    ts.tradeDate, ts.hmsList, r.maxCycle, r.targetRate);
+
             ssim.run(r, am, stockDates,
                     bLog2Files, bResetLog, bStdout);
         }
     }
+    private static void handleX0(SSInstance template, String hmsList,
+            boolean bLog2Files, boolean bResetLog, boolean bStdout,
+            StockDates stockDates, AmManager am, SSiManager ssim) {
+        TradeDates tradeDates = new TradeDates(template.stockCode, template.startDate);
+        if(hmsList!=null) {
+            loopTradeDates(template, hmsList, tradeDates,
+                    bLog2Files, bResetLog, bStdout,
+                    stockDates, am, ssim);
+        } else {
+            CheckPoint0 ckpt = new CheckPoint0();
+            int length = ckpt.getLength();
+            Combinations c = new Combinations(length, 2);
+            //loop hmsList combination(n,2)
+            Iterator<int[]> itr = c.iterator();
+            while(itr.hasNext()) {
+                int[] e = itr.next();
+                hmsList = ckpt.getHMSList(e);
+
+                loopTradeDates(template, hmsList, tradeDates,
+                        bLog2Files, bResetLog, bStdout,
+                        stockDates, am, ssim);
+            }
+        }
+    }
+    private static void loopTradeDates(SSInstance template, String hmsList, TradeDates tradeDates,
+            boolean bLog2Files, boolean bResetLog, boolean bStdout,
+            StockDates stockDates, AmManager am, SSiManager ssim) {
+        double[][] corrM = getCorrMatrix(template.stockCode, template.startDate, hmsList, am);
+        String tradeDate = tradeDates.firstDate();
+        while(tradeDate!=null) {
+            SSInstance r = new SSInstance(template);
+            r.tradeDate = tradeDate;
+            r.hmsList = hmsList;
+            ssim.run(r, am, stockDates, 
+                    bLog2Files, bResetLog, bStdout);
+
+            tradeDate = tradeDates.nextDate(tradeDate);
+        }
+    }
 
     private static double[][] getCorrMatrix(String stockCode, String startDate, 
-            String sTradeSumFile, String hmsList, AmManager am) {
+            String hmsList, AmManager am) {
         double[][] m = null;
 
         try {
-            if(sTradeSumFile == null) {
-                MatlabEngine eng = MatlabEngine.startMatlab();
-                String[] sTradeDates = new TradeDates(stockCode, startDate).getAllDates();
-                m = am.getCorrMatrix(hmsList, sTradeDates, eng);
-                eng.close();
-            }
+            MatlabEngine eng = MatlabEngine.startMatlab();
+            String[] sTradeDates = new TradeDates(stockCode, startDate).getAllDates();
+            m = am.getCorrMatrix(hmsList, sTradeDates, eng);
+            eng.close();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
 
         return m;
     }
-    private static ArrayList<TradeSum> getTradeSumList(String stockCode, String startDate,
-            String sTradeSumFile, String hmsList) {
+    private static ArrayList<TradeSum> getTradeSumList(String sTradeSumFile) {
         ArrayList<TradeSum> list = new ArrayList<TradeSum>();
 
         if(sTradeSumFile != null) {
             TradeSumLoader l = new TradeSumLoader();
             l.load(sTradeSumFile, list);
-        } else {
-            String[] sTradeDates = new TradeDates(stockCode, startDate).getAllDates();
-            for(int i=0; i<sTradeDates.length; i++) 
-                list.add(new TradeSum(sTradeDates[i], hmsList));
         }
 
         return list;
@@ -109,7 +156,7 @@ public class SSInstancesHelper {
         System.err.println("                       relative(<=1): targetRate"); 
         System.err.println("                       absolute(>1) : targetRate-1");
 
-             String line = "       only one, either -f or -m, can be enabled!";
+             String line = "       only one, either -f or -m or None can be enabled!";
         line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);
         System.err.println(line);
         SSInstanceHelper.commonUsageInfo();
