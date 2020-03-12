@@ -41,4 +41,7 @@ public class AStockSdTime extends SdTime {
     public static String getCloseQuotationTime() {
         return "15:00:00";
     }
+    public static long getCloseQuotationTime(String tradeDate) {
+        return Time.getSpecificTime(tradeDate, getCloseQuotationTime());
+    }
 }

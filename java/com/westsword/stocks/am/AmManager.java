@@ -61,6 +61,10 @@ public class AmManager {
     public double getDownPrice(long inTime) {
         return getInPrice(Stock.TRADE_TYPE_DOWN, inTime);
     }
+    public double getOutPrice(int tradeType, long outTime) {
+        AmRecord r = getFloorItem(outTime);
+        return r.getOutPrice(tradeType);
+    }
     public AmRecord getFloorItem(long tp) {
         int idx = mSdTime.getAbs(tp);
         idx = mAmRecordMap.floorKey(idx);
@@ -115,6 +119,9 @@ public class AmManager {
     //Two ways to return out[]: 
     //  always NaN
     //  just as Regression.getTradeResult
+    //out[0] - maxDeltaPriceBias
+    //out[1] - maxPosPrice, most optimistic
+    //out[2] - riskDelta, risk if not achieving targetRate
     public AmRecord getTradeResult(long inTime, int tradeType, double targetRate, 
             String nextTradeDateN, int sTDistance, StockDates stockDates, double[] out) {
         double inPrice = getInPrice(tradeType, inTime);
@@ -124,15 +131,33 @@ public class AmManager {
         AmRecord outItem = mAmrTable.getOutItem(inTime, tradeType, outPrice, 
                 nextTradeDateN, sTDistance, stockDates);
         if(out!=null) {
-            out[0] = Double.NaN;
-            out[1] = Double.NaN;
-            out[2] = Double.NaN;
+            out[0] = mAmrTable.getMaxDeltaPriceBias(inTime, tradeType, 
+                    nextTradeDateN, stockDates, outItem, this);
+            out[1] = mAmrTable.getMaxPosPrice(inTime, tradeType,
+                    nextTradeDateN, sTDistance, stockDates);
+            out[2] = getRiskDelta(inTime, tradeType, nextTradeDateN);
         }
 
         return outItem;
     }
 
-    
+    public double getRiskDelta(long inTime, int tradeType, String nextTradeDateN) {
+        double riskDelta = Double.NaN;
+
+        double inPrice = getInPrice(tradeType, inTime);
+        String hms = Time.getTimeHMS(inTime);
+        long lastTp = Time.getSpecificTime(nextTradeDateN, hms);
+        double oPrice = getOutPrice(tradeType, lastTp);
+        if(tradeType == Stock.TRADE_TYPE_LONG) {
+            riskDelta =  oPrice - inPrice;
+        } else {
+            riskDelta = inPrice - oPrice;
+        }
+
+        return riskDelta;
+    }
+
+
     //startDate0,startHMS0 endDate0,endHMS0
     //startDate1,startHMS1 endDate1,endHMS1
     public double getAmCorrel(String startDate0, String startHMS0, String endDate0, String endHMS0, 
