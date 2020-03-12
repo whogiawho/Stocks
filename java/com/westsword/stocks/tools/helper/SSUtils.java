@@ -101,45 +101,55 @@ public class SSUtils {
 
         return bHMSMatched;
     }
-    public static ArrayList<String> getSimilarTradeDates(SSInstance r, AmManager am) {
+    public static ArrayList<String> getSimilarTradeDates(SSInstance r, AmManager am, double[][] corrM) {
         return getSimilarTradeDates(r.stockCode, r.startDate, r.threshold,
-                r.tradeDate, r.hmsList, am);
+                r.tradeDate, r.hmsList, am, corrM);
     }
     public static ArrayList<String> getSimilarTradeDates(String stockCode, String startDate, double threshold, 
             String tradeDate, String hmsList, AmManager am) {
+        return getSimilarTradeDates(stockCode, startDate, threshold,
+                tradeDate, hmsList, am, null);
+    }
+    public static ArrayList<String> getSimilarTradeDates(String stockCode, String startDate, double threshold, 
+            String tradeDate, String hmsList, AmManager am, double[][] corrM) {
         ArrayList<String> tradeDateList = new ArrayList<String>();
 
-        String[] hms = hmsList.split("_");
-        TradeDates tradeDates = new TradeDates(stockCode);
-        String tradeDate0 = startDate;
-        while(tradeDate0 != null) {
-            String[] out = new String[1]; 
-            boolean bHMSMatched = isHMSMatched(tradeDate0, tradeDate, hms, am, threshold, out);
-            if(bHMSMatched)
-                tradeDateList.add(tradeDate0);
-            /*
-            System.out.format("%s %s %s %s\n", 
-                    tradeDate0, tradeDate, hmsList, out[0]);
-            */
+        if(corrM!=null) {
+            getSimilarTradeDates(stockCode, startDate, threshold,
+                    tradeDate, hmsList, corrM, tradeDateList);
+        } else {
+            String[] hms = hmsList.split("_");
+            TradeDates tradeDates = new TradeDates(stockCode);
+            String tradeDate0 = startDate;
+            while(tradeDate0 != null) {
+                String[] out = new String[1]; 
+                boolean bHMSMatched = isHMSMatched(tradeDate0, tradeDate, hms, am, threshold, out);
+                if(bHMSMatched)
+                    tradeDateList.add(tradeDate0);
+                /*
+                System.out.format("%s %s %s %s\n", 
+                        tradeDate0, tradeDate, hmsList, out[0]);
+                */
 
-            tradeDate0 = tradeDates.nextDate(tradeDate0);
+                tradeDate0 = tradeDates.nextDate(tradeDate0);
+            }
         }
 
         return tradeDateList;
     }
-    public static String getSimilarTradeDates(String stockCode, String startDate, String hmsList, 
-        String tradeDate, double[][] rm) {
+    public static void getSimilarTradeDates(String stockCode, String startDate, double threshold, 
+            String tradeDate, String hmsList, double[][] corrM, ArrayList<String> tradeDateList) {
         TradeDates tradeDates = new TradeDates(stockCode, startDate);
         int idx = tradeDates.getIndex(tradeDate);
-        int h = rm.length;
-        int w = rm[0].length;
-        String sMatchedDates = "";
+        int h = corrM.length;
+        int w = corrM[0].length;
         for(int i=0; i<w; i++) {
-            if(rm[idx][i] >= SSUtils.Default_Threshold)
-                sMatchedDates += tradeDates.getDate(i) + ",";
+            if(corrM[idx][i] >= SSUtils.Default_Threshold) {
+                String sMatchedDate = tradeDates.getDate(i);
+                if(tradeDateList!=null)
+                    tradeDateList.add(sMatchedDate);
+            }
         }
-
-        return sMatchedDates.substring(0, sMatchedDates.length()-1);
     }
 
 

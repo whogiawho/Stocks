@@ -1,6 +1,7 @@
 package com.westsword.stocks.tools.helper;
 
 
+import java.util.*;
 import com.mathworks.engine.MatlabEngine;
 import java.util.concurrent.ExecutionException;
 
@@ -25,8 +26,10 @@ public class MatlabSync {
             System.out.format("MatlabSync.run: matlab.corrcoef duration=%4d\n", 
                     end-start);
 
-            String sMatchedDates = SSUtils.getSimilarTradeDates(stockCode, startDate, hmsList, startDate, rm);
-            System.out.format("%s\n", sMatchedDates);
+            ArrayList<String> tradeDateList = new ArrayList<String>();
+            SSUtils.getSimilarTradeDates(stockCode, startDate, SSUtils.Default_Threshold,
+                    startDate, hmsList, rm, tradeDateList);
+            System.out.format("%s\n", tradeDateList.toString());
             
             eng.close();
         } catch (ExecutionException | InterruptedException e) {

@@ -48,7 +48,7 @@ public class SSInstanceHelper {
 
         SSInstance r = new SSInstance(stockCode, startDate, threshold, sTDistance, tradeType,
                 tradeDate0, hmsList, maxCycle, targetRate);
-        r.run(am, stockDates, 
+        r.run(am, stockDates, null,
                 bLog2Files, bResetLog, bStdout);
     }
 
