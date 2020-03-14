@@ -7,7 +7,7 @@ currentDateLastRawTradeDetailTime=5e0ee6ac
 
 
 PriceDecimalFormat=#.##
-
+MaxTasks=24
 
 
 SdStartTime=09:25:00
@@ -24,6 +24,7 @@ CkptInterval=60
 switchOfRawData=false
 #switch to turn on performance tuning
 noPerformanceLog=true
+BufferingTradeResult=true
 
 
 TimeZone=GMT+08:00

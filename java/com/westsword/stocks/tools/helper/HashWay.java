@@ -20,8 +20,8 @@ public class HashWay implements ISearchAmRecord {
             Double.NaN,
             Double.NaN,
         };
-        AmRecord outItem = am.getTradeResult(inTime, tradeType, targetRate, 
-                nextTradeDateN, sTDistance, stockDates, out);
+        AmRecord outItem = am.getTradeResult(inTime, nextTradeDateN, targetRate, 
+                sTDistance, tradeType, stockDates, out);
         if(outItem == null) {
             long outTime = Time.getSpecificTime(nextTradeDateN, AStockSdTime.getCloseQuotationTime());
             outItem = am.getFloorItem(outTime);

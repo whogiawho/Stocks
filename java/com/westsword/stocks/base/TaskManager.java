@@ -4,7 +4,7 @@ package com.westsword.stocks.base;
 import java.util.*;
 
 public class TaskManager {
-    public final static int MaxThreads = 30;
+    public final static int MaxThreads = Settings.getMaxTasks();
 
     private volatile int mConcurrent;
 

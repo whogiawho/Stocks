@@ -116,6 +116,9 @@ public class Settings extends FileLoader {
     public static String getPriceDecimalFormat() {
         return getString("PriceDecimalFormat");
     }
+    public static Integer getMaxTasks() {
+        return getInteger("MaxTasks");
+    }
 
 
     public static String getTradeDate() {
@@ -197,11 +200,14 @@ public class Settings extends FileLoader {
 
     public final static int NO_PERFORMANCE_LOG = 0;
     public final static int SWITCH_OF_RAW_DATA = 1;
+    public final static int BUFFERING_TRADERESULT = 2;
     public final static String[] booleanKeys = {
         "noPerformanceLog",
         "switchOfRawData",
+        "BufferingTradeResult",
     };
     public final static Boolean[] booleanValues = {
+        null,
         null,
         null,
     };
