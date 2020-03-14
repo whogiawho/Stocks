@@ -60,7 +60,7 @@ public class SSInstancesHelper {
         } else {
             handleX0(template, hmsList, 
                     bLog2Files, bResetLog, bStdout,
-                    stockDates, am, ssim);
+                    stockDates, am, ssim, cmd);
         }
     }
 
@@ -84,7 +84,7 @@ public class SSInstancesHelper {
     }
     private static void handleX0(SSInstance template, String hmsList,
             boolean bLog2Files, boolean bResetLog, boolean bStdout,
-            StockDates stockDates, AmManager am, SSiManager ssim) {
+            StockDates stockDates, AmManager am, SSiManager ssim, CommandLine cmd) {
         TradeDates tradeDates = new TradeDates(template.stockCode, template.startDate);
         if(hmsList!=null) {
             loopTradeDates(template, hmsList, tradeDates,
@@ -92,14 +92,25 @@ public class SSInstancesHelper {
                     stockDates, am, ssim);
         } else {
             CheckPoint0 ckpt = new CheckPoint0();
+            String startHMSList = SSUtils.getStartHMSList(cmd);
+            int[] idxs = null;
+            if(startHMSList!=null)
+                 idxs = ckpt.getIdxList(startHMSList);
+
             int length = ckpt.getLength();
             Combinations c = new Combinations(length, 2);
+            Comparator<int[]> iC = c.comparator();
             //loop hmsList combination(n,2)
             Iterator<int[]> itr = c.iterator();
             while(itr.hasNext()) {
                 int[] e = itr.next();
                 hmsList = ckpt.getHMSList(e);
+                if(idxs!=null && iC.compare(e, idxs)<=0) {
+                    System.err.format("handleX0: skipping %s\n", hmsList);
+                    continue;
+                }
 
+                //clear am's trBuf(optionaly)
                 loopTradeDates(template, hmsList, tradeDates,
                         bLog2Files, bResetLog, bStdout,
                         stockDates, am, ssim);
@@ -115,7 +126,7 @@ public class SSInstancesHelper {
             SSInstance r = new SSInstance(template);
             r.tradeDate = tradeDate;
             r.hmsList = hmsList;
-            ssim.run(r, am, stockDates, 
+            ssim.run(r, am, stockDates, corrM,
                     bLog2Files, bResetLog, bStdout);
 
             tradeDate = tradeDates.nextDate(tradeDate);
@@ -163,6 +174,8 @@ public class SSInstancesHelper {
 
         System.err.println("       -f sTradeSumFile; [tradeDate, hmsList] in the file; exclusive to -m");
         System.err.println("       -m hmsList      ; loop all [tradeDate, hmsList]; exclusive to -f");
+        System.err.println("       -a startHMSList ; loops starting from startHMSList(exclusive)");
+        System.err.println("                         effective only when no -fm");
         System.exit(-1);
     }
 
@@ -174,6 +187,7 @@ public class SSInstancesHelper {
 
             options.addOption("f", true,  "a tradeSum file");
             options.addOption("m", true,  "hmsList");
+            options.addOption("a", true,  "skip those HMS before startHMSList(inclusive)");
             CommandLineParser parser = new DefaultParser();
             cmd = parser.parse(options, newArgs);
         } catch (Exception e) {
