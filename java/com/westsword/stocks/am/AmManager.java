@@ -2,6 +2,7 @@ package com.westsword.stocks.am;
 
 
 import java.util.*;
+import java.util.concurrent.*;
 import com.mathworks.engine.MatlabEngine;
 import java.util.concurrent.ExecutionException;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
@@ -13,6 +14,8 @@ import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 
 public class AmManager {
+    public final static boolean Buffering_TradeResult = Settings.getSwitch(Settings.BUFFERING_TRADERESULT);
+
 
     //all tradeDaes
     public AmManager(String stockCode) {
@@ -122,8 +125,30 @@ public class AmManager {
     //out[0] - maxDeltaPriceBias
     //out[1] - maxPosPrice, most optimistic
     //out[2] - riskDelta, risk if not achieving targetRate
-    public AmRecord getTradeResult(long inTime, int tradeType, double targetRate, 
-            String nextTradeDateN, int sTDistance, StockDates stockDates, double[] out) {
+    public AmRecord getTradeResult(long inTime, String nextTradeDateN, double targetRate, 
+            int sTDistance, int tradeType, StockDates stockDates, double[] out) {
+        if(Buffering_TradeResult) {
+            TRBufR r = mTrBufMap.get(inTime);
+            if(r!=null) {
+                //System.err.format("%s: %x already in mTrBufMap size=%d!\n", 
+                //        Utils.getCallerName(getClass()), inTime, mTrBufMap.size());
+                out[0] = r.maxDeltaPriceBias;
+                out[1] = r.maxPosPrice;
+                out[2] = r.riskDelta;
+                return r.outItem;
+            }
+        }
+
+        AmRecord outItem = _getTradeResult(inTime, nextTradeDateN, targetRate,
+                sTDistance, tradeType, stockDates, out);
+
+        if(Buffering_TradeResult)
+            mTrBufMap.put(inTime, new TRBufR(outItem, out[0], out[1], out[2]));
+
+        return outItem;
+    }
+    public AmRecord _getTradeResult(long inTime, String nextTradeDateN, double targetRate, 
+            int sTDistance, int tradeType, StockDates stockDates, double[] out) {
         double inPrice = getInPrice(tradeType, inTime);
         double targetProfit = Trade.getTargetProfit(targetRate, inPrice);
         double outPrice = Utils.getOutPrice(inPrice, targetProfit, tradeType);
@@ -140,7 +165,6 @@ public class AmManager {
 
         return outItem;
     }
-
     public double getRiskDelta(long inTime, int tradeType, String nextTradeDateN) {
         double riskDelta = Double.NaN;
 
@@ -308,4 +332,20 @@ public class AmManager {
                 Utils.getCallerName(getClass()));
     }
 
+
+    private ConcurrentHashMap<Long, TRBufR> mTrBufMap = new ConcurrentHashMap<Long, TRBufR>();
+    //TRBufR = TradeResult Buf Record
+    public static class TRBufR {
+        public AmRecord outItem;
+        double maxDeltaPriceBias;
+        double maxPosPrice;
+        double riskDelta;
+
+        public TRBufR(AmRecord outItem, double maxDeltaPriceBias, double maxPosPrice, double riskDelta) {
+            this.outItem = outItem;
+            this.maxDeltaPriceBias = maxDeltaPriceBias;
+            this.maxPosPrice = maxPosPrice;
+            this.riskDelta = riskDelta;
+        }
+    }
 }
