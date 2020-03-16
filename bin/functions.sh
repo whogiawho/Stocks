@@ -23,7 +23,7 @@ cygwinRootDir=$cygwin32RootDir
 cygwinBitMode=`getCygwinBitMode`
 echo cygwinBitMode=$cygwinBitMode
 [[ $cygwinBitMode == 64 ]] && {
-    HeapBase=12
+    HeapBase=10
     HeapSize=$(($HeapBase*1024))
     export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -Xmx${HeapSize}m -Xms${HeapSize}m"
     cygwinRootDir=$cygwin64RootDir

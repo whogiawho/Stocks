@@ -33,8 +33,8 @@ public class HashWay implements ISearchAmRecord {
         outParms[2] = "" + outItem.getOutPrice(tradeType);
         outParms[3] = "" + outItem.getProfit(tradeType, inPrice);
         outParms[4] = "" + outItem.hexTimePoint;
-        outParms[5] = "" + out[1];
-        outParms[6] = "" + out[2];
-        outParms[7] = "" + out[0];
+        outParms[5] = "" + out[1];    //maxPosPrice
+        outParms[6] = "" + out[2];    //riskDelta
+        outParms[7] = "" + out[0];    //maxDeltaPriceBias
     }
 }

@@ -3,6 +3,37 @@
 MinMatchedCount=${MinMatchedCount:-100}
 
 
+function getSSFullWin {
+    local dir=$1
+
+    local fTmp=`mktemp`
+    echo "generating fullwin list file $fTmp ..."
+
+    grep "100\.\?[0-9]*%" $dir/*.txt|sort -nk2,2 > $fTmp
+    sed -i "s@$dir.*:@@g" $fTmp
+}
+function getSSFullWinStats {
+    local dir=$1
+    local fFullWin=$2
+    local maxCycle=${3:-180}
+    local targetRate=${4:-1.100}
+
+    local fTmp=`mktemp`
+    echo "generating fullwin list stats file $fTmp ..."
+
+    local line=
+    while read line; 
+    do 
+        local a b c d e f g h i j
+        read a b c d e f g h i j <<<`echo $line`; 
+        local fTradeDetails=$dir/${a}_${maxCycle}_${targetRate}/${i}.txt; 
+        local maxWait=`sort -nk12,12 $fTradeDetails|tail -n 1|awk '{print $12}'`; 
+        local maxHang=`sort -nk13,13 $fTradeDetails|tail -n 1|awk '{print $13}'`; 
+        local cnt=`wc $fTradeDetails|awk '{print $1}'`; 
+        printf "%s %s %4d %4d %4d\n" $a $i $cnt $maxWait $maxHang; 
+    done <$fFullWin >$fTmp
+}
+
 #parms samples:
 #dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 #maxwait=180              exclude those tradeLength>=maxwait
@@ -112,6 +143,8 @@ function baseGetSSCommonTradeDetails {
     sed -i "s/^/\^/g" $fTmp3
 
     grep -f $fTmp3 $file1|awk "\$12<=$maxwait{print \$0}"
+
+    rm -rf $fTmp3
 }
 
 

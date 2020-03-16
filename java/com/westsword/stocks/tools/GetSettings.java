@@ -191,7 +191,7 @@ public class GetSettings{
         System.out.format("\n testMatlab: \n");
 
         MatlabAsync.run();
-        MatlabSync.run();
+        //MatlabSync.run();
     }
     public static void testAmMatrix(String stockCode) {
         System.out.format("\n testAmMatrix: \n");

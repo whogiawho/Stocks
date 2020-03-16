@@ -105,7 +105,7 @@ public class SSInstancesHelper {
             while(itr.hasNext()) {
                 int[] e = itr.next();
                 hmsList = ckpt.getHMSList(e);
-                if(idxs!=null && iC.compare(e, idxs)<=0) {
+                if(idxs!=null && iC.compare(e, idxs)<0) {
                     System.err.format("handleX0: skipping %s\n", hmsList);
                     continue;
                 }
@@ -115,6 +115,12 @@ public class SSInstancesHelper {
                         bLog2Files, bResetLog, bStdout,
                         stockDates, am, ssim);
             }
+        }
+        try {
+            if(eng!=null)
+                eng.close();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
     }
     private static void loopTradeDates(SSInstance template, String hmsList, TradeDates tradeDates,
@@ -133,15 +139,17 @@ public class SSInstancesHelper {
         }
     }
 
+    private static MatlabEngine eng = null;
     private static double[][] getCorrMatrix(String stockCode, String startDate, 
             String hmsList, AmManager am) {
         double[][] m = null;
 
         try {
-            MatlabEngine eng = MatlabEngine.startMatlab();
+            if(eng==null)
+                eng = MatlabEngine.startMatlab();
             String[] sTradeDates = new TradeDates(stockCode, startDate).getAllDates();
             m = am.getCorrMatrix(hmsList, sTradeDates, eng);
-            eng.close();
+            //eng.close();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -174,7 +182,7 @@ public class SSInstancesHelper {
 
         System.err.println("       -f sTradeSumFile; [tradeDate, hmsList] in the file; exclusive to -m");
         System.err.println("       -m hmsList      ; loop all [tradeDate, hmsList]; exclusive to -f");
-        System.err.println("       -a startHMSList ; loops starting from startHMSList(exclusive)");
+        System.err.println("       -a startHMSList ; loops starting from startHMSList(inclusive)");
         System.err.println("                         effective only when no -fm");
         System.exit(-1);
     }
@@ -187,7 +195,7 @@ public class SSInstancesHelper {
 
             options.addOption("f", true,  "a tradeSum file");
             options.addOption("m", true,  "hmsList");
-            options.addOption("a", true,  "skip those HMS before startHMSList(inclusive)");
+            options.addOption("a", true,  "skip those HMS before startHMSList(exclusive)");
             CommandLineParser parser = new DefaultParser();
             cmd = parser.parse(options, newArgs);
         } catch (Exception e) {
