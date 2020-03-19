@@ -85,6 +85,9 @@ public class SSUtils {
     public static String getStartHMSList(CommandLine cmd) {
         return getString(cmd, "a", null);
     }
+    public static String getEndHMSList(CommandLine cmd) {
+        return getString(cmd, "b", null);
+    }
 
 
     //in case that false is returned, out[0] is not a complete amcorrel for hms[]

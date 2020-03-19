@@ -1,17 +1,63 @@
 #!/bin/bash
 
 MinMatchedCount=${MinMatchedCount:-100}
+re100="100\.\?[0-9]*%"
 
 
+#dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
+function _getInstanceStats {
+    local stockCode=$1
+    local startDate=$2
+    local threshold=$3
+    local sTDistance=$4
+    local tradeType=$5
+    local tradeDate=$6
+    local hmsList=$7
+    local maxCycle=$8
+    local targetRate=$9
+
+    local dir=`makeTradeDateDir $stockCode $startDate $threshold $sTDistance $tradeType \
+        $tradeDate $maxCycle $targetRate`
+
+    getInstanceStats $dir $hmsList
+}
+function getInstanceStats {
+    local dir=$1
+    local hmsList=$2
+
+    local fTradeDetails=$dir/${hmsList}.txt; 
+
+    local cnt=`wc $fTradeDetails|awk '{print $1}'`; 
+    local netR=`tail -n 1 $fTradeDetails|awk '{print $8}'`;
+    local maxWait=`sort -nk12,12 $fTradeDetails|tail -n 1|awk '{print $12}'`; 
+    local maxHang=`sort -nk13,13 $fTradeDetails|tail -n 1|awk '{print $13}'`; 
+    netR=`divide $netR $maxHang`;
+
+    printf "%4d %8.3f %4d %4d\n" $cnt $netR $maxWait $maxHang
+}
+function getNetR {
+    local dir=$1
+    local hmsList=$2
+
+    local fTradeSum=$dir.txt
+    local netR=`grep $hmsList $fTradeSum|awk '{print $10}'`;
+
+    echo $netR
+}
+
+
+#dir=data/similarStack/600030/20160108_0.90_T1L
 function getSSFullWin {
     local dir=$1
 
     local fTmp=`mktemp`
     echo "generating fullwin list file $fTmp ..."
 
-    grep "100\.\?[0-9]*%" $dir/*.txt|sort -nk2,2 > $fTmp
+    grep "$re100" $dir/*.txt|sort -nk2,2 > $fTmp
     sed -i "s@$dir.*:@@g" $fTmp
 }
+#dir=data/similarStack/600030/20160108_0.90_T1L
+#fFullWin=`getSSFullWin`
 function getSSFullWinStats {
     local dir=$1
     local fFullWin=$2
@@ -24,13 +70,12 @@ function getSSFullWinStats {
     local line=
     while read line; 
     do 
-        local a b c d e f g h i j
-        read a b c d e f g h i j <<<`echo $line`; 
-        local fTradeDetails=$dir/${a}_${maxCycle}_${targetRate}/${i}.txt; 
-        local maxWait=`sort -nk12,12 $fTradeDetails|tail -n 1|awk '{print $12}'`; 
-        local maxHang=`sort -nk13,13 $fTradeDetails|tail -n 1|awk '{print $13}'`; 
-        local cnt=`wc $fTradeDetails|awk '{print $1}'`; 
-        printf "%s %s %4d %4d %4d\n" $a $i $cnt $maxWait $maxHang; 
+        local tradeDate b c d e f g h hmsList j
+        read tradeDate b c d e f g h hmsList j <<<`echo $line`; 
+
+        local stats=`getInstanceStats $dir/${tradeDate}_${maxCycle}_${targetRate} $hmsList`
+
+        printf "%s %s %s\n" $tradeDate $hmsList "$stats"
     done <$fFullWin >$fTmp
 }
 
@@ -43,7 +88,7 @@ function getSSHMSListFullWin {
 
     local file=$dir.txt; 
     local i=
-    for i in `sort -nk3,3 $file |grep "100\.\?[0-9]*%"|awk '{print $9}'`; #get those 100% winning hmsList
+    for i in `sort -nk3,3 $file |grep "$re100"|awk '{print $9}'`; #get those 100% winning hmsList
     do 
         local allg=0; 
         local maxPeriod=`awk '{print $12}' $dir/$i.txt|sort -n|tail -n 1`
@@ -60,6 +105,7 @@ function getSSHMSListFullWin {
     done
 }
 
+#dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 #maxwait            include those tradeLength<=maxwait
 function getSSHMSList {
     local dir=$1
@@ -74,6 +120,7 @@ function getSSHMSList {
     done
 }
 
+#dir[12]=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 #only considering those hmsList with matchedTradeDates>=100
 function getSSCommon {
     local dir1=$1
@@ -97,6 +144,7 @@ function getSSCommon {
     done
 }
 
+#dir[12]=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 function baseGetSSCommon {
     local dir1=$1
     local hmsList1=$2
@@ -104,7 +152,7 @@ function baseGetSSCommon {
     local dir2=$4
     local hmsList2=$5
 
-    #local a= last1= last2=
+    #local a last1 last2
     #IFS=_ read a last1 <<<`echo $hmsList1`
     #IFS=_ read a last2 <<<`echo $hmsList1`
     #[[ $last1 > $last2 ]] && return
@@ -126,6 +174,7 @@ function baseGetSSCommon {
     rm -rf $fTmp3
 }
 
+#dir[12]=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 function baseGetSSCommonTradeDetails {
     local dir1=$1
     local hmsList1=$2
@@ -148,5 +197,32 @@ function baseGetSSCommonTradeDetails {
 }
 
 
+
+function makeStartDateDir {
+    local stockCode=$1
+    local startDate=$2
+    local threshold=$3
+    local sTDistance=$4
+    local tradeType=$5
+
+    threshold=`printf "%.2f" $threshold`
+    local sym
+    [[ $tradeType == 5 ]] && sym=L || sym=S
+    echo data/similarStack/$stockCode/${startDate}_${threshold}_T${sTDistance}${sym}
+}
+function makeTradeDateDir {
+    local stockCode=$1
+    local startDate=$2
+    local threshold=$3
+    local sTDistance=$4
+    local tradeType=$5
+    local tradeDate=$6
+    local maxCycle=$7
+    local targetRate=$8
+
+    local s1st=`makeStartDateDir $stockCode $startDate $threshold $sTDistance $tradeType`
+    targetRate=`printf "%.3f" $targetRate`
+    echo $s1st/${tradeDate}_${maxCycle}_${targetRate}
+}
 
 
