@@ -3,8 +3,6 @@ package com.westsword.stocks.am;
 
 import java.util.*;
 import java.util.concurrent.*;
-import com.mathworks.engine.MatlabEngine;
-import java.util.concurrent.ExecutionException;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import com.westsword.stocks.base.Stock;
@@ -80,18 +78,6 @@ public class AmManager {
     }
 
 
-    public double[][] getCorrMatrix(String hmsList, String[] sTradeDates, MatlabEngine eng) {
-        double[][] rm = null;
-
-        try {
-            double [][] m = getAmMatrix(hmsList, sTradeDates);
-            rm = eng.feval("corrcoef", (Object)m);
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return rm;
-    }
     //
     public double[][] getAmMatrix(String hmsList, String[] sTradeDates) {
         int w = sTradeDates.length;

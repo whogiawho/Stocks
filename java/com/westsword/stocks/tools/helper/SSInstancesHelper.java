@@ -2,9 +2,7 @@ package com.westsword.stocks.tools.helper;
 
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import org.apache.commons.cli.*;
-import com.mathworks.engine.MatlabEngine;
 import org.apache.commons.math3.util.Combinations;
 
 import com.westsword.stocks.am.*;
@@ -85,11 +83,13 @@ public class SSInstancesHelper {
     private static void handleX0(SSInstance template, String hmsList,
             boolean bLog2Files, boolean bResetLog, boolean bStdout,
             StockDates stockDates, AmManager am, SSiManager ssim, CommandLine cmd) {
+        CmManager cm = new CmManager();
+
         TradeDates tradeDates = new TradeDates(template.stockCode, template.startDate);
         if(hmsList!=null) {
             loopTradeDates(template, hmsList, tradeDates,
                     bLog2Files, bResetLog, bStdout,
-                    stockDates, am, ssim);
+                    stockDates, am, ssim, cm);
         } else {
             CheckPoint0 ckpt = new CheckPoint0();
             String startHMSList = SSUtils.getStartHMSList(cmd);
@@ -120,21 +120,17 @@ public class SSInstancesHelper {
                 //clear am's trBuf(optionaly)
                 loopTradeDates(template, hmsList, tradeDates,
                         bLog2Files, bResetLog, bStdout,
-                        stockDates, am, ssim);
+                        stockDates, am, ssim, cm);
             }
             System.err.format("handleX0: %s\n", "finished!");
         }
-        try {
-            if(eng!=null)
-                eng.close();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+
+        cm.close();
     }
     private static void loopTradeDates(SSInstance template, String hmsList, TradeDates tradeDates,
             boolean bLog2Files, boolean bResetLog, boolean bStdout,
-            StockDates stockDates, AmManager am, SSiManager ssim) {
-        double[][] corrM = getCorrMatrix(template.stockCode, template.startDate, hmsList, am);
+            StockDates stockDates, AmManager am, SSiManager ssim, CmManager cm) {
+        double[][] corrM = cm.getCorrMatrix(template.stockCode, template.startDate, hmsList, am);
         String tradeDate = tradeDates.firstDate();
         while(tradeDate!=null) {
             SSInstance r = new SSInstance(template);
@@ -147,23 +143,6 @@ public class SSInstancesHelper {
         }
     }
 
-    private static MatlabEngine eng = null;
-    private static double[][] getCorrMatrix(String stockCode, String startDate, 
-            String hmsList, AmManager am) {
-        double[][] m = null;
-
-        try {
-            if(eng==null)
-                eng = MatlabEngine.startMatlab();
-            String[] sTradeDates = new TradeDates(stockCode, startDate).getAllDates();
-            m = am.getCorrMatrix(hmsList, sTradeDates, eng);
-            //eng.close();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return m;
-    }
     private static ArrayList<TradeSum> getTradeSumList(String sTradeSumFile) {
         ArrayList<TradeSum> list = new ArrayList<TradeSum>();
 
