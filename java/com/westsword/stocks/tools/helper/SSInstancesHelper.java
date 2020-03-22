@@ -101,6 +101,9 @@ public class SSInstancesHelper {
             if(endHMSList!=null)
                 endIdxs = ckpt.getIdxList(endHMSList);
 
+            cm.startWorker(template.stockCode, template.startDate, 
+                    startHMSList, endHMSList, am);
+
             int length = ckpt.getLength();
             Combinations c = new Combinations(length, 2);
             Comparator<int[]> iC = c.comparator();
