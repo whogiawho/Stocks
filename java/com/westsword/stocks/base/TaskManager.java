@@ -25,7 +25,7 @@ public class TaskManager {
     public void maxThreadsCheck() {
         while(getConcurrent()>=MaxThreads) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(10);
             } catch (Exception e) {
                 e.printStackTrace();
             }

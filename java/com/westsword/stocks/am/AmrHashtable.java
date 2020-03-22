@@ -166,8 +166,8 @@ public class AmrHashtable {
     //  tradeDate<=nextTradeDateN 
     //  tp>=inTime depending on sTDistance
     //  upPrice|downPrice exceeds outPrice depending on tradeType
-    public AmRecord getOutItem(long inTime, int tradeType, double outPrice,
-            String nextTradeDateN, int sTDistance, StockDates stockDates) {
+    public AmRecord getOutItem(long inTime, String nextTradeDateN, double outPrice,
+            int sTDistance, int tradeType, StockDates stockDates) {
         AmRecord item = null;
 
         TreeMap<AmrKey, TreeSet<AmRecord>> outTable = getOutTable(tradeType);

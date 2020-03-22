@@ -139,8 +139,8 @@ public class AmManager {
         double targetProfit = Trade.getTargetProfit(targetRate, inPrice);
         double outPrice = Utils.getOutPrice(inPrice, targetProfit, tradeType);
 
-        AmRecord outItem = mAmrTable.getOutItem(inTime, tradeType, outPrice, 
-                nextTradeDateN, sTDistance, stockDates);
+        AmRecord outItem = mAmrTable.getOutItem(inTime, nextTradeDateN, outPrice, 
+                sTDistance, tradeType, stockDates);
         if(out!=null) {
             out[0] = mAmrTable.getMaxDeltaPriceBias(inTime, tradeType, 
                     nextTradeDateN, stockDates, outItem, this);
@@ -319,7 +319,10 @@ public class AmManager {
     }
 
 
+    //now the key consists of only inTime
+    //it may consists of inTime(_nextTradeDateN_targetRate_sTDistance_tradeType) in the long run
     private ConcurrentHashMap<Long, TRBufR> mTrBufMap = new ConcurrentHashMap<Long, TRBufR>();
+
     //TRBufR = TradeResult Buf Record
     public static class TRBufR {
         public AmRecord outItem;

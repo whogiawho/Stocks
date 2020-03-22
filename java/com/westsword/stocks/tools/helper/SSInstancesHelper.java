@@ -95,11 +95,11 @@ public class SSInstancesHelper {
             String startHMSList = SSUtils.getStartHMSList(cmd);
             int[] startIdxs = null;
             if(startHMSList!=null)
-                 startIdxs = ckpt.getIdxList(startHMSList);
+                startIdxs = ckpt.getIdxList(startHMSList);
             String endHMSList = SSUtils.getEndHMSList(cmd);
             int[] endIdxs = null;
             if(endHMSList!=null)
-                 endIdxs = ckpt.getIdxList(endHMSList);
+                endIdxs = ckpt.getIdxList(endHMSList);
 
             int length = ckpt.getLength();
             Combinations c = new Combinations(length, 2);

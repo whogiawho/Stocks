@@ -10,9 +10,9 @@ import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.utils.AnsiColor;
 
 public class SSUtils {
-    public final static String Default_StockCode = "600030";
+    public final static String Default_StockCode = Settings.getStockCode();
+    public final static String Default_StartDate = Settings.getSdStartDate();
     public final static double Default_Threshold = 0.9;
-    public final static String Default_StartDate = "20160108";
     public final static int Default_Nearest_Day_To_End_TradeSession = 1;          //t0|t1
     public final static int Default_TradeType = 5;                                //Long(5)|Short(1)
 
