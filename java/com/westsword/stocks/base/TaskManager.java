@@ -3,6 +3,8 @@ package com.westsword.stocks.base;
 
 import java.util.*;
 
+import com.westsword.stocks.base.time.Time;
+
 public class TaskManager {
     public final static int MaxThreads = Settings.getMaxTasks();
 
@@ -30,6 +32,7 @@ public class TaskManager {
                 e.printStackTrace();
             }
         }
+        //System.out.format("%s %s: mConcurrent=%d\n", Time.current(), Utils.getCallerName(getClass()), mConcurrent);
     }
 
     public void run() {

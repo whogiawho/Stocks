@@ -136,6 +136,10 @@ public class Time {
         long tp = System.currentTimeMillis()/1000;
         return getTimeYMD(tp, false);
     }
+    public static String current() {
+        long tp = System.currentTimeMillis()/1000;
+        return getTimeYMDHMS(tp);
+    }
 
 
     public static Calendar getCalendar() {

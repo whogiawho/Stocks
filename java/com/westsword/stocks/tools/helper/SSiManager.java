@@ -22,6 +22,7 @@ public class SSiManager extends TaskManager {
 
         Thread t = new SSiTask(this, ssi, am, stockDates, corrM, 
                 bLog2Files, bResetLog, bPrintTradeDetails);
+        t.setPriority(Thread.MAX_PRIORITY);
         t.start();
     }
 

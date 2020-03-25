@@ -40,6 +40,8 @@ public class SSInstancesHelper {
             return;
         }
 
+        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+
         //
         boolean bResetLog = SSUtils.getSwitchResetLog(cmd);
         boolean bLog2Files = SSUtils.getSwitchLog2File(cmd);
@@ -113,7 +115,7 @@ public class SSInstancesHelper {
                 int[] e = itr.next();
                 hmsList = ckpt.getHMSList(e);
                 if(startIdxs!=null && iC.compare(e, startIdxs)<0) {
-                    System.err.format("handleX0: skipping %s\n", hmsList);
+                    System.out.format("handleX0: skipping %s\n", hmsList);
                     continue;
                 }
                 if(endIdxs!=null && iC.compare(e, endIdxs)>=0) {
@@ -125,7 +127,7 @@ public class SSInstancesHelper {
                         bLog2Files, bResetLog, bStdout,
                         stockDates, am, ssim, cm);
             }
-            System.err.format("handleX0: %s\n", "finished!");
+            System.out.format("handleX0: %s\n", "finished!");
         }
 
         cm.close();

@@ -116,7 +116,7 @@ public class AmManager {
         if(Buffering_TradeResult) {
             TRBufR r = mTrBufMap.get(inTime);
             if(r!=null) {
-                //System.err.format("%s: %x already in mTrBufMap size=%d!\n", 
+                //System.out.format("%s: %x already in mTrBufMap size=%d!\n", 
                 //        Utils.getCallerName(getClass()), inTime, mTrBufMap.size());
                 out[0] = r.maxDeltaPriceBias;
                 out[1] = r.maxPosPrice;
@@ -311,7 +311,7 @@ public class AmManager {
                     Utils.getCallerName(getClass()), tradeDate);
             */
         }
-        System.err.format("%s: loading complete\n", 
+        System.out.format("%s: loading complete\n", 
                 Utils.getCallerName(getClass()));
 
         PerformanceLog.end(tStart, "%s: loading analysis.txt = %d\n", 

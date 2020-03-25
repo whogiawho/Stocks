@@ -26,13 +26,13 @@ public class FileLoader implements ILoadFile {
 
             reader.close();
         } catch(FileNotFoundException e) {
-            System.err.format("%s: %s not found\n", 
+            System.out.format("%s: %s not found\n", 
                     Utils.getCallerName(getClass()), sFileName);
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.format("%s: count=%d\n", 
+            System.out.format("%s: count=%d\n", 
                     Utils.getCallerName(getClass()), count);
-            System.err.format("%s: %s\n", 
+            System.out.format("%s: %s\n", 
                     Utils.getCallerName(getClass()), line);
         }
     }

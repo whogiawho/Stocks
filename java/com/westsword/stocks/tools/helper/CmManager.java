@@ -11,9 +11,10 @@ import org.apache.commons.math3.util.Combinations;
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.ckpt.*;
 import com.westsword.stocks.base.time.*;
+import com.westsword.stocks.base.Utils;
 
 public class CmManager {
-    public final static int MAX_CORRMATRIX_BUFF_SIZE = 10;
+    public final static int MAX_CORRMATRIX_BUFF_SIZE = 5;
 
     private MatlabEngine mEng = null;
     private Worker mWThread = null;
@@ -34,10 +35,12 @@ public class CmManager {
 
         String key = stockCode+startDate+hmsList;
         if(cmMap.get(key)!=null) {
+            System.out.format("%s %s: get cm from cmMap; cmMap.size=%s\n", Time.current(), Utils.getCallerName(getClass()), cmMap.size());
             cm = cmMap.remove(key);
             //notify the worker an element is removed
             if(mWThread!=null) {
                 synchronized(mWThread) {
+                    System.out.format("%s %s: notify the worker thread\n", Time.current(), Utils.getCallerName(getClass()));
                     mWThread.notify();
                 }
             }
@@ -48,8 +51,9 @@ public class CmManager {
         try {
             String[] sTradeDates = new TradeDates(stockCode, startDate).getAllDates();
             double[][] m0 = am.getAmMatrix(hmsList, sTradeDates);
-
             cm = mEng.feval("corrcoef", (Object)m0);
+
+            System.out.format("%s %s: get cm directly!\n", Time.current(), Utils.getCallerName(getClass()));
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -74,10 +78,11 @@ public class CmManager {
         String key0 = stockCode+startDate;
 
         mWThread = new Worker(sTradeDates, startHMSList, endHMSList, am, key0);
+        mWThread.setPriority(Thread.MAX_PRIORITY);
         mWThread.start();
 
         //wait until the cmMap.size()>=1
-        while(cmMap.size()<1);
+        while(cmMap.size()<MAX_CORRMATRIX_BUFF_SIZE);
     }
 
     public class Worker extends Thread {
@@ -115,8 +120,10 @@ public class CmManager {
                 //wait if cmMap.size>=5
                 synchronized(this) {
                     try {
-                        while(cmMap.size()>=MAX_CORRMATRIX_BUFF_SIZE)
+                        while(cmMap.size()>=MAX_CORRMATRIX_BUFF_SIZE) {
+                            System.out.format("%s %s: cmMap.size=%d; worker waited()\n", Time.current(), Utils.getCallerName(getClass()), cmMap.size());
                             wait();
+                        }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -137,13 +144,13 @@ public class CmManager {
                     double[][] cm = mEng.feval("corrcoef", (Object)m0);
                     String key = key0+hmsList;
                     cmMap.put(key, cm);
+                    System.out.format("%s %s: putting new %s to cmMap; cmMap.size=%d; \n", Time.current(), Utils.getCallerName(getClass()), key, cmMap.size());
                 } catch (ExecutionException | InterruptedException ex) {
                     ex.printStackTrace();
                 }
             }
         }
         public void run() {
-            setPriority(Thread.MAX_PRIORITY);
             fillCmMap();
         }
     }
