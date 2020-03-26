@@ -12,10 +12,11 @@ public class AnalyzeTools{
 
         System.err.println("usage: java AnalyzeTools commands");
         System.err.println("       commands are listed below:");
-        System.err.println("       [ getvalue | setvalue | make1mamcmap | makeanalysistxt |\n" +
+        System.err.println("       [ getvalue | setvalue | makeanalysistxt |\n" +
                 "         getamcorrel | getrel | getupprice | getdownprice | decode |\n" +
-                "         ssgroupchar | ssgroupchars | makessdates |\n" +
-                "         ssinstance | ssinstances | getfullss ]");
+                "         ssinstance | ssinstances | getfullss |\n" +
+                "         ssgroupchar | ssgroupchars |\n" +
+                "         makessdates | make1mamcmap ]");
 
         System.exit(-1);
     }

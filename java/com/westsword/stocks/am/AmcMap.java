@@ -31,7 +31,6 @@ public class AmcMap {
 
         return amcMap;
     }
-
     public static ConcurrentHashMap<String, Double> load(String stockCode, String tradeDate0, String tradeDate1) {
         String sFile = StockPaths.getAmCorrelMapFile(stockCode, tradeDate0, tradeDate1);
         ConcurrentHashMap<String, Double> map = new ConcurrentHashMap<String, Double>();
@@ -40,6 +39,9 @@ public class AmcMap {
 
         return map;
     }
+
+
+
 
     public static void removeAmCorrel(String tradeDate0, String tradeDate1, 
             String startHMS, String endHMS) {

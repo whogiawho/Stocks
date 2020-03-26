@@ -210,16 +210,18 @@ public class GetSettings{
         System.out.format("testAmMatrix: computeCorrelationMatrix duration=%4d\n", 
                 end-start);
     }
-    public static void testAmManager(String stockCode) {
+    public static void testAmManager(String stockCode, boolean bOnlyLoad) {
         System.out.format("\n testAmManager: \n");
         AmManager am = new AmManager(stockCode);
 
-        amcorrelPrint(am, "20090115", "20090116", "09:30:00", "14:30:00");
-        amcorrelPrint(am, "20090115", "20090119", "09:30:00", "14:30:00");
-        amcorrelPrint(am, "20090115", "20090120", "09:30:00", "14:30:00");
-        amcorrelPrint(am, "20090115", "20090121", "09:30:00", "14:30:00");
-        amcorrelPrint(am, "20090115", "20090122", "09:30:00", "14:30:00");
-        amcorrelPrint(am, "20090115", "20090123", "09:30:00", "14:30:00");
+        if(!bOnlyLoad) {
+            amcorrelPrint(am, "20090115", "20090116", "09:30:00", "14:30:00");
+            amcorrelPrint(am, "20090115", "20090119", "09:30:00", "14:30:00");
+            amcorrelPrint(am, "20090115", "20090120", "09:30:00", "14:30:00");
+            amcorrelPrint(am, "20090115", "20090121", "09:30:00", "14:30:00");
+            amcorrelPrint(am, "20090115", "20090122", "09:30:00", "14:30:00");
+            amcorrelPrint(am, "20090115", "20090123", "09:30:00", "14:30:00");
+        }
     }
     private static void testAmObject(AmRecord r0, AmRecord r1) {
         if(r0.compareTo(r1)==0)
@@ -486,9 +488,9 @@ public class GetSettings{
         //testTreeMap(stockCode);
         //testSystem(stockCode);
 
-        //testAmManager(stockCode);
+        testAmManager(stockCode, true);
         //testAmMatrix(stockCode);
-        testMatlab(stockCode);
+        //testMatlab(stockCode);
         //testCkpt(stockCode);
         //testCombination(stockCode);
         //testTradeSumLoader(stockCode);

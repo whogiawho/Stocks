@@ -241,6 +241,7 @@ public class AmManager {
     private SdTime1 mSdTime;
     private StockDates mStockDates;
 
+    //2 key data structures to track AmRecords for a list of tradeDates
     private TreeMap<Integer, AmRecord> mAmRecordMap;
     private AmrHashtable mAmrTable;
 
@@ -298,6 +299,13 @@ public class AmManager {
                 startDate1, startHMS1, endDate1, endHMS1, sSize1);
     }
 
+
+
+
+
+    //parallel load
+    private void parallelLoad(TreeMap<Integer, AmRecord> rMap, AmrHashtable hTable, String[] sTradeDates) {
+    }
     private void load(TreeMap<Integer, AmRecord> rMap, AmrHashtable hTable, String[] sTradeDates) {
         long tStart = PerformanceLog.start();
 
@@ -319,8 +327,12 @@ public class AmManager {
     }
 
 
-    //now the key consists of only inTime
-    //it may consists of inTime(_nextTradeDateN_targetRate_sTDistance_tradeType) in the long run
+
+
+
+    //about mTrBufMap's key:
+    //  now the key consists of only inTime
+    //  it may consists of inTime(_nextTradeDateN_targetRate_sTDistance_tradeType) in the long run
     private ConcurrentHashMap<Long, TRBufR> mTrBufMap = new ConcurrentHashMap<Long, TRBufR>();
 
     //TRBufR = TradeResult Buf Record
