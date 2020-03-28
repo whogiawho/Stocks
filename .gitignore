@@ -5,3 +5,4 @@ data/
 *.exe
 *.class
 *.pyc
+doc/misc.txt
