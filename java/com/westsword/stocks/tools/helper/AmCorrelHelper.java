@@ -23,7 +23,7 @@ public class AmCorrelHelper {
             stockDates.nextDate(tradeDate2),
         };
 
-        AmManager am = new AmManager(stockCode, tradeDates);
+        AmManager am = new AmManager(stockCode, tradeDates, true);
 
         String sAmCorrel = "";
         String[] fields = hmsList.split("_");

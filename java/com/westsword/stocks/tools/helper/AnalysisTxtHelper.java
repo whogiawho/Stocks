@@ -19,7 +19,7 @@ public class AnalysisTxtHelper {
             tradeDate,
         };
         String hms = args[3];
-        AmManager am = new AmManager(stockCode, tradeDates);
+        AmManager am = new AmManager(stockCode, tradeDates, true);
         long tp = Time.getSpecificTime(tradeDate, hms);
         double price=0.0;
         if(args[0].equals("getupprice"))

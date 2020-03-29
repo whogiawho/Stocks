@@ -169,7 +169,7 @@ public class AmUtils {
 
 
     public static double[][] getAmMatrix(String stockCode, String startDate, String hmsList) {
-        AmManager am = new AmManager(stockCode);
+        AmManager am = new AmManager(stockCode, true);
 
         String[] sTradeDates = new TradeDates(stockCode, startDate).getAllDates();
         double[][] m = am.getAmMatrix(hmsList, sTradeDates);

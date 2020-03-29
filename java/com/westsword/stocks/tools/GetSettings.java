@@ -212,7 +212,7 @@ public class GetSettings{
     }
     public static void testAmManager(String stockCode, boolean bOnlyLoad) {
         System.out.format("\n testAmManager: \n");
-        AmManager am = new AmManager(stockCode);
+        AmManager am = new AmManager(stockCode, true);     //parallelLoad
 
         if(!bOnlyLoad) {
             amcorrelPrint(am, "20090115", "20090116", "09:30:00", "14:30:00");
@@ -321,7 +321,11 @@ public class GetSettings{
     public static void testTradeSumLoader(String stockCode) {
         System.out.format("\n testTradeSumLoader: \n");
         
-        String sTradeSumFile = "d:\\stocks\\data\\similarStack\\600030\\20160108_0.90_T1L\\20160108_001_1.100.txt";
+        /*
+        String ssRoot = "d:\\stocks\\data\\similarStack";
+        String sTradeSumFile = ssRoot + "\\600030\\20160108_0.90_T1L\\20160108_001_1.100.txt";
+        */
+        String sTradeSumFile = "e:\\cygwin64\\tmp\\1ssFullWin.txt";
         TradeSumLoader l = new TradeSumLoader();
         ArrayList<TradeSum> list = new ArrayList<TradeSum>();
         l.load(sTradeSumFile, list);
@@ -371,7 +375,7 @@ public class GetSettings{
             tradeDate0,
             tradeDate1,
         };
-        AmManager am = new AmManager(stockCode, sTradeDates);
+        AmManager am = new AmManager(stockCode, sTradeDates, true);
         ConcurrentHashMap<String, Double> amcMap = new ConcurrentHashMap<String, Double>();
 
         String hms0 = "09:30:00";

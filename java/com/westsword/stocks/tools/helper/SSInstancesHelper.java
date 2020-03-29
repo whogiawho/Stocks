@@ -46,7 +46,7 @@ public class SSInstancesHelper {
         boolean bResetLog = SSUtils.getSwitchResetLog(cmd);
         boolean bLog2Files = SSUtils.getSwitchLog2File(cmd);
         boolean bStdout = SSUtils.getSwitchStdout(cmd);
-        AmManager am = new AmManager(stockCode, startDate);
+        AmManager am = new AmManager(stockCode, startDate, true);
         StockDates stockDates = new StockDates(stockCode);
         SSiManager ssim = new SSiManager();
         SSInstance template = new SSInstance(stockCode, startDate, threshold, sTDistance, tradeType,

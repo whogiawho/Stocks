@@ -37,7 +37,7 @@ public class SSInstanceHelper {
         boolean bResetLog = SSUtils.getSwitchResetLog(cmd);
         boolean bLog2Files = SSUtils.getSwitchLog2File(cmd);
         boolean bStdout = SSUtils.getSwitchStdout(cmd);
-        AmManager am = new AmManager(stockCode, startDate);
+        AmManager am = new AmManager(stockCode, startDate, true);
         StockDates stockDates = new StockDates(stockCode);
 
         String hmsList = newArgs[1];
