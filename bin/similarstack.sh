@@ -104,7 +104,6 @@ function getSSHMSListFullWin {
         }; 
     done
 }
-
 #dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 #maxwait            include those tradeLength<=maxwait
 function getSSHMSList {
@@ -119,6 +118,7 @@ function getSSHMSList {
         echo $i $count; 
     done
 }
+
 
 #dir[12]=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 #only considering those hmsList with matchedTradeDates>=100
@@ -143,7 +143,6 @@ function getSSCommon {
         done
     done
 }
-
 #dir[12]=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 function baseGetSSCommon {
     local dir1=$1
@@ -168,12 +167,12 @@ function baseGetSSCommon {
 
     local countTotal=`wc $fTmp3|awk '{print $1}'`
     local count0=`grep -f $fTmp3 $file1|awk "\\$12<=$maxwait{print \\$0}"|wc|awk '{print $1}'`
+    local r=`echo "scale=2; $count0/$countTotal"|bc`
 
-    echo $dir1 $hmsList1 $maxwait $dir2 $hmsList2 $countTotal $count0
+    printf "%s %s %s %s %s %8s %8s %8.3f\n" $dir1 $hmsList1 $maxwait $dir2 $hmsList2 $countTotal $count0 $r
 
     rm -rf $fTmp3
 }
-
 #dir[12]=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 function baseGetSSCommonTradeDetails {
     local dir1=$1
@@ -226,3 +225,48 @@ function makeTradeDateDir {
 }
 
 
+function pickGroup {
+    local stockCode=$1
+    local hmsList=$2
+    local fList0=$1
+    local fList1=$2
+    local fList2=$3
+
+    local fTmp0=`mktemp`
+    local fTmp1=`mktemp`
+
+    local i=
+    for i in `cat $fList0`
+    do
+        local j=
+        for j in `cat $fList1`
+        do
+            [[ $j != $i ]] && {
+                getAmCorrel $stockCode $i $j $hmsList >>$fTmp0
+            }
+        done
+
+        for j in `cat $fList2`
+        do
+            [[ $j != $i ]] && {
+                getAmCorrel $stockCode $i $j $hmsList >>$fTmp1
+            }
+        done
+
+        local avg0=`getListAvg $fTmp0 1`
+        local avg1=`getListAvg $fTmp1 1`
+        local stddev0=`getListStdDev $fTmp0 1`
+        local stddev1=`getListStdDev $fTmp1 1`
+
+        local ingroupT=
+        local r=`ge $avg0 $avg1`
+        [[ $r == 1 ]] && ingroupT=1 || ingroupT=2
+
+        local ingroupF=
+        grep -q $i $fList1 && ingroupF=1 || ingroupF=2 
+
+        printf "%s %8s %8s %4s %4s %8s %8s\n" $i $avg0 $avg1 $ingroupT $ingroupF $stddev0 $stddev1
+
+        rm -rf $fTmp0 $fTmp1
+    done
+}
