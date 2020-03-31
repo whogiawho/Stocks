@@ -55,7 +55,7 @@ public class SSGroupHelper {
         SSgmsdrManager m = new SSgmsdrManager();
         CheckPoint0 ckpt = new CheckPoint0();
         int length = ckpt.getLength();
-        Combinations c = new Combinations(length, 2);
+        Combinations c = new Combinations(length-1, 2);     //exclude the last ckpt
         Iterator<int[]> itr = c.iterator();
         while(itr.hasNext()) {
             int[] e = itr.next();
@@ -65,6 +65,15 @@ public class SSGroupHelper {
             MinStdDevR r = new MinStdDevR(stockCode, hmsList);
             m.run(r, tradeDateList, hms, am);
         }
+    }
+
+    public void verify(String args[]) {
+        if(args.length!=6) {
+            usage3();
+            return;
+        }
+
+
     }
 
 
@@ -85,6 +94,15 @@ public class SSGroupHelper {
         String sPrefix = "usage: java AnalyzeTools ";
         System.err.println(sPrefix+"ssgroupchars stockCode sTradeDateFile");
         System.err.println("       sTradeDateFile ; one tradeDate each line");
+        System.exit(-1);
+    }
+    private static void usage3() {
+        String sPrefix = "usage: java AnalyzeTools ";
+        System.err.println(sPrefix+"ssgroupverify stockCode hmsList sListAll sList0 sList1");
+        System.err.println("       sListAll,sList0,sList1; one tradeDate each line");
+        System.err.println("       sListAll; all tradeDates matched hmsList");
+        System.err.println("       sList0; those tradeDates whose cycle==1");
+        System.err.println("       sList1; those tradeDates whose cycle>1");
         System.exit(-1);
     }
 
