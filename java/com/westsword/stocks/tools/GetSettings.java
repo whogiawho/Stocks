@@ -492,11 +492,11 @@ public class GetSettings{
         //testTreeMap(stockCode);
         //testSystem(stockCode);
 
-        testAmManager(stockCode, true);
+        //testAmManager(stockCode, true);
         //testAmMatrix(stockCode);
         //testMatlab(stockCode);
         //testCkpt(stockCode);
-        //testCombination(stockCode);
+        testCombination(stockCode);
         //testTradeSumLoader(stockCode);
         //testTaskManager(stockCode);
         //testFinal(stockCode);

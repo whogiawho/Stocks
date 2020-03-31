@@ -36,7 +36,7 @@ public class SSDatesHelper {
         SSDatesManager ssdm = new SSDatesManager();
         CheckPoint0 ckpt = new CheckPoint0();
         int length = ckpt.getLength();
-        Combinations c = new Combinations(length, 2);
+        Combinations c = new Combinations(length-1, 2);     //exclude the last ckpt
         //loop hmsList combination(n,2)
         Iterator<int[]> itr = c.iterator();
         while(itr.hasNext()) {

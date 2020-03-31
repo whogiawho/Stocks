@@ -40,7 +40,7 @@ public class Amc1mMapHelper {
 
         CheckPoint0 ckpt0 = new CheckPoint0();
         int length = ckpt0.getLength();
-        Combinations c = new Combinations(length, 2);
+        Combinations c = new Combinations(length-1, 2);    //exclude the last ckpt
 
         for(int i=0; i<sTradeDates.length; i++) {
             String tradeDate1 = sTradeDates[i];

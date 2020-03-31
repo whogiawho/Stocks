@@ -46,7 +46,7 @@ public class FullSSHelper {
         String[] fields1 = sTargetRateList.split(" +");
         CheckPoint0 ckpt = new CheckPoint0();
         int length = ckpt.getLength();
-        Combinations c = new Combinations(length, 2);
+        Combinations c = new Combinations(length-1, 2);    //exclude the last ckpt
 
         SSiManager ssim = new SSiManager();
         TradeDates tradeDates = getTradeDates(stockCode, startDate, sTradeDateList);

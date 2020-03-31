@@ -29,6 +29,6 @@ public class CheckPoint0 extends CheckPoint {
     }
 
     public CheckPoint0() {
-        this(Settings.getCkptInterval(), "14:55:00");
+        this(Settings.getCkptInterval(), "14:56:00");
     }
 }
