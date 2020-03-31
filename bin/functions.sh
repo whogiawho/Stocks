@@ -41,6 +41,7 @@ cygwinTmpDir="$cygwinRootDir\\tmp"
 . bin/tradedetails.sh
 . bin/similarstack.sh
 . bin/amcorrel.sh
+. bin/gcp.sh
 
 
 function setupCfgFile {
