@@ -26,7 +26,7 @@ public class FileLoader implements ILoadFile {
 
             reader.close();
         } catch(FileNotFoundException e) {
-            System.out.format("%s: %s not found\n", 
+            System.err.format("%s: %s not found\n", 
                     Utils.getCallerName(getClass()), sFileName);
         } catch (Exception e) {
             e.printStackTrace();

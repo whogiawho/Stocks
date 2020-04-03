@@ -3,6 +3,7 @@ package com.westsword.stocks.base.ckpt;
 
 import java.util.*;
 
+import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.time.*;
 
 public class CheckPoint {
@@ -58,14 +59,6 @@ public class CheckPoint {
         return sHMSList;
     }
 
-    private int getIdx(String[] sCkpt, String hms) {
-        int idx = -1;
-        for(int i=0; i<sCkpt.length; i++) {
-            if(hms.equals(sCkpt[i]))
-                return i;
-        }
-        return idx;
-    }
     public int[] getIdxList(String hmsList) {
         String[] sCkpt = mCkptList.toArray(new String[0]);
         String[] fields = hmsList.split("_");
@@ -73,7 +66,7 @@ public class CheckPoint {
         for(int i=0; i<fields.length; i++) {
             String hms = fields[i];
             //there should be a check here to throw runtime exception
-            idxs[i] = getIdx(sCkpt, hms);
+            idxs[i] = Utils.getIdx(sCkpt, hms);
         }
         return idxs;
     }

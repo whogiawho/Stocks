@@ -129,4 +129,16 @@ public class Utils {
 
         return outPrice;
     }
+
+
+
+    public static int getIdx(String[] strings, String s) {
+        int idx = -1;
+        for(int i=0; i<strings.length; i++) {
+            if(s.equals(strings[i]))
+                return i;
+        }
+        return idx;
+    }
+
 }

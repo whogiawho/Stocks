@@ -300,6 +300,26 @@ public class GetSettings{
         testTreeMap1(stockCode);
         testTreeMap2(stockCode);
     }
+    public static void testArrayList(String stockCode) {
+        System.out.format("\n testArrayList: \n");
+
+        ArrayList<String> l = new ArrayList<String>();
+        String s0 = new String("cde");
+        String s1 = new String("abc");
+        String s2 = new String("abc");
+        l.add(s0);
+        l.add(s1);
+        l.add(s1);
+
+        System.out.format("s0=%s\n", s0);
+        System.out.format("s1=%s\n", s1);
+        System.out.format("l.size()=%d\n", l.size());
+
+        String s3 = new String("abc");
+        System.out.format("index(s3)=%d\n", l.indexOf(s3));
+        System.out.format("s0=%d\n", s0.hashCode());
+        System.out.format("l=%s\n", l.toString());
+    }
     public static void testCkpt(String stockCode) {
         System.out.format("\n testCkpt: \n");
 
@@ -490,13 +510,14 @@ public class GetSettings{
         //testCheck(stockCode, "111000");
         //testCalendar(stockCode);
         //testTreeMap(stockCode);
+        testArrayList(stockCode);
         //testSystem(stockCode);
 
         //testAmManager(stockCode, true);
         //testAmMatrix(stockCode);
         //testMatlab(stockCode);
         //testCkpt(stockCode);
-        testCombination(stockCode);
+        //testCombination(stockCode);
         //testTradeSumLoader(stockCode);
         //testTaskManager(stockCode);
         //testFinal(stockCode);
