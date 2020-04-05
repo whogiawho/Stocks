@@ -16,6 +16,7 @@ public class AnalyzeTools{
                 "         getamcorrel | getrel | getupprice | getdownprice | decode |\n" +
                 "         ssinstance | ssinstances | getfullss |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify |\n" +
+                "         mminstance |\n" +
                 "         makessdates | make1mamcmap ]");
 
         System.exit(-1);
@@ -67,6 +68,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("ssgroupverify")) {
             SSGroupHelper ssgh = new SSGroupHelper();
             ssgh.verify(args);
+        } else if (sOption.equals("mminstance")) {
+            MMInstanceHelper mmih = new MMInstanceHelper();
+            mmih.run(args);
         } else if (sOption.equals("makessdates")) {
             SSDatesHelper ssdh = new SSDatesHelper();
             ssdh.make(args);

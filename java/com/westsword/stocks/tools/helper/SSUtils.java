@@ -107,6 +107,10 @@ public class SSUtils {
 
         return bHMSMatched;
     }
+    public static ArrayList<String> getSimilarTradeDates(MMInstance r, AmManager am, double[][] corrM) {
+        return getSimilarTradeDates(r.stockCode, r.startDate, r.threshold,
+                r.tradeDate, r.hmsList, am, corrM);
+    }
     public static ArrayList<String> getSimilarTradeDates(SSInstance r, AmManager am, double[][] corrM) {
         return getSimilarTradeDates(r.stockCode, r.startDate, r.threshold,
                 r.tradeDate, r.hmsList, am, corrM);

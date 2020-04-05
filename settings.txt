@@ -7,31 +7,32 @@ currentDateLastRawTradeDetailTime=5e0ee6ac
 
 
 PriceDecimalFormat=#.##
-MaxTasks=24
 
 
 SdStartTime=09:25:00
 SdInterval=1
 CkptInterval=60
 
+
 600030.SdStartDate=20090105
 600030.priceStep=0.01
-
-
 
 
 #switch to turn on raw data trace: RawRTPankou, RawTradeDetails, and others
 switchOfRawData=false
 #switch to turn on performance tuning
 noPerformanceLog=true
-BufferingTradeResult=true
 
 
 TimeZone=GMT+08:00
 Locale=zh_CN
 
+
 #0 - LoopWay
 #1 - HashWay
 Way2SearchAmRecord=1
 
+
+MaxTasks=24
+BufferingTradeResult=true
 

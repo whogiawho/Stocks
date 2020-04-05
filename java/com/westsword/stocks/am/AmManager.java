@@ -17,14 +17,14 @@ public class AmManager {
 
     //all tradeDaes
     public AmManager(String stockCode) {
-        this(stockCode, false);
+        this(stockCode, true);
     }
     public AmManager(String stockCode, boolean bParallelLoad) {
         this(stockCode, new TradeDates(stockCode).getAllDates(), bParallelLoad);
     }
     //tradeDates between [startDate, ]
     public AmManager(String stockCode, String startDate) {
-        this(stockCode, startDate, false);
+        this(stockCode, startDate, true);
     }
     public AmManager(String stockCode, String startDate, boolean bParallelLoad) {
         this(stockCode, new TradeDates(stockCode, startDate).getAllDates(), bParallelLoad);
@@ -46,7 +46,7 @@ public class AmManager {
             load(mAmRecordMap, mAmrTable, tradeDates);
     }
     public AmManager(String stockCode, String[] tradeDates) {
-        this(stockCode, tradeDates, false);
+        this(stockCode, tradeDates, true);
     }
     public AmManager(String stockCode, ArrayList<String> tradeDateList) {
         this(stockCode, tradeDateList.toArray(new String[0]));
@@ -116,6 +116,25 @@ public class AmManager {
     }
 
 
+    //out[0] - maxNetRevenue
+    public double maxDelta(long inTime, String nextTradeDateN, int sTDistance, int tradeType, 
+            StockDates stockDates, double[] out) {
+        double maxDelta = 0.0;
+
+        double maxPosPrice = mAmrTable.getMaxPosPrice(inTime, tradeType,
+                    nextTradeDateN, sTDistance, stockDates);
+        double inPrice = getInPrice(tradeType, inTime);
+
+        if(tradeType == Stock.TRADE_TYPE_LONG) {
+            maxDelta = maxPosPrice - inPrice;
+            out[0] = Trade.getNetProfit(inPrice, maxPosPrice);
+        } else {
+            maxDelta = inPrice - maxPosPrice;
+            out[0] = Trade.getNetProfit(maxPosPrice, inPrice);
+        }
+
+        return maxDelta;
+    }
     //replace Regression.getTradeResult; 
     //Two ways to return out[]: 
     //  always NaN
