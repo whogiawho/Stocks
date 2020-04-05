@@ -51,7 +51,7 @@ public class SSInstance {
         resetLogFile(bResetLog, hmsList, sPaths[1], sPaths[2]);
 
         BufR br = new BufR();
-        _run(am, stockDates, corrM, sPaths[1], br);
+        _run(am, stockDates, corrM, br);
 
         //log tradeDetails by the filter criteria
         boolean bLogTradeDetails = bLog2Files && !filterIt(br);
@@ -73,8 +73,7 @@ public class SSInstance {
         t.start();
         */
     }
-    public void _run(AmManager am, StockDates stockDates, double[][] corrM, 
-            String sTradeDetailsFile, BufR br) {
+    public void _run(AmManager am, StockDates stockDates, double[][] corrM, BufR br) {
         //
         String inHMS = SSUtils.getInHMS(hmsList);
 
