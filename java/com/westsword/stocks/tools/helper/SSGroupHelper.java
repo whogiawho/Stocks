@@ -33,7 +33,8 @@ public class SSGroupHelper {
         AmManager am = new AmManager(stockCode, tradeDateList);
 
         MinStdDevR r = new MinStdDevR(stockCode, hmsList);
-        m.run(r, tradeDateList, hms, am);
+        //m.run(r, tradeDateList, hms, am);
+        m.run(r, tradeDateList, hmsList, am);
     }
 
 
@@ -63,7 +64,8 @@ public class SSGroupHelper {
             String[] hms = hmsList.split("_");
 
             MinStdDevR r = new MinStdDevR(stockCode, hmsList);
-            m.run(r, tradeDateList, hms, am);
+            //m.run(r, tradeDateList, hms, am);
+            m.run(r, tradeDateList, hmsList, am);
         }
     }
 
@@ -73,9 +75,78 @@ public class SSGroupHelper {
             return;
         }
 
+        String stockCode = args[1];
+        String hmsList = args[2];
+        String sListAll = args[3];
+        String sList0 = args[4];
+        String sList1 = args[5];
 
+        //all tradeDates
+        LineLoader loader = new LineLoader();
+        ArrayList<String> tradeDateList = new ArrayList<String>();
+        loader.load(tradeDateList, sListAll);
+        String[] sTradeDatesAll = tradeDateList.toArray(new String[0]);
+
+        //tradeDates0
+        ArrayList<String> tradeDateList0 = new ArrayList<String>();
+        loader.load(tradeDateList0, sList0);
+        ArrayList<Integer> idxs0 = getIdxs(tradeDateList, tradeDateList0);
+
+        //tradeDates1
+        ArrayList<String> tradeDateList1 = new ArrayList<String>();
+        loader.load(tradeDateList1, sList1);
+        ArrayList<Integer> idxs1 = getIdxs(tradeDateList, tradeDateList1);
+
+        AmManager am = new AmManager(stockCode, sTradeDatesAll);
+        CmManager cm = new CmManager();
+        double[][] m = cm.getCorrMatrix(sTradeDatesAll, hmsList, am);
+
+        //loop all tradeDates
+        for(int i=0; i<tradeDateList.size(); i++) {
+            String tradeDate = tradeDateList.get(i);
+
+            int sgFact=0;
+            double avg0=0.0, avg1=0.0;
+            int idx = tradeDateList0.indexOf(tradeDate);
+            if(idx != -1) {      //tradeDate in tradeDateList0
+                double sum0 = getSum(idxs0, i, m);
+                avg0 = sum0/(idxs0.size()-1);
+                double sum1 = getSum(idxs1, i, m);
+                avg1 = sum1/idxs1.size();
+                sgFact=0;
+            } else {             //tradeDate in tradeDateList1
+                double sum0 = getSum(idxs0, i, m);
+                avg0 = sum0/idxs0.size();
+                double sum1 = getSum(idxs1, i, m);
+                avg1 = sum1/(idxs1.size()-1);
+                sgFact=1;
+            }
+            System.out.format("%s %8.3f %8.3f %8.3f %4d\n", 
+                    tradeDate, avg0, avg1, avg0-avg1, sgFact);
+        }
     }
 
+    private double getSum(ArrayList<Integer> idxs, int i, double[][] m) {
+        double sum = 0.0;
+
+        for(int j=0; j<idxs.size(); j++) {
+            int k = idxs.get(j);
+            if(i!=k) {
+                sum += m[i][k];
+            }
+        }
+
+        return sum;
+    }
+    private ArrayList<Integer> getIdxs(ArrayList<String> tradeDateList, ArrayList<String> tradeDateList0) {
+        ArrayList<Integer> list = new ArrayList<Integer>();
+
+        for(int i=0; i<tradeDateList0.size(); i++) {
+            list.add(tradeDateList.indexOf(tradeDateList0.get(i)));
+        }
+
+        return list;
+    }
 
     private static void usage1() {
         String sPrefix = "usage: java AnalyzeTools ";
