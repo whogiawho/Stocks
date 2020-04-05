@@ -225,7 +225,7 @@ function makeTradeDateDir {
 }
 
 
-function pickGroup {
+function verifyGroup {
     local stockCode=$1
     local hmsList=$2
     local fList0=$1
@@ -258,11 +258,11 @@ function pickGroup {
         local stddev0=`getListStdDev $fTmp0 1`
         local stddev1=`getListStdDev $fTmp1 1`
 
-        local ingroupT=
+        local ingroupT=                                     //theory
         local r=`ge $avg0 $avg1`
         [[ $r == 1 ]] && ingroupT=1 || ingroupT=2
 
-        local ingroupF=
+        local ingroupF=                                     //fact
         grep -q $i $fList1 && ingroupF=1 || ingroupF=2 
 
         printf "%s %8s %8s %4s %4s %8s %8s\n" $i $avg0 $avg1 $ingroupT $ingroupF $stddev0 $stddev1

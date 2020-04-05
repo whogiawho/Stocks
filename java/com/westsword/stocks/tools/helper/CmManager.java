@@ -29,6 +29,19 @@ public class CmManager {
         }
     }
 
+    public double[][] getCorrMatrix(String[] sTradeDates, String hmsList, AmManager am) {
+        double[][] cm = null;
+        try {
+            double[][] m0 = am.getAmMatrix(hmsList, sTradeDates);
+            cm = mEng.feval("corrcoef", (Object)m0);
+
+            System.out.format("%s %s: get cm directly!\n", Time.current(), Utils.getCallerName(getClass()));
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return cm;
+    }
     public double[][] getCorrMatrix(String stockCode, String startDate, String hmsList, 
             AmManager am) {
         double[][] cm = null;
@@ -48,15 +61,8 @@ public class CmManager {
             return cm;
         }
 
-        try {
-            String[] sTradeDates = new TradeDates(stockCode, startDate).getAllDates();
-            double[][] m0 = am.getAmMatrix(hmsList, sTradeDates);
-            cm = mEng.feval("corrcoef", (Object)m0);
-
-            System.out.format("%s %s: get cm directly!\n", Time.current(), Utils.getCallerName(getClass()));
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        String[] sTradeDates = new TradeDates(stockCode, startDate).getAllDates();
+        cm = getCorrMatrix(sTradeDates, hmsList, am);
 
         return cm;
     }
