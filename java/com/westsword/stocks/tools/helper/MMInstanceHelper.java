@@ -50,9 +50,6 @@ public class MMInstanceHelper {
 
 
     public static void commonUsageInfo() {
-        System.err.println("       -r          ; reset tradeDetails log file and tradeSum item");
-        System.err.println("       -n          ; does not log to files");
-        System.err.println("       -o          ; does not write message to stdout");
         System.err.println("       -c stockCode;");
         System.err.println("       -d startDate;");
         System.err.println("       -h threshold;");
@@ -61,19 +58,15 @@ public class MMInstanceHelper {
     }
     private static void usage() {
         String sPrefix = "usage: java AnalyzeTools ";
-        System.err.println(sPrefix+"mminstance [-rnocdhts] tradeDate hmsList maxCycle");
+        System.err.println(sPrefix+"mminstance [-cdhts] tradeDate hmsList maxCycle");
         System.err.println("       tradeDate   ; tradeDate>=startDate");
         commonUsageInfo();
-
 
         System.exit(-1);
     }
 
     public static Options getOptions() {
         Options options = new Options();
-        options.addOption("r", false, "reset tradeDetails log file and tradeSum item");
-        options.addOption("n", false, "does not log to files");
-        options.addOption("o", false, "does not write message to stdout");
         options.addOption("c", true,  "a stock's code");
         options.addOption("d", true,  "a tradeDate from which a ss search is started");
         options.addOption("h", true,  "a threshold value to get ss for tradeDates");

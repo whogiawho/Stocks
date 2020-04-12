@@ -60,9 +60,11 @@ public class MMInstance {
             long inTime = Time.getSpecificTime(tradeDate1, inHMS);
             double cMax = am.maxDelta(inTime, nextTradeDateN, sTDistance, tradeType, 
                     stockDates, out);
+            //System.out.format("%s %s %8.3f\n", tradeDate1, inHMS, cMax);
+
             maxDeltaList.add(cMax);
             maxNetRList.add(out[0]);
-            if(cMax<minmaxDelta) {
+            if(cMax!=Double.NEGATIVE_INFINITY&&cMax<minmaxDelta) {
                 minmaxDelta = cMax;
             }
         }
@@ -75,6 +77,21 @@ public class MMInstance {
     private double getTotalNetR(ArrayList<Double> maxDeltaList, ArrayList<Double> maxNetRList, 
             double minmaxDelta) {
         double totalNetR = 0.0;
+        int size0 = maxDeltaList.size();
+        int size1 = maxNetRList.size();
+        if(size0!=size1) {
+            String msg = String.format("maxDeltaLiseSize(%d) != maxNetRListSize(%d)\n", size0, size1);
+            throw new RuntimeException(msg);
+        }
+
+        for(int i=0; i<size0; i++) {
+            double maxDelta = maxDeltaList.get(i);
+            if(maxDelta!=Double.NEGATIVE_INFINITY) {
+                double delta= maxDelta-minmaxDelta;
+                totalNetR += maxNetRList.get(i)-delta;
+            }
+        }
+
         return totalNetR;
     }
 }
