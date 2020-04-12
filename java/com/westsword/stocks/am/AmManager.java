@@ -199,6 +199,20 @@ public class AmManager {
     }
 
 
+    public long getAm(String tradeDate, String hmsList) {
+        long aM = 0;
+
+        String[] fields = hmsList.split("_");
+        String startHMS = fields[0];
+        String endHMS = fields[1];
+
+        NavigableMap<Integer, AmRecord> map = getItemMap(tradeDate, startHMS, tradeDate, endHMS);
+        AmRecord first = map.firstEntry().getValue();
+        AmRecord last = map.lastEntry().getValue();
+        aM = last.am - first.am;
+
+        return aM;
+    }
     //startDate0,startHMS0 endDate0,endHMS0
     //startDate1,startHMS1 endDate1,endHMS1
     public double getAmCorrel(String startDate0, String startHMS0, String endDate0, String endHMS0, 
@@ -209,14 +223,14 @@ public class AmManager {
         long endTp0 = Time.getSpecificTime(endDate0, endHMS0);
         int startIdx0 = mSdTime.getAbs(startTp0);
         int endIdx0 = mSdTime.getAbs(endTp0);
+        NavigableMap<Integer, AmRecord> map0 = mAmRecordMap.subMap(startIdx0, true, endIdx0, true);
 
         long startTp1 = Time.getSpecificTime(startDate1, startHMS1);
         long endTp1 = Time.getSpecificTime(endDate1, endHMS1);
         int startIdx1 = mSdTime.getAbs(startTp1);
         int endIdx1 = mSdTime.getAbs(endTp1);
-              
-        NavigableMap<Integer, AmRecord> map0 = mAmRecordMap.subMap(startIdx0, true, endIdx0, true);
         NavigableMap<Integer, AmRecord> map1 = mAmRecordMap.subMap(startIdx1, true, endIdx1, true);
+              
         int size0 = map0.size(); int expSize0 = endIdx0-startIdx0+1;
         int size1 = map1.size(); int expSize1 = endIdx1-startIdx1+1;
         if(!checkSizes(size0, expSize0, size1, expSize1,
@@ -278,6 +292,27 @@ public class AmManager {
 
     public String getStockCode() {
         return mStockCode;
+    }
+    public double getPriceAmplitude(String tradeDate, String startHMS, String endHMS) {
+        /*
+        long startTp = Time.getSpecificTime(tradeDate, startHMS);
+        long endTp = Time.getSpecificTime(tradeDate, endHMS);
+        int start = mSdTime.getAbs(startTp);
+        int end = mSdTime.getAbs(endTp);
+        NavigableMap<Integer, AmRecord> map = mAmRecordMap.subMap(start, true, end, true);
+        */
+        NavigableMap<Integer, AmRecord> map = getItemMap(tradeDate, startHMS, tradeDate, endHMS);
+
+        double min=Double.POSITIVE_INFINITY, max=Double.NEGATIVE_INFINITY;
+        for(AmRecord r: map.values()) {
+            if(r.downPrice<min)
+                min = r.downPrice;
+            if(r.upPrice>max)
+                max = r.upPrice;
+        }
+        
+
+        return max-min;
     }
 
 

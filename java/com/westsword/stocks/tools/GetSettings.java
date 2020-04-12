@@ -510,13 +510,13 @@ public class GetSettings{
         //testCheck(stockCode, "111000");
         //testCalendar(stockCode);
         //testTreeMap(stockCode);
-        testArrayList(stockCode);
+        //testArrayList(stockCode);
         //testSystem(stockCode);
 
         //testAmManager(stockCode, true);
         //testAmMatrix(stockCode);
         //testMatlab(stockCode);
-        //testCkpt(stockCode);
+        testCkpt(stockCode);
         //testCombination(stockCode);
         //testTradeSumLoader(stockCode);
         //testTaskManager(stockCode);

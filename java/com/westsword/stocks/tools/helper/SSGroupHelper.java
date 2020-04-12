@@ -174,8 +174,8 @@ public class SSGroupHelper {
         System.err.println("       sListAll; all tradeDates matched hmsList");
         System.err.println("       sList0; those tradeDates whose cycle==1");
         System.err.println("       sList1; those tradeDates whose cycle>1");
+        System.err.println("       make sure sListAll is composed of sList0&sList1");
         System.exit(-1);
     }
-
 
 }

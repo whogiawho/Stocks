@@ -12,8 +12,8 @@ public class AnalyzeTools{
 
         System.err.println("usage: java AnalyzeTools commands");
         System.err.println("       commands are listed below:");
-        System.err.println("       [ getvalue | setvalue | makeanalysistxt |\n" +
-                "         getamcorrel | getrel | getupprice | getdownprice | decode |\n" +
+        System.err.println("       [ getvalue | setvalue | makeanalysistxt | priceamp |\n" +
+                "         getamcorrel | getrel | getupprice | getdownprice | getam | decode |\n" +
                 "         ssinstance | ssinstances | getfullss |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify |\n" +
                 "         mminstance |\n" +
@@ -40,6 +40,8 @@ public class AnalyzeTools{
             CoderHelper.decode(args);
         } else if (sOption.equals("makeanalysistxt")) {
             AnalysisHelper.makeTxt(args);
+        } else if (sOption.equals("priceamp")) {
+            PriceHelper.amplitude(args);
         } else if (sOption.equals("make1mamcmap")) {
             Amc1mMapHelper amcmh = new Amc1mMapHelper();
             amcmh.make(args);
@@ -50,6 +52,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("getamcorrel")) {
             AmCorrelHelper ach = new AmCorrelHelper();
             ach.getAmCorrel(args);
+        } else if (sOption.equals("getam")) {
+            AmHelper amh = new AmHelper();
+            amh.getAm(args);
         } else if (sOption.equals("getrel")) {
             SdTime1Helper sth = new SdTime1Helper();
             sth.getrel(args);
