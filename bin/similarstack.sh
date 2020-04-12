@@ -217,13 +217,13 @@ function _ssGetIntersection {
         }
 
         local cnt=`wc $fTmp|awk '{print $1}'`; 
-        local cycle=`sort -nk12,12 $fTmp|tail -n1|awk '{print $12}'`; 
+        local maxCycle=`sort -nk12,12 $fTmp|tail -n1|awk '{print $12}'`; 
 
-        [[ $cnt != 0 && $cycle -le $maxWaitThres ]] && {
+        [[ $cnt != 0 && $maxCycle -le $maxWaitThres ]] && {
             [[ $endHMS2 > $endHMS1 ]] && {
-                printf "%s %s %s %s %4d %4d\n" $tradeDate2 $i $tradeDate1 $hmsList1 $cnt $cycle; 
+                printf "%s %s %s %s %4d %4d\n" $tradeDate2 $i $tradeDate1 $hmsList1 $cnt $maxCycle; 
             } || {
-                printf "%s %s %s %s %4d %4d\n" $tradeDate1 $hmsList1 $tradeDate2 $i $cnt $cycle; 
+                printf "%s %s %s %s %4d %4d\n" $tradeDate1 $hmsList1 $tradeDate2 $i $cnt $maxCycle; 
             } 
         }
     done
