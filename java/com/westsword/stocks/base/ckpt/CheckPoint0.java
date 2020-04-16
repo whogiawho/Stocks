@@ -23,8 +23,9 @@ public class CheckPoint0 extends CheckPoint {
         long endTp = Time.getSpecificTime(currentDate, AStockSdTime.getMidSuspensionTime());
         add(startTp, endTp, interval);
 
-        //add [13:00:00, endHMS]
-        startTp = Time.getSpecificTime(currentDate, AStockSdTime.getMidOpenQuotationTime());
+        //skip 13:00:00
+        //add [13:01:00, endHMS]
+        startTp = Time.getSpecificTime(currentDate, AStockSdTime.getMidOpenQuotationTime()) + interval;
         endTp = Time.getSpecificTime(currentDate, endHMS);
         add(startTp, endTp, interval);
     }

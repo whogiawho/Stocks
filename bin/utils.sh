@@ -182,3 +182,12 @@ function cleardmp {
     rm -rf $hexinRoot/*.dmp
     set +x
 }
+
+function getFilesWBaseRoot {
+    local rootKey=$1          #something like "d:\\\\"
+
+    grep -ri "$rootKey" python/ thsHack/ java/ bin/| \
+        grep -v 匹配到二进制文件| \
+        grep -v "txt:"| \
+        awk -F: '{print $1}'|uniq
+}

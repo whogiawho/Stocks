@@ -137,10 +137,11 @@ function doDailyGetRawJob {
 
     [[ ! -z $noCheck ]] && return 
 
-    local sFormat="doDailyGetRawJob: ($stockCode, $tradeDate) %20s %10s!\n"
     echo 
     for stockCode in $stockList
     do
+        local sFormat="doDailyGetRawJob: ($stockCode, $tradeDate) %20s %10s!\n"
+
         checkRawPankou $stockCode $tradeDate && {
             printf "$sFormat" "rawPankou" "ok"
         } || {

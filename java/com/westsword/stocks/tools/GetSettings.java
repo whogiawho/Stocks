@@ -330,6 +330,7 @@ public class GetSettings{
         System.out.format("\n testCombination: \n");
 
         CheckPoint0 ckpt = new CheckPoint0();
+        //Combinations c = new Combinations(ckpt.getLength()-1, 2);
         Combinations c = new Combinations(5, 2);
         Iterator<int[]> itr = c.iterator();
         while(itr.hasNext()) {
@@ -365,6 +366,14 @@ public class GetSettings{
         if(Double.isNaN(a)) {
             System.out.format("a=%8.3f\n", a);
         }
+    }
+    public static void testBackSlash(String stockCode) {
+        System.out.format("\n testBackSlash: \n");
+
+        //String sStockCode=Settings.getString("d:\Stocks\settings.txt", "stockCode");   //illegal
+        //String sStockCode=Settings.getString("d:/Stocks/settings.txt", "stockCode");   //ok
+        String sStockCode=Settings.getString("d:\\Stocks\\settings.txt", "stockCode");   //ok
+        System.out.format("sStockCode=%s\n", sStockCode);
     }
     public static void testString(String stockCode) {
         System.out.format("\n testString: \n");
@@ -516,14 +525,15 @@ public class GetSettings{
         //testAmManager(stockCode, true);
         //testAmMatrix(stockCode);
         //testMatlab(stockCode);
-        testCkpt(stockCode);
-        //testCombination(stockCode);
+        //testCkpt(stockCode);
+        testCombination(stockCode);
         //testTradeSumLoader(stockCode);
         //testTaskManager(stockCode);
         //testFinal(stockCode);
         //testGetAmCorrel(stockCode);
         //testDouble(stockCode);
         //testString(stockCode);
+        testBackSlash(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
