@@ -7,6 +7,7 @@ import org.apache.commons.math3.util.Combinations;
 
 import com.westsword.stocks.base.utils.*;
 import com.westsword.stocks.base.ckpt.*;
+import com.westsword.stocks.tools.helper.man.*;
 import com.westsword.stocks.am.AmManager;
 import com.westsword.stocks.base.time.StockDates;
 import com.westsword.stocks.base.time.TradeDates;

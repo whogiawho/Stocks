@@ -1,4 +1,4 @@
-package com.westsword.stocks.tools.helper;
+package com.westsword.stocks.tools.helper.man;
 
 
 import java.util.*;

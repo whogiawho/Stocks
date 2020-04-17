@@ -8,6 +8,7 @@ import com.westsword.stocks.am.AmManager;
 import com.westsword.stocks.base.utils.AnsiColor;
 import com.westsword.stocks.base.utils.LineLoader;
 import com.westsword.stocks.base.ckpt.CheckPoint0;
+import com.westsword.stocks.tools.helper.man.*;
 
 public class SSGroupHelper {
 
@@ -27,6 +28,7 @@ public class SSGroupHelper {
 
 
         SSgmsdrManager m = new SSgmsdrManager();
+
         LineLoader loader = new LineLoader();
         ArrayList<String> tradeDateList= new ArrayList<String>();
         loader.load(tradeDateList, args[3]);

@@ -37,13 +37,13 @@ public class MinStdDevR {
         StandardDeviation sd = new StandardDeviation();
         ArrayList<Double> amcorrelList = new ArrayList<Double>();
         CmManager cm = new CmManager();
-        double[][] m = cm.getCorrMatrix(sTradeDates, hmsList, am);
+        double[][] corrM = cm.getCorrMatrix(sTradeDates, hmsList, am);
 
         for(int i=0; i<tradeDateList.size(); i++) {
             String tradeDate0 = tradeDateList.get(i);
             amcorrelList.clear();
 
-            double avgAmCorrel = getAmCorrels(tradeDate0, tradeDateList, m, amcorrelList);
+            double avgAmCorrel = getAmCorrels(tradeDate0, tradeDateList, corrM, amcorrelList);
 
             Double[] sds = amcorrelList.toArray(new Double[0]);
             double stddev = sd.evaluate(ArrayUtils.toPrimitive(sds));
@@ -81,14 +81,14 @@ public class MinStdDevR {
     }
 
 
-    private double getAmCorrels(String tradeDate0, ArrayList<String> tradeDateList, double[][] m, 
+    private double getAmCorrels(String tradeDate0, ArrayList<String> tradeDateList, double[][] corrM, 
             ArrayList<Double> amcorrelList) {
         double avgAmCorrel = 0;
         int idx = Utils.getIdx(tradeDateList.toArray(new String[0]), tradeDate0);
 
         int count = 0;
-        for(int j=0; j<m.length; j++) {
-            Double amcorrel = m[idx][j];
+        for(int j=0; j<corrM.length; j++) {
+            Double amcorrel = corrM[idx][j];
             if(amcorrel != Double.NaN) {
                 avgAmCorrel += amcorrel;
                 count++;

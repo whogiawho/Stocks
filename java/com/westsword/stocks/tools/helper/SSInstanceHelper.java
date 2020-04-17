@@ -5,6 +5,7 @@ import org.apache.commons.cli.*;
 
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.time.*;
+import com.westsword.stocks.tools.helper.man.*;
 
 public class SSInstanceHelper {
 

@@ -8,6 +8,7 @@ import org.apache.commons.math3.util.Combinations;
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.ckpt.*;
+import com.westsword.stocks.tools.helper.man.*;
 import com.westsword.stocks.base.utils.AnsiColor;
 
 public class SSInstancesHelper {

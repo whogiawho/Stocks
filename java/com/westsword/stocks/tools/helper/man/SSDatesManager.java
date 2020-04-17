@@ -1,4 +1,4 @@
-package com.westsword.stocks.tools.helper;
+package com.westsword.stocks.tools.helper.man;
 
 
 import com.westsword.stocks.am.AmManager;

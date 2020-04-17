@@ -1,4 +1,4 @@
-package com.westsword.stocks.tools.helper;
+package com.westsword.stocks.tools.helper.man;
 
 
 import java.util.*;
@@ -9,6 +9,8 @@ import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.Trade;
 import com.westsword.stocks.base.utils.StockPaths;
+import com.westsword.stocks.tools.helper.SSUtils;
+import com.westsword.stocks.tools.helper.TradeSumLoader;
 
 public class SSInstance {
     public String stockCode;
