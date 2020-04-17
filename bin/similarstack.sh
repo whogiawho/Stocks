@@ -80,156 +80,6 @@ function getSSFullWinStats {
 
 
 
-#dir[12]=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
-#only considering those hmsList with matchedTradeDates>=100
-function getSSCommon {
-    local dir1=$1
-    local maxWait=$2
-    local dir2=$3
-
-    local file1=$dir1.txt; 
-    local list1=`awk "\\$2>=$MinMatchedCount{print \\$9}" $file1`
-
-    local file2=$dir2.txt; 
-    local list2=`awk "\\$2>=$MinMatchedCount{print \\$9}" $file2`
-
-    local i=
-    local j=
-    for i in $list1
-    do
-        for j in $list2
-        do
-            baseGetSSCommon $dir1 $i $maxWait $dir2 $j
-        done
-    done
-}
-#dir[12]=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
-function baseGetSSCommon {
-    local dir1=$1
-    local hmsList1=$2
-    local maxWait=$3              #apply to <dir1, hmsList1>
-    local dir2=$4
-    local hmsList2=$5
-
-    #local a last1 last2
-    #IFS=_ read a last1 <<<`echo $hmsList1`
-    #IFS=_ read a last2 <<<`echo $hmsList1`
-    #[[ $last1 > $last2 ]] && return
-
-    [[ $dir1 == $dir2 && $hmsList1 == $hmsList2 ]] && return
-
-    local file1=$dir1/$hmsList1.txt
-    local file2=$dir2/$hmsList2.txt
-
-    local fTmp3=`mktemp`
-    comm -12 <(awk "{print \$1}" $file1) <(awk "{print \$1}" $file2) >$fTmp3
-    sed -i "s/^/\^/g" $fTmp3
-
-    local countTotal=`wc $fTmp3|awk '{print $1}'`
-    local count0=`grep -f $fTmp3 $file1|awk "\\$12<=$maxWait{print \\$0}"|wc|awk '{print $1}'`
-    local r=`echo "scale=2; $count0/$countTotal"|bc`
-
-    printf "%s %s %s %s %s %8s %8s %8.3f\n" $dir1 $hmsList1 $maxWait $dir2 $hmsList2 $countTotal $count0 $r
-
-    rm -rf $fTmp3
-}
-#dir[12]=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
-function baseGetSSCommonTradeDetails {
-    local dir1=$1
-    local hmsList1=$2
-    local maxWait=$3              #apply to <dir1, hmsList1>
-    local dir2=$4
-    local hmsList2=$5
-
-    [[ $dir1 == $dir2 && $hmsList1 == $hmsList2 ]] && return
-
-    local file1=$dir1/$hmsList1.txt
-    local file2=$dir2/$hmsList2.txt
-
-    local fTmp3=`mktemp`
-    comm -12 <(awk "{print \$1}" $file1) <(awk "{print \$1}" $file2) >$fTmp3
-    sed -i "s/^/\^/g" $fTmp3
-
-    grep -f $fTmp3 $file1|awk "\$12<=$maxWait{print \$0}"
-
-    rm -rf $fTmp3
-}
-#dir=data/similarStack/600030/20160108_0.90_T1L
-function ssGetIntersection {
-    local dir=$1
-    local tradeDates=$2
-    local maxCycle=${3:-180}
-    local targetRate=${4:-1.100}
-
-    local i=
-    local dirList=
-    [[ -z $tradeDates ]] && {
-        for i in `find $dir -mindepth 1 -maxdepth 1 -type d`
-        do
-            dirList="$dirList $i"
-        done
-    } || {
-        for i in $tradeDates
-        do
-            dirList="$dirList $dir/${i}_${maxCycle}_${targetRate}" 
-        done
-    }
-
-    local maxWaitThres=5
-    local max=49
-    local cnt=0
-    for i in $dirList
-    do
-        local sTradeSum="$i.txt"
-        local hmsList=`sort -nk2,2 $sTradeSum|grep -v $InvalidHMSList|tail -n 1|awk '{print $9}'`
-        _ssGetIntersection $i $hmsList $maxWaitThres $i &
-        cnt=$((cnt+1))
-        [[ $cnt -ge $max ]] && {
-            wait
-            cnt=0
-        }
-    done
-}
-#dir[12]=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
-function _ssGetIntersection {
-    local dir1=$1
-    local hmsList1=$2
-    local maxWaitThres=$3              #apply to <dir1, hmsList1>
-    local dir2=$4
-
-    [[ $hmsList1 == $InvalidHMSList ]] && return
-
-    local tradeDate1=`ssGetTradeDate $dir1`
-    local tradeDate2=`ssGetTradeDate $dir2`
-    local endHMS1=`ssGetEndHMS $hmsList1`
-    local fTmp=`mktemp`; 
-    local i=
-    for i in `ls $dir2/*.txt`; do 
-        i=`ssGetHMSList $i`
-        [[ $i == $InvalidHMSList ]] && continue
-
-        #whose endHMS is later? i or hmsList1 
-        local endHMS2=`ssGetEndHMS $i`
-        [[ $endHMS2 > $endHMS1 ]] && {
-            baseGetSSCommonTradeDetails $dir2 $i 180 $dir1 $hmsList1>$fTmp; 
-        } || {
-            baseGetSSCommonTradeDetails $dir1 $hmsList1 180 $dir2 $i>$fTmp; 
-        }
-
-        local cnt=`wc $fTmp|awk '{print $1}'`; 
-        local maxCycle=`sort -nk12,12 $fTmp|tail -n1|awk '{print $12}'`; 
-
-        [[ $cnt != 0 && $maxCycle -le $maxWaitThres ]] && {
-            [[ $endHMS2 > $endHMS1 ]] && {
-                printf "%s %s %s %s %4d %4d\n" $tradeDate2 $i $tradeDate1 $hmsList1 $cnt $maxCycle; 
-            } || {
-                printf "%s %s %s %s %4d %4d\n" $tradeDate1 $hmsList1 $tradeDate2 $i $cnt $maxCycle; 
-            } 
-        }
-    done
-
-    rm -rf $fTmp
-}
 
 
 
@@ -335,44 +185,25 @@ function ssGetEndHMS {
 
 
 
-#parms samples:
 #dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
-#maxWait=180              exclude those tradeLength>maxWait
-function getSSHMSListFullWin {
+#cycleThres=180              those cycle==cycleThres&& cycle>cycleThres
+function getSSTradeDates {
     local dir=$1
-    local maxWait=$2
+    local hmsList=$2
+    local cycleThres=$3
 
-    local file=$dir.txt; 
-    local i=
-    for i in `sort -nk3,3 $file |grep "$re100"|awk '{print $9}'`; #get those 100% winning hmsList
-    do 
-        local allg=0; 
-        local maxPeriod=`awk '{print $12}' $dir/$i.txt|sort -n|tail -n 1`
+    local tradeDate=`ssGetTradeDate $dir`
+    local sTradeDetails=$dir/$hmsList.txt; 
+    local fOutEq=$TMP/${tradeDate}_${hmsList}Eq$cycleThres.txt
+    awk "\$12==cycleThres{print \$1}" cycleThres=$cycleThres $sTradeDetails > $fOutEq
 
-        [[ $maxPeriod -gt $maxWait ]] && { 
-            allg=1; 
-        }
-        [[ $allg == 0 ]] && { 
-            local c=`wc $dir/$i.txt|awk '{print $1}'`;                      #matchedTradeDates
-            local m1=`awk '{print $12}' $dir/$i.txt|sort -nu|tail -n 1`;    #max tradeLength
-            local m2=`awk '{print $13}' $dir/$i.txt|sort -nu|tail -n 1`;    #max currentHangCount
-            printf "%s %4d %4d %4d\n" $i $c $m1 $m2; 
-        }; 
-    done
+    local fOutGt=$TMP/${tradeDate}_${hmsList}Gt$cycleThres.txt
+    awk "\$12>cycleThres{print \$1}" cycleThres=$cycleThres $sTradeDetails > $fOutGt
+
+    wc $fOutEq |awk '{print $1,$4}'
+    wc $fOutGt |awk '{print $1,$4}'
 }
-#dir=data/similarStack/600030/20160108_0.90_T1L
-#maxWait            exclude those tradeLength>maxWait
-function getSSHMSList {
-    local dir=$1
-    local maxWait=$2
 
-    local i=
-    for i in `find $dir -mindepth 1 -maxdepth 1 -type d`
-    do
-        echo $i
-        getSSHMSListFullWin $i $maxWait
-    done
-}
 function verifyGroup {
     local stockCode=$1
     local hmsList=$2

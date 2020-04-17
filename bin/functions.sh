@@ -42,6 +42,8 @@ cygwinTmpDir="$cygwinRootDir\\tmp"
 . bin/similarstack.sh
 . bin/amcorrel.sh
 . bin/gcp.sh
+. bin/sscommons.sh
+. bin/ssn.sh
 
 
 function setupCfgFile {
