@@ -8,6 +8,7 @@ import com.westsword.stocks.am.AmManager;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.utils.AnsiColor;
+import com.westsword.stocks.tools.helper.man.*;
 
 public class SSUtils {
     public final static String Default_StockCode = Settings.getStockCode();
@@ -126,7 +127,7 @@ public class SSUtils {
 
         if(corrM!=null) {
             getSimilarTradeDates(stockCode, startDate, threshold,
-                    tradeDate, hmsList, corrM, tradeDateList);
+                    tradeDate, corrM, tradeDateList);
         } else {
             String[] hms = hmsList.split("_");
             TradeDates tradeDates = new TradeDates(stockCode);
@@ -148,13 +149,13 @@ public class SSUtils {
         return tradeDateList;
     }
     public static void getSimilarTradeDates(String stockCode, String startDate, double threshold, 
-            String tradeDate, String hmsList, double[][] corrM, ArrayList<String> tradeDateList) {
+            String tradeDate, double[][] corrM, ArrayList<String> tradeDateList) {
         TradeDates tradeDates = new TradeDates(stockCode, startDate);
         int idx = tradeDates.getIndex(tradeDate);
         int h = corrM.length;
         int w = corrM[0].length;
         for(int i=0; i<w; i++) {
-            if(corrM[idx][i] >= SSUtils.Default_Threshold) {
+            if(corrM[idx][i] >= threshold) {
                 String sMatchedDate = tradeDates.getDate(i);
                 if(tradeDateList!=null)
                     tradeDateList.add(sMatchedDate);

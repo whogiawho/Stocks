@@ -35,7 +35,7 @@ public class CmManager {
             double[][] m0 = am.getAmMatrix(hmsList, sTradeDates);
             cm = mEng.feval("corrcoef", (Object)m0);
 
-            System.out.format("%s %s: get cm directly!\n", Time.current(), Utils.getCallerName(getClass()));
+            System.err.format("%s %s: get cm directly!\n", Time.current(), Utils.getCallerName(getClass()));
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }

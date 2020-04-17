@@ -17,7 +17,7 @@ public class AnalyzeTools{
                 "         ssinstance | ssinstances | getfullss |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify |\n" +
                 "         mminstance |\n" +
-                "         makessdates | make1mamcmap ]");
+                "         makessdates | maxmatchsingle | maxmatchall | make1mamcmap ]");
 
         System.exit(-1);
     }
@@ -79,6 +79,12 @@ public class AnalyzeTools{
         } else if (sOption.equals("makessdates")) {
             SSDatesHelper ssdh = new SSDatesHelper();
             ssdh.make(args);
+        } else if (sOption.equals("maxmatchsingle")) {
+            SSDatesHelper ssdh = new SSDatesHelper();
+            ssdh.maxMatchSingle(args);
+        } else if (sOption.equals("maxmatchall")) {
+            SSDatesHelper ssdh = new SSDatesHelper();
+            ssdh.maxMatchAll(args);
         } else if (sOption.equals("getfullss")) {
             FullSSHelper fullssh = new FullSSHelper();
             fullssh.run(args);

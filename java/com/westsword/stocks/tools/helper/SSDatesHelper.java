@@ -8,8 +8,10 @@ import org.apache.commons.math3.util.Combinations;
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.utils.StockPaths;
+import com.westsword.stocks.base.utils.LineLoader;
 import com.westsword.stocks.base.time.StockDates;
 import com.westsword.stocks.base.ckpt.CheckPoint0;
+import com.westsword.stocks.tools.helper.man.*;
 
 public class SSDatesHelper {
 
@@ -47,10 +49,6 @@ public class SSDatesHelper {
             ssdm.run(ssd, am);
         }
     }
-
-
-
-
     private static void usage() {
         System.err.println("usage: java AnalyzeTools makessdates [-ch] tradeDate");
         System.err.println("       list all similar tradeDates for the (tradeDate, hmsList)");
@@ -58,7 +56,6 @@ public class SSDatesHelper {
         System.err.println("       -h threshold;");
         System.exit(-1);
     }
-
     public static CommandLine getCommandLine(String[] args) {
         CommandLine cmd = null;
         try {
@@ -74,4 +71,132 @@ public class SSDatesHelper {
 
         return cmd;
     }
+
+
+
+
+
+    public void maxMatchSingle(String[] args) {
+        CommandLine cmd = getCommandLine(args);
+        String[] newArgs = cmd.getArgs();
+        if(newArgs.length<2) {
+            maxmatchsingleUsage();
+            return;
+        }
+
+        String stockCode = SSUtils.getStockCode(cmd);
+        double threshold = SSUtils.getThreshold(cmd);
+
+        String fTradeDates = newArgs[0];
+        String hmsList = newArgs[1];
+
+        LineLoader loader = new LineLoader();
+        ArrayList<String> tradeDateList= new ArrayList<String>();
+        loader.load(tradeDateList, fTradeDates);
+        String[] sTradeDates = tradeDateList.toArray(new String[0]);
+        AmManager am = new AmManager(stockCode, tradeDateList);
+
+        CmManager cm = new CmManager();
+        double[][] corrM =  cm.getCorrMatrix(sTradeDates, hmsList, am);
+
+        String[] out = new String[2];
+        int maxCount = getMaxMatchCount(corrM, threshold, sTradeDates, out);
+
+        System.out.format("%d %s %s %s\n", maxCount, out[0], hmsList, out[1]);
+    }
+    private static int getMaxMatchCount(double[][] corrM, double threshold, String[] sTradeDates,
+            String[] out) {
+        String sMaxTradeDate="";
+        String sMaxMatchTradeDates = "";
+        int maxCount=0;
+        for(int i=0; i<corrM.length; i++) {
+            int count=0;
+            String sMatchTradeDates = "";
+            for(int j=0; j<corrM[i].length; j++) {
+                if(corrM[i][j]>=threshold) {
+                    count++;
+                    sMatchTradeDates += sTradeDates[j] + " ";
+                }
+            }
+            if(count>maxCount) {
+                maxCount=count;
+                sMaxTradeDate = sTradeDates[i];
+                sMaxMatchTradeDates = sMatchTradeDates;
+            }
+        }
+
+        sMaxMatchTradeDates = sMaxMatchTradeDates.trim();
+        sMaxMatchTradeDates = sMaxMatchTradeDates.replaceAll(" ", ",");
+        out[0] = sMaxTradeDate;
+        out[1] = sMaxMatchTradeDates;
+
+        return maxCount;
+    }
+    private static void maxmatchsingleUsage() {
+        System.err.println("usage: java AnalyzeTools maxmatchsingle [-ch] fTradeDates hmsList");
+        System.err.println("       find the tradeDate in fTradeDates which has max matches for hmsList");
+        System.err.println("       -c stockCode;");
+        System.err.println("       -h threshold;");
+        System.exit(-1);
+    }
+
+
+
+
+    public void maxMatchAll(String[] args) {
+        CommandLine cmd = getCommandLine(args);
+        String[] newArgs = cmd.getArgs();
+        if(newArgs.length<1) {
+            maxmatchallUsage();
+            return;
+        }
+
+        String stockCode = SSUtils.getStockCode(cmd);
+        double threshold = SSUtils.getThreshold(cmd);
+
+        String fTradeDates = newArgs[0];
+
+        LineLoader loader = new LineLoader();
+        ArrayList<String> tradeDateList= new ArrayList<String>();
+        loader.load(tradeDateList, fTradeDates);
+        String[] sTradeDates = tradeDateList.toArray(new String[0]);
+        AmManager am = new AmManager(stockCode, tradeDateList);
+
+        CmManager cm = new CmManager();
+        String[] out = new String[2];
+        int maxCount=Integer.MIN_VALUE;
+        String sMaxTradeDate="";
+        String sMaxMatchTradeDates="";
+        String sMaxHMSList="";
+
+        CheckPoint0 ckpt = new CheckPoint0();
+        int length = ckpt.getLength();
+        Combinations c = new Combinations(length-1, 2);     //exclude the last ckpt
+        //loop all hmsList combination(n,2)
+        Iterator<int[]> itr = c.iterator();
+        while(itr.hasNext()) {
+            int[] e = itr.next();
+            String hmsList = ckpt.getHMSList(e);                     //
+
+            double[][] corrM =  cm.getCorrMatrix(sTradeDates, hmsList, am);
+            int count = getMaxMatchCount(corrM, threshold, sTradeDates, out);
+            if(count>maxCount) {
+                maxCount = count;
+                sMaxTradeDate = out[0];
+                sMaxMatchTradeDates = out[1];
+                sMaxHMSList = hmsList;
+                System.out.format("%d %s %s %s\n", 
+                        maxCount, sMaxTradeDate, sMaxHMSList, sMaxMatchTradeDates);
+            }
+        }
+
+    }
+    private static void maxmatchallUsage() {
+        System.err.println("usage: java AnalyzeTools maxmatchall [-ch] fTradeDates");
+        System.err.println("       find the tradeDate in fTradeDates which has max matches for all hmsList");
+        System.err.println("       -c stockCode;");
+        System.err.println("       -h threshold;");
+        System.exit(-1);
+    }
 }
+

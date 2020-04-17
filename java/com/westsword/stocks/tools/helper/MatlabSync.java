@@ -28,7 +28,7 @@ public class MatlabSync {
 
             ArrayList<String> tradeDateList = new ArrayList<String>();
             SSUtils.getSimilarTradeDates(stockCode, startDate, SSUtils.Default_Threshold,
-                    startDate, hmsList, rm, tradeDateList);
+                    startDate, rm, tradeDateList);
             System.out.format("%s\n", tradeDateList.toString());
             
             eng.close();
