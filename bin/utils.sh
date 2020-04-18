@@ -68,12 +68,30 @@ function substract {
     echo $result
 }
 
+function gt {
+    local f0=$1
+    local f1=$2
+
+    local bCompare=
+    bCompare=`echo "$f0 > $f1"|bc`
+
+    echo $bCompare
+}
 function ge {
     local f0=$1
     local f1=$2
 
     local bCompare=
     bCompare=`echo "$f0 >= $f1"|bc`
+
+    echo $bCompare
+}
+function lt {
+    local f0=$1
+    local f1=$2
+
+    local bCompare=
+    bCompare=`echo "$f0 < $f1"|bc`
 
     echo $bCompare
 }

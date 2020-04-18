@@ -77,7 +77,42 @@ function getSSFullWinStats {
 
     done <$fFullWin >$fTmp
 }
+#dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
+function getMinMaxProfitGe {
+    local dir=$1
+    local profitThres=$2
 
+    local tradeDate=`ssGetTradeDate $dir`
+    local i=
+    for i in `ls $dir`
+    do 
+        local maxDelta=`sort -nk9,9 $dir/$i|head -n 1|awk '{print $9}'`
+        local ret=`ge $maxDelta $profitThres`
+        [[ $ret == 1 ]] && { 
+            local cnt=`wc $dir/$i|awk '{print $1}'`
+            local hmsList=${i%%.txt*}
+            printf "%s %s %4d %8.3f\n" $tradeDate $hmsList $cnt $maxDelta
+        } 
+    done
+}
+#dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
+function getMaxCycleLe {
+    local dir=$1
+    local cycleThres=$2
+
+    local tradeDate=`ssGetTradeDate $dir`
+    local i=
+    for i in `ls $dir`
+    do 
+        local maxCycle=`sort -nk12,12 $dir/$i|tail -n 1|awk '{print $12}'`
+        local ret=`le $maxCycle $cycleThres`
+        [[ $ret == 1 ]] && { 
+            local cnt=`wc $dir/$i|awk '{print $1}'`
+            local hmsList=${i%%.txt*}
+            printf "%s %s %4d %8d\n" $tradeDate $hmsList $cnt $maxCycle
+        } 
+    done
+}
 
 
 
