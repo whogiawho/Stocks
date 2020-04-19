@@ -25,41 +25,10 @@ public class Analyze600030 {
         //remove analysis.txt
         String outAnalysisFile = getAnalysisFile(mRTAnalyzeFrame);
         Utils.deleteFile(outAnalysisFile);
+
+        //load am
     }
 
-    private boolean callAuctionCompleted(ArrayList<RawTradeDetails> rawDetailsList, 
-            boolean completed) {
-        //get the ratio of ab/(ab+as) when call auction completes
-        if(!completed && rawDetailsList.size() != 0) {
-            RawTradeDetails current = rawDetailsList.get(rawDetailsList.size()-1);
-            long callAuctionTime = AStockSdTime.getCallAuctionEndTime(current.time);
-
-            if(current.time >= callAuctionTime) {
-                int asSum=0, abSum=0;
-                //only include those tradeDetails <= callAuctionTime
-                //sum as&ab during callAuction;
-                for(int i=0; i<rawDetailsList.size(); i++) {
-                    RawTradeDetails element = rawDetailsList.get(i);
-                    if(element.time > callAuctionTime)
-                        break;
-
-                    if(element.type == Stock.TRADE_TYPE_UP)
-                        abSum += element.count;
-                    else if(element.type == Stock.TRADE_TYPE_DOWN)
-                        asSum += element.count;
-                    else
-                        System.out.format("%s: unsupported type = %d\n", 
-                                Utils.getCallerName(getClass()), element.type);
-                }
-
-                String sFormat = "\nCallAuction Completed! ab/(ab+as) = %8.3f%%\n";
-                System.out.format(sFormat, (double)abSum/(abSum+asSum)*100);
-                completed= true;
-            }
-        }
-
-        return completed;
-    }
 
     private boolean bCallAuctionComplete = false;
     public void startAnalyze(ArrayList<RawTradeDetails> rawDetailsList, 
@@ -104,17 +73,6 @@ public class Analyze600030 {
     }
 
 
-
-    private String getAnalysisFile(RealtimeAnalyze frame) {
-        String sAnalyze1File = frame.getAnalysisFile();
-
-        if(!sAnalyze1File.equals("")) {
-            return sAnalyze1File;
-        }
-
-        return StockPaths.getAnalysisFile();
-    }
-
     private boolean mLastRawTradeDetailHandled = false;
     public boolean isLastRawTradeDetailHandled() {
         return mLastRawTradeDetailHandled;
@@ -148,6 +106,50 @@ public class Analyze600030 {
             if(timePt == AStockSdTime.getLastRawTradeDetailTime(timePt))
                 setLastRawTradeDetailHandled(true);
         }
+    }
+
+
+    private boolean callAuctionCompleted(ArrayList<RawTradeDetails> rawDetailsList, 
+            boolean completed) {
+        //get the ratio of ab/(ab+as) when call auction completes
+        if(!completed && rawDetailsList.size() != 0) {
+            RawTradeDetails current = rawDetailsList.get(rawDetailsList.size()-1);
+            long callAuctionTime = AStockSdTime.getCallAuctionEndTime(current.time);
+
+            if(current.time >= callAuctionTime) {
+                int asSum=0, abSum=0;
+                //only include those tradeDetails <= callAuctionTime
+                //sum as&ab during callAuction;
+                for(int i=0; i<rawDetailsList.size(); i++) {
+                    RawTradeDetails element = rawDetailsList.get(i);
+                    if(element.time > callAuctionTime)
+                        break;
+
+                    if(element.type == Stock.TRADE_TYPE_UP)
+                        abSum += element.count;
+                    else if(element.type == Stock.TRADE_TYPE_DOWN)
+                        asSum += element.count;
+                    else
+                        System.out.format("%s: unsupported type = %d\n", 
+                                Utils.getCallerName(getClass()), element.type);
+                }
+
+                String sFormat = "\nCallAuction Completed! ab/(ab+as) = %8.3f%%\n";
+                System.out.format(sFormat, (double)abSum/(abSum+asSum)*100);
+                completed= true;
+            }
+        }
+
+        return completed;
+    }
+    private String getAnalysisFile(RealtimeAnalyze frame) {
+        String sAnalyze1File = frame.getAnalysisFile();
+
+        if(!sAnalyze1File.equals("")) {
+            return sAnalyze1File;
+        }
+
+        return StockPaths.getAnalysisFile();
     }
 }
 

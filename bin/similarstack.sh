@@ -6,6 +6,27 @@ MinMatchedCount=${MinMatchedCount:-100}
 re100="100\.0%"
 
 
+#dir=data/similarStack/600030/20160108_0.90_T1L
+function listSSTableStats {
+    local dir=$1
+    local maxCycle=${2:-180}
+    local targetRate=${3:-1.100}
+
+    local fSSTable=$rootDirCygdrive/ssTable.txt
+
+    local line=
+    while read line; 
+    do 
+        echo $line|grep -qE "\#|^$" && continue; 
+
+        local a b c d e f g h i
+        read a b c d e f g h i <<<`echo $line`;
+        tradeDate=${i%%:*}; 
+        hmsList=${i##*:};
+        getInstanceStats $dir/${tradeDate}_${maxCycle}_${targetRate} $hmsList
+    done<$fSSTable
+}
+
 #dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 function getInstanceStats {
     local dir=$1

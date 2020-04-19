@@ -158,6 +158,7 @@ function _ssGetIntersection {
 
 
 
+#dir=data/similarStack/600030/20160108_0.90_T1L
 #fSet - output by _ssGetIntersection
 function ssnMinSet {
     local dir=$1
@@ -198,6 +199,7 @@ function ssnMinSet {
 
     rm -rf $fTmp0 $fTmp1 $fTmp2
 }
+#dir=data/similarStack/600030/20160108_0.90_T1L
 #fSet - output by _ssGetIntersection
 function _ssnMinSet {
     local dir=$1
