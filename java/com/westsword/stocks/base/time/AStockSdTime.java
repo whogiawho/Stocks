@@ -19,12 +19,14 @@ public class AStockSdTime extends SdTime {
         addRange("13:00:00", "15:00:00");
     }
 
+
     public static String getCallAuctionEndTime0() {
         return Settings.getSdStartTime();           //09:25:00
     }
     public static String getCallAuctionEndTime1() {
         return "09:25:02";
     }
+
 
     public static String getCallAuctionEndTime() {
         return "09:25:00"; 
@@ -41,7 +43,23 @@ public class AStockSdTime extends SdTime {
     public static String getCloseQuotationTime() {
         return "15:00:00";
     }
+    public static String getLastRawTradeDetailTime() {
+        return "15:01:00";
+    }
+
+
     public static long getCloseQuotationTime(String tradeDate) {
         return Time.getSpecificTime(tradeDate, getCloseQuotationTime());
+    }
+
+
+    public static long getCloseQuotationTime(long timepoint) {
+        return Time.getSpecificTime(timepoint, getCloseQuotationTime());
+    }
+    public static long getCallAuctionEndTime(long timepoint) {
+        return Time.getSpecificTime(timepoint, getCallAuctionEndTime());
+    }
+    public static long getLastRawTradeDetailTime(long timepoint) {
+        return Time.getSpecificTime(timepoint, getLastRawTradeDetailTime());
     }
 }

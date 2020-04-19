@@ -20,6 +20,8 @@ CkptInterval=60
 
 #switch to turn on raw data trace: RawRTPankou, RawTradeDetails, and others
 switchOfRawData=false
+#switch to turn to main loop
+switchOfMainLoop=false
 #switch to turn on performance tuning
 noPerformanceLog=true
 
