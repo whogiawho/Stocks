@@ -96,9 +96,7 @@ public class AmUtils {
         return rawDetailsList;
     }
 
-    public long loadPrevLastAm(String tradeDate) {
-        long lastAm = 0;
-
+    public AmRecord loadPrevLastAmRecord(String tradeDate) {
         if(!mStockDates.contains(tradeDate)) {
             String msg = String.format("%s is not valid for %s\n", 
                     tradeDate, mStockCode);
@@ -106,7 +104,7 @@ public class AmUtils {
         }
 
         if(tradeDate.equals(mStockDates.firstDate()))
-            return lastAm;
+            return null;
 
         tradeDate = mStockDates.prevDate(tradeDate);
         String sAnalysisFile = StockPaths.getAnalysisFile(mStockCode, tradeDate);
@@ -114,8 +112,17 @@ public class AmUtils {
         ArrayList<AmRecord> amList = new ArrayList<AmRecord>();
         amLoader.load(amList, null, null, sAnalysisFile);
 
-        AmRecord r = amList.get(amList.size()-1);
-        lastAm = r.am;
+        if(amList.size() == 0)
+            return null;
+
+        return amList.get(amList.size()-1);
+    }
+    public long loadPrevLastAm(String tradeDate) {
+        long lastAm = 0;
+
+        AmRecord r = loadPrevLastAmRecord(tradeDate);
+        if(r != null)
+            lastAm = r.am;
         //System.out.format("lastAm=%d\n", lastAm);
 
         return lastAm;
@@ -134,6 +141,9 @@ public class AmUtils {
         public double prevMaxUP;
         public double prevMinDP;
 
+        public TrackExtreme() {
+            this(new ArrayList<RawTradeDetails>());
+        }
         public TrackExtreme(ArrayList<RawTradeDetails> rawDetailsList) {
             maxUP=Double.NEGATIVE_INFINITY; 
             prevMaxUP=Double.NaN;
