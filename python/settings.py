@@ -8,9 +8,9 @@ if 'qsIdx' in os.environ:
 print('qsIdx = '+str(qsIdx), file=sys.stderr)
 
 WaitsAfterStartingProc=10
-headFile="d:\\cygwin64\\bin\\head.exe"
+headFile="e:\\cygwin64\\bin\\head.exe"
 jyXiadanFile=r'd:\Program Files (x86)\jyzqths\xiadan.exe'
-zxXiadanFile=r'd:\Program Files (x86)\中信证券至胜全能版\xiadan.exe'
+zxXiadanFile=r'd:\Program Files (x86)\zxzqzs\xiadan.exe'
 jyHexinFile=r'd:\Program Files (x86)\jyzqths\hexin.exe'
 zxHexinFile=r'd:\Program Files (x86)\zxzqzs\hexin.exe'
 tesseractFile="e:\\cygwin64\\bin\\tesseract.exe"
@@ -53,10 +53,10 @@ iQuit_Control_ID=qsQuit_CONTROL_ID[qsIdx]
 iClose_InfoHint_ID=qsCLOSE_INFOHINT_ID[qsIdx]
 
 #automate getLoginParms
-idagFile="d:\hri61pa\Hex-Rays IDA 6.1 Pro Andvanced\Hex-Rays.IDA.Pro.Advanced.v6.1.Windows.incl.Hex-Rays.x86.Decompiler.v1.5.READ.NFO-RDW\ida61\idag.exe"
-hexinIdb="d:\HexinSoftware\Hexin\hexin.idb"
-idcGetLoginParms="d:\stocks\scripts\getLoginParms.idc"
-thsHexinFile=r'd:\HexinSoftware\Hexin\hexin.exe'
+idagFile="e:\hri61pa\Hex-Rays IDA 6.1 Pro Andvanced\Hex-Rays.IDA.Pro.Advanced.v6.1.Windows.incl.Hex-Rays.x86.Decompiler.v1.5.READ.NFO-RDW\ida61\idag.exe"
+hexinIdb="e:\HexinSoftware\Hexin\hexin.idb"
+idcGetLoginParms="d:\Stocks\\thsHack\scripts\getLoginParms.idc"
+thsHexinFile=r'e:\HexinSoftware\Hexin\hexin.exe'
 scriptDlg_FileName_Edit_Control_ID=1148
 scriptDlg_Ok_Button_Control_ID=1
 thsLoginDlg_Login_Button_Control_ID=1
