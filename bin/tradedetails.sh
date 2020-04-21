@@ -6,7 +6,6 @@ function splitRawTradeDetails {
     local stockCode=$1
     local tradeDate=$2
 
-    local splitRawTradeDetailsJar="$rootDir\\build\\jar\\splitrawtradedetails.jar"
     local tradeDetailsFile="$rawZuBiDataDir\\$stockCode\\$stockCode.$tradeDate.txt"
     local emuTradeDetailsDir="$dailyDir\\$stockCode\\$tradeDate\\emuTradeDetails"
     rm -rf "$emuTradeDetailsDir"

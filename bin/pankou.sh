@@ -9,7 +9,6 @@ function splitRawPankou {
     local pankouYear=
     pankouYear=${tradeDate:0:4}
 
-    local splitRawPankouJar="$rootDir\\build\\jar\\splitrawpankou.jar"
 
     local pankouFile="$rawPankouDataDir\\$stockCode\\$tradeDate\\pankou\\pankou.txt"
     local emuPankouDir="$dailyDir\\$stockCode\\$tradeDate\\emuPankou"

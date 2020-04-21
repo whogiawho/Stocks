@@ -14,7 +14,6 @@ function getInstantData {
     local serverPort=$4
     local serverType=$5
 
-    local hexinProtocolJar="$rootDir\\build\\jar\\hexinprotocol.jar"
     while [[ 1 ]] 
     do
         java -jar $hexinProtocolJar command4 $serverAddr $serverPort $serverType $stockCode $tradeDate
@@ -59,7 +58,6 @@ function _getRawPankou {
     serverAddr=${serverAddr:-$DefaultServerAddr}
     serverPort=${serverPort:-$DefaultServerPort}
     serverType=${serverType:-$DefaultServerType}
-    local hexinProtocolJar="$rootDir\\build\\jar\\hexinprotocol.jar"
 
     #generate $dataRoot"\pankoumedium\$stockCode.$tradeDate.txt"
     java -jar $hexinProtocolJar command2 $serverAddr $serverPort $serverType \
@@ -105,7 +103,6 @@ function _getRawTradeDetails {
     serverAddr=${serverAddr:-$DefaultServerAddr}
     serverPort=${serverPort:-$DefaultServerPort}
     serverType=${serverType:-$DefaultServerType}
-    local hexinProtocolJar="$rootDir\\build\\jar\\hexinprotocol.jar"
     local callAuctionTime=$CallAuctionEndTime
     local closeQuotationTime=$CloseQuotationTime
 
