@@ -130,6 +130,9 @@ public class StockPaths {
 
 
 
+    public static String getSSTableFile() {
+        return getStockRootDir() + "ssTable.txt";
+    }
     public static String getAnalysisFile() {
         String stockCode = Settings.getStockCode();
         String tradeDate = Settings.getTradeDate();
