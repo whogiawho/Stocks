@@ -35,6 +35,7 @@ public class AmUtils {
     public long writeAmRecords(long startAm, String tradeDate) {
         //any tp later than tradeDate's close_quotation_time is not written
         long closeTP = Time.getSpecificTime(tradeDate, AStockSdTime.getCloseQuotationTime());
+        System.out.format("%s: closeTP=%x\n", Utils.getCallerName(getClass()), closeTP);
         
         ArrayList<RawTradeDetails> rawDetailsList = loadRawTradeDetails(tradeDate);
         int lSize = rawDetailsList.size();
@@ -47,9 +48,10 @@ public class AmUtils {
         long am = startAm;
         long caeTp = Time.getSpecificTime(tradeDate, mSdTime.getCallAuctionEndTime0());
         int caeSd = mSdTime.getAbs(caeTp);
-        int prevSd = caeSd;
+        int prevSd = caeSd;                //prevSd starts from callAuctionEndTime
         for(int i=0; i<lSize; i++) {
             RawTradeDetails r = rawDetailsList.get(i);
+            //System.out.format("%s: %x\n", Utils.getCallerName(getClass()), r.time);
             int rSd = mSdTime.getAbs(r.time);
             if(rSd != prevSd) {
                 //write AmRecords between [prevSd, rSd) to sAnalysisFile
@@ -67,24 +69,32 @@ public class AmUtils {
             }
         }
         //last record
-        if(lSize!=0)
+        if(lSize!=0) {
+            System.out.format("%s: %d\n", Utils.getCallerName(getClass()), prevSd);
             writeRange(prevSd, prevSd+1, am, ter, sAnalysisFile, closeTP);
+        }
 
         return am;
     }
-    private void writeRange(int start, int end, long am, 
-            TrackExtreme ter, String sAnalysisFile, long closeTP) {
+    public void writeRange(int start, int end, long am, TrackExtreme ter, 
+            String sAnalysisFile, long closeTP, TreeMap<Integer, AmRecord> amRecordMap) {
         ter.setEx2Prev();
         for(int i=start; i<end; i++) {
             long tp = mSdTime.rgetAbs(i);
             if(tp<=closeTP) {
                 //String tradeDate = Time.getTimeYMD(tp);
                 //String tradeTime = Time.getTimeHMS(tp);
-                String sFormat = "%-10x %8d %20d %8.3f %8.3f\n";
-                String line = String.format(sFormat, tp, i, am, ter.maxUP, ter.minDP);
-                Utils.append2File(sAnalysisFile, line);
+                AmRecord r = new AmRecord(tp, i, am, ter.maxUP, ter.minDP);
+                if(amRecordMap!=null) {
+                    amRecordMap.put(i, r);
+                }
+                r.append2File(sAnalysisFile);
             }
         }
+    }
+    public void writeRange(int start, int end, long am, 
+            TrackExtreme ter, String sAnalysisFile, long closeTP) {
+        writeRange(start, end, am, ter, sAnalysisFile, closeTP, null);
     }
     private ArrayList<RawTradeDetails> loadRawTradeDetails(String tradeDate) {
         //load rawTradeDetails to rawDetailsList

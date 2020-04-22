@@ -29,6 +29,13 @@ public class AmManager {
     public AmManager(String stockCode, String startDate, boolean bParallelLoad) {
         this(stockCode, new TradeDates(stockCode, startDate).getAllDates(), bParallelLoad);
     }
+    //tradeDates between [startDate, endDate]
+    public AmManager(String stockCode, String startDate, String endDate) {
+        this(stockCode, startDate, endDate, true);
+    }
+    public AmManager(String stockCode, String startDate, String endDate, boolean bParallelLoad) {
+        this(stockCode, new TradeDates(stockCode, startDate, endDate).getAllDates(), bParallelLoad);
+    }
     //tradeDates[]
     public AmManager(String stockCode, String[] tradeDates, boolean bParallelLoad) {
         mStockCode = stockCode;
