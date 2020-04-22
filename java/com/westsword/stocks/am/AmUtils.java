@@ -35,7 +35,7 @@ public class AmUtils {
     public long writeAmRecords(long startAm, String tradeDate) {
         //any tp later than tradeDate's close_quotation_time is not written
         long closeTP = Time.getSpecificTime(tradeDate, AStockSdTime.getCloseQuotationTime());
-        System.out.format("%s: closeTP=%x\n", Utils.getCallerName(getClass()), closeTP);
+        //System.out.format("%s: closeTP=%x\n", Utils.getCallerName(getClass()), closeTP);
         
         ArrayList<RawTradeDetails> rawDetailsList = loadRawTradeDetails(tradeDate);
         int lSize = rawDetailsList.size();
@@ -70,7 +70,7 @@ public class AmUtils {
         }
         //last record
         if(lSize!=0) {
-            System.out.format("%s: %d\n", Utils.getCallerName(getClass()), prevSd);
+            //System.out.format("%s: %d\n", Utils.getCallerName(getClass()), prevSd);
             writeRange(prevSd, prevSd+1, am, ter, sAnalysisFile, closeTP);
         }
 

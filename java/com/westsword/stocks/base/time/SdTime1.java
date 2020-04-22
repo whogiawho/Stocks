@@ -28,7 +28,7 @@ public class SdTime1 extends AStockSdTime implements ISdTimeAbs {
         mStockCode = stockCode;
         mSdStartDate = sdStartDate;
         mSdStartTime = sdStartTime;
-        mStockDates = new StockDates(mSdStartDate, Time.currentDate(), stockCode);
+        mStockDates = new StockDates(mSdStartDate, Dates.nextYearLastDate(Time.currentDate()), stockCode);
     }
 
 

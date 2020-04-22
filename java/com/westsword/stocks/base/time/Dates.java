@@ -124,4 +124,11 @@ public class Dates {
         }
     }
 
+
+    public static String nextYearLastDate(String tradeDate) {
+        String y = tradeDate.substring(0, 4);
+        int iy = Integer.valueOf(y);
+        iy++;
+        return "" + iy + "1231";
+    }
 }
