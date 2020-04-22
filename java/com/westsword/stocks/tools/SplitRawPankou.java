@@ -32,6 +32,7 @@ public class SplitRawPankou extends FileLoader {
             pankouYear = args[2];
         }
 
+        //System.out.format("dDstDir=%s pankouYear=%s\n", dDstDir, pankouYear);
         SplitRawPankou splitPankou = new SplitRawPankou(dDstDir, pankouYear);
         splitPankou.load(args[0]);
     }
@@ -39,6 +40,8 @@ public class SplitRawPankou extends FileLoader {
 
     public boolean onLineRead(String line, int count) {
         try {
+            //System.out.format("%s: %s\n", Utils.getCallerName(getClass()), line);
+
             String[] fields=line.split(",");
             String thisTime = fields[4*RawRTPankou.PANKOU_LEVEL_NUMBER];
            
