@@ -13,7 +13,8 @@ public class AnalyzeTools{
         System.err.println("usage: java AnalyzeTools commands");
         System.err.println("       commands are listed below:");
         System.err.println("       [ getvalue | setvalue | makeanalysistxt | priceamp |\n" +
-                "         getamcorrel | getrel | getupprice | getdownprice | getam | decode |\n" +
+                "         getamcorrel | getupprice | getdownprice | getam | decode |\n" +
+                "         getrel | getabs | rgetabs |\n" +
                 "         ssinstance | ssinstances | getfullss |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify |\n" +
                 "         mminstance |\n" +
@@ -57,7 +58,13 @@ public class AnalyzeTools{
             amh.getAm(args);
         } else if (sOption.equals("getrel")) {
             SdTime1Helper sth = new SdTime1Helper();
-            sth.getrel(args);
+            sth.getRel(args);
+        } else if (sOption.equals("getabs")) {
+            SdTime1Helper sth = new SdTime1Helper();
+            sth.getAbs(args);
+        } else if (sOption.equals("rgetabs")) {
+            SdTime1Helper sth = new SdTime1Helper();
+            sth.rgetAbs(args);
         } else if (sOption.equals("ssinstance")) {
             SSInstanceHelper ssih = new SSInstanceHelper();
             ssih.run(args);
