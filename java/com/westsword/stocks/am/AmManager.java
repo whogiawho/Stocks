@@ -62,14 +62,7 @@ public class AmManager {
 
     public NavigableMap<Integer, AmRecord> getItemMap(String startDate, String startHMS,
             String endDate, String endHMS) {
-        long startTp = Time.getSpecificTime(startDate, startHMS);
-        int startIdx = mSdTime.getAbs(startTp);
-        long endTp = Time.getSpecificTime(endDate, endHMS);
-        int endIdx = mSdTime.getAbs(endTp);
-
-        NavigableMap<Integer, AmRecord> itemMap = mAmRecordMap.subMap(startIdx, true, endIdx, true);
-
-        return itemMap;
+        return AmUtils.getItemMap(mAmRecordMap, mSdTime, startDate, startHMS, endDate, endHMS);
     }
     public double getInPrice(int tradeType, long inTime) {
         AmRecord r = getFloorItem(inTime);
@@ -247,7 +240,7 @@ public class AmManager {
 
         return getAmCorrel(map0, map1);
     }
-    private double getAmCorrel(NavigableMap<Integer, AmRecord> map0, NavigableMap<Integer, AmRecord> map1) {
+    public double getAmCorrel(NavigableMap<Integer, AmRecord> map0, NavigableMap<Integer, AmRecord> map1) {
         int size0 = map0.size(); 
         int size1 = map1.size(); 
         double[] x = new double[size0];

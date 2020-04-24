@@ -196,4 +196,15 @@ public class AmUtils {
 
         return m;
     }
+    public static NavigableMap<Integer, AmRecord> getItemMap(TreeMap<Integer, AmRecord> amrMap, SdTime1 sdTime, 
+            String startDate, String startHMS, String endDate, String endHMS) {
+        long startTp = Time.getSpecificTime(startDate, startHMS);
+        int startIdx = sdTime.getAbs(startTp);
+        long endTp = Time.getSpecificTime(endDate, endHMS);
+        int endIdx = sdTime.getAbs(endTp);
+
+        NavigableMap<Integer, AmRecord> itemMap = amrMap.subMap(startIdx, true, endIdx, true);
+
+        return itemMap;
+    }
 }
