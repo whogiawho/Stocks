@@ -137,6 +137,7 @@
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/${realtimeanalyze}.jar" basedir="${classes.dir}" 
             includes="com/westsword/stocks/analyze/*.class,
+                com/westsword/stocks/analyze/ssanalyze/*.class,
                 com/westsword/stocks/am/*.class,
                 com/westsword/stocks/base/utils/*.class,
                 com/westsword/stocks/base/*.class,

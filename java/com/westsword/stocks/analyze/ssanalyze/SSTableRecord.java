@@ -1,0 +1,148 @@
+package com.westsword.stocks.analyze.ssanalyze;
+
+
+import java.util.*;
+
+import com.westsword.stocks.am.*;
+import com.westsword.stocks.base.Utils;
+import com.westsword.stocks.base.time.*;
+
+public class SSTableRecord {
+    public int tradeCount;
+
+    public String stockCode;
+    public String startDate;
+    public double threshold;
+    public int sTDistance;
+    public int tradeType;
+
+    public int maxCycle;
+    public double targetRate;
+
+    public String sMatchExp;
+
+    private Boolean mbEvalResult;
+
+
+    public SSTableRecord (int tradeCount, 
+            String stockCode, String startDate, double threshold, int sTDistance, int tradeType, 
+            int maxCycle, double targetRate, String sMatchExp) {
+        this.tradeCount = tradeCount;
+
+        this.stockCode = stockCode;
+        this.startDate = startDate;
+        this.threshold = threshold;
+        this.sTDistance = sTDistance;
+        this.tradeType = tradeType;
+
+        this.maxCycle = maxCycle;
+        this.targetRate = targetRate;
+
+        this.sMatchExp = sMatchExp;
+
+        mbEvalResult = null;
+    }
+    public SSTableRecord(SSTableRecord r) {
+        this(r.tradeCount, 
+                r.stockCode, r.startDate, r.threshold, r.sTDistance, r.tradeType,
+                r.maxCycle, r.targetRate, r.sMatchExp);
+    }
+
+
+    public ArrayList<String> getLastHMSList() {
+        ArrayList<String> hmsList = new ArrayList<String>();
+
+        String[] fields = sMatchExp.split("\\&\\|");
+        for(int i=0; i<fields.length; i++) {
+            String[] subFields = fields[i].split(":");
+            //subFields[0] - tradeDate; subFields[1] - hmsList
+            String[] hmss = subFields[1].split("_");
+            hmsList.add(hmss[hmss.length-1]);
+        }
+
+        return hmsList;
+    }
+    public ArrayList<String> getTradeDates() {
+        ArrayList<String> sTradeDateList = new ArrayList<String>();
+
+        String[] fields = sMatchExp.split("\\&\\|");
+        //System.out.format("%s: fields.length=%d\n", Utils.getCallerName(getClass()), fields.length);
+        for(int i=0; i<fields.length; i++) {
+            //System.out.format("%s: %s\n", Utils.getCallerName(getClass()), fields[i]);
+            String[] subFields = fields[i].split(":");
+            //System.out.format("%s: subFields.length=%d\n", Utils.getCallerName(getClass()), subFields.length);
+            //subFields[0] - tradeDate; subFields[1] - hmsList
+            sTradeDateList.add(subFields[0]);
+        }
+
+        return sTradeDateList;
+    }
+    //currentTp==null - an evaluation is forced to be done
+    //currentTp!=null - a check is done whether to be evaluated
+    public Boolean eval(long currentTp, AmManager am, TreeMap<Integer, AmRecord> amrMap) {
+        if(mbEvalResult==null) {
+            if(eligible(currentTp)) {
+                String currentDate = Time.getTimeYMD(currentTp, false);
+                mbEvalResult = eval(am, amrMap, currentDate);
+            }
+        }
+
+        return mbEvalResult;
+    }
+    private boolean eval(AmManager am, TreeMap<Integer, AmRecord> amrMap, String currentDate) {
+        boolean bResult = true;
+
+        String[] fields = sMatchExp.split("\\&\\|");
+        for(int i=0; i<fields.length; i++) {
+            String[] subFields = fields[i].split(":");
+            String tradeDate = subFields[0];
+            String[] hmss = subFields[1].split("_");
+            NavigableMap<Integer, AmRecord> map0 = am.getItemMap(tradeDate, hmss[0], tradeDate, hmss[1]);
+            NavigableMap<Integer, AmRecord> map1 = getItemMap(amrMap, currentDate, hmss[0], hmss[1]);
+            //print warning message if map0.size&map1.size are not equal
+
+            double amcorrel = am.getAmCorrel(map0, map1);
+            if(amcorrel < threshold) {
+                bResult = false;
+                break;
+            }
+        }
+
+        return bResult;
+    }
+    public boolean eligible(long currentTp) {
+        boolean bEligible = true;
+
+        String currentDate = Time.getTimeYMD(currentTp, false);
+        ArrayList<String> hmsList = getLastHMSList();
+        for(int i=0; i<hmsList.size(); i++) {
+            String hms = hmsList.get(i);
+            long tp = Time.getSpecificTime(currentDate, hms);
+            if(currentTp<tp) {
+                bEligible = false;
+                break;
+            }
+        }
+
+        return bEligible;
+    }
+    private NavigableMap<Integer, AmRecord> getItemMap(TreeMap<Integer, AmRecord> amrMap, 
+            String currentDate, String startHMS, String endHMS) {
+        SdTime1 sdTime = new SdTime1(stockCode);
+
+        return AmUtils.getItemMap(amrMap, sdTime, currentDate, startHMS, currentDate, endHMS);
+    }
+
+
+
+    public static ArrayList<String> getTradeDates(ArrayList<SSTableRecord> list) {
+        ArrayList<String> sTradeDateList = new ArrayList<String>();
+
+        for(int i=0; i<list.size(); i++) {
+            SSTableRecord r = list.get(i);
+            sTradeDateList.addAll(r.getTradeDates());
+        }
+
+        return sTradeDateList;
+    }
+}

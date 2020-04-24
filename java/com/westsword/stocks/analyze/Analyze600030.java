@@ -9,6 +9,7 @@ import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.StockPaths;
+import com.westsword.stocks.analyze.ssanalyze.*;
 
 public class Analyze600030 {
     public final static int LAST_RAW_DETAILS_IDX   = 0;
@@ -20,8 +21,6 @@ public class Analyze600030 {
     private final SdTime1 mSdTime;
     private final AmUtils mAmu;
     private final AmUtils.TrackExtreme mTer;
-    private final ArrayList<SSTableRecord> mSSTableRecordList;
-    private final AmManager mAm;
     private final int[] mIndexs = {
         -1,               //raw details idx processed last time               LAST_RAW_DETAILS_IDX
         -1,               //raw pankou idx processed last time                LAST_RAW_PANKOU_IDX 
@@ -30,6 +29,7 @@ public class Analyze600030 {
     private long mStartAm;
     private TreeMap<Integer, AmRecord> mAmRecordMap;
 
+    private SimilarStackAnalyze mSsAnalyze;
 
     Analyze600030(RealtimeAnalyze rtAnalyzeFrame) {
         String stockCode = Settings.getStockCode();
@@ -48,24 +48,14 @@ public class Analyze600030 {
         mAmu = new AmUtils(stockCode);
         //set mTer
         mTer = new AmUtils.TrackExtreme();
-        //set mSSTableRecordList
-        mSSTableRecordList = new ArrayList<SSTableRecord>();
-        loadSSTable(mSSTableRecordList);
-        //set mAm
-        ArrayList<String> tradeDateList = SSTableRecord.getTradeDates(mSSTableRecordList);
-        StockDates stockDates = new StockDates(stockCode);
-        mAm = new AmManager(stockCode, tradeDateList);
 
         //set mStartAm
         mStartAm = mAmu.loadPrevLastAm(tradeDate);
         //set mAmRecordMap
         mAmRecordMap = new TreeMap<Integer, AmRecord>();
-    }
-    private void loadSSTable(ArrayList<SSTableRecord> sstrList) {
-        SSTableLoader loader = new SSTableLoader();
-        String sSSTable = StockPaths.getSSTableFile();
-        loader.load(sstrList, sSSTable);
-        //System.out.format("%s: size=%d\n", Utils.getCallerName(getClass()), sstrList.size());
+
+        //set mSsAnalyze
+        mSsAnalyze = new SimilarStackAnalyze(stockCode);
     }
 
 
@@ -77,7 +67,7 @@ public class Analyze600030 {
         processRawTradeDetails(mIndexs, rawDetailsList);
         processRawPankou(mIndexs, rawPankouList);
 
-        //ckpt actions here
+        mSsAnalyze.analyze(mAmRecordMap);
 
         if(isLastRawTradeDetailHandled()||isLastPankouHandled()) {
             System.out.format("%s: isLastRawTradeDetailHandled=%b, isLastPankouHandled=%b\n", 
