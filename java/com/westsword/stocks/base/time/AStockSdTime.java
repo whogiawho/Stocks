@@ -28,23 +28,33 @@ public class AStockSdTime extends SdTime {
     }
 
 
+    public final static String CALL_AUCTION_END_TIME = "09:25:00";
     public static String getCallAuctionEndTime() {
-        return "09:25:00"; 
+        return CALL_AUCTION_END_TIME; 
     }
+    public final static String OPEN_QUOTATION_TIME = "09:30:00";
     public static String getOpenQuotationTime() {
-        return "09:30:00";
+        return OPEN_QUOTATION_TIME;
     }
+    public final static String MID_SUSPEND_TIME = "11:30:00";
     public static String getMidSuspensionTime() {
-        return "11:30:00";
+        return MID_SUSPEND_TIME;
     }
+    public final static String MID_OPEN_QUOTATION_TIME = "13:00:00";
     public static String getMidOpenQuotationTime() {
-        return "13:00:00";
+        return MID_OPEN_QUOTATION_TIME;
     }
+    public final static String CLOSE_QUOTATION_TIME = "15:00:00";
     public static String getCloseQuotationTime() {
-        return "15:00:00";
+        return CLOSE_QUOTATION_TIME;
     }
+    public final static String LAST_RAWTRADEDETAIL_TIME= "15:01:00";
     public static String getLastRawTradeDetailTime() {
-        return "15:01:00";
+        return LAST_RAWTRADEDETAIL_TIME;
+    }
+    public final static String RRP_TIME = "14:56:00";
+    public static String getRrpTime() {
+        return RRP_TIME;
     }
 
 
@@ -53,6 +63,9 @@ public class AStockSdTime extends SdTime {
     }
 
 
+    public static long getRrpTime(long timepoint) {
+        return Time.getSpecificTime(timepoint, getRrpTime());
+    }
     public static long getCloseQuotationTime(long timepoint) {
         return Time.getSpecificTime(timepoint, getCloseQuotationTime());
     }

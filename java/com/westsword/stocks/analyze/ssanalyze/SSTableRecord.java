@@ -21,6 +21,7 @@ public class SSTableRecord {
 
     public String sMatchExp;
 
+
     private Boolean mbEvalResult;
 
 
@@ -144,5 +145,14 @@ public class SSTableRecord {
         }
 
         return sTradeDateList;
+    }
+
+
+    private boolean bSessionOpened;
+    public boolean getSessionOpened() {
+        return bSessionOpened;
+    }
+    public void setSessionOpened(boolean bSessionOpened) {
+        this.bSessionOpened = bSessionOpened;
     }
 }
