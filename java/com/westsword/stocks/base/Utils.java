@@ -8,6 +8,7 @@ import java.nio.charset.*;
 import org.apache.commons.io.FileUtils;
 
 import com.westsword.stocks.base.Settings;
+import com.westsword.stocks.base.time.*;
 
 public class Utils {
 
@@ -141,4 +142,24 @@ public class Utils {
         return idx;
     }
 
+
+
+    public static boolean isMarketOff() {
+        return isOfflineRun();
+    }
+    public static boolean isOfflineRun() {
+        String tradeDate = Settings.getTradeDate();
+        return isOfflineRun(tradeDate);
+    }
+    public static boolean isOfflineRun(String tradeDate) {
+        boolean bOffline = false;
+
+        long closeTp4RunDate = Time.getSpecificTime(tradeDate, AStockSdTime.getCloseQuotationTime());
+        //offline run
+        long currentTp = System.currentTimeMillis()/1000;
+        if(currentTp >= closeTp4RunDate)
+            bOffline = true;
+
+        return bOffline;
+    }
 }
