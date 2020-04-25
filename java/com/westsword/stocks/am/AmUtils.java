@@ -77,7 +77,7 @@ public class AmUtils {
         return am;
     }
     public void writeRange(int start, int end, long am, TrackExtreme ter, 
-            String sAnalysisFile, long closeTP, TreeMap<Integer, AmRecord> amRecordMap) {
+            String sAnalysisFile, long closeTP, TreeMap<Integer, AmRecord> amrMap) {
         ter.setEx2Prev();
         for(int i=start; i<end; i++) {
             long tp = mSdTime.rgetAbs(i);
@@ -85,8 +85,8 @@ public class AmUtils {
                 //String tradeDate = Time.getTimeYMD(tp);
                 //String tradeTime = Time.getTimeHMS(tp);
                 AmRecord r = new AmRecord(tp, i, am, ter.maxUP, ter.minDP);
-                if(amRecordMap!=null) {
-                    amRecordMap.put(i, r);
+                if(amrMap!=null) {
+                    amrMap.put(i, r);
                 }
                 r.append2File(sAnalysisFile);
             }

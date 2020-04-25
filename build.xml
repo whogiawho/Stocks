@@ -84,6 +84,7 @@
                 com/westsword/stocks/tools/helper/*.class,
                 com/westsword/stocks/tools/helper/man/*.class,
                 com/westsword/stocks/am/*.class,
+                com/westsword/stocks/session/*.class,
                 com/westsword/stocks/base/*.class,
                 com/westsword/stocks/base/ckpt/*.class,
                 com/westsword/stocks/base/time/*.class">
@@ -139,6 +140,7 @@
             includes="com/westsword/stocks/analyze/*.class,
                 com/westsword/stocks/analyze/ssanalyze/*.class,
                 com/westsword/stocks/am/*.class,
+                com/westsword/stocks/session/*.class,
                 com/westsword/stocks/base/utils/*.class,
                 com/westsword/stocks/base/*.class,
                 com/westsword/stocks/base/ckpt/*.class,

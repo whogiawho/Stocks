@@ -1,5 +1,8 @@
 package com.westsword.stocks.base.utils;
 
+
+import com.westsword.stocks.base.Stock;
+
 public class AnsiColor {
     //something like \\uxxxx is a Unicode char with hex value xxxx
     public static final String ANSI_RESET = "\u001B[0m";
@@ -17,6 +20,16 @@ public class AnsiColor {
     public static final String specialStringUnknown=String.format("%s%s%s", ANSI_BLUE, "？", ANSI_RESET);
 
 
+    //return yellow if tradeType==TRADE_TYPE_INVALID
+    public static String getColorString(String src, int tradeType) {
+        String sColor = ANSI_YELLOW;
+        if(tradeType == Stock.TRADE_TYPE_LONG)
+            sColor = ANSI_RED;
+        else if(tradeType == Stock.TRADE_TYPE_SHORT)
+            sColor = ANSI_GREEN;
+            
+        return getColorString(src, sColor);
+    }
     public static String getColorString(String src, String sColor) {
         return String.format("%s%s%s", sColor, src, ANSI_RESET);
     }

@@ -1,9 +1,9 @@
 stockCode=600030
-currentDate=20200424
+currentDate=20200426
 
 
-currentDateCloseQuotationTime=5ea28e70
-currentDateLastRawTradeDetailTime=5ea28eac
+currentDateCloseQuotationTime=5ea53170
+currentDateLastRawTradeDetailTime=5ea531ac
 
 
 PriceDecimalFormat=#.##
@@ -38,4 +38,9 @@ Way2SearchAmRecord=1
 
 MaxTasks=24
 BufferingTradeResult=true
+
+#0 - jyzq
+#1 - zxzq
+#it may be override by the system env variable qsIdx 
+QSIDX=0
 

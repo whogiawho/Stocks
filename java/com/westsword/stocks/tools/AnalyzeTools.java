@@ -16,6 +16,7 @@ public class AnalyzeTools{
                 "         getamcorrel | getupprice | getdownprice | getam | decode |\n" +
                 "         getrel | getabs | rgetabs |\n" +
                 "         ssinstance | ssinstances | getfullss |\n" +
+                "         getentrust | checkabss | submitabs |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify |\n" +
                 "         mminstance |\n" +
                 "         makessdates | maxmatchsingle | maxmatchall | make1mamcmap ]");
@@ -95,6 +96,12 @@ public class AnalyzeTools{
         } else if (sOption.equals("getfullss")) {
             FullSSHelper fullssh = new FullSSHelper();
             fullssh.run(args);
+        } else if(sOption.equals("checkabss")) {
+            THSQSHelper.checkAbsS(args);
+        } else if(sOption.equals("submitabs")) {
+            THSQSHelper.submitAbs(args);
+        } else if(sOption.equals("getentrust")) {
+            THSQSHelper.getEntrust(args);
         } else {
             usage();
         }

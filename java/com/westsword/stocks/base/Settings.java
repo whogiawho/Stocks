@@ -82,6 +82,9 @@ public class Settings extends FileLoader {
 
 
 
+    public static Integer getQsIdx() {
+        return getInteger("QSIDX");
+    }
     public static Integer getWay2SearchAmRecord() {
         return getInteger("Way2SearchAmRecord");
     }
