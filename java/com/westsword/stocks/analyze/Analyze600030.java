@@ -8,10 +8,12 @@ import com.westsword.stocks.base.Stock;
 import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.time.*;
-import com.westsword.stocks.base.utils.StockPaths;
+import com.westsword.stocks.base.utils.*;
 import com.westsword.stocks.analyze.ssanalyze.*;
+import com.westsword.stocks.session.*;
 
 public class Analyze600030 {
+    public final static long THSQS_REFRESH_INTERVAL = 600;
     public final static int LAST_RAW_DETAILS_IDX   = 0;
     public final static int LAST_RAW_PANKOU_IDX    = 1;
 
@@ -25,11 +27,13 @@ public class Analyze600030 {
         -1,               //raw details idx processed last time               LAST_RAW_DETAILS_IDX
         -1,               //raw pankou idx processed last time                LAST_RAW_PANKOU_IDX 
     };
+    private final TradeSessionManager mTsMan;
+    private final SimilarStackAnalyze mSsAnalyze;
+    private final THSQS iThsqs;
 
     private long mStartAm;
     private TreeMap<Integer, AmRecord> mAmRecordMap;
 
-    private SimilarStackAnalyze mSsAnalyze;
 
     Analyze600030(RealtimeAnalyze rtAnalyzeFrame) {
         String stockCode = Settings.getStockCode();
@@ -48,39 +52,73 @@ public class Analyze600030 {
         mAmu = new AmUtils(stockCode);
         //set mTer
         mTer = new AmUtils.TrackExtreme();
+        //set mTsMan
+        mTsMan = new TradeSessionManager(stockCode, tradeDate);
+        mTsMan.check2SubmitSession();
+        //set mSsAnalyze
+        mSsAnalyze = new SimilarStackAnalyze(stockCode);
+        mSsAnalyze.setTradeSessionManager(mTsMan);
+        //set iThsqs
+        iThsqs = new THSQS();
 
         //set mStartAm
         mStartAm = mAmu.loadPrevLastAm(tradeDate);
         //set mAmRecordMap
         mAmRecordMap = new TreeMap<Integer, AmRecord>();
-
-        //set mSsAnalyze
-        mSsAnalyze = new SimilarStackAnalyze(stockCode);
     }
 
+    private long prevRefreshTp=0;
+    private void refreshTHSQS(ArrayList<RawRTPankou> rawPankouList) {
+        if(Utils.isOfflineRun())
+            return;
+
+        int pankouListSize = rawPankouList.size();
+        if(pankouListSize != 0) {
+            long currentTp=rawPankouList.get(pankouListSize-1).mSecondsFrom1970Time;
+            if(currentTp-prevRefreshTp>THSQS_REFRESH_INTERVAL) {
+                System.out.format("%s: %s\n", 
+                        Utils.getCallerName(getClass()), Time.getTimeYMDHMS(currentTp));
+                iThsqs.refresh();
+                prevRefreshTp = currentTp;
+            }
+        }
+    }
 
     private boolean bCallAuctionComplete = false;
     public void startAnalyze(ArrayList<RawTradeDetails> rawDetailsList, 
             ArrayList<RawRTPankou> rawPankouList) {
         bCallAuctionComplete = callAuctionCompleted(rawDetailsList, bCallAuctionComplete);
 
-        processRawTradeDetails(mIndexs, rawDetailsList);
+        processRawTradeDetails(mIndexs, rawDetailsList, mAmRecordMap);
         processRawPankou(mIndexs, rawPankouList);
 
+        Integer key = mAmRecordMap.lastKey();
+        if(key != null) {
+            AmRecord r = mAmRecordMap.get(key);
+            //check if there is a session that should be closed
+            mTsMan.check2CloseSession(r);
+            //check if it is time to makeRRP
+            mTsMan.makeRRP(r);
+        }
+
         mSsAnalyze.analyze(mAmRecordMap);
+
+        refreshTHSQS(rawPankouList);
 
         if(isLastRawTradeDetailHandled()||isLastPankouHandled()) {
             System.out.format("%s: isLastRawTradeDetailHandled=%b, isLastPankouHandled=%b\n", 
                     Utils.getCallerName(getClass()), isLastRawTradeDetailHandled(), isLastPankouHandled());
+            mTsMan.checkAbnormalSubmittedSessions();
         }
     }
 
     private void writeRange(int start, int end, long am, AmUtils.TrackExtreme ter, 
-            String sAnalysisFile, long closeTP, TreeMap<Integer, AmRecord> amRecordMap) {
+            String sAnalysisFile, long closeTP, TreeMap<Integer, AmRecord> amrMap) {
         mAmu.writeRange(start, end, am, mTer, 
-                mAnalysisFile, mCloseTP, amRecordMap);
+                mAnalysisFile, mCloseTP, amrMap);
     }
-    private void processRawTradeDetails(int[] indexs, ArrayList<RawTradeDetails> rawDetailsList) {
+    private void processRawTradeDetails(int[] indexs, ArrayList<RawTradeDetails> rawDetailsList, 
+            TreeMap<Integer, AmRecord> amrMap) {
         int last = indexs[LAST_RAW_DETAILS_IDX];
         int current = rawDetailsList.size()-1;
         //prevSd starts from LAST_RAW_DETAILS_IDX; which can be -1(invalid) or valid ones
@@ -95,7 +133,7 @@ public class Analyze600030 {
                 //skip writeRange if prevSd==-1
                 if(prevSd != -1)
                     writeRange(prevSd, rSd, am, mTer, 
-                            mAnalysisFile, mCloseTP, mAmRecordMap);
+                            mAnalysisFile, mCloseTP, amrMap);
                 prevSd = rSd;
                 mTer.resetEx();
             }
