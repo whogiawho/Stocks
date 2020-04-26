@@ -21,8 +21,11 @@ public class StockPaths {
     public static String getStockRootDir() {
         return getValueWOS("d:\\Stocks\\", "/root/Stocks/");
     }
+    public static String getDataDir() {
+        return getStockRootDir() + "data" + sSep;
+    }
     public static String getDailyDir() {
-        return getStockRootDir() + getValueWOS("data\\daily\\", "data/daily/");
+        return getDataDir() + "daily" + sSep;
     }
     public static String getSettingFile() {
         return StockPaths.getStockRootDir() + "settings.txt";
@@ -37,13 +40,13 @@ public class StockPaths {
 
     //raw tradeDetails.txt
     public static String getRawTradeDetailsFile(String stockCode, String tradeDate) {
-        String sPath = getStockRootDir() + "data" + sSep + "rawTradeDetails";
+        String sPath = getDataDir() + "rawTradeDetails";
         sPath += sSep+stockCode+sSep+stockCode + "." + tradeDate + ".txt";
         return sPath;
     }
     //raw pankou.txt
     public static String getPankouTxt(String stockCode, String tradeDate) {
-        String sPath = getStockRootDir() + "data" + sSep + "rawPankou";
+        String sPath = getDataDir() + "rawPankou";
         sPath += sSep+stockCode + sSep + tradeDate + sSep + "pankou" + sSep + "pankou.txt";
         return sPath;
     }
@@ -56,7 +59,7 @@ public class StockPaths {
 
     
     public static String getSSDatesRootDir() {
-        return getStockRootDir() + sSep + "data" + sSep + "ssdates" + sSep;
+        return getDataDir() + sSep + "ssdates" + sSep;
     }
     public static String getSSDatesDir(String stockCode, double threshold, String tradeDate) {
         String sDir = "";
@@ -74,7 +77,7 @@ public class StockPaths {
 
 
     public static String getSSRootDir() {
-        return getStockRootDir() + sSep + "data" + sSep + "similarStack" + sSep;
+        return getDataDir() + sSep + "similarStack" + sSep;
     }
     public static String getSimilarStackDir(String stockCode) {
         return getSSRootDir() + stockCode + sSep;
@@ -127,8 +130,11 @@ public class StockPaths {
 
 
 
-    public static String getSSTableFile() {
-        return getStockRootDir() + "ssTable.txt";
+    public static String getSSTableDir() {
+        return getDataDir() + "ssTable" + sSep;
+    }
+    public static String getSSTableFile(String sName) {
+        return getSSTableDir() + sName + ".txt";
     }
     public static String getAnalysisFile() {
         String stockCode = Settings.getStockCode();
@@ -156,7 +162,7 @@ public class StockPaths {
 
 
     public static String getLogDir() {
-        return getStockRootDir() + "data" + sSep + "log" + sSep;
+        return getDataDir() + "log" + sSep;
     }
     public static String getPerformanceLogFile() {
         return getLogDir() + "performance.log";
@@ -172,7 +178,7 @@ public class StockPaths {
 
 
     public static String getTradeSessionDir() {
-        return getStockRootDir() + "data" + sSep + "sessions" + sSep;
+        return getDataDir() + "sessions" + sSep;
     }
     public static String getTradeSessionDir(boolean bOpen) {
         return getTradeSessionDir() + (bOpen?"open":"close") + sSep;

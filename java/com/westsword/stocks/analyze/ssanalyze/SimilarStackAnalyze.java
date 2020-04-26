@@ -7,20 +7,24 @@ import com.westsword.stocks.am.*;
 import com.westsword.stocks.analyze.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
+import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.session.*;
 
 public class SimilarStackAnalyze {
 
+    private final String mName;
     private final AmManager mAm;
-
     private final ArrayList<SSTableRecord> mSSTableRecordList;
+
     private TradeSessionManager mTsMan = null;
 
 
-    public SimilarStackAnalyze(String stockCode) {
+    public SimilarStackAnalyze(String stockCode, String sName) {
+        mName = sName;
+
         //set mSSTableRecordList
         mSSTableRecordList = new ArrayList<SSTableRecord>();
-        loadSSTable(mSSTableRecordList);
+        loadSSTable(mSSTableRecordList, sName);
 
         //set mAm
         ArrayList<String> tradeDateList = SSTableRecord.getTradeDates(mSSTableRecordList);
@@ -30,19 +34,20 @@ public class SimilarStackAnalyze {
     public void setTradeSessionManager(TradeSessionManager m) {
         mTsMan = m;
     }
-    private void loadSSTable(ArrayList<SSTableRecord> sstrList) {
+    private void loadSSTable(ArrayList<SSTableRecord> sstrList, String sName) {
         SSTableLoader loader = new SSTableLoader();
-        String sSSTable = StockPaths.getSSTableFile();
+        String sSSTable = StockPaths.getSSTableFile(sName);
         loader.load(sstrList, sSSTable);
-        //System.out.format("%s: size=%d\n", Utils.getCallerName(getClass()), sstrList.size());
+        System.out.format("%s: sSSTable=%s, size=%d\n", 
+                Utils.getCallerName(getClass()), sSSTable, sstrList.size());
     }
 
 
 
     public void analyze(TreeMap<Integer, AmRecord> amrMap) {
         //ckpt actions here
-        Integer key = amrMap.lastKey();
-        if(key!=null) {
+        if(amrMap.size() != 0) {
+            Integer key = amrMap.lastKey();
             AmRecord currentR = amrMap.get(key);
             long currentTp = currentR.hexTimePoint;
             ArrayList<Integer> removedList = new ArrayList<Integer>();
@@ -54,7 +59,7 @@ public class SimilarStackAnalyze {
                     removedList.add(i);
                     if(bR&&mTsMan!=null) {
                         //check to open a new tradeSession
-                        mTsMan.check2OpenSession(sstr, currentR, "");
+                        mTsMan.check2OpenSession(sstr, currentR, mName);
                     } 
                     //print sstr
                     sstr.print(bR);

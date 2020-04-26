@@ -373,7 +373,7 @@ public class GetSettings{
         //String sStockCode=Settings.getString("d:\Stocks\settings.txt", "stockCode");   //illegal
         //String sStockCode=Settings.getString("d:/Stocks/settings.txt", "stockCode");   //ok
         String sStockCode=Settings.getString("d:\\Stocks\\settings.txt", "stockCode");   //ok
-        System.out.format("sStockCode=%s\n", sStockCode);
+        System.out.format("sStockCode=%s 已撤\n", sStockCode);
     }
     public static void testString(String stockCode) {
         System.out.format("\n testString: \n");

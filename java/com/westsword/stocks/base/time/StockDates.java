@@ -68,7 +68,8 @@ public class StockDates extends WorkDates {
     //settings.stockCode.SdStartDate --- currentDate
     public StockDates(String stockCode) {
         this(Settings.getSdStartDate(stockCode),
-                Time.currentDate(),
+                Dates.nextYearLastDate(Time.currentDate()),
+                //Time.currentDate(),
                 stockCode);
     }
 
