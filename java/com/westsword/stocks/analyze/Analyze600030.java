@@ -28,7 +28,7 @@ public class Analyze600030 {
         -1,               //raw pankou idx processed last time                LAST_RAW_PANKOU_IDX 
     };
     private final TradeSessionManager mTsMan;
-    private final SimilarStackAnalyze mSsAnalyze;
+    private final SimilarStackAnalyze mSsAnalyzeh0;
     private final THSQS iThsqs;
 
     private long mStartAm;
@@ -55,9 +55,9 @@ public class Analyze600030 {
         //set mTsMan
         mTsMan = new TradeSessionManager(stockCode, tradeDate);
         mTsMan.check2SubmitSession();
-        //set mSsAnalyze
-        mSsAnalyze = new SimilarStackAnalyze(stockCode);
-        mSsAnalyze.setTradeSessionManager(mTsMan);
+        //set mSsAnalyzeh0
+        mSsAnalyzeh0 = new SimilarStackAnalyze(stockCode, "h0");
+        mSsAnalyzeh0.setTradeSessionManager(mTsMan);
         //set iThsqs
         iThsqs = new THSQS();
 
@@ -92,8 +92,8 @@ public class Analyze600030 {
         processRawTradeDetails(mIndexs, rawDetailsList, mAmRecordMap);
         processRawPankou(mIndexs, rawPankouList);
 
-        Integer key = mAmRecordMap.lastKey();
-        if(key != null) {
+        if(mAmRecordMap.size() != 0) {
+            Integer key = mAmRecordMap.lastKey();
             AmRecord r = mAmRecordMap.get(key);
             //check if there is a session that should be closed
             mTsMan.check2CloseSession(r);
@@ -101,7 +101,7 @@ public class Analyze600030 {
             mTsMan.makeRRP(r);
         }
 
-        mSsAnalyze.analyze(mAmRecordMap);
+        mSsAnalyzeh0.analyze(mAmRecordMap);
 
         refreshTHSQS(rawPankouList);
 
