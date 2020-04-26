@@ -6,6 +6,7 @@ import java.util.*;
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.time.*;
+import com.westsword.stocks.base.utils.*;
 
 public class SSTableRecord {
     public int tradeCount;
@@ -50,6 +51,27 @@ public class SSTableRecord {
     }
 
 
+    public String toString() {
+        String sFormat = "%4d %4d %s %8.3f %6d %4d %8s\n";
+        String line = String.format(sFormat, 
+                sTDistance, tradeType, sMatchExp, targetRate, tradeCount, maxCycle, stockCode);
+
+        return line;
+    }
+    public void print(Boolean bEval) {
+        String sPrefix = "";
+        String sOut = toString();
+        if(bEval != null) {
+            if(bEval == true) {           //print with RED|GREEN color
+                sOut = AnsiColor.getColorString(sOut, tradeType);
+                sPrefix = "Traded:";
+            } else {
+                sPrefix = "Removed:";
+            }
+        }
+
+        System.out.format("%-8s %s", sPrefix, sOut);
+    }
     public ArrayList<String> getLastHMSList() {
         ArrayList<String> hmsList = new ArrayList<String>();
 
