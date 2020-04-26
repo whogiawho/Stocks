@@ -24,9 +24,6 @@ public class StockPaths {
     public static String getDailyDir() {
         return getStockRootDir() + getValueWOS("data\\daily\\", "data/daily/");
     }
-    public static String getC4TradeDetailsExe() {
-        return getStockRootDir() + getValueWOS("bin\\c4tradedetails.exe", "bin/c4tradedetails.exe");
-    }
     public static String getSettingFile() {
         return StockPaths.getStockRootDir() + "settings.txt";
     }
@@ -40,14 +37,14 @@ public class StockPaths {
 
     //raw tradeDetails.txt
     public static String getRawTradeDetailsFile(String stockCode, String tradeDate) {
-        String sPath = getStockRootDir() + "data"+sSep+"rawTradeDetails";
-        sPath += sSep+stockCode+sSep+stockCode+"."+tradeDate+".txt";
+        String sPath = getStockRootDir() + "data" + sSep + "rawTradeDetails";
+        sPath += sSep+stockCode+sSep+stockCode + "." + tradeDate + ".txt";
         return sPath;
     }
     //raw pankou.txt
     public static String getPankouTxt(String stockCode, String tradeDate) {
-        String sPath = getStockRootDir() + "data"+sSep+"rawPankou";
-        sPath += sSep+stockCode+sSep+tradeDate+sSep+"pankou"+sSep+"pankou.txt";
+        String sPath = getStockRootDir() + "data" + sSep + "rawPankou";
+        sPath += sSep+stockCode + sSep + tradeDate + sSep + "pankou" + sSep + "pankou.txt";
         return sPath;
     }
 
@@ -118,7 +115,7 @@ public class StockPaths {
 
         sDir += tradeDate + "_" + String.format("%03d_%.3f", maxCycle, targetRate);
 
-        return sDir+".txt";
+        return sDir + ".txt";
     }
     private static String getTradeTypeSymbol(int tradeType) {
         String sTradeType = "L";
@@ -171,5 +168,57 @@ public class StockPaths {
     }
     public static String getAmCorrelMapFile(String stockCode, String tradeDate0, String tradeDate1) {
         return getAmCorrelMapDir(stockCode, tradeDate0) + tradeDate1 + ".txt";
+    }
+
+
+    public static String getTradeSessionDir() {
+        return getStockRootDir() + "data" + sSep + "sessions" + sSep;
+    }
+    public static String getTradeSessionDir(boolean bOpen) {
+        return getTradeSessionDir() + (bOpen?"open":"close") + sSep;
+    }
+    public static String getTradeSessionFile(long inHexTimePoint, boolean bOpen) {
+        String sSessionFile = "";
+
+        sSessionFile += getTradeSessionDir(bOpen);
+        String sHexTimePoint = String.format("%x", inHexTimePoint);
+        sSessionFile += sHexTimePoint + ".txt";
+
+        return sSessionFile;
+    }
+
+
+
+
+    public static String getC4TradeDetailsExe() {
+        return getStockRootDir() + getValueWOS("bin\\c4tradedetails.exe", "bin/c4tradedetails.exe");
+    }
+
+    public static String pythonCommand() {
+        return "python -u";
+    }
+    public static String getPythonRootDir() {
+        return getStockRootDir() + getValueWOS("python\\", "python/");
+    }
+    public static String pythonBuyPath() {
+        return getPythonRootDir() + "buy.py";
+    }
+    public static String pythonSellPath() {
+        return getPythonRootDir() + "sell.py";
+    }
+    public static String pythonGetEntrustPath() {
+        return getPythonRootDir() + "today_entrusts.py";
+    }
+    public static String pythonGetTradePath() {
+        return getPythonRootDir() + "today_trades.py";
+    }
+    public static String pythonGetBalancePath() {
+        return getPythonRootDir() + "balance.py";
+    }
+    public static String pythonGetPositionPath() {
+        return getPythonRootDir() + "position.py";
+    }
+    public static String pythonRefreshPath() {
+        return getPythonRootDir() + "refresh.py";
     }
 }
