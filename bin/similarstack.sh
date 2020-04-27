@@ -9,10 +9,11 @@ re100="100\.0%"
 #dir=data/similarStack/600030/20160108_0.90_T1L
 function listSSTableStats {
     local dir=$1
-    local maxCycle=${2:-180}
-    local targetRate=${3:-1.100}
+    local ssTableName=$2
+    local maxCycle=${3:-180}
+    local targetRate=${4:-1.100}
 
-    local fSSTable=$rootDirCygdrive/ssTable.txt
+    local fSSTable=$rootDirCygdrive/data/ssTable/$ssTableName.txt
 
     local line=
     while read line; 

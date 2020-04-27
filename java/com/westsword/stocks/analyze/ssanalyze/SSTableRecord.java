@@ -74,7 +74,7 @@ public class SSTableRecord {
             }
         }
 
-        System.out.format("%-8s in %-4s:\n %s\n", sPrefix, sTableName, sOut);
+        System.out.format("%-8s in %-4s at %s:\n %s\n", sPrefix, sTableName, Time.current(), sOut);
     }
     public ArrayList<String> getLastHMSList() {
         ArrayList<String> hmsList = new ArrayList<String>();

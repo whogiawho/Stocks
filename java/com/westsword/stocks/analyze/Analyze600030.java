@@ -29,6 +29,8 @@ public class Analyze600030 {
     };
     private final TradeSessionManager mTsMan;
     private final SimilarStackAnalyze mSsAnalyzeh0;
+    private final SimilarStackAnalyze mSsAnalyzeh1;
+    private final SimilarStackAnalyze mSsAnalyzeh2;
     private final THSQS iThsqs;
 
     private long mStartAm;
@@ -55,9 +57,13 @@ public class Analyze600030 {
         //set mTsMan
         mTsMan = new TradeSessionManager(stockCode, tradeDate);
         mTsMan.check2SubmitSession();
-        //set mSsAnalyzeh0
+        //set mSsAnalyzeh[012]
         mSsAnalyzeh0 = new SimilarStackAnalyze(stockCode, "h0");
+        mSsAnalyzeh1 = new SimilarStackAnalyze(stockCode, "h1");
+        mSsAnalyzeh2 = new SimilarStackAnalyze(stockCode, "h2");
         mSsAnalyzeh0.setTradeSessionManager(mTsMan);
+        mSsAnalyzeh1.setTradeSessionManager(mTsMan);
+        mSsAnalyzeh2.setTradeSessionManager(mTsMan);
         //set iThsqs
         iThsqs = new THSQS();
 
@@ -85,11 +91,14 @@ public class Analyze600030 {
     }
 
     private void doTsManStuff(TreeMap<Integer, AmRecord> amrMap, TradeSessionManager tsMan) {
-        if(amrMap.size() != 0) {
+        int mapSize = amrMap.size();
+        if(mapSize != 0) {
             Integer key = amrMap.lastKey();
             AmRecord r = amrMap.get(key);
-            System.out.format("%s: %s\n", 
-                    Utils.getCallerName(getClass()), Time.getTimeYMDHMS(r.hexTimePoint));
+            /*
+            System.out.format("%s: %s mapSize=%d\n", 
+                    Utils.getCallerName(getClass()), Time.getTimeYMDHMS(r.hexTimePoint), mapSize);
+            */
             //check if there is a session that should be closed
             tsMan.check2CloseSession(r);
             //check if it is time to makeRRP
@@ -108,6 +117,8 @@ public class Analyze600030 {
         doTsManStuff(mAmRecordMap, mTsMan);
 
         mSsAnalyzeh0.analyze(mAmRecordMap);
+        mSsAnalyzeh1.analyze(mAmRecordMap);
+        mSsAnalyzeh2.analyze(mAmRecordMap);
 
         refreshTHSQS(rawPankouList);
 
