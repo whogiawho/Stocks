@@ -9,6 +9,8 @@ import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 
 public class SSTableRecord {
+    public String sTableName;
+
     public int tradeCount;
 
     public String stockCode;
@@ -28,7 +30,9 @@ public class SSTableRecord {
 
     public SSTableRecord (int tradeCount, 
             String stockCode, String startDate, double threshold, int sTDistance, int tradeType, 
-            int maxCycle, double targetRate, String sMatchExp) {
+            int maxCycle, double targetRate, String sMatchExp, String sTableName) {
+        this.sTableName = sTableName;
+
         this.tradeCount = tradeCount;
 
         this.stockCode = stockCode;
@@ -47,7 +51,7 @@ public class SSTableRecord {
     public SSTableRecord(SSTableRecord r) {
         this(r.tradeCount, 
                 r.stockCode, r.startDate, r.threshold, r.sTDistance, r.tradeType,
-                r.maxCycle, r.targetRate, r.sMatchExp);
+                r.maxCycle, r.targetRate, r.sMatchExp, r.sTableName);
     }
 
 
@@ -64,13 +68,13 @@ public class SSTableRecord {
         if(bEval != null) {
             if(bEval == true) {           //print with RED|GREEN color
                 sOut = AnsiColor.getColorString(sOut, tradeType);
-                sPrefix = "Traded:";
+                sPrefix = "Traded";
             } else {
-                sPrefix = "Removed:";
+                sPrefix = "Removed";
             }
         }
 
-        System.out.format("%-8s %s", sPrefix, sOut);
+        System.out.format("%-8s in %-4s:\n %s\n", sPrefix, sTableName, sOut);
     }
     public ArrayList<String> getLastHMSList() {
         ArrayList<String> hmsList = new ArrayList<String>();

@@ -84,6 +84,19 @@ public class Analyze600030 {
         }
     }
 
+    private void doTsManStuff(TreeMap<Integer, AmRecord> amrMap, TradeSessionManager tsMan) {
+        if(amrMap.size() != 0) {
+            Integer key = amrMap.lastKey();
+            AmRecord r = amrMap.get(key);
+            System.out.format("%s: %s\n", 
+                    Utils.getCallerName(getClass()), Time.getTimeYMDHMS(r.hexTimePoint));
+            //check if there is a session that should be closed
+            tsMan.check2CloseSession(r);
+            //check if it is time to makeRRP
+            tsMan.makeRRP(r);
+        }
+    }
+
     private boolean bCallAuctionComplete = false;
     public void startAnalyze(ArrayList<RawTradeDetails> rawDetailsList, 
             ArrayList<RawRTPankou> rawPankouList) {
@@ -92,14 +105,7 @@ public class Analyze600030 {
         processRawTradeDetails(mIndexs, rawDetailsList, mAmRecordMap);
         processRawPankou(mIndexs, rawPankouList);
 
-        if(mAmRecordMap.size() != 0) {
-            Integer key = mAmRecordMap.lastKey();
-            AmRecord r = mAmRecordMap.get(key);
-            //check if there is a session that should be closed
-            mTsMan.check2CloseSession(r);
-            //check if it is time to makeRRP
-            mTsMan.makeRRP(r);
-        }
+        doTsManStuff(mAmRecordMap, mTsMan);
 
         mSsAnalyzeh0.analyze(mAmRecordMap);
 

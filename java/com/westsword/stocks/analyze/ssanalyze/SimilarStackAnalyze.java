@@ -37,7 +37,7 @@ public class SimilarStackAnalyze {
     private void loadSSTable(ArrayList<SSTableRecord> sstrList, String sName) {
         SSTableLoader loader = new SSTableLoader();
         String sSSTable = StockPaths.getSSTableFile(sName);
-        loader.load(sstrList, sSSTable);
+        loader.load(sstrList, sSSTable, sName);
         System.out.format("%s: sSSTable=%s, size=%d\n", 
                 Utils.getCallerName(getClass()), sSSTable, sstrList.size());
     }

@@ -7,6 +7,7 @@ import com.westsword.stocks.base.utils.FileLoader;
 
 public class SSTableLoader extends FileLoader {
     private ArrayList<SSTableRecord> mList = null;
+    private String mName = null;
 
     public boolean onLineRead(String line, int count) {
         if(line.matches("^ *#.*")||line.matches("^ *$"))
@@ -24,7 +25,7 @@ public class SSTableLoader extends FileLoader {
         String sMatchExp = fields[8];
         SSTableRecord r = new SSTableRecord(tradeCount, 
                 stockCode, startDate, threshold, sTDistance, tradeType,
-                maxCycle, targetRate, sMatchExp);
+                maxCycle, targetRate, sMatchExp, mName);
 
         if(mList != null)
             mList.add(r);
@@ -32,8 +33,9 @@ public class SSTableLoader extends FileLoader {
         return true;
     }
 
-    public void load(ArrayList<SSTableRecord> rList, String sFile) {
+    public void load(ArrayList<SSTableRecord> rList, String sFile, String sName) {
         mList = rList;
+        mName = sName;
 
         load(sFile);
     }
