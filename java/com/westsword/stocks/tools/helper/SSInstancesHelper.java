@@ -8,8 +8,9 @@ import org.apache.commons.math3.util.Combinations;
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.ckpt.*;
-import com.westsword.stocks.tools.helper.man.*;
 import com.westsword.stocks.base.utils.AnsiColor;
+import com.westsword.stocks.tools.helper.man.*;
+import com.westsword.stocks.analyze.ssanalyze.*;
 
 public class SSInstancesHelper {
 
@@ -34,9 +35,9 @@ public class SSInstancesHelper {
         }
         int maxCycle = Integer.valueOf(newArgs[0]);
 
-        String sTradeSumFile = SSUtils.getTradeSumFile(cmd);
+        String sSSTableFile = SSUtils.getSSTableFile(cmd);
         String hmsList = SSUtils.getHMSList(cmd);
-        if(sTradeSumFile!=null&&hmsList!=null) {
+        if(sSSTableFile!=null&&hmsList!=null) {
             usage();
             return;
         }
@@ -53,8 +54,8 @@ public class SSInstancesHelper {
         SSInstance template = new SSInstance(stockCode, startDate, threshold, sTDistance, tradeType,
                     "", "", maxCycle, targetRate);
 
-        if(sTradeSumFile != null) {
-            ArrayList<TradeSum> list = getTradeSumList(sTradeSumFile);
+        if(sSSTableFile != null) {
+            ArrayList<SSTableRecord> list = getSSTableRecordList(sSSTableFile);
             handle01(template, list,
                     bLog2Files, bResetLog, bStdout,
                     stockDates, am, ssim);
@@ -65,19 +66,31 @@ public class SSInstancesHelper {
         }
     }
 
-    private static void handle01(SSInstance template, ArrayList<TradeSum> list, 
+    private static void handle01(SSInstance template, ArrayList<SSTableRecord> list, 
             boolean bLog2Files, boolean bResetLog, boolean bStdout,
             StockDates stockDates, AmManager am, SSiManager ssim) {
         //loop the tradeSumList 
         for(int i=0; i<list.size(); i++) {
-            TradeSum ts = list.get(i);
+            SSTableRecord ts = list.get(i);
+
+            String[] fields = ts.getComponents();
+            //check fields.length == 1
+            if(fields.length != 1) {
+                //print a warning and skip
+                String sWarn = String.format("illegal matchExp: %s", ts.sMatchExp);
+                sWarn = AnsiColor.getColorString(sWarn, AnsiColor.ANSI_RED);
+                System.out.format("%s\n", sWarn);
+                continue;
+            }
 
             SSInstance r = new SSInstance(template);
-            r.tradeDate = ts.tradeDate;
-            r.hmsList = ts.hmsList;
+            //get tradeDate&hmsList from ts
+            String[] subFields = fields[0].split(":");
+            r.tradeDate = subFields[0];
+            r.hmsList = subFields[1];
             System.out.format("%8s %8s %8.2f %4d %4d %8s %8s %4d %8.3f\n",
                     r.stockCode, r.startDate, r.threshold, r.sTDistance, r.tradeType,
-                    ts.tradeDate, ts.hmsList, r.maxCycle, r.targetRate);
+                    r.tradeDate, r.hmsList, r.maxCycle, r.targetRate);
 
             ssim.run(r, am, stockDates,
                     bLog2Files, bResetLog, bStdout);
@@ -149,12 +162,12 @@ public class SSInstancesHelper {
         }
     }
 
-    private static ArrayList<TradeSum> getTradeSumList(String sTradeSumFile) {
-        ArrayList<TradeSum> list = new ArrayList<TradeSum>();
+    private static ArrayList<SSTableRecord> getSSTableRecordList(String sSSTableFile) {
+        ArrayList<SSTableRecord> list = new ArrayList<SSTableRecord>();
 
-        if(sTradeSumFile != null) {
-            TradeSumLoader l = new TradeSumLoader();
-            l.load(sTradeSumFile, list);
+        if(sSSTableFile != null) {
+            SSTableLoader l = new SSTableLoader();
+            l.load(list, sSSTableFile, "");
         }
 
         return list;
@@ -173,7 +186,7 @@ public class SSInstancesHelper {
         System.err.println(line);
         SSInstanceHelper.commonUsageInfo();
 
-        System.err.println("       -f sTradeSumFile; [tradeDate, hmsList] in the file; exclusive to -m");
+        System.err.println("       -f sSSTableFile; [tradeDate, hmsList] in the file; exclusive to -m");
         System.err.println("       -m hmsList      ; loop all [tradeDate, hmsList]; exclusive to -f");
         System.err.println("       -a startHMSList ; loop from startHMSList(inclusive)");
         System.err.println("       -b endHMSList   ; loop until endHMSList(exclusive)");

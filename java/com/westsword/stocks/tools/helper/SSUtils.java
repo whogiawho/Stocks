@@ -77,7 +77,7 @@ public class SSUtils {
     public static String getTradeDateList(CommandLine cmd) {
         return getString(cmd, "l", null);
     }
-    public static String getTradeSumFile(CommandLine cmd) {
+    public static String getSSTableFile(CommandLine cmd) {
         return getString(cmd, "f", null);
     }
     public static String getHMSList(CommandLine cmd) {

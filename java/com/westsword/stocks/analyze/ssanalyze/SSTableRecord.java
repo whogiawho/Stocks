@@ -76,10 +76,10 @@ public class SSTableRecord {
 
         System.out.format("%-8s in %-4s at %s:\n %s\n", sPrefix, sTableName, Time.current(), sOut);
     }
-    public ArrayList<String> getLastHMSList() {
+    public ArrayList<String> getListOfLastHMS() {
         ArrayList<String> hmsList = new ArrayList<String>();
 
-        String[] fields = sMatchExp.split("\\&\\|");
+        String[] fields = getComponents();
         for(int i=0; i<fields.length; i++) {
             String[] subFields = fields[i].split(":");
             //subFields[0] - tradeDate; subFields[1] - hmsList
@@ -89,10 +89,13 @@ public class SSTableRecord {
 
         return hmsList;
     }
+    public String[] getComponents() {
+        return sMatchExp.split("\\&\\|");
+    }
     public ArrayList<String> getTradeDates() {
         ArrayList<String> sTradeDateList = new ArrayList<String>();
 
-        String[] fields = sMatchExp.split("\\&\\|");
+        String[] fields = getComponents();
         //System.out.format("%s: fields.length=%d\n", Utils.getCallerName(getClass()), fields.length);
         for(int i=0; i<fields.length; i++) {
             //System.out.format("%s: %s\n", Utils.getCallerName(getClass()), fields[i]);
@@ -119,7 +122,7 @@ public class SSTableRecord {
     private boolean eval(AmManager am, TreeMap<Integer, AmRecord> amrMap, String currentDate) {
         boolean bResult = true;
 
-        String[] fields = sMatchExp.split("\\&\\|");
+        String[] fields = getComponents();
         for(int i=0; i<fields.length; i++) {
             String[] subFields = fields[i].split(":");
             String tradeDate = subFields[0];
@@ -141,7 +144,7 @@ public class SSTableRecord {
         boolean bEligible = true;
 
         String currentDate = Time.getTimeYMD(currentTp, false);
-        ArrayList<String> hmsList = getLastHMSList();
+        ArrayList<String> hmsList = getListOfLastHMS();
         for(int i=0; i<hmsList.size(); i++) {
             String hms = hmsList.get(i);
             long tp = Time.getSpecificTime(currentDate, hms);
