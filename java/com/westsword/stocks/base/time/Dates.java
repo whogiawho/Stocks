@@ -41,10 +41,21 @@ public class Dates {
     }
 
 
+    //bCurrent=true:  consider currentDate as one of threshold for the last
+    //bCurrent=false: does not consider currentDate as one of threshold for the last
     //bNullReturned=true:  null will be returned if distance is < n
     //bNullReturned=false: null will never be returned
-    public String nextDate(String tradeDate, int n, boolean bNullReturned) {
+    public String nextDate(String tradeDate, int n, boolean bNullReturned, boolean bCurrent) {
         String last = lastDate();
+        if(bCurrent) {     
+            String currentDate = Time.currentDate();
+            //the possibility of tradeDate being last should also be considered
+            if(tradeDate.compareTo(currentDate)>0)
+                currentDate = tradeDate;
+            currentDate = floor(currentDate);
+            if(currentDate.compareTo(last)<0)
+                last = currentDate;
+        }
 
         String next = tradeDate;
         for(int i=0; i<n; i++) {
@@ -56,6 +67,9 @@ public class Dates {
             next = nextDate(next);
         }
         return next;
+    }
+    public String nextDate(String tradeDate, int n, boolean bNullReturned) {
+        return nextDate(tradeDate, n, bNullReturned, false);
     }
     //return the date whose distance is n from tradeDate if possible
     //when the distance is <n, the last tradedate is returned

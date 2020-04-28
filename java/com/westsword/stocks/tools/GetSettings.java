@@ -139,6 +139,7 @@ public class GetSettings{
     }
     public static void testStockDates(String stockCode, String date0, String date1) {
         System.out.format("\n testStockDates: \n");
+
         StockDates stockDates = new StockDates(date0, date1, stockCode);
         String[] sTradeDates = stockDates.getAllDates();
         System.out.format("testStockDates: length=%d\n", sTradeDates.length);
@@ -152,6 +153,7 @@ public class GetSettings{
     }
     public static void testTradeDates(String stockCode, String date0, String date1) {
         System.out.format("\n testTradeDates: \n");
+
         TradeDates tradeDates = new TradeDates(stockCode, date0, date1);
         String date = tradeDates.firstDate();
         while(date!=null) {
@@ -162,6 +164,7 @@ public class GetSettings{
 
     public static void testStockDatesDistance(String stockCode, int maxCycle) {
         System.out.format("\n testStockDatesDistance: \n");
+
         StockDates stockDates = new StockDates(stockCode);
         String date = stockDates.firstDate();
         while(date!=null) {
@@ -172,8 +175,50 @@ public class GetSettings{
             date = stockDates.nextDate(date);
         }
     }
+    public static void testNextDate(String stockCode) {
+        System.out.format("\n testNextDate: \n");
+
+        StockDates stockDates = new StockDates(stockCode);
+        String currentDate = Time.currentDate();
+        int dist = 180;
+
+        String next0 = stockDates.nextDate(currentDate);
+        String prev0 = stockDates.prevDate(currentDate);
+        System.out.format("nextDate(%s)=%s\n", currentDate, next0);
+
+        //base=currentDate
+        String next1 = stockDates.nextDate(currentDate, dist, false);
+        String next2 = stockDates.nextDate(currentDate, dist, false, true);
+        System.out.format("nextDate(%s, %d, false)=%s\n", currentDate, dist, next1); 
+        System.out.format("nextDate(%s, %d, false, true)=%s\n", currentDate, dist, next2); 
+
+        //base=next0
+        String next3 = stockDates.nextDate(next0, dist, false);
+        String next4 = stockDates.nextDate(next0, dist, false, true);
+        String next5 = stockDates.nextDate(next0, dist*4, false, true);
+        System.out.format("nextDate(%s, %d, false)=%s\n", next0, dist, next3); 
+        System.out.format("nextDate(%s, %d, false, true)=%s\n", next0, dist, next4); 
+        System.out.format("nextDate(%s, %d, false, true)=%s\n", next0, dist*4, next5); 
+
+        //base=prev0
+        String next6 = stockDates.nextDate(prev0, dist, false);
+        String next7 = stockDates.nextDate(prev0, dist, false, true);
+        String next8 = stockDates.nextDate(prev0, dist*4, false, true);
+        System.out.format("nextDate(%s, %d, false)=%s\n", prev0, dist, next6); 
+        System.out.format("nextDate(%s, %d, false, true)=%s\n", prev0, dist, next7); 
+        System.out.format("nextDate(%s, %d, false, true)=%s\n", prev0, dist*4, next8); 
+
+        //
+        String next9 = stockDates.nextDate(prev0, dist*4, false);
+        String next10 = stockDates.nextDate(currentDate, dist*4, false);
+        String next11 = stockDates.nextDate(next0, dist*4, false);
+        System.out.format("nextDate(%s, %d, false)=%s\n", prev0, dist*4, next9); 
+        System.out.format("nextDate(%s, %d, false)=%s\n", currentDate, dist*4, next10); 
+        System.out.format("nextDate(%s, %d, false)=%s\n", next0, dist*4, next11); 
+    }
     public static void listStockDates(String stockCode, String date0, String date1) {
         System.out.format("\n listStockDates: \n");
+
         StockDates stockDates = new StockDates(date0, date1, stockCode);
         String date = stockDates.firstDate();
         while(date!=null) {
@@ -526,17 +571,18 @@ public class GetSettings{
         //testAmMatrix(stockCode);
         //testMatlab(stockCode);
         //testCkpt(stockCode);
-        testCombination(stockCode);
+        //testCombination(stockCode);
         //testTradeSumLoader(stockCode);
         //testTaskManager(stockCode);
         //testFinal(stockCode);
         //testGetAmCorrel(stockCode);
         //testDouble(stockCode);
         //testString(stockCode);
-        testBackSlash(stockCode);
+        //testBackSlash(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
+        testNextDate(stockCode);
     }
 
 }
