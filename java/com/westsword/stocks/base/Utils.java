@@ -15,7 +15,7 @@ public class Utils {
 
     public static boolean existFile(String path) {
         File f = new File(path);
-        return f .exists();
+        return f.exists();
     }
     //mkdir path if not exist
     public static void mkDir(String path) {

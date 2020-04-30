@@ -248,7 +248,12 @@ public class THSQS {
     }
     public Double queryEntrustAvgPrice(String sEntrustNO) {
         //need to get the entrust price 
-        return Double.valueOf(queryEntrust(sEntrustNO, sEntrustPriceKeys[qsIdx]));
+        String sRet = queryEntrust(sEntrustNO, sEntrustPriceKeys[qsIdx]);
+        Double dRet = Double.NaN;
+        if(!sRet.equals(""))
+            dRet = Double.valueOf(sRet);
+
+        return dRet;
     }
     public String queryEntrustState(String sEntrustNO) {
         //need to get the entrust state
