@@ -6,7 +6,7 @@ function getOpenQuotationPrice {
 
     getUpPrice $stockCode $tradeDate $CallAuctionEndTime
 }
-function getCloseQuotaionPrice {
+function getCloseQuotationPrice {
     local stockCode=$1
     local tradeDate=$2
 

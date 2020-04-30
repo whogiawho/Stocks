@@ -47,11 +47,12 @@ splitRawTradeDetailsJar="$rootDir\\build\\jar\\splitrawtradedetails.jar"
 . bin/price.sh
 . bin/pankou.sh
 . bin/tradedetails.sh
-. bin/similarstack.sh
 . bin/amcorrel.sh
 . bin/gcp.sh
+. bin/similarstack.sh
 . bin/sscommons.sh
 . bin/ssn.sh
+. bin/sstable.sh
 . bin/daily.sh
 . bin/thsqs.sh
 . bin/session.sh
