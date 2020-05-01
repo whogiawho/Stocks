@@ -15,7 +15,7 @@ public class AnalyzeTools{
         System.err.println("       [ getvalue | setvalue | makeanalysistxt | priceamp |\n" +
                 "         getamcorrel | getupprice | getdownprice | getam | decode |\n" +
                 "         getrel | getabs | rgetabs |\n" +
-                "         ssinstance | ssinstances | getfullss |\n" +
+                "         ssinstance | ssinstances | getfullss | checksstable |\n" +
                 "         getentrust | checkabss | submitabs |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify |\n" +
                 "         mminstance |\n" +
@@ -96,6 +96,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("getfullss")) {
             FullSSHelper fullssh = new FullSSHelper();
             fullssh.run(args);
+        } else if (sOption.equals("checksstable")) {
+            SSTableHelper ssth = new SSTableHelper();
+            ssth.checkSSTable(args);
         } else if(sOption.equals("checkabss")) {
             THSQSHelper.checkAbsS(args);
         } else if(sOption.equals("submitabs")) {

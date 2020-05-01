@@ -165,6 +165,7 @@ public class SSTableRecord {
 
 
 
+
     public static ArrayList<String> getTradeDates(ArrayList<SSTableRecord> list) {
         ArrayList<String> sTradeDateList = new ArrayList<String>();
 
@@ -183,5 +184,41 @@ public class SSTableRecord {
     }
     public void setSessionOpened(boolean bSessionOpened) {
         this.bSessionOpened = bSessionOpened;
+    }
+
+
+
+    //below methods assuming only one component
+    public double getInPrice(AmManager am, String tradeDate) {
+        double inPrice = Double.NaN;
+
+        ArrayList<String> hmsList = getListOfLastHMS();
+        long tp = Time.getSpecificTime(tradeDate, hmsList.get(0));
+        inPrice = am.getInPrice(tradeType, tp);
+
+        return inPrice;
+    }
+    public boolean eval(AmManager am, String tradeDate) {
+        boolean bResult = false;
+
+        double amcorrel = getAmCorrel(am, tradeDate);
+        if(amcorrel >= threshold) {
+            bResult = true;
+        }
+
+        return bResult;
+    }
+    public double getAmCorrel(AmManager am, String tradeDate) {
+        String[] fields = getComponents();
+        String[] subFields = fields[0].split(":");
+        String[] hmss = subFields[1].split("_");
+
+        /*
+        System.out.format("subFields[0]=%s, tradeDate=%s hmss[0]=%s hmss[1]=%s\n", 
+                subFields[0], tradeDate, hmss[0], hmss[1]);
+        */
+        double amcorrel = am.getAmCorrel(subFields[0], tradeDate, hmss[0], hmss[1]);
+
+        return amcorrel;
     }
 }
