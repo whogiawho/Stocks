@@ -6,13 +6,15 @@ function statsBasedOnOp {
     local dir=$1
     local hmsList=$2
 
+    local stockCode=`ssGetStockCode $dir`
     local tradeDate=`ssGetTradeDate $dir`
     local fTmp=$TMP/${tradeDate}_${hmsList}.txt
     local line=
     cat $dir/$hmsList.txt | while read line; 
     do 
-        local matchedDate b nextDate d inPrice f g h i j
-        read matchedDate b nextDate d inPrice f g h i j <<<`echo $line`; 
+        local matchedDate b c d inPrice f g h i j
+        read matchedDate b c d inPrice f g h i j <<<`echo $line`; 
+        local nextDate=`getNextTradeDate $stockCode $matchedDate`
         local openP=`getOpenQuotationPrice 600030 $nextDate`; 
         local maxP=`getMaxPrice 600030 $nextDate|awk '{print $1}'`; 
         local closeP=`getCloseQuotationPrice 600030 $nextDate`; 
@@ -60,5 +62,30 @@ function ssGetMinDeltas {
     printf "%4d %.2f\n" $cnt $minDelta
 
     rm -rf $fTmp1
+}
+
+function checkAllSSTable {
+    local stockCode=$1
+    local tradeDate=$2
+
+    java -jar $analyzetoolsJar checksstable $stockCode $tradeDate h0 2>/dev/null
+    java -jar $analyzetoolsJar checksstable $stockCode $tradeDate h1 2>/dev/null
+    java -jar $analyzetoolsJar checksstable $stockCode $tradeDate h2 2>/dev/null
+}
+
+function checkSSTable {
+    local stockCode=$1
+    local tradeDate=$2
+    local ssTableName=$3
+
+    local fSSTable=$rootDirCygdrive/data/ssTable/$ssTableName.txt
+    cat $fSSTable |grep -vE "^$|#" |awk '{print $9}'|sed "s/:/ /g"|while read line; 
+    do 
+        local matchedTradeDate hmsList 
+        read matchedTradeDate hmsList<<<`echo $line`; 
+        local amcorrel=`getAmCorrel $stockCode $tradeDate $matchedTradeDate $hmsList`; 
+        local ret=`gt $amcorrel 0.90`; 
+        [[ $ret == 1 ]] && echo $matchedTradeDate $hmsList $amcorrel; 
+    done
 }
 

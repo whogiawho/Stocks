@@ -22,8 +22,8 @@ function listSSTableStats {
 
         local a b c d e f g h i
         read a b c d e f g h i <<<`echo $line`;
-        tradeDate=${i%%:*}; 
-        hmsList=${i##*:};
+        local tradeDate=${i%%:*}; 
+        local hmsList=${i##*:};
         getInstanceStats $dir/${tradeDate}_${maxCycle}_${targetRate} $hmsList
     done<$fSSTable
 }
@@ -197,6 +197,7 @@ function _getInstanceStats {
 }
 
 
+#dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 function getNetR {
     local dir=$1
     local hmsList=$2
@@ -205,6 +206,16 @@ function getNetR {
     local netR=`grep $hmsList $fTradeSum|awk '{print $10}'`;
 
     echo $netR
+}
+#dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
+function ssGetStockCode {
+    local dir=$1
+
+    dir=`echo ${dir#*/}`
+    dir=`echo ${dir#*/}`
+    dir=`echo ${dir%%/*}`
+
+    echo $dir
 }
 #dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 function ssGetTradeDate {
