@@ -206,14 +206,17 @@ public class Settings extends FileLoader {
     public final static int SWITCH_OF_MAIN_LOOP = 2;
     public final static int BUFFERING_TRADERESULT = 3;
     public final static int ONLY_LONG_TRADESESSION = 4;
+    public final static int MAX_OUT_PRICE = 5;
     public final static String[] booleanKeys = {
         "noPerformanceLog",
         "switchOfRawData",
         "switchOfMainLoop",
         "BufferingTradeResult",
         "OnlyLongTradeSession",
+        "MaxOutPrice",
     };
     public final static Boolean[] booleanValues = {
+        null,
         null,
         null,
         null,

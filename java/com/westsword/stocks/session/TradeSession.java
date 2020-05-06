@@ -100,7 +100,10 @@ public class TradeSession {
         else
             outPrice = getInPrice() - targetProfit;
 
-        return outPrice;
+        if(Settings.getSwitch(Settings.MAX_OUT_PRICE))
+            return Math.max(outPrice, getAbnormalOutPrice());
+        else
+            return outPrice;
     }
     public void open(long inTime, double inPrice, double actualInPrice, int tradeVol) {
         mInHexTimePoint = inTime;
