@@ -28,10 +28,19 @@ function listSSTableStats {
     done<$fSSTable
 }
 
-#dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
+#dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100 ||
+#dir=data/similarStack/600030/20160108_0.90_T1L/20160111:130900_131900
 function getInstanceStats {
     local dir=$1
     local hmsList=$2
+    local maxCycle=${3:-180}
+    local targetRate=${4:-1.100}
+
+    echo $dir|grep -q : && {
+        hmsList=${dir##*:}
+        dir=${dir%%:*}
+        dir=${dir}_${maxCycle}_${targetRate}
+    }
 
     local fTradeDetails=$dir/${hmsList}.txt; 
     local tradeDate=`ssGetTradeDate $dir`
