@@ -120,5 +120,13 @@ function getMaxPriceBetween {
 }
 
 
+function getPrevCloseQuotationHexPrice {
+    local stockCode=$1
+    local tradeDate=$2
+
+    local prevDate=`getPrevTradeDate $stockCode $tradeDate`
+    
+    tail -n 1 "$rawZuBiDataDir\\$stockCode\\$stockCode.$prevDate.txt"|awk '{print $2}'
+}
 
 

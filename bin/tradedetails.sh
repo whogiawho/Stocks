@@ -22,7 +22,12 @@ function appendLastRawTradeDetail {
     local tradeDetailsFile="$rawZuBiDataDir\\$stockCode\\$stockCode.$tradeDate.txt"
 
     local encTradeTime=`convertTime2Hex $tradeDate $LastRawTradeDetailTime|tr a-z A-Z`
-    local tradePrice=`tail -n 1 $tradeDetailsFile|awk '{print $2}'`
+    local tradePrice=
+    [[ -f $tradeDetailsFile ]] && {
+        tradePrice=`tail -n 1 $tradeDetailsFile|awk '{print $2}'`
+    } || {
+        tradePrice=`getPrevCloseQuotationHexPrice $stockCode $tradeDate`
+    }
     local tradeNO=0
     local tradeType=1
 
