@@ -40,7 +40,7 @@ public class AmManager {
     public AmManager(String stockCode, String[] tradeDates, boolean bParallelLoad) {
         mStockCode = stockCode;
         mSdTime = new SdTime1(stockCode);
-        mStockDates = new StockDates(stockCode);
+        mTradeDates = new TradeDates(stockCode);
         mAmRecordMap = new TreeMap<Integer, AmRecord>();
         mAmrTable = new AmrHashtable();
 
@@ -268,8 +268,8 @@ public class AmManager {
             amCorrel = getAmCorrel(tradeDate0, startHMS, tradeDate0, endHMS,
                     tradeDate1, startHMS, tradeDate1, endHMS);
         } else {
-            String nextTradeDate0 = mStockDates.nextDate(tradeDate0);
-            String nextTradeDate1 = mStockDates.nextDate(tradeDate1);
+            String nextTradeDate0 = mTradeDates.nextDate(tradeDate0);
+            String nextTradeDate1 = mTradeDates.nextDate(tradeDate1);
 
             if(nextTradeDate0!=null && nextTradeDate1!=null) {
                 amCorrel = getAmCorrel(tradeDate0, startHMS, nextTradeDate0, endHMS,
@@ -284,7 +284,7 @@ public class AmManager {
     
     private String mStockCode;
     private SdTime1 mSdTime;
-    private StockDates mStockDates;
+    private TradeDates mTradeDates;
 
     //2 key data structures to track AmRecords for a list of tradeDates
     private TreeMap<Integer, AmRecord> mAmRecordMap;
