@@ -25,9 +25,7 @@ public class AmUtils {
         tradeDate2= mStockDates.floor(tradeDate2);
         long startAm = loadPrevLastAm(tradeDate1);
         while(tradeDate1!=null&&tradeDate2!=null&&tradeDate1.compareTo(tradeDate2)<=0) {
-            if(!mStockDates.isMissingDate(tradeDate1)) {
-                startAm = writeAmRecords(startAm, tradeDate1);
-            }
+            startAm = writeAmRecords(startAm, tradeDate1);
 
             tradeDate1 = mStockDates.nextDate(tradeDate1);
         }

@@ -65,15 +65,13 @@ public class StockDates extends WorkDates {
                     Utils.getCallerName(getClass()), mMissingSet.size());
         }
     }
-    //settings.stockCode.SdStartDate --- currentDate
-    public StockDates(String stockCode) {
+    //settings.stockCode.SdStartDate --- currentDate|nextYearLastDate
+    public StockDates(String stockCode, boolean bCurrentDate) {
         this(Settings.getSdStartDate(stockCode),
-                Dates.nextYearLastDate(Time.currentDate()),
-                //Time.currentDate(),
+                bCurrentDate?Time.currentDate():Dates.nextYearLastDate(Time.currentDate()),
                 stockCode);
     }
-
-    public boolean isMissingDate(String date) {
-        return mMissingSet.contains(date); 
+    public StockDates(String stockCode) {
+        this(stockCode, true);
     }
 }
