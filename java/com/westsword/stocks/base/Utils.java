@@ -162,4 +162,16 @@ public class Utils {
 
         return bOffline;
     }
+    //(14:56:00, 15:30:00)
+    public static boolean isRRPTime(long currentTp) {
+        long rrpStartTime = AStockSdTime.getRrpStartTime(currentTp);
+        if(currentTp<rrpStartTime)
+            return false;
+
+        long rrpEndTime = AStockSdTime.getRrpEndTime(currentTp);
+        if(currentTp>rrpStartTime)
+            return false;
+
+        return true;
+    }
 }

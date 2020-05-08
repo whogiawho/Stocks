@@ -157,12 +157,9 @@ public class TradeSessionManager {
 
         if(bRRPDone)
             return;
-        if(Utils.isOfflineRun())
-            return;
 
         long currentItemTp = item.hexTimePoint;
-        long rrpTime = AStockSdTime.getRrpTime(currentItemTp);
-        if(currentItemTp<rrpTime)
+        if(!Utils.isRRPTime(currentItemTp))
             return;
 
         THSQS iThsqs = new THSQS();

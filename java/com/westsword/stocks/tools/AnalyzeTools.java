@@ -16,7 +16,7 @@ public class AnalyzeTools{
                 "         getamcorrel | getupprice | getdownprice | getam | decode |\n" +
                 "         getrel | getabs | rgetabs |\n" +
                 "         ssinstance | ssinstances | getfullss | checksstable |\n" +
-                "         getentrust | checkabss | submitabs |\n" +
+                "         getentrust | checkabss | submitabs | makerrp |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify |\n" +
                 "         mminstance |\n" +
                 "         makessdates | maxmatchsingle | maxmatchall | make1mamcmap ]");
@@ -103,6 +103,8 @@ public class AnalyzeTools{
             THSQSHelper.checkAbsS(args);
         } else if(sOption.equals("submitabs")) {
             THSQSHelper.submitAbs(args);
+        } else if(sOption.equals("makerrp")) {
+            THSQSHelper.makeRRP(args);
         } else if(sOption.equals("getentrust")) {
             THSQSHelper.getEntrust(args);
         } else {

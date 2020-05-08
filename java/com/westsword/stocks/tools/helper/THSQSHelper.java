@@ -1,5 +1,7 @@
 package com.westsword.stocks.tools.helper;
 
+
+import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.utils.THSQS;
 import com.westsword.stocks.session.TradeSessionManager;
@@ -43,18 +45,27 @@ public class THSQSHelper {
 
 
 
-    public static void submitAbs(String[] args) {
+    public static TradeSessionManager getTradeSessionManager() {
         String stockCode = Settings.getStockCode();
         String tradeDate = Settings.getTradeDate();
 
         TradeSessionManager m = new TradeSessionManager(stockCode, tradeDate);
+
+        return m;
+    }
+    public static void submitAbs(String[] args) {
+        TradeSessionManager m = getTradeSessionManager();
         m.check2SubmitSession();
     }
     public static void checkAbsS(String[] args) {
-        String stockCode = Settings.getStockCode();
-        String tradeDate = Settings.getTradeDate();
-
-        TradeSessionManager m = new TradeSessionManager(stockCode, tradeDate);
+        TradeSessionManager m = getTradeSessionManager();
         m.checkAbnormalSubmittedSessions();
+    }
+    public static void makeRRP(String[] args) {
+        TradeSessionManager m = getTradeSessionManager();
+
+        long tp = System.currentTimeMillis()/1000;
+        AmRecord r = new AmRecord(tp, -1, -1, Double.NaN, Double.NaN);
+        m.makeRRP(r);
     }
 }

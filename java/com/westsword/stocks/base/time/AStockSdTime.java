@@ -52,9 +52,13 @@ public class AStockSdTime extends SdTime {
     public static String getLastRawTradeDetailTime() {
         return LAST_RAWTRADEDETAIL_TIME;
     }
-    public final static String RRP_TIME = "14:56:00";
-    public static String getRrpTime() {
-        return RRP_TIME;
+    public final static String RRP_START_TIME = "14:56:00";
+    public static String getRrpStartTime() {
+        return RRP_START_TIME;
+    }
+    public final static String RRP_END_TIME = "15:30:00";
+    public static String getRrpEndTime() {
+        return RRP_END_TIME;
     }
 
 
@@ -63,8 +67,11 @@ public class AStockSdTime extends SdTime {
     }
 
 
-    public static long getRrpTime(long timepoint) {
-        return Time.getSpecificTime(timepoint, getRrpTime());
+    public static long getRrpStartTime(long timepoint) {
+        return Time.getSpecificTime(timepoint, getRrpStartTime());
+    }
+    public static long getRrpEndTime(long timepoint) {
+        return Time.getSpecificTime(timepoint, getRrpEndTime());
     }
     public static long getCloseQuotationTime(long timepoint) {
         return Time.getSpecificTime(timepoint, getCloseQuotationTime());
