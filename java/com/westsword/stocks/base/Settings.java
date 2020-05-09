@@ -122,6 +122,9 @@ public class Settings extends FileLoader {
     public static Integer getMaxTasks() {
         return getInteger("MaxTasks");
     }
+    public static Double getMaxGrowthRate() {
+        return getDouble("MaxGrowthRate");
+    }
 
 
     public static String getTradeDate() {

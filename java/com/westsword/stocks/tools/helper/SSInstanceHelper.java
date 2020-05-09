@@ -70,8 +70,8 @@ public class SSInstanceHelper {
         System.err.println(sPrefix+"ssinstance [-rnocdhts] tradeDate hmsList maxCycle targetRate");
         System.err.println("       tradeDate   ; tradeDate>=startDate");
         System.err.println("       targetRate  ; something like [0-9]{1,}.[0-9]{1,3}");
-        System.err.println("                       relative(<=1): targetRate"); 
-        System.err.println("                       absolute(>1) : targetRate-1");
+        System.err.println("                       relative(<=MaxGrowthRate): targetRate"); 
+        System.err.println("                       absolute(>MaxGrowthRate) : targetRate-MaxGrowthRate");
         commonUsageInfo();
 
 

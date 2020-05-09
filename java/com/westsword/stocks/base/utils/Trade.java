@@ -2,6 +2,7 @@ package com.westsword.stocks.base.utils;
 
 
 import com.westsword.stocks.base.Parms;
+import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.time.NatureDates;
 
 public class Trade {
@@ -97,15 +98,16 @@ public class Trade {
 
 
     //2 kinds of scenratios:
-    //  targetRate<=1          [0, 1], percent >100% is not allowed
-    //  targetRate>1           (0, ...)
+    //  targetRate<=MaxGrowthRate          [0, MaxGrowthRate], percent>MaxGrowthRate is not allowed
+    //  targetRate>MaxGrowthRate           (0, ...)
     //Parms:
     //  dist - distance by days
     public static double getTargetProfit(double targetRate, double inPrice, int dist) {
         double targetProfit = inPrice*targetRate*dist/360;
 
-        if(targetRate>1) {
-            targetProfit = targetRate - 1;
+        double maxGrowthRate = Settings.getMaxGrowthRate();
+        if(targetRate>maxGrowthRate) {
+            targetProfit = targetRate - maxGrowthRate;
         }
 
         return targetProfit;
