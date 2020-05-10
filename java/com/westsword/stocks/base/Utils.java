@@ -87,7 +87,12 @@ public class Utils {
 
 
     public static double roundUp(double inD) {
-        String sFormat = Settings.getPriceDecimalFormat();
+        return roundUp(inD, null);
+    }
+    public static double roundUp(double inD, String sFormat) {
+        if(sFormat==null) {
+            sFormat = Settings.getPriceDecimalFormat();
+        }
         DecimalFormat df = new DecimalFormat(sFormat);
         df.setRoundingMode(RoundingMode.CEILING);
 

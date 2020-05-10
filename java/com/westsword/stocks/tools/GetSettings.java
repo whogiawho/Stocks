@@ -420,6 +420,17 @@ public class GetSettings{
         String sStockCode=Settings.getString("d:\\Stocks\\settings.txt", "stockCode");   //ok
         System.out.format("sStockCode=%s 已撤\n", sStockCode);
     }
+    public static void testRoundUp(String stockCode) {
+        System.out.format("\n testRoundUp: \n");
+
+        double d = Double.valueOf("3.1415926");
+        double d1 = Utils.roundUp(d);
+        double d2 = Utils.roundUp(d, "#");
+
+        System.out.format("d=%f\n", d);
+        System.out.format("d1=%f\n", d1);
+        System.out.format("d2=%f\n", d2);
+    }
     public static void testString(String stockCode) {
         System.out.format("\n testString: \n");
 
@@ -549,12 +560,10 @@ public class GetSettings{
         //testSettings();       
         //testMisc();       
 
-        /*
-        testSdTime(1);       
-        testSdTime(2);       
-        testSdTime(3);       
-        testAStockSdTime();       
-        */
+        //testSdTime(1);       
+        //testSdTime(2);       
+        //testSdTime(3);       
+        //testAStockSdTime();       
         //testSdTime1();
 
         //testCheck(stockCode, "111000_123000_143000_145000l");
@@ -578,11 +587,12 @@ public class GetSettings{
         //testGetAmCorrel(stockCode);
         //testDouble(stockCode);
         //testString(stockCode);
+        testRoundUp(stockCode);
         //testBackSlash(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
-        testNextDate(stockCode);
+        //testNextDate(stockCode);
     }
 
 }
