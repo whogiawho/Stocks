@@ -42,11 +42,15 @@ public class Time {
     }
 
 
-    public static String getTimeYMDHMS(long time) {
-        String sYMD = getTimeYMD(time);
-        String sHMS = getTimeHMS(time);
+    public static String getTimeYMDHMS(long time, boolean bWithMinus, boolean bWithColon) {
+        String sYMD = getTimeYMD(time, bWithMinus);
+        String sHMS = getTimeHMS(time, bWithColon);
 
         return sYMD + "_" +sHMS;
+
+    }
+    public static String getTimeYMDHMS(long time) {
+        return getTimeYMDHMS(time, true, true);
     }
     public static String getTimeYMD(long time, boolean bWithMinus) {
         Calendar cal = getCalendar();
@@ -74,7 +78,7 @@ public class Time {
     public static String getTimeYMD(long time) {
         return getTimeYMD(time, true);
     }
-    public static String getTimeHMS(long time) {
+    public static String getTimeHMS(long time, boolean bWithColon) {
         Calendar cal = getCalendar();
         cal.setTimeInMillis(time*1000);
 
@@ -86,7 +90,16 @@ public class Time {
         int second = cal.get(Calendar.SECOND);
         sSecond = formalizeNumber(second);
 
-        return ""+sHour+":"+sMinute+":"+sSecond;
+        String hms;
+        if(bWithColon)
+            hms = ""+sHour+":"+sMinute+":"+sSecond; 
+        else
+            hms = ""+sHour+sMinute+sSecond; 
+
+        return hms;
+    }
+    public static String getTimeHMS(long time) {
+        return getTimeHMS(time, true);
     }
 
 
