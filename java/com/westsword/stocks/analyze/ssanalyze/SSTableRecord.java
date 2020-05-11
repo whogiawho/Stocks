@@ -129,9 +129,17 @@ public class SSTableRecord {
             String[] hmss = subFields[1].split("_");
             NavigableMap<Integer, AmRecord> map0 = am.getItemMap(tradeDate, hmss[0], tradeDate, hmss[1]);
             NavigableMap<Integer, AmRecord> map1 = getItemMap(amrMap, currentDate, hmss[0], hmss[1]);
+            double amcorrel = Double.NaN;
             //print warning message if map0.size&map1.size are not equal
+            if(map0.size()!=map1.size()) {
+                String sWarn = String.format("%s %d!=%d", sMatchExp, map0.size(), map1.size());
+                sWarn = AnsiColor.getColorString(sWarn, AnsiColor.ANSI_RED);
+                System.out.format("%s: %s\n", Utils.getCallerName(getClass()), sWarn);
+                amcorrel = AmCorrel.get(map0, map1);
+            } else {
+                amcorrel = am.getAmCorrel(map0, map1);
+            }
 
-            double amcorrel = am.getAmCorrel(map0, map1);
             if(amcorrel < threshold) {
                 bResult = false;
                 break;
