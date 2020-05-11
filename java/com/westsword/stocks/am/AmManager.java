@@ -88,6 +88,31 @@ public class AmManager {
         idx = mAmRecordMap.ceilingKey(idx);
         return mAmRecordMap.get(idx);
     }
+    public AmRecord getTargetAmRecord(int startSdt, int tradeType, int sdLength, double targetProfit) {
+        AmRecord r = null;
+
+        AmRecord inR = mAmRecordMap.get(startSdt);
+        if(inR == null)
+            return r;
+
+        double inPrice = inR.getInPrice(tradeType);
+        for(int i=startSdt; i<startSdt+sdLength; i++) {
+            AmRecord ar = mAmRecordMap.get(i);
+            if(ar == null)
+                break;
+
+            if(tradeType == Stock.TRADE_TYPE_LONG && ar.getOutPrice(tradeType)-inPrice>=targetProfit || 
+                    tradeType == Stock.TRADE_TYPE_SHORT && inPrice-ar.getOutPrice(tradeType)>=targetProfit) {
+                r = ar;
+                break;
+            }
+        }
+
+        return r;
+    }
+    public AmRecord last() {
+        return mAmRecordMap.get(mAmRecordMap.lastKey());
+    }
 
 
     //
