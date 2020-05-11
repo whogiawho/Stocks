@@ -9,6 +9,10 @@ import com.westsword.stocks.base.time.*;
 public class CheckPoint {
     private TreeSet<String> mCkptList = new TreeSet<String>();
 
+    public TreeSet<String> get() {
+        return mCkptList;
+    }
+
     public int getLength() {
         return mCkptList.size();
     }
