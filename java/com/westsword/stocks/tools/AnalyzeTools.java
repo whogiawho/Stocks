@@ -18,7 +18,7 @@ public class AnalyzeTools{
                 "         ssinstance | ssinstances | getfullss | checksstable |\n" +
                 "         getentrust | checkabss | submitabs | makerrp |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify |\n" +
-                "         mminstance |\n" +
+                "         mminstance | qualrange |\n" +
                 "         makessdates | maxmatchsingle | maxmatchall | make1mamcmap ]");
 
         System.exit(-1);
@@ -84,6 +84,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("mminstance")) {
             MMInstanceHelper mmih = new MMInstanceHelper();
             mmih.run(args);
+        } else if (sOption.equals("qualrange")) {
+            RangeHelper rh = new RangeHelper();
+            rh.findQualified(args);
         } else if (sOption.equals("makessdates")) {
             SSDatesHelper ssdh = new SSDatesHelper();
             ssdh.make(args);
