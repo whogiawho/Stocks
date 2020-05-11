@@ -159,8 +159,10 @@ public class TradeSessionManager {
             return;
 
         long currentItemTp = item.hexTimePoint;
-        if(!Utils.isRRPTime(currentItemTp))
+        if(!Utils.isRRPTime(currentItemTp)) {
+            System.out.format("%s: not rrp time %x!\n", Utils.getCallerName(getClass()), currentItemTp);
             return;
+        }
 
         THSQS iThsqs = new THSQS();
 
