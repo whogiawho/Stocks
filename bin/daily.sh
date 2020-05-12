@@ -25,7 +25,7 @@ function doDailyTask {
     continueIfRawPankouReady $stockCode $tradeDate
     continueIfRawTradeDetailsReady $stockCode $tradeDate
 
-    routinesAfterCloseQuotation $stockCode $tradeDate
+    routinesAfterCloseQuotation $stockCode $tradeDate skipRA
 }
 function continueIfRawTradeDetailsReady {
     local stockCode=$1
@@ -52,10 +52,11 @@ function continueIfRawPankouReady {
 function routinesAfterCloseQuotation {
     local stockCode=$1
     local tradeDate=$2
+    local skipRealtimeAnalyze=$3
 
     setupCfgFile $stockCode $tradeDate
 
-    _realtimeAnalyze $stockCode $tradeDate y
+    _realtimeAnalyze $stockCode $tradeDate y $skipRealtimeAnalyze
 
     #generate analysis.txt
     java -jar $analyzetoolsJar makeanalysistxt $stockCode $tradeDate
@@ -65,20 +66,23 @@ function _realtimeAnalyze {
     local stockCode=$1
     local tradeDate=$2
     local bAppendLast=$3
+    local skipRealtimeAnalyze=$4
 
     setupCfgFile $stockCode $tradeDate
     prepareRetrospective $stockCode $tradeDate $bAppendLast
 
-    realtimeAnalyze $stockCode $tradeDate &
-    #wait until loading analysis.txt completes
-    sleep $SLEEP_INTERVAL 
-    $rootDirCygdrive/bin/autoImitate.bat
-    #wait so that realtimeAnalyze can complete processing
-    sleep $SLEEP_INTERVAL 
+    [[ -z $skipRealtimeAnalyze ]] && {
+        realtimeAnalyze $stockCode $tradeDate &
+        #wait until loading analysis.txt completes
+        sleep $SLEEP_INTERVAL 
+        $rootDirCygdrive/bin/autoImitate.bat
+        #wait so that realtimeAnalyze can complete processing
+        sleep $SLEEP_INTERVAL 
 
-    killall java
-    #only continue if java is killed
-    checkProcKilled java
+        killall java
+        #only continue if java is killed
+        checkProcKilled java
+    }
 }
 #bAppendLast - fix pankou&&append last tradedetails if being set
 function prepareRetrospective {
