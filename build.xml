@@ -106,6 +106,7 @@
             includes="com/westsword/stocks/base/utils/*.class,
                 com/westsword/stocks/tools/*.class,
                 com/westsword/stocks/tools/helper/*.class,
+                com/westsword/stocks/tools/matlab/*.class,
                 com/westsword/stocks/am/*.class,
                 com/westsword/stocks/base/*.class,
                 com/westsword/stocks/base/time/*.class,

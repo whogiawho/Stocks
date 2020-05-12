@@ -15,6 +15,7 @@ import com.westsword.stocks.base.utils.*;
 
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.tools.helper.*;
+import com.westsword.stocks.tools.matlab.*;
 
 public class GetSettings{
     public static void testSettings() {

@@ -1,4 +1,4 @@
-package com.westsword.stocks.tools.helper;
+package com.westsword.stocks.tools.matlab;
 
 
 import java.util.*;
@@ -6,6 +6,7 @@ import com.mathworks.engine.MatlabEngine;
 import java.util.concurrent.ExecutionException;
 
 import com.westsword.stocks.am.AmUtils;
+import com.westsword.stocks.tools.helper.SSUtils;
 
 public class MatlabSync {
     public static void run() {
