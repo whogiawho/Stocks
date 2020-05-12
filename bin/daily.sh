@@ -68,6 +68,17 @@ function _realtimeAnalyze {
 
     setupCfgFile $stockCode $tradeDate
     prepareRetrospective $stockCode $tradeDate $bAppendLast
+
+    realtimeAnalyze $stockCode $tradeDate &
+    #wait until loading analysis.txt completes
+    sleep $SLEEP_INTERVAL 
+    $rootDirCygdrive/bin/autoImitate.bat
+    #wait so that realtimeAnalyze can complete processing
+    sleep $SLEEP_INTERVAL 
+
+    killall java
+    #only continue if java is killed
+    checkProcKilled java
 }
 #bAppendLast - fix pankou&&append last tradedetails if being set
 function prepareRetrospective {

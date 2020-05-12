@@ -15,6 +15,7 @@ EXT_PAN=5
 INT_PAN=1
 UP=$EXT_PAN
 DOWN=$INT_PAN
+SLEEP_INTERVAL=${SLEEP_INTERVAL:-60}
 
 export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
 cygwin32RootDir="e:\\cygwin"

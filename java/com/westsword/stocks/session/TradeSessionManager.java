@@ -160,7 +160,7 @@ public class TradeSessionManager {
 
         long currentItemTp = item.hexTimePoint;
         if(!Utils.isRRPTime(currentItemTp)) {
-            System.out.format("%s: not rrp time %x!\n", Utils.getCallerName(getClass()), currentItemTp);
+            //System.out.format("%s: not rrp time %x!\n", Utils.getCallerName(getClass()), currentItemTp);
             return;
         }
 

@@ -209,3 +209,18 @@ function getFilesWBaseRoot {
         grep -v "txt:"| \
         awk -F: '{print $1}'|uniq
 }
+
+
+function checkProcKilled {
+    local psKey=$1
+
+    while [[ 1 ]] 
+    do
+        ps|grep -q $psKey && {
+            sleep 1
+        } || {
+            break
+        }
+    done
+}
+
