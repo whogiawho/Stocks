@@ -181,4 +181,14 @@ public class Utils {
 
         return true;
     }
+
+
+    public static int getCkptIntervalSdLength() {
+        int ckptInterval = Settings.getCkptInterval();
+        int sdInterval = Settings.getSdInterval();
+
+        int sdLength = (int)roundUp((double)ckptInterval/sdInterval, "#");
+
+        return sdLength;
+    }
 }

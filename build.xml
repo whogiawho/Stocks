@@ -108,6 +108,7 @@
                 com/westsword/stocks/tools/helper/*.class,
                 com/westsword/stocks/tools/matlab/*.class,
                 com/westsword/stocks/am/*.class,
+                com/westsword/stocks/qr/*.class,
                 com/westsword/stocks/base/*.class,
                 com/westsword/stocks/base/time/*.class,
                 com/westsword/stocks/base/ckpt/*.class,

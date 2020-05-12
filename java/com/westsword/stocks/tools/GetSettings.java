@@ -14,7 +14,9 @@ import com.westsword.stocks.base.ckpt.*;
 import com.westsword.stocks.base.utils.*;
 
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.qr.*;
 import com.westsword.stocks.tools.helper.*;
+import com.westsword.stocks.tools.helper.man.*;
 import com.westsword.stocks.tools.matlab.*;
 
 public class GetSettings{
@@ -175,6 +177,21 @@ public class GetSettings{
 
             date = stockDates.nextDate(date);
         }
+    }
+    public static void testQualRange(String stockCode) {
+        System.out.format("\n testQualRange: \n");
+
+        int ckptIntervalSdLength = Utils.getCkptIntervalSdLength();
+        int n = 2;
+        int sdLength = ckptIntervalSdLength*2;
+
+        QualRangeManager qrm = new QualRangeManager(stockCode);
+        String sqrFile = "e:\\cygwin64\\tmp\\10.txt";
+        qrm.load(sqrFile);
+        qrm.setSdLength(sdLength);
+        qrm.printStartYMDHMS();
+
+        System.out.format("qrSize=%d\n", qrm.getQRSize());
     }
     public static void testNextDate(String stockCode) {
         System.out.format("\n testNextDate: \n");
@@ -565,7 +582,7 @@ public class GetSettings{
         //testSdTime(2);       
         //testSdTime(3);       
         //testAStockSdTime();       
-        //testSdTime1();
+        testSdTime1();
 
         //testCheck(stockCode, "111000_123000_143000_145000l");
         //testCheck(stockCode, "111000_123000_143000_145000f");
@@ -588,7 +605,8 @@ public class GetSettings{
         //testGetAmCorrel(stockCode);
         //testDouble(stockCode);
         //testString(stockCode);
-        testRoundUp(stockCode);
+        //testRoundUp(stockCode);
+        testQualRange(stockCode);
         //testBackSlash(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");
