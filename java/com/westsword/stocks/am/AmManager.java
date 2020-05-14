@@ -8,6 +8,7 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import com.westsword.stocks.base.Stock;
 import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.Settings;
+import com.westsword.stocks.qr.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 
@@ -134,6 +135,27 @@ public class AmManager {
             for(int j=0; j<h; j++) {
                 AmRecord r = mAmRecordMap.get(start+j);
                 m[j][i] = (double)r.am;
+            }
+        }
+
+        return m;
+    }
+    //
+    public double[][] getAmMatrix(ArrayList<QualRange> qrList) {
+        double[][] m = null;
+
+        if(qrList!=null) {
+            int w = qrList.size();
+            int h = qrList.get(0).getSdLength();
+            m = new double[h][w];
+
+            for(int i=0; i<w; i++) {
+                QualRange qr = qrList.get(i);
+                int start = qr.getStartSdt(mSdTime);
+                for(int j=0; j<h; j++) {
+                    AmRecord r = mAmRecordMap.get(start+j);
+                    m[j][i] = (double)r.am;
+                }
             }
         }
 

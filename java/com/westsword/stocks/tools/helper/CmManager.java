@@ -29,18 +29,20 @@ public class CmManager {
         }
     }
 
-    public double[][] getCorrMatrix(String[] sTradeDates, String hmsList, AmManager am) {
+    public double[][] getCorrMatrix(double[][] m0) {
         double[][] cm = null;
-        try {
-            double[][] m0 = am.getAmMatrix(hmsList, sTradeDates);
-            cm = mEng.feval("corrcoef", (Object)m0);
 
-            System.err.format("%s %s: get cm directly!\n", Time.current(), Utils.getCallerName(getClass()));
+        try {
+            cm = mEng.feval("corrcoef", (Object)m0);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
 
         return cm;
+    }
+    public double[][] getCorrMatrix(String[] sTradeDates, String hmsList, AmManager am) {
+        double[][] m0 = am.getAmMatrix(hmsList, sTradeDates);
+        return getCorrMatrix(m0);
     }
     public double[][] getCorrMatrix(String stockCode, String startDate, String hmsList, 
             AmManager am) {
@@ -48,12 +50,14 @@ public class CmManager {
 
         String key = stockCode+startDate+hmsList;
         if(cmMap.get(key)!=null) {
-            System.out.format("%s %s: get cm from cmMap; cmMap.size=%s\n", Time.current(), Utils.getCallerName(getClass()), cmMap.size());
+            String sFormat = "%s %s: get cm from cmMap; cmMap.size=%s\n";
+            System.out.format(sFormat, Time.current(), Utils.getCallerName(getClass()), cmMap.size());
             cm = cmMap.remove(key);
             //notify the worker an element is removed
             if(mWThread!=null) {
                 synchronized(mWThread) {
-                    System.out.format("%s %s: notify the worker thread\n", Time.current(), Utils.getCallerName(getClass()));
+                    sFormat = "%s %s: notify the worker thread\n";
+                    System.out.format(sFormat, Time.current(), Utils.getCallerName(getClass()));
                     mWThread.notify();
                 }
             }
