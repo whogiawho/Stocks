@@ -17,7 +17,7 @@ public class QualRangeLoader extends FileLoader {
         String tradeDate = subFileds[0];
         String hms = subFileds[1];
 
-        QualRange qr = new QualRange(tradeDate, hms, -1);
+        QualRange qr = new QualRange(tradeDate, hms);
         if(mqrList != null)
             mqrList.add(qr);
 
