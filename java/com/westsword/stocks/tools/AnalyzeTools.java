@@ -18,8 +18,8 @@ public class AnalyzeTools{
                 "         ssinstance | ssinstances | getfullss | checksstable |\n" +
                 "         getentrust | checkabss | submitabs | makerrp |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify |\n" +
-                "         mminstance | qualrange |\n" +
-                "         makessdates | maxmatchsingle | maxmatchall | make1mamcmap ]");
+                "         mminstance | qualrange | qrmaxmatch |\n" +
+                "         makessdates | ssdmaxmatchS| ssdmaxmatchA | make1mamcmap ]");
 
         System.exit(-1);
     }
@@ -85,15 +85,18 @@ public class AnalyzeTools{
             MMInstanceHelper mmih = new MMInstanceHelper();
             mmih.run(args);
         } else if (sOption.equals("qualrange")) {
-            RangeHelper rh = new RangeHelper();
-            rh.findQualified(args);
+            QualRangeHelper qrh = new QualRangeHelper();
+            qrh.findQualified(args);
+        } else if (sOption.equals("qrmaxmatch")) {
+            QualRangeHelper qrh = new QualRangeHelper();
+            qrh.maxmatch(args);
         } else if (sOption.equals("makessdates")) {
             SSDatesHelper ssdh = new SSDatesHelper();
             ssdh.make(args);
-        } else if (sOption.equals("maxmatchsingle")) {
+        } else if (sOption.equals("ssdmaxmatchS")) {
             SSDatesHelper ssdh = new SSDatesHelper();
             ssdh.maxMatchSingle(args);
-        } else if (sOption.equals("maxmatchall")) {
+        } else if (sOption.equals("ssdmaxmatchA")) {
             SSDatesHelper ssdh = new SSDatesHelper();
             ssdh.maxMatchAll(args);
         } else if (sOption.equals("getfullss")) {
