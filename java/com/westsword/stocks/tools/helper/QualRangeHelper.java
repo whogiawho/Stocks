@@ -35,7 +35,7 @@ public class QualRangeHelper {
         CheckPoint0 ckpt0 = new CheckPoint0();
         TreeSet<String> hmsSet = ckpt0.get();
 
-        String sFormat = "%x %x %s %s %8.3f %8.3f\n";
+        String sFormat = "%s %s %x %x %8.3f %8.3f\n";
         AmManager am = new AmManager(stockCode);
         SdTime1 sdt = new SdTime1(stockCode);
 
@@ -54,7 +54,7 @@ public class QualRangeHelper {
                     double inPrice = am.getInPrice(tradeType, inTp);
                     double outPrice = r.getOutPrice(tradeType);
                     System.out.format(sFormat, 
-                            inTp, r.hexTimePoint, inYMDHMS, outYMDHMS, inPrice, outPrice); 
+                            inYMDHMS, outYMDHMS, inTp, r.hexTimePoint, inPrice, outPrice); 
                 }
             }
         }
@@ -99,8 +99,11 @@ public class QualRangeHelper {
         //print max elements of qrSet
         QualRange qr = qrSet.last();
         qr.print();
+
+        /*
         qr = qrSet.first();
         qr.print();
+        */
     }
     private int getStart(CommandLine cmd) {
         return SSUtils.getInteger(cmd, "s", 1);
@@ -235,7 +238,7 @@ public class QualRangeHelper {
     }
 
     private void verifyUsage() {
-        System.err.println("usage: java AnalyzeTools qrverify stockCode tradeType cycle targetProfit endDate endHMS matchedSdLen");
+        System.err.println("usage: java AnalyzeTools qrverify [-h] stockCode tradeType cycle targetProfit endDate endHMS matchedSdLen");
         System.err.println("       stockCode - which stock is to be operated");
         System.err.println("       tradeType - long or short");
         System.err.println("       <cycle, targetProfit> - second part");

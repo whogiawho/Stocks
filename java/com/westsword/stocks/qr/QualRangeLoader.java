@@ -13,7 +13,7 @@ public class QualRangeLoader extends FileLoader {
             return true;
 
         String[] fields=line.split(" +");
-        String[] subFileds = fields[2].split("_");
+        String[] subFileds = fields[0].split("_");
         String tradeDate = subFileds[0];
         String hms = subFileds[1];
 
