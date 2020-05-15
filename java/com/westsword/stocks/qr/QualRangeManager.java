@@ -40,16 +40,19 @@ public class QualRangeManager {
         double[][] m = mAm.getAmMatrix(mqrList);
         return cm.getCorrMatrix(m);
     }
-    public void getMatchedSet(double[][] cm, TreeSet<QualRange> qrSet, double threshold) {
-        for(int i=0; i<cm.length; i++) {
+    public void getMatchedSet(double[][] corrM, TreeSet<QualRange> qrSet, double threshold) {
+        for(int i=0; i<corrM.length; i++) {
             int count = 0;
             QualRange qr = mqrList.get(i);
-            for(int j=0; j<cm[i].length; j++) {
-                if(cm[i][j]>=threshold) {
+            TreeSet<String> tdSet = new TreeSet<String>();
+            for(int j=0; j<corrM[i].length; j++) {
+                if(corrM[i][j]>=threshold) {
                     count++;
+                    tdSet.add(mqrList.get(j).getEndDate());
                 }
             }
-            qr.setMatchedCnt(count);
+            qr.setMatchedQrCnt(count);
+            qr.setMatchedTdCnt(tdSet.size());
             qrSet.add(new QualRange(qr));
         }
     }

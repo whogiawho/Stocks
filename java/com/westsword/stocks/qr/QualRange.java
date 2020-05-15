@@ -10,20 +10,24 @@ public class QualRange implements Comparable<QualRange> {
     private String endHMS;
     private int mSdLength;          //the length before <endTradeDate, endHMS>
 
-    private int mMatchedCnt;
+    private int mMatchedQrCnt;
+    private int mMatchedTdCnt;
 
-    public QualRange(String endTradeDate, String endHMS, int sdLength, int matchedCnt) {
+    public QualRange(String endTradeDate, String endHMS, int sdLength, 
+            int matchedQrCnt, int matchedTdCnt) {
         this.endTradeDate = endTradeDate;
         this.endHMS = endHMS;
         mSdLength = sdLength;
 
-        mMatchedCnt = matchedCnt;
+        mMatchedQrCnt = matchedQrCnt;
+        mMatchedTdCnt = matchedTdCnt;
     }
     public QualRange(String endTradeDate, String endHMS) {
-        this(endTradeDate, endHMS, -1, -1);
+        this(endTradeDate, endHMS, -1, -1, -1);
     }
     public QualRange(QualRange qr) {
-        this(qr.getEndDate(), qr.getEndHMS(), qr.getSdLength(), qr.getMatchedCnt());
+        this(qr.getEndDate(), qr.getEndHMS(), qr.getSdLength(), 
+                qr.getMatchedQrCnt(), qr.getMatchedTdCnt());
     }
 
 
@@ -33,14 +37,21 @@ public class QualRange implements Comparable<QualRange> {
     public int getSdLength() {
         return mSdLength;
     }
-    public void setMatchedCnt(int cnt) {
-        mMatchedCnt = cnt;
+    public void setMatchedQrCnt(int cnt) {
+        mMatchedQrCnt = cnt;
     }
-    public int getMatchedCnt() {
-        return mMatchedCnt;
+    public int getMatchedQrCnt() {
+        return mMatchedQrCnt;
+    }
+    public void setMatchedTdCnt(int cnt) {
+        mMatchedTdCnt = cnt;
+    }
+    public int getMatchedTdCnt() {
+        return mMatchedTdCnt;
     }
     public void print() {
-        System.out.format("%s %s %4d %4d\n", endTradeDate, endHMS, mSdLength, mMatchedCnt);
+        System.out.format("%s %s %4d %4d %4d\n", 
+                endTradeDate, endHMS, mSdLength, mMatchedQrCnt, mMatchedTdCnt);
     }
 
 
@@ -74,6 +85,6 @@ public class QualRange implements Comparable<QualRange> {
 
 
     public int compareTo(QualRange qr) {
-        return Integer.compare(mMatchedCnt, qr.getMatchedCnt());
+        return Integer.compare(mMatchedQrCnt, qr.getMatchedQrCnt());
     }
 }
