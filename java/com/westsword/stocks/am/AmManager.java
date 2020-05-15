@@ -79,10 +79,17 @@ public class AmManager {
         AmRecord r = getFloorItem(outTime);
         return r.getOutPrice(tradeType);
     }
+    public double getOutPrice(int tradeType, int sdt) {
+        AmRecord r = getFloorItem(sdt);
+        return r.getOutPrice(tradeType);
+    }
+    public AmRecord getFloorItem(int sdt) {
+        sdt = mAmRecordMap.floorKey(sdt);
+        return mAmRecordMap.get(sdt);
+    }
     public AmRecord getFloorItem(long tp) {
         int idx = mSdTime.getAbs(tp);
-        idx = mAmRecordMap.floorKey(idx);
-        return mAmRecordMap.get(idx);
+        return getFloorItem(idx);
     }
     public AmRecord getCeilingItem(long tp) {
         int idx = mSdTime.getAbs(tp);
@@ -259,6 +266,21 @@ public class AmManager {
         aM = last.am - first.am;
 
         return aM;
+    }
+    public double getAmCorrel(int startIdx0, int endIdx0, int startIdx1, int endIdx1) {
+        double amCorrel = Double.NaN;
+
+        NavigableMap<Integer, AmRecord> map0 = mAmRecordMap.subMap(startIdx0, true, endIdx0, true);
+        NavigableMap<Integer, AmRecord> map1 = mAmRecordMap.subMap(startIdx1, true, endIdx1, true);
+
+        int size0 = map0.size(); int expSize0 = endIdx0-startIdx0+1;
+        int size1 = map1.size(); int expSize1 = endIdx1-startIdx1+1;
+        if(!checkSizes(size0, expSize0, size1, expSize1, 
+                    "", "", "", "",
+                    "", "", "", ""))
+            return amCorrel;
+
+        return getAmCorrel(map0, map1);
     }
     //startDate0,startHMS0 endDate0,endHMS0
     //startDate1,startHMS1 endDate1,endHMS1

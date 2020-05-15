@@ -103,6 +103,9 @@ public class GetSettings{
         sdTimePrint(sdTime);
 
         sdTimePrintEx(sdTime);
+
+        long tp = sdTime.rgetAbs(0);
+        System.out.format("tp=%x\n", tp);
     }
     public static void sdTimePrintEx(SdTime1 sdTime) {
         sdPrintEx(sdTime, "20090105", "10:30:00");
@@ -606,7 +609,7 @@ public class GetSettings{
         //testDouble(stockCode);
         //testString(stockCode);
         //testRoundUp(stockCode);
-        testQualRange(stockCode);
+        //testQualRange(stockCode);
         //testBackSlash(stockCode);
         
         //listStockDates(stockCode, "20090101", "20200112");

@@ -18,7 +18,7 @@ public class AnalyzeTools{
                 "         ssinstance | ssinstances | getfullss | checksstable |\n" +
                 "         getentrust | checkabss | submitabs | makerrp |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify |\n" +
-                "         mminstance | qualrange | qrmaxmatch |\n" +
+                "         mminstance | qualrange | qrmaxmatch | qrverify |\n" +
                 "         makessdates | ssdmaxmatchS| ssdmaxmatchA | make1mamcmap ]");
 
         System.exit(-1);
@@ -90,6 +90,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("qrmaxmatch")) {
             QualRangeHelper qrh = new QualRangeHelper();
             qrh.maxmatch(args);
+        } else if (sOption.equals("qrverify")) {
+            QualRangeHelper qrh = new QualRangeHelper();
+            qrh.verify(args);
         } else if (sOption.equals("makessdates")) {
             SSDatesHelper ssdh = new SSDatesHelper();
             ssdh.make(args);
