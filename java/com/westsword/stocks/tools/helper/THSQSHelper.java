@@ -59,7 +59,7 @@ public class THSQSHelper {
     }
     public static void checkAbsS(String[] args) {
         TradeSessionManager m = getTradeSessionManager();
-        m.checkAbnormalSubmittedSessions();
+        m.checkAbnormalSubmittedSessions(false);
     }
     public static void makeRRP(String[] args) {
         TradeSessionManager m = getTradeSessionManager();

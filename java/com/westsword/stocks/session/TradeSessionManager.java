@@ -42,11 +42,13 @@ public class TradeSessionManager {
 
     //state: c->b c->d
     //take a look at TradeSession.java for more
-    public void checkAbnormalSubmittedSessions() {
+    public void checkAbnormalSubmittedSessions(boolean bRunTimeCheck) {
         System.out.format("%s: entering\n", Utils.getCallerName(getClass()));
 
-        if(!Utils.isMarketOff())
-            return;
+        if(bRunTimeCheck) {
+            if(!Utils.isMarketOff())
+                return;
+        }
 
         ArrayList<TradeSession> removedList = new ArrayList<TradeSession>();
         THSQS iThsqs = new THSQS();

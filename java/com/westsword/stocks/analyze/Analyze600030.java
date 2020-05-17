@@ -125,7 +125,7 @@ public class Analyze600030 {
         if(isLastRawTradeDetailHandled()||isLastPankouHandled()) {
             System.out.format("%s: isLastRawTradeDetailHandled=%b, isLastPankouHandled=%b\n", 
                     Utils.getCallerName(getClass()), isLastRawTradeDetailHandled(), isLastPankouHandled());
-            mTsMan.checkAbnormalSubmittedSessions();
+            mTsMan.checkAbnormalSubmittedSessions(true);
         }
     }
 

@@ -1,6 +1,35 @@
 #!/bin/bash
 
 
+function checkAllSSTable {
+    local stockCode=$1
+    local tradeDate=$2
+
+    java -jar $analyzetoolsJar checksstable $stockCode $tradeDate h0 2>/dev/null
+    java -jar $analyzetoolsJar checksstable $stockCode $tradeDate h1 2>/dev/null
+    java -jar $analyzetoolsJar checksstable $stockCode $tradeDate h2 2>/dev/null
+}
+
+function checkSSTable {
+    local stockCode=$1
+    local tradeDate=$2
+    local ssTableName=$3
+
+    local fSSTable=$rootDirCygdrive/data/ssTable/$ssTableName.txt
+    cat $fSSTable |grep -vE "^$|#" |awk '{print $9}'|sed "s/:/ /g"|while read line; 
+    do 
+        local matchedTradeDate hmsList 
+        read matchedTradeDate hmsList<<<`echo $line`; 
+        local amcorrel=`getAmCorrel $stockCode $tradeDate $matchedTradeDate $hmsList`; 
+        local ret=`gt $amcorrel 0.90`; 
+        [[ $ret == 1 ]] && echo $matchedTradeDate $hmsList $amcorrel; 
+    done
+}
+
+
+
+
+
 #dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 function statsBasedOnOp {
     local dir=$1
@@ -64,28 +93,4 @@ function ssGetMinDeltas {
     rm -rf $fTmp1
 }
 
-function checkAllSSTable {
-    local stockCode=$1
-    local tradeDate=$2
-
-    java -jar $analyzetoolsJar checksstable $stockCode $tradeDate h0 2>/dev/null
-    java -jar $analyzetoolsJar checksstable $stockCode $tradeDate h1 2>/dev/null
-    java -jar $analyzetoolsJar checksstable $stockCode $tradeDate h2 2>/dev/null
-}
-
-function checkSSTable {
-    local stockCode=$1
-    local tradeDate=$2
-    local ssTableName=$3
-
-    local fSSTable=$rootDirCygdrive/data/ssTable/$ssTableName.txt
-    cat $fSSTable |grep -vE "^$|#" |awk '{print $9}'|sed "s/:/ /g"|while read line; 
-    do 
-        local matchedTradeDate hmsList 
-        read matchedTradeDate hmsList<<<`echo $line`; 
-        local amcorrel=`getAmCorrel $stockCode $tradeDate $matchedTradeDate $hmsList`; 
-        local ret=`gt $amcorrel 0.90`; 
-        [[ $ret == 1 ]] && echo $matchedTradeDate $hmsList $amcorrel; 
-    done
-}
 

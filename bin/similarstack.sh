@@ -21,7 +21,7 @@ function listSSTableStats {
         echo $line|grep -qE "\#|^$" && continue; 
 
         local a b c d e f g h i
-        read a b c d e f g h i <<<`echo $line`;
+        read a b c d e f g h i <<<`echo $line`; #assuming i to be a single component, containing no &
         local tradeDate=${i%%:*}; 
         local hmsList=${i##*:};
         getInstanceStats $dir/${tradeDate}_${maxCycle}_${targetRate} $hmsList
