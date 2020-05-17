@@ -15,16 +15,33 @@ function listSSTableStats {
 
     local fSSTable=$rootDirCygdrive/data/ssTable/$ssTableName.txt
 
+    local -a components
     local line=
     while read line; 
     do 
         echo $line|grep -qE "\#|^$" && continue; 
 
         local a b c d e f g h i
-        read a b c d e f g h i <<<`echo $line`; #assuming i to be a single component, containing no &
-        local tradeDate=${i%%:*}; 
-        local hmsList=${i##*:};
-        getInstanceStats $dir/${tradeDate}_${maxCycle}_${targetRate} $hmsList
+        read a b c d e f g h i <<<`echo $line`; 
+
+        #loop $i to get the component with the last endHMS
+        local lastEndHMS=
+        local lastHmsList=
+        local lastTradeDate=
+        IFS='&' read -ra components <<<"$i"
+        for i in "${components[@]}"
+        do
+            local tradeDate=${i%%:*}; 
+            local hmsList=${i##*:};
+            local endHMS=${hmsList##*_}
+            [[ $endHMS > $lastEndHMS ]] && {
+                lastEndHMS=$endHMS
+                lastTradeDate=$tradeDate
+                lastHmsList=$hmsList
+            }
+        done
+
+        getInstanceStats $dir/${lastTradeDate}_${maxCycle}_${targetRate} $lastHmsList
     done<$fSSTable
 }
 
