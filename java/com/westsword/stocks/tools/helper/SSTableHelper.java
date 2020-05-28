@@ -42,16 +42,19 @@ public class SSTableHelper {
 
         for(int i=0; i<sstrList.size(); i++) {
             SSTableRecord sstr = sstrList.get(i);
-            double amcorrel = sstr.getAmCorrel(am, tradeDate);
-            String sAmCorrel = String.format("%8.3f", amcorrel);
-            sAmCorrel = AnsiColor.getColorString(sAmCorrel, AnsiColor.ANSI_RED);
+            double[] ret = new double[sstr.getComponentSize()];
+            //System.out.format("size=%d\n", sstr.getComponentSize());
+
+            boolean bEval = sstr.eval(am, tradeDate, ret);
+            String sAmCorrels = sstr.getAmCorrels(ret);
+            sAmCorrels = AnsiColor.getColorString(sAmCorrels, AnsiColor.ANSI_RED);
             double inPrice = sstr.getInPrice(am, tradeDate);
-            if(amcorrel >= sstr.threshold) {
-                String sFormat = "%-4s %s %4d %4d " + 
-                                 "%8.3f %8.3f %8s\n";
+            if(bEval) {
+                String sFormat = "%-30s %s %4d %4d " + 
+                                 "%8.3f %8.3f %s\n";
                 System.out.format(sFormat, 
                         sstr.sTableName, sstr.sMatchExp, sstr.sTDistance, sstr.tradeType, 
-                        inPrice, sstr.threshold, sAmCorrel);
+                        inPrice, sstr.threshold, sAmCorrels);
             }
         }
     }

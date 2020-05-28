@@ -196,6 +196,16 @@ public class GetSettings{
 
         System.out.format("qrSize=%d\n", qrm.getQRSize());
     }
+    public static void testSplit(String stockCode) {
+        System.out.format("\n testSplit: \n");
+
+        String str = "20170922:092500_141100&20170922:093400_094300";
+        String[] fileds = str.split("\\&|\\|");
+        System.out.format("size=%d\n", fileds.length);
+        for(int i=0; i<fileds.length; i++) {
+            System.out.format("fileds[%d]=%s\n", i, fileds[i]);
+        }
+    }
     public static void testNextDate(String stockCode) {
         System.out.format("\n testNextDate: \n");
 
@@ -585,7 +595,7 @@ public class GetSettings{
         //testSdTime(2);       
         //testSdTime(3);       
         //testAStockSdTime();       
-        testSdTime1();
+        //testSdTime1();
 
         //testCheck(stockCode, "111000_123000_143000_145000l");
         //testCheck(stockCode, "111000_123000_143000_145000f");
@@ -615,6 +625,7 @@ public class GetSettings{
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
         //testNextDate(stockCode);
+        testSplit(stockCode);
     }
 
 }

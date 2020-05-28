@@ -90,7 +90,10 @@ public class SSTableRecord {
         return hmsList;
     }
     public String[] getComponents() {
-        return sMatchExp.split("\\&\\|");
+        return sMatchExp.split("\\&|\\|");
+    }
+    public int getComponentSize() {
+        return getComponents().length;
     }
     public ArrayList<String> getTradeDates() {
         ArrayList<String> sTradeDateList = new ArrayList<String>();
@@ -113,22 +116,24 @@ public class SSTableRecord {
         if(mbEvalResult==null) {
             if(eligible(currentTp)) {
                 String currentDate = Time.getTimeYMD(currentTp, false);
-                mbEvalResult = eval(am, amrMap, currentDate);
+                mbEvalResult = eval(am, amrMap, currentDate, null);
             }
         }
 
         return mbEvalResult;
     }
-    private boolean eval(AmManager am, TreeMap<Integer, AmRecord> amrMap, String currentDate) {
+    private boolean eval(AmManager am, NavigableMap<Integer, AmRecord> amrMap, String currentDate, double[] ret) {
         boolean bResult = true;
 
+        SdTime1 sdTime = new SdTime1(stockCode);
         String[] fields = getComponents();
         for(int i=0; i<fields.length; i++) {
             String[] subFields = fields[i].split(":");
             String tradeDate = subFields[0];
             String[] hmss = subFields[1].split("_");
             NavigableMap<Integer, AmRecord> map0 = am.getItemMap(tradeDate, hmss[0], tradeDate, hmss[1]);
-            NavigableMap<Integer, AmRecord> map1 = getItemMap(amrMap, currentDate, hmss[0], hmss[1]);
+            NavigableMap<Integer, AmRecord> map1 = AmUtils.getItemMap(amrMap, sdTime, 
+                    currentDate, hmss[0], currentDate, hmss[1]); 
             double amcorrel = Double.NaN;
             //print warning message if map0.size&map1.size are not equal
             if(map0.size()!=map1.size()) {
@@ -139,6 +144,8 @@ public class SSTableRecord {
             } else {
                 amcorrel = am.getAmCorrel(map0, map1);
             }
+            if(ret != null)
+                ret[i] = amcorrel;
 
             if(amcorrel < threshold) {
                 bResult = false;
@@ -163,12 +170,6 @@ public class SSTableRecord {
         }
 
         return bEligible;
-    }
-    private NavigableMap<Integer, AmRecord> getItemMap(TreeMap<Integer, AmRecord> amrMap, 
-            String currentDate, String startHMS, String endHMS) {
-        SdTime1 sdTime = new SdTime1(stockCode);
-
-        return AmUtils.getItemMap(amrMap, sdTime, currentDate, startHMS, currentDate, endHMS);
     }
 
 
@@ -206,17 +207,23 @@ public class SSTableRecord {
 
         return inPrice;
     }
-    public boolean eval(AmManager am, String tradeDate) {
+    public String getAmCorrels(double[] ret) {
+        String sAmCorrels = "";
+        for(int i=0; i<ret.length; i++) {
+            sAmCorrels += String.format("%8.3f", ret[i]);
+        }
+        return sAmCorrels;
+    }
+    public boolean eval(AmManager am, String tradeDate, double[] ret) {
         boolean bResult = false;
 
-        double amcorrel = getAmCorrel(am, tradeDate);
-        if(amcorrel >= threshold) {
-            bResult = true;
-        }
+        String startHMS = AStockSdTime.CALL_AUCTION_END_TIME;
+        String endHMS = AStockSdTime.CLOSE_QUOTATION_TIME;
+        NavigableMap<Integer, AmRecord> amrMap = am.getItemMap(tradeDate, startHMS, tradeDate, endHMS);
 
-        return bResult;
+        return eval(am, amrMap, tradeDate, ret); 
     }
-    public double getAmCorrel(AmManager am, String tradeDate) {
+    private double getAmCorrel(AmManager am, String tradeDate) {
         String[] fields = getComponents();
         String[] subFields = fields[0].split(":");
         String[] hmss = subFields[1].split("_");
