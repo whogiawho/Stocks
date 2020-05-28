@@ -183,12 +183,13 @@ function execGetInstantData {
     local serverAddr=$3
     local serverPort=$4
     local serverType=$5
+    local sEnv=$6
+
+    local runGetInstantData=$stockCode:$tradeDate:$serverAddr:$serverPort:$serverType
 
     export HOME=$cygwin32RootCygdrive/home/$user;      #32bit cygwin HOME
     local pathb=$PATH                                  #save PATH
     resetPATH; 
-    local sEnv=0
-    local runGetInstantData=$stockCode:$tradeDate:$serverAddr:$serverPort:$serverType
     wscript.exe "$cygwin32RootDir\invisible.vbs" "$cygwin32RootDir\_mintty.bat" $sEnv $runGetInstantData; 
     export HOME=/home/$user;                           #restore HOME to 64bit cygwin
     export PATH=$pathb                                 #restore PATH
@@ -207,7 +208,7 @@ function autoTrade {
     local serverPort=
     local serverType=
     local others=
-    local line=`getHexinServerList |grep 56000001|head -n 1`
+    local line=`getHexinServerList |grep -E "56000001|56000000" |head -n 1`
     [[ ! -z $line ]] && {
         read serverAddr serverPort serverType others <<<`echo $line`
         echo $serverAddr:$serverPort:$serverType
@@ -220,7 +221,7 @@ function autoTrade {
     autoLoginQs
 
     #start cygwin32, and run getInstantData
-    execGetInstantData $stockCode $tradeDate $serverAddr $serverPort $serverType
+    execGetInstantData $stockCode $tradeDate $serverAddr $serverPort $serverType $sEnv
 
     realtimeAnalyze $stockCode $tradeDate
 }

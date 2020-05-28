@@ -23,6 +23,51 @@ function getExtremePrice {
     line=`getMinPrice $stockCode $tradeDateList`
     echo $line
 }
+function getMaxCol {
+    local stockCode=$1
+    local tradeDateList=$2
+    local col=$3
+
+    local max=-1000000000000000000000000000
+    local maxTime=
+    local i=
+    for i in $tradeDateList
+    do
+        local analysisTxt="$dailyDir\\$stockCode\\$i\\analysis.txt"
+        local dailyMax=`awk '{print \$col}' col=$col $analysisTxt|sort -n|tail -n 1`
+        local dailyMaxTime=`cat $analysisTxt|sort -nk$col,$col|tail -n 1|awk '{print $1}'`
+        local rCmp=`ge $dailyMax $max`
+        [[ $rCmp == 1 ]] && {
+            max=$dailyMax
+            maxTime=${i}_`getTimeHMS $dailyMaxTime`
+        }
+    done
+
+    echo $max $maxTime
+}
+function getMinCol {
+    local stockCode=$1
+    local tradeDateList=$2
+    local col=$3
+
+    local min=1000000000000000000000000000
+    local minTime=
+    local i=
+    for i in $tradeDateList
+    do
+        local analysisTxt="$dailyDir\\$stockCode\\$i\\analysis.txt"
+        local dailyMin=`awk '{print \$col}' col=$col $analysisTxt|sort -rn|tail -n 1`
+        local dailyMinTime=`cat $analysisTxt|sort -rnk$col,$col|tail -n 1|awk '{print $1}'`
+        local rCmp=`le $dailyMin $min`
+        [[ $rCmp == 1 ]] && {
+            min=$dailyMin
+            minTime=${i}_`getTimeHMS $dailyMinTime`
+        }
+    done
+
+    echo $min $minTime
+}
+
 function getMaxPrice {
     local stockCode=$1
     local tradeDateList=$2
