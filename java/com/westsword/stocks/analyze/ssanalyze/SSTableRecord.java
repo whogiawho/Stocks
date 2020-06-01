@@ -26,6 +26,7 @@ public class SSTableRecord {
 
 
     private Boolean mbEvalResult;
+    private ArrayList<String> mListOfLastHMS;
 
 
     public SSTableRecord (int tradeCount, 
@@ -47,6 +48,7 @@ public class SSTableRecord {
         this.sMatchExp = sMatchExp;
 
         mbEvalResult = null;
+        mListOfLastHMS = getListOfLastHMS();
     }
     public SSTableRecord(SSTableRecord r) {
         this(r.tradeCount, 
@@ -131,6 +133,7 @@ public class SSTableRecord {
             String[] subFields = fields[i].split(":");
             String tradeDate = subFields[0];
             String[] hmss = subFields[1].split("_");
+
             NavigableMap<Integer, AmRecord> map0 = am.getItemMap(tradeDate, hmss[0], tradeDate, hmss[1]);
             NavigableMap<Integer, AmRecord> map1 = AmUtils.getItemMap(amrMap, sdTime, 
                     currentDate, hmss[0], currentDate, hmss[1]); 
@@ -159,9 +162,8 @@ public class SSTableRecord {
         boolean bEligible = true;
 
         String currentDate = Time.getTimeYMD(currentTp, false);
-        ArrayList<String> hmsList = getListOfLastHMS();
-        for(int i=0; i<hmsList.size(); i++) {
-            String hms = hmsList.get(i);
+        for(int i=0; i<mListOfLastHMS.size(); i++) {
+            String hms = mListOfLastHMS.get(i);
             long tp = Time.getSpecificTime(currentDate, hms);
             if(currentTp<tp) {
                 bEligible = false;
@@ -176,14 +178,13 @@ public class SSTableRecord {
 
 
     public static ArrayList<String> getTradeDates(ArrayList<SSTableRecord> list) {
-        ArrayList<String> sTradeDateList = new ArrayList<String>();
-
+        TreeSet<String> sTradeDateSet = new TreeSet<String>();
         for(int i=0; i<list.size(); i++) {
             SSTableRecord r = list.get(i);
-            sTradeDateList.addAll(r.getTradeDates());
+            sTradeDateSet.addAll(r.getTradeDates());
         }
 
-        return sTradeDateList;
+        return new ArrayList<String>(sTradeDateSet);
     }
 
 
@@ -195,18 +196,6 @@ public class SSTableRecord {
         this.bSessionOpened = bSessionOpened;
     }
 
-
-
-    //below methods assuming only one component
-    public double getInPrice(AmManager am, String tradeDate) {
-        double inPrice = Double.NaN;
-
-        ArrayList<String> hmsList = getListOfLastHMS();
-        long tp = Time.getSpecificTime(tradeDate, hmsList.get(0));
-        inPrice = am.getInPrice(tradeType, tp);
-
-        return inPrice;
-    }
     public String getAmCorrels(double[] ret) {
         String sAmCorrels = "";
         for(int i=0; i<ret.length; i++) {
@@ -223,6 +212,29 @@ public class SSTableRecord {
 
         return eval(am, amrMap, tradeDate, ret); 
     }
+
+    //not assuming the last HMS of 1st component is the inTime
+    public double getInPrice(AmManager am, String tradeDate) {
+        double inPrice = Double.NaN;
+
+        String sInTime = "";
+        for(int i=0; i<mListOfLastHMS.size(); i++) {
+            String sItem = mListOfLastHMS.get(i);
+            if(sItem.compareTo(sInTime)>0) {
+                sInTime = sItem;
+            }
+        }
+
+        long tp = Time.getSpecificTime(tradeDate, sInTime);
+        inPrice = am.getInPrice(tradeType, tp);
+
+        return inPrice;
+    }
+
+
+
+
+    //assuming only 1 component
     private double getAmCorrel(AmManager am, String tradeDate) {
         String[] fields = getComponents();
         String[] subFields = fields[0].split(":");
