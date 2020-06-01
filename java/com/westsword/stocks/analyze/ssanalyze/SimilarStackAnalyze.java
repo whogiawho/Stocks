@@ -28,6 +28,8 @@ public class SimilarStackAnalyze {
 
         //set mAm
         ArrayList<String> tradeDateList = SSTableRecord.getTradeDates(mSSTableRecordList);
+        System.out.format("%s: new AmManager with tradeDates=%s\n", 
+                Utils.getCallerName(getClass()), tradeDateList.toString());
         mAm = new AmManager(stockCode, tradeDateList);
     }
     public void setTradeSessionManager(TradeSessionManager m) {

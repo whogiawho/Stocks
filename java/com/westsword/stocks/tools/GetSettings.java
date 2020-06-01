@@ -469,6 +469,12 @@ public class GetSettings{
         System.out.format("%s\n", s);
         s = s.replaceAll("[\\[\\] ]", "");
         System.out.format("%s\n", s);
+
+        String sEmpty = "";
+        String sCompared = "abc";
+        int iCompared = sCompared.compareTo(sEmpty);
+        if(iCompared>0)
+            System.out.format("sCompared(%s) > sEmpty(%s) iCompared=%d\n", sCompared, sEmpty, iCompared);
     }
     public static void testFinal(String stockCode) {
         System.out.format("\n testFinal: \n");
@@ -617,7 +623,7 @@ public class GetSettings{
         //testFinal(stockCode);
         //testGetAmCorrel(stockCode);
         //testDouble(stockCode);
-        //testString(stockCode);
+        testString(stockCode);
         //testRoundUp(stockCode);
         //testQualRange(stockCode);
         //testBackSlash(stockCode);
