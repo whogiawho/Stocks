@@ -74,6 +74,27 @@ function baseGetSSCommonTradeDetails {
 
     rm -rf $fTmp3
 }
+#dir=data/similarStack/600030/20160108_0.90_T1L
+#matchExpr="20150410:144400_145500&20150410:112600_131500"
+function _baseGetSSCommonTradeDetails {
+    local dir=$1
+    local matchExpr=$2
+    local maxWait=$3
+    local maxCycle=${4:-180}
+    local targetRate=${5:-1.100}
+
+    local exprPart1=${matchExpr%&*}
+    local exprPart2=${matchExpr#*&}
+    local tradeDate1=${exprPart1%:*}
+    local tradeDate2=${exprPart2%:*}
+    local hmsList1=${exprPart1#*:}
+    local hmsList2=${exprPart2#*:}
+    local dir1=$dir/${tradeDate1}_${maxCycle}_${targetRate}
+    local dir2=$dir/${tradeDate2}_${maxCycle}_${targetRate}
+
+    #echo $dir1 $hmsList1 $dir2 $hmsList2
+    baseGetSSCommonTradeDetails $dir1 $hmsList1 $maxWait $dir2 $hmsList2
+}
 
 
 
