@@ -42,6 +42,6 @@ function checkOpenSession {
         local tradeType=`grep tradeType $i|awk -F= '{print $2}'|dos2unix`
         local profit=NaN
 
-        printf "%s %12s %12s %4s %8s\n" $i $inDate $outDate `getTradeDateDist $stockCode $inDate $outDate` $profit; 
+        printf "%s %8s %12s %12s %4s %8s\n" $i $inPrice $inDate $outDate `getTradeDateDist $stockCode $inDate $outDate` $profit; 
     done
 }
