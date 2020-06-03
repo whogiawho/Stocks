@@ -200,6 +200,11 @@ function cleardmp {
     rm -rf $hexinRoot/*.dmp
     set +x
 }
+function cleartmp {
+    set -x
+    rm -rf $TMP/tmp* $TMP/sh-thd.*
+    set +x
+}
 
 function getFilesWBaseRoot {
     local rootKey=$1          #something like "d:\\\\"

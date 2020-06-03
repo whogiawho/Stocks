@@ -31,6 +31,14 @@ public class Analyze600030 {
     private final SimilarStackAnalyze mSsAnalyzeh0;
     private final SimilarStackAnalyze mSsAnalyzeh1;
     private final SimilarStackAnalyze mSsAnalyzeh2;
+
+    private final SimilarStackAnalyze mSsAnalyze20160302_134500_140700_2;
+    private final SimilarStackAnalyze mSsAnalyze20140416_093800_095600_2;
+    private final SimilarStackAnalyze mSsAnalyze20110221_094900_130200_2;
+    private final SimilarStackAnalyze mSsAnalyze20131017_105000_133200_2;
+    private final SimilarStackAnalyze mSsAnalyze20180117_093900_105800_2;
+    private final SimilarStackAnalyze mSsAnalyze20180413_110900_111200_2;
+
     private final SimilarStackAnalyze mSsAnalyze20150529_093900_105800_2;
     private final SimilarStackAnalyze mSsAnalyze20150410_112600_131500_2;
     private final SimilarStackAnalyze mSsAnalyze20160817_142300_144100_2;
@@ -63,19 +71,32 @@ public class Analyze600030 {
         //set mTsMan
         mTsMan = new TradeSessionManager(stockCode, tradeDate);
         mTsMan.check2SubmitSession();
-        //set mSsAnalyzeh[012]
+        //set mSsAnalyzeh[012] etc
         mSsAnalyzeh0 = new SimilarStackAnalyze(stockCode, "h0");
         mSsAnalyzeh1 = new SimilarStackAnalyze(stockCode, "h1");
         mSsAnalyzeh2 = new SimilarStackAnalyze(stockCode, "h2");
+        mSsAnalyze20160302_134500_140700_2 = new SimilarStackAnalyze(stockCode, "20160302_134500_140700_2");
+        mSsAnalyze20140416_093800_095600_2 = new SimilarStackAnalyze(stockCode, "20140416_093800_095600_2");
+        mSsAnalyze20110221_094900_130200_2 = new SimilarStackAnalyze(stockCode, "20110221_094900_130200_2");
+        mSsAnalyze20131017_105000_133200_2 = new SimilarStackAnalyze(stockCode, "20131017_105000_133200_2");
+        mSsAnalyze20180117_093900_105800_2 = new SimilarStackAnalyze(stockCode, "20180117_093900_105800_2");
+        mSsAnalyze20180413_110900_111200_2 = new SimilarStackAnalyze(stockCode, "20180413_110900_111200_2");
         mSsAnalyze20150529_093900_105800_2 = new SimilarStackAnalyze(stockCode, "20150529_093900_105800_2");
         mSsAnalyze20150410_112600_131500_2 = new SimilarStackAnalyze(stockCode, "20150410_112600_131500_2");
         mSsAnalyze20160817_142300_144100_2 = new SimilarStackAnalyze(stockCode, "20160817_142300_144100_2");
         mSsAnalyze20170922_092500_141100_2 = new SimilarStackAnalyze(stockCode, "20170922_092500_141100_2");
         mSsAnalyze20190924_101700_103800_2 = new SimilarStackAnalyze(stockCode, "20190924_101700_103800_2");
         mSsAnalyze20110104_095500_110900_3 = new SimilarStackAnalyze(stockCode, "20110104_095500_110900_3");
+
         mSsAnalyzeh0.setTradeSessionManager(mTsMan);
         mSsAnalyzeh1.setTradeSessionManager(mTsMan);
         mSsAnalyzeh2.setTradeSessionManager(mTsMan);
+        mSsAnalyze20160302_134500_140700_2.setTradeSessionManager(mTsMan);
+        mSsAnalyze20140416_093800_095600_2.setTradeSessionManager(mTsMan);
+        mSsAnalyze20110221_094900_130200_2.setTradeSessionManager(mTsMan);
+        mSsAnalyze20131017_105000_133200_2.setTradeSessionManager(mTsMan);
+        mSsAnalyze20180117_093900_105800_2.setTradeSessionManager(mTsMan);
+        mSsAnalyze20180413_110900_111200_2.setTradeSessionManager(mTsMan);
         mSsAnalyze20150529_093900_105800_2.setTradeSessionManager(mTsMan);
         mSsAnalyze20150410_112600_131500_2.setTradeSessionManager(mTsMan);
         mSsAnalyze20160817_142300_144100_2.setTradeSessionManager(mTsMan);

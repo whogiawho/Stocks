@@ -13,7 +13,7 @@ public class SSTableLoader extends FileLoader {
         if(line.matches("^ *#.*")||line.matches("^ *$"))
             return true;
 
-        String[] fields=line.split(" +");
+        String[] fields = line.split(" +");
         int tradeCount = Integer.valueOf(fields[0]);
         String stockCode = fields[1];
         String startDate = fields[2];

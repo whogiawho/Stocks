@@ -11,11 +11,19 @@ function checkAllSSTable {
     checkSSTable $stockCode $tradeDate h0
     checkSSTable $stockCode $tradeDate h1
     checkSSTable $stockCode $tradeDate h2
+
+    checkSSTable $stockCode $tradeDate 20160302_134500_140700_2
+    checkSSTable $stockCode $tradeDate 20140416_093800_095600_2
+    checkSSTable $stockCode $tradeDate 20110221_094900_130200_2
+    checkSSTable $stockCode $tradeDate 20131017_105000_133200_2
+    checkSSTable $stockCode $tradeDate 20180117_093900_105800_2
+    checkSSTable $stockCode $tradeDate 20180413_110900_111200_2
+
+    checkSSTable $stockCode $tradeDate 20150529_093900_105800_2
+    checkSSTable $stockCode $tradeDate 20150410_112600_131500_2
+    checkSSTable $stockCode $tradeDate 20160817_142300_144100_2
     checkSSTable $stockCode $tradeDate 20170922_092500_141100_2
     checkSSTable $stockCode $tradeDate 20190924_101700_103800_2
-    checkSSTable $stockCode $tradeDate 20150410_112600_131500_2
-    checkSSTable $stockCode $tradeDate 20150529_093900_105800_2
-    checkSSTable $stockCode $tradeDate 20160817_142300_144100_2
     checkSSTable $stockCode $tradeDate 20110104_095500_110900_3
 }
 function checkSSTable {
