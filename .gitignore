@@ -7,3 +7,4 @@ data/
 *.pyc
 doc/misc.txt
 doc/macros.xlsm
+python/settings.py
