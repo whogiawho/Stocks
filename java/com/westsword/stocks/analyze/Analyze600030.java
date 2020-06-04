@@ -177,6 +177,12 @@ public class Analyze600030 {
         mSsAnalyzeh0.analyze(mAmRecordMap);
         mSsAnalyzeh1.analyze(mAmRecordMap);
         mSsAnalyzeh2.analyze(mAmRecordMap);
+        mSsAnalyze20160302_134500_140700_2.analyze(mAmRecordMap);
+        mSsAnalyze20140416_093800_095600_2.analyze(mAmRecordMap);
+        mSsAnalyze20110221_094900_130200_2.analyze(mAmRecordMap);
+        mSsAnalyze20131017_105000_133200_2.analyze(mAmRecordMap);
+        mSsAnalyze20180117_093900_105800_2.analyze(mAmRecordMap);
+        mSsAnalyze20180413_110900_111200_2.analyze(mAmRecordMap);
         mSsAnalyze20150529_093900_105800_2.analyze(mAmRecordMap);
         mSsAnalyze20150410_112600_131500_2.analyze(mAmRecordMap);
         mSsAnalyze20160817_142300_144100_2.analyze(mAmRecordMap);
