@@ -113,7 +113,7 @@
                 com/westsword/stocks/base/*.class,
                 com/westsword/stocks/base/time/*.class,
                 com/westsword/stocks/base/ckpt/*.class,
-                ">
+                com/westsword/stocks/analyze/ssanalyze/*.class">
             <zipfileset includes="**/*" src="lib/commons-io-2.4.jar"/>
             <zipfileset includes="**/*" src="lib/commons-lang3-3.5.jar"/>
             <zipfileset includes="**/*" src="lib/commons-math3-3.6.1.jar"/>

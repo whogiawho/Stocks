@@ -20,6 +20,7 @@ package com.westsword.stocks.base.time;
 import java.io.*;
 import java.util.*;
 
+import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.utils.StockPaths;
 
@@ -73,16 +74,11 @@ public class TradeDates extends Dates {
     }
 
     //get all tradeDates
-    private static String[] getTradeDateList(String stockCode) {
+    public static String[] getTradeDateList(String stockCode) {
         String stockData = StockPaths.getDailyDir(stockCode);
         //System.out.format("stockData=%s\n", stockData);
 
-        File fStockData= new File(stockData);
-        String[] sTradeDates = fStockData.list();
-        //System.out.format("size=%d\n", sTradeDates.length);
-	    TreeSet<String> trSet = new TreeSet<String>(Arrays.asList(sTradeDates));
-	    sTradeDates = trSet.toArray(new String[0]);
-
+        String[] sTradeDates = Utils.getSubNames(stockData);
 	    /*
         for(int i=0; i<sTradeDates.length; i++) {
             System.out.format("%s\n", sTradeDates[i]);

@@ -33,6 +33,7 @@ import com.westsword.stocks.am.*;
 import com.westsword.stocks.qr.*;
 import com.westsword.stocks.tools.helper.*;
 import com.westsword.stocks.tools.helper.man.*;
+import com.westsword.stocks.analyze.ssanalyze.*;
 import com.westsword.stocks.tools.matlab.*;
 
 public class GetSettings{
@@ -172,6 +173,20 @@ public class GetSettings{
             System.out.format("%s\n", sTradeDates[i]);
         }
         */
+    }
+    public static void testSSTable(String stockCode) {
+        System.out.format("\n testSSTable: \n");
+
+        String[] sSSTableFiles = SSTable.getSSTableNames();
+        System.out.format("sSSTableFiles.size=%d first=%s last=%s\n", 
+                sSSTableFiles.length, sSSTableFiles[0], sSSTableFiles[sSSTableFiles.length-1]);
+    }
+    public static void testTradeDatesList(String stockCode) {
+        System.out.format("\n testTradeDatesList: \n");
+
+        String[] sTradeDates = TradeDates.getTradeDateList(stockCode);
+        System.out.format("sTradeDates.size=%d first=%s last=%s\n", 
+                sTradeDates.length, sTradeDates[0], sTradeDates[sTradeDates.length-1]);
     }
     public static void testTradeDates(String stockCode, String date0, String date1) {
         System.out.format("\n testTradeDates: \n");
@@ -609,6 +624,8 @@ public class GetSettings{
         */
         //testTradeDates(stockCode, "20090105", "20191231");
         //testTradeDates(stockCode, "20160108", "20191231");
+        testTradeDatesList(stockCode);
+        testSSTable(stockCode);
 
         //testSettings();       
         //testMisc();       

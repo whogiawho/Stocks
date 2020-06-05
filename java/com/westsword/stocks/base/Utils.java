@@ -18,6 +18,7 @@ package com.westsword.stocks.base;
 
 
 import java.io.*;
+import java.util.*;
 import java.math.*;
 import java.text.*;
 import java.nio.charset.*;
@@ -75,6 +76,15 @@ public class Utils {
         } catch(Exception e) {
             e.printStackTrace();
         }
+    }
+    public static String[] getSubNames(String sDir) {
+        File fDir = new File(sDir);
+        String[] sNames = fDir.list();
+        //System.out.format("size=%d\n", sNames.length);
+	    TreeSet<String> trSet = new TreeSet<String>(Arrays.asList(sNames));
+	    sNames = trSet.toArray(new String[0]);
+
+        return sNames;
     }
 
 
