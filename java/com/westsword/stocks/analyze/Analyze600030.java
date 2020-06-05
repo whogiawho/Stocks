@@ -44,23 +44,26 @@ public class Analyze600030 {
         -1,               //raw pankou idx processed last time                LAST_RAW_PANKOU_IDX 
     };
     private final TradeSessionManager mTsMan;
+
+    private final SimilarStackAnalyze[] mSsAnalyze;
+    /*
     private final SimilarStackAnalyze mSsAnalyzeh0;
     private final SimilarStackAnalyze mSsAnalyzeh1;
     private final SimilarStackAnalyze mSsAnalyzeh2;
-
     private final SimilarStackAnalyze mSsAnalyze20160302_134500_140700_2;
     private final SimilarStackAnalyze mSsAnalyze20140416_093800_095600_2;
     private final SimilarStackAnalyze mSsAnalyze20110221_094900_130200_2;
     private final SimilarStackAnalyze mSsAnalyze20131017_105000_133200_2;
     private final SimilarStackAnalyze mSsAnalyze20180117_093900_105800_2;
     private final SimilarStackAnalyze mSsAnalyze20180413_110900_111200_2;
-
     private final SimilarStackAnalyze mSsAnalyze20150529_093900_105800_2;
     private final SimilarStackAnalyze mSsAnalyze20150410_112600_131500_2;
     private final SimilarStackAnalyze mSsAnalyze20160817_142300_144100_2;
     private final SimilarStackAnalyze mSsAnalyze20170922_092500_141100_2;
     private final SimilarStackAnalyze mSsAnalyze20190924_101700_103800_2;
     private final SimilarStackAnalyze mSsAnalyze20110104_095500_110900_3;
+    */
+
     private final THSQS iThsqs;
 
     private long mStartAm;
@@ -88,6 +91,14 @@ public class Analyze600030 {
         mTsMan = new TradeSessionManager(stockCode, tradeDate);
         mTsMan.check2SubmitSession();
         //set mSsAnalyzeh[012] etc
+        String[] sSSTable = SSTable.getSSTableNames();
+        mSsAnalyze = new SimilarStackAnalyze[sSSTable.length];
+        for(int i=0; i<sSSTable.length; i++) {
+            mSsAnalyze[i] = new SimilarStackAnalyze(stockCode, sSSTable[i]);
+            mSsAnalyze[i].setTradeSessionManager(mTsMan);
+        }
+
+        /*
         mSsAnalyzeh0 = new SimilarStackAnalyze(stockCode, "h0");
         mSsAnalyzeh1 = new SimilarStackAnalyze(stockCode, "h1");
         mSsAnalyzeh2 = new SimilarStackAnalyze(stockCode, "h2");
@@ -103,7 +114,9 @@ public class Analyze600030 {
         mSsAnalyze20170922_092500_141100_2 = new SimilarStackAnalyze(stockCode, "20170922_092500_141100_2");
         mSsAnalyze20190924_101700_103800_2 = new SimilarStackAnalyze(stockCode, "20190924_101700_103800_2");
         mSsAnalyze20110104_095500_110900_3 = new SimilarStackAnalyze(stockCode, "20110104_095500_110900_3");
+        */
 
+        /*
         mSsAnalyzeh0.setTradeSessionManager(mTsMan);
         mSsAnalyzeh1.setTradeSessionManager(mTsMan);
         mSsAnalyzeh2.setTradeSessionManager(mTsMan);
@@ -119,6 +132,8 @@ public class Analyze600030 {
         mSsAnalyze20170922_092500_141100_2.setTradeSessionManager(mTsMan);
         mSsAnalyze20190924_101700_103800_2.setTradeSessionManager(mTsMan);
         mSsAnalyze20110104_095500_110900_3.setTradeSessionManager(mTsMan);
+        */
+
         //set iThsqs
         iThsqs = new THSQS();
 
@@ -174,6 +189,10 @@ public class Analyze600030 {
 
         
         long startT=System.currentTimeMillis();
+        for(int i=0; i<mSsAnalyze.length; i++) {
+            mSsAnalyze[i].analyze(mAmRecordMap);
+        }
+        /*
         mSsAnalyzeh0.analyze(mAmRecordMap);
         mSsAnalyzeh1.analyze(mAmRecordMap);
         mSsAnalyzeh2.analyze(mAmRecordMap);
@@ -189,6 +208,7 @@ public class Analyze600030 {
         mSsAnalyze20170922_092500_141100_2.analyze(mAmRecordMap);
         mSsAnalyze20190924_101700_103800_2.analyze(mAmRecordMap);
         mSsAnalyze20110104_095500_110900_3.analyze(mAmRecordMap);
+        */
         if(!bNoPerformanceLog) {
             long endT = System.currentTimeMillis();
             System.out.format("%s %s: ssanalyze duration=%d\n", 
