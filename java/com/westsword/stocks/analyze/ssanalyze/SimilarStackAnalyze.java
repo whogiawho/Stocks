@@ -78,8 +78,8 @@ public class SimilarStackAnalyze {
                         //check to open a new tradeSession
                         mTsMan.check2OpenSession(sstr, currentR, mName);
                     } 
-                    //print sstr
-                    sstr.print(bR);
+                    //print sstr of Traded only
+                    sstr.print(bR, true);
                 }
             }
 
@@ -88,6 +88,9 @@ public class SimilarStackAnalyze {
                 int j = removedList.get(i);
                 SSTableRecord sstr = mSSTableRecordList.remove(j);
             }
+            if(removedList.size()!=0)
+                System.out.format("%s: %d elements removed at %s!\n", 
+                        Utils.getCallerName(getClass()), removedList.size(), mName);
         }
     }
 

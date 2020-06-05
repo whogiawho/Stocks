@@ -83,7 +83,7 @@ public class SSTableRecord {
 
         return line;
     }
-    public void print(Boolean bEval) {
+    public void print(Boolean bEval, boolean bOnlyTraded) {
         String sPrefix = "";
         String sOut = toString();
         if(bEval != null) {
@@ -95,7 +95,8 @@ public class SSTableRecord {
             }
         }
 
-        System.out.format("%-8s in %-4s at %s:\n %s\n", sPrefix, sTableName, Time.current(), sOut);
+        if(bOnlyTraded && bEval || !bOnlyTraded)
+            System.out.format("%-8s in %-4s at %s:\n %s\n", sPrefix, sTableName, Time.current(), sOut);
     }
     public Stack<AtomExpr> getAtomExprStack() {
         Stack<AtomExpr> atomStack = new Stack<AtomExpr>();
