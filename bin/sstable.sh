@@ -12,6 +12,13 @@ function checkAllSSTable {
     checkSSTable $stockCode $tradeDate h1
     checkSSTable $stockCode $tradeDate h2
 
+    checkSSTable $stockCode $tradeDate 20190902_112700_132000_2
+    checkSSTable $stockCode $tradeDate 20110729_103700_132300_2
+    checkSSTable $stockCode $tradeDate 20130228_102900_132100_2
+    checkSSTable $stockCode $tradeDate 20130228_111200_131400_2
+    checkSSTable $stockCode $tradeDate 20110322_141600_145300_2
+    checkSSTable $stockCode $tradeDate 20151229_143800_144400_2
+
     checkSSTable $stockCode $tradeDate 20160302_134500_140700_2
     checkSSTable $stockCode $tradeDate 20140416_093800_095600_2
     checkSSTable $stockCode $tradeDate 20110221_094900_130200_2
