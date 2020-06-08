@@ -21,11 +21,18 @@ import java.util.*;
 
 import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.utils.*;
+import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.analyze.ssanalyze.*;
-import com.westsword.stocks.base.time.*;
 
 public class SSTableHelper {
+
+    public static void getSSTableName(String[] args) {
+        String[] sTable = SSTable.getSSTableNames();
+        for(int i=0; i<sTable.length; i++) {
+            System.out.format("%s\n", sTable[i]);
+        }
+    }
 
     public static void checkSSTable(String[] args) {
         if(args.length < 4 ) {
