@@ -44,7 +44,6 @@ public class SSTableRecord {
     private Boolean mbEvalResult;
     private TreeSet<AtomExpr> mExprSet;
     private Stack<AtomExpr> mExprStack;
-    private SdTime1 mSdTime;
 
     public SSTableRecord (int tradeCount, 
             String stockCode, String startDate, double threshold, int sTDistance, int tradeType, 
@@ -67,7 +66,6 @@ public class SSTableRecord {
         mbEvalResult = null;
         mExprSet = getAtomExprSet();
         mExprStack = getAtomExprStack();
-        mSdTime = new SdTime1(stockCode);
     }
     public SSTableRecord(SSTableRecord r) {
         this(r.tradeCount, 
@@ -149,11 +147,40 @@ public class SSTableRecord {
 
     //currentTp==null - an evaluation is forced to be done
     //currentTp!=null - a check is done whether to be evaluated
-    public Boolean eval(long currentTp, AmManager am, TreeMap<Integer, AmRecord> amrMap) {
+    public Boolean _eval(long currentTp, AmManager am, TreeMap<Integer, AmRecord> amrMap, SdTime1 sdTime) {
         if(mbEvalResult==null) {
             if(eligible(currentTp)) {
                 String currentDate = Time.getTimeYMD(currentTp, false);
-                mbEvalResult = eval(am, amrMap, currentDate, null);
+                mbEvalResult = eval(am, amrMap, currentDate, sdTime, null);
+            }
+        }
+
+        return mbEvalResult;
+    }
+    public Boolean eval(long currentTp, AmManager am, TreeMap<Integer, AmRecord> amrMap, SdTime1 sdTime) {
+        if(mbEvalResult==null) {
+            if(!mExprStack.empty()) {
+                String currentDate = Time.getTimeYMD(currentTp, false);
+    
+                while(!mExprStack.empty()) {
+                    AtomExpr e = mExprStack.peek();
+                    String hms = e.sLastHMS;
+                    long tp = Time.getSpecificTime(currentDate, hms);
+                    if(currentTp < tp) {
+                        return null;
+                    } else {
+                        //pop it and evaluate e 
+                        mExprStack.pop();
+
+                        double amcorrel = getAmCorrel(am, amrMap, currentDate, e.sExpr, sdTime);
+                        if(amcorrel < threshold) {
+                            mbEvalResult = false;
+                            return mbEvalResult;
+                        }
+                    }
+                }
+
+                mbEvalResult = true;
             }
         }
 
@@ -161,41 +188,25 @@ public class SSTableRecord {
     }
 
     //eval this record with tradeDate
-    public boolean eval(AmManager am, String tradeDate, double[] ret) {
+    public boolean eval(AmManager am, String tradeDate, SdTime1 sdTime, double[] ret) {
         boolean bResult = false;
 
         String startHMS = AStockSdTime.CALL_AUCTION_END_TIME;
         String endHMS = AStockSdTime.CLOSE_QUOTATION_TIME;
         NavigableMap<Integer, AmRecord> amrMap = am.getItemMap(tradeDate, startHMS, tradeDate, endHMS);
 
-        return eval(am, amrMap, tradeDate, ret); 
+        return eval(am, amrMap, tradeDate, sdTime, ret); 
     }
     //assuming amrMap is now ready for evaluation: its last HMS is larger than mExprSet.last().sLastHMS
-    private boolean eval(AmManager am, NavigableMap<Integer, AmRecord> amrMap, String currentDate, double[] ret) {
+    private boolean eval(AmManager am, NavigableMap<Integer, AmRecord> amrMap, String currentDate, SdTime1 sdTime, double[] ret) {
         boolean bResult = true;
 
         String[] fields = getComponents();
         for(int i=0; i<fields.length; i++) {
-            String[] subFields = fields[i].split(":");
-            String tradeDate = subFields[0];
-            String[] hmss = subFields[1].split("_");
+            double amcorrel = getAmCorrel(am, amrMap, currentDate, fields[i], sdTime);
 
-            NavigableMap<Integer, AmRecord> map0 = am.getItemMap(tradeDate, hmss[0], tradeDate, hmss[1]);
-            NavigableMap<Integer, AmRecord> map1 = AmUtils.getItemMap(amrMap, mSdTime, 
-                    currentDate, hmss[0], currentDate, hmss[1]); 
-            double amcorrel = Double.NaN;
-            //print warning message if map0.size&map1.size are not equal
-            if(map0.size()!=map1.size()) {
-                String sWarn = String.format("%s %d!=%d", sMatchExp, map0.size(), map1.size());
-                sWarn = AnsiColor.getColorString(sWarn, AnsiColor.ANSI_RED);
-                System.out.format("%s: %s\n", Utils.getCallerName(getClass()), sWarn);
-                amcorrel = AmCorrel.get(map0, map1);
-            } else {
-                amcorrel = am.getAmCorrel(map0, map1);
-            }
             if(ret != null)
                 ret[i] = amcorrel;
-
             if(amcorrel < threshold) {
                 bResult = false;
                 break;
@@ -204,6 +215,29 @@ public class SSTableRecord {
 
         return bResult;
     }
+    private double getAmCorrel(AmManager am, NavigableMap<Integer, AmRecord> amrMap, String currentDate, 
+            String sExpr, SdTime1 sdTime) {
+        String[] subFields = sExpr.split(":");
+        String tradeDate = subFields[0];
+        String[] hmss = subFields[1].split("_");
+
+        NavigableMap<Integer, AmRecord> map0 = am.getItemMap(tradeDate, hmss[0], tradeDate, hmss[1]);
+        NavigableMap<Integer, AmRecord> map1 = AmUtils.getItemMap(amrMap, sdTime, 
+                currentDate, hmss[0], currentDate, hmss[1]); 
+        double amcorrel = Double.NaN;
+        //print warning message if map0.size&map1.size are not equal
+        if(map0.size()!=map1.size()) {
+            String sWarn = String.format("%s %d!=%d", sMatchExp, map0.size(), map1.size());
+            sWarn = AnsiColor.getColorString(sWarn, AnsiColor.ANSI_RED);
+            System.out.format("%s: %s\n", Utils.getCallerName(getClass()), sWarn);
+            amcorrel = AmCorrel.get(map0, map1);
+        } else {
+            amcorrel = am.getAmCorrel(map0, map1);
+        }
+
+        return amcorrel;
+    }
+
 
 
 
@@ -295,57 +329,4 @@ public class SSTableRecord {
         return hmsList;
     }
 
-
-
-    public Boolean _eval(long currentTp, AmManager am, TreeMap<Integer, AmRecord> amrMap) {
-        if(mbEvalResult==null) {
-            if(!mExprStack.empty()) {
-                String currentDate = Time.getTimeYMD(currentTp, false);
-    
-                while(!mExprStack.empty()) {
-                    AtomExpr e = mExprStack.peek();
-                    String hms = e.sLastHMS;
-                    long tp = Time.getSpecificTime(currentDate, hms);
-                    if(currentTp < tp) {
-                        return null;
-                    } else {
-                        //pop it and evaluate e 
-                        mExprStack.pop();
-
-                        double amcorrel = getAmCorrel(am, amrMap, currentDate, e.sExpr);
-                        if(amcorrel < threshold) {
-                            mbEvalResult = false;
-                            return mbEvalResult;
-                        }
-                    }
-                }
-
-                mbEvalResult = true;
-            }
-        }
-
-        return mbEvalResult;
-    }
-    private double getAmCorrel(AmManager am, TreeMap<Integer, AmRecord> amrMap, String currentDate, 
-            String sExpr) {
-        String[] subFields = sExpr.split(":");
-        String tradeDate = subFields[0];
-        String[] hmss = subFields[1].split("_");
-
-        NavigableMap<Integer, AmRecord> map0 = am.getItemMap(tradeDate, hmss[0], tradeDate, hmss[1]);
-        NavigableMap<Integer, AmRecord> map1 = AmUtils.getItemMap(amrMap, mSdTime, 
-                currentDate, hmss[0], currentDate, hmss[1]); 
-        double amcorrel = Double.NaN;
-        //print warning message if map0.size&map1.size are not equal
-        if(map0.size()!=map1.size()) {
-            String sWarn = String.format("%s %d!=%d", sMatchExp, map0.size(), map1.size());
-            sWarn = AnsiColor.getColorString(sWarn, AnsiColor.ANSI_RED);
-            System.out.format("%s: %s\n", Utils.getCallerName(getClass()), sWarn);
-            amcorrel = AmCorrel.get(map0, map1);
-        } else {
-            amcorrel = am.getAmCorrel(map0, map1);
-        }
-
-        return amcorrel;
-    }
 }
