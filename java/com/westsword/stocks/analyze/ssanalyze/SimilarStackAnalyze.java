@@ -27,16 +27,18 @@ import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.session.*;
 
 public class SimilarStackAnalyze {
-
     private final String mName;
+    private SdTime1 mSdTime;
+
     private final AmManager mAm;
     private final ArrayList<SSTableRecord> mSSTableRecordList;
 
     private TradeSessionManager mTsMan = null;
 
 
-    public SimilarStackAnalyze(String stockCode, String sName) {
+    public SimilarStackAnalyze(String stockCode, String sName, SdTime1 sdTime) {
         mName = sName;
+        mSdTime = sdTime;
 
         //set mSSTableRecordList
         mSSTableRecordList = new ArrayList<SSTableRecord>();
@@ -71,7 +73,7 @@ public class SimilarStackAnalyze {
 
             for(int i=0; i<mSSTableRecordList.size(); i++) {
                 SSTableRecord sstr = mSSTableRecordList.get(i);
-                Boolean bR = sstr.eval(currentTp, mAm, amrMap);
+                Boolean bR = sstr.eval(currentTp, mAm, amrMap, mSdTime);
                 if(bR != null) {
                     removedList.add(i);
                     if(bR&&mTsMan!=null) {

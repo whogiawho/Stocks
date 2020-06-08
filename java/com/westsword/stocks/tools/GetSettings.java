@@ -180,6 +180,11 @@ public class GetSettings{
         String[] sSSTableFiles = SSTable.getSSTableNames();
         System.out.format("sSSTableFiles.size=%d first=%s last=%s\n", 
                 sSSTableFiles.length, sSSTableFiles[0], sSSTableFiles[sSSTableFiles.length-1]);
+
+        SdTime1 sdTime = new SdTime1(stockCode);
+        SimilarStackAnalyze[] ssAnalyze = new SimilarStackAnalyze[sSSTableFiles.length];
+        for(int i=0; i<sSSTableFiles.length; i++)
+            ssAnalyze[i] = new SimilarStackAnalyze(stockCode, sSSTableFiles[i], sdTime);
     }
     public static void testTradeDatesList(String stockCode) {
         System.out.format("\n testTradeDatesList: \n");
@@ -624,7 +629,7 @@ public class GetSettings{
         */
         //testTradeDates(stockCode, "20090105", "20191231");
         //testTradeDates(stockCode, "20160108", "20191231");
-        testTradeDatesList(stockCode);
+        //testTradeDatesList(stockCode);
         testSSTable(stockCode);
 
         //testSettings();       

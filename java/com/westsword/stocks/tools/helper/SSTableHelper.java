@@ -23,6 +23,7 @@ import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.utils.*;
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.analyze.ssanalyze.*;
+import com.westsword.stocks.base.time.*;
 
 public class SSTableHelper {
 
@@ -55,13 +56,14 @@ public class SSTableHelper {
         }
         tradeDateList.add(tradeDate);
         AmManager am = new AmManager(stockCode, tradeDateList);
+        SdTime1 sdTime = new SdTime1(stockCode);
 
         for(int i=0; i<sstrList.size(); i++) {
             SSTableRecord sstr = sstrList.get(i);
             double[] ret = new double[sstr.getComponentSize()];
             //System.out.format("size=%d\n", sstr.getComponentSize());
 
-            boolean bEval = sstr.eval(am, tradeDate, ret);
+            boolean bEval = sstr.eval(am, tradeDate, sdTime, ret);
             String sAmCorrels = sstr.getAmCorrels(ret);
             sAmCorrels = AnsiColor.getColorString(sAmCorrels, AnsiColor.ANSI_RED);
             double inPrice = sstr.getInPrice(am, tradeDate);

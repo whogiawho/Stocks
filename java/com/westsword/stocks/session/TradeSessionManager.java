@@ -175,6 +175,8 @@ public class TradeSessionManager {
 
         if(bRRPDone)
             return;
+        if(Utils.isOfflineRun())
+            return;
 
         long currentItemTp = item.hexTimePoint;
         if(!Utils.isRRPTime(currentItemTp)) {

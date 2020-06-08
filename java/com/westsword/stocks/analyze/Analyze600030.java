@@ -94,7 +94,7 @@ public class Analyze600030 {
         String[] sSSTable = SSTable.getSSTableNames();
         mSsAnalyze = new SimilarStackAnalyze[sSSTable.length];
         for(int i=0; i<sSSTable.length; i++) {
-            mSsAnalyze[i] = new SimilarStackAnalyze(stockCode, sSSTable[i]);
+            mSsAnalyze[i] = new SimilarStackAnalyze(stockCode, sSSTable[i], mSdTime);
             mSsAnalyze[i].setTradeSessionManager(mTsMan);
         }
 
