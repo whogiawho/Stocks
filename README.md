@@ -17,5 +17,5 @@ So next time when a similar segment appears, a buy should be done, and it should
 ![alipay](https://github.com/whogiawho/Stocks/blob/master/doc/alipayQrCode.jpg)  
 
 
-To make it completely auto run, a seperate settings.py containing passwords is needed and not uploaded.  
+To make it completely auto run, a seperate settings.py containing login info is needed and not uploaded.  
 Contact me with whogiawho@gmail.com, thanks!
