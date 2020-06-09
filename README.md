@@ -15,4 +15,7 @@ So next time when a similar segment appears, a buy should be done, and it should
 
 # Investment and Cooperation are Welcome
 ![alipay](https://github.com/whogiawho/Stocks/blob/master/doc/alipayQrCode.jpg)  
- contact me with whogiawho@gmail.com, thanks!
+
+
+To make it completely auto run, a seperate settings.py containing passwords is needed and not uploaded.  
+Contact me with whogiawho@gmail.com, thanks!
