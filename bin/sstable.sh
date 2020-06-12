@@ -104,7 +104,7 @@ function ssGetMatchedCounts {
 
     local fTmp=`mktemp`
     local i=
-    for i in `cat $fTable |awk '{print $9}'`; 
+    for i in `cat $fTable |grep -v \# |grep -v "^$" |awk '{print $9}'`; 
     do 
         echo $i
         _baseGetSSCommonTradeDetails $dir "$i" 22; 
