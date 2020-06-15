@@ -21,16 +21,58 @@ import com.westsword.stocks.base.time.StockDates;
 
 public class AmCorrelHelper {
     public static void getAmCorrel(String args[]) {
-        if(args.length != 5) {
+        if(args.length != 5 && args.length!=6) {
             usage();
             return;
         }
 
-        String stockCode = args[1];
-        String tradeDate1 = args[2];
-        String tradeDate2 = args[3];
-        String hmsList = args[4];
+        if(args.length == 5) {
+            String stockCode = args[1];
+            String tradeDate1 = args[2];
+            String tradeDate2 = args[3];
+            String hmsList = args[4];
+            getAmCorrel(stockCode, tradeDate1, tradeDate2, hmsList);
+        } else {
+            String stockCode = args[1];
+            String s0 = args[2];
+            String e0 = args[3];
+            String s1 = args[4];
+            String e1 = args[5];
 
+            getAmCorrel(stockCode, s0, e0, s1, e1);
+        }
+    }
+    private static void getAmCorrel(String stockCode, String s0, String e0, String s1, String e1) {
+            String[] fields = s0.split(",");
+            String startDate0 = fields[0];
+            String startHMS0 = fields[1];
+            fields = e0.split(",");
+            String endDate0 = fields[0];
+            String endHMS0 = fields[1];
+            fields = s1.split(",");
+            String startDate1 = fields[0];
+            String startHMS1 = fields[1];
+            fields = e1.split(",");
+            String endDate1 = fields[0];
+            String endHMS1 = fields[1];
+
+            StockDates stockDates = new StockDates(stockCode);
+            String[] tradeDates = new String[] {
+                startDate0,
+                endDate0, 
+                startDate1,
+                endDate1,
+            };
+
+            AmManager am = new AmManager(stockCode, tradeDates, true);
+
+            String sAmCorrel = "";
+            double amcorrel = am.getAmCorrel(startDate0, startHMS0, endDate0, endHMS0,
+                    startDate1, startHMS1, endDate1, endHMS1); 
+            sAmCorrel += String.format("%8.3f", amcorrel);
+            System.out.format("%s\n", sAmCorrel);
+    }
+    private static void getAmCorrel(String stockCode, String tradeDate1, String tradeDate2, String hmsList) {
         StockDates stockDates = new StockDates(stockCode);
         String[] tradeDates = new String[] {
             tradeDate1,
@@ -50,6 +92,7 @@ public class AmCorrelHelper {
             sAmCorrel += String.format("%8.3f", amcorrel);
         }
         System.out.format("%s\n", sAmCorrel);
+
     }
 
 
@@ -57,6 +100,7 @@ public class AmCorrelHelper {
 
     private static void usage() {
         System.err.println("usage: java AnalyzeTools getamcorrel stockCode tradeDate1 tradeDate2 hmsList");
+        System.err.println("       java AnalyzeTools getamcorrel stockCode sDate0,sHms0 eDate0,eHms0 sDate1,sHms1 eDate1,eHms1");
         System.exit(-1);
     }
 }

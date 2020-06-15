@@ -71,9 +71,16 @@ public class AmRecord implements Comparable<AmRecord> {
         return Long.compare(hexTimePoint, r.hexTimePoint);
     }
 
-    public void append2File(String sAnalysisFile) {
+    public String toString() {
         String sFormat = "%-10x %8d %20d %8.3f %8.3f\n";
         String line = String.format(sFormat, hexTimePoint, timeIndex, am, upPrice, downPrice);
-        Utils.append2File(sAnalysisFile, line);
+
+        return line;
+    }
+    public void append2File(String sAnalysisFile) {
+        Utils.append2File(sAnalysisFile, toString());
+    }
+    public void print() {
+        System.out.format("%s", toString());
     }
 }

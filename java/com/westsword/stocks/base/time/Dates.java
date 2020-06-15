@@ -94,6 +94,25 @@ public class Dates {
         return nextDate(tradeDate, n, false);
     }
 
+    public String prevDate(String tradeDate, int n, boolean bNullReturned) {
+        String prev = tradeDate;
+
+        String first = firstDate();
+        for(int i=0; i<n; i++) {
+            if(prev.equals(first)) {
+                if(bNullReturned)
+                    prev=null;
+                break;
+            }
+            prev = prevDate(prev);
+        }
+
+        return prev;
+    }
+    public String prevDate(String tradeDate, int n) {
+        return prevDate(tradeDate, n, false);
+    }
+
     //asuumption for these methods:
     //  1. date0&date1 of format: YYYYMMDD; 
     //  2. both are valid members of mDatesSet
