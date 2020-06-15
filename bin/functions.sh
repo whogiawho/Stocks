@@ -57,6 +57,7 @@ splitRawTradeDetailsJar="$rootDir\\build\\jar\\splitrawtradedetails.jar"
 . bin/daily.sh
 . bin/thsqs.sh
 . bin/session.sh
+. bin/qr.sh
 
 
 
