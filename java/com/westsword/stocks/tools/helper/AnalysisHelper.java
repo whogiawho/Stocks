@@ -22,7 +22,6 @@ public class AnalysisHelper {
     public static void makeTxt(String args[]) {
         if(args.length != 3 && args.length != 2 && args.length !=4) {
             usage();
-            return;
         }
 
         String stockCode = args[1];
