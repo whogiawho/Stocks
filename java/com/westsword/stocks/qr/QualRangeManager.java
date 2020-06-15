@@ -64,11 +64,13 @@ public class QualRangeManager {
             for(int j=0; j<corrM[i].length; j++) {
                 if(corrM[i][j]>=threshold) {
                     count++;
-                    tdSet.add(mqrList.get(j).getEndDate());
+                    QualRange qrn = mqrList.get(j);
+                    tdSet.add(qrn.getEndDate() + ":" + qrn.getEndHMS());
                 }
             }
             qr.setMatchedQrCnt(count);
             qr.setMatchedTdCnt(tdSet.size());
+            qr.setTdSet(tdSet);
             qrSet.add(new QualRange(qr));
         }
     }

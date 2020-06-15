@@ -27,23 +27,25 @@ public class QualRange implements Comparable<QualRange> {
     private int mSdLength;          //the length before <endTradeDate, endHMS>
 
     private int mMatchedQrCnt;
-    private int mMatchedTdCnt;
+    private int mMatchedTdCnt;      //matched tradedate count
+    private TreeSet<String> mTdSet; // 
 
     public QualRange(String endTradeDate, String endHMS, int sdLength, 
-            int matchedQrCnt, int matchedTdCnt) {
+            int matchedQrCnt, int matchedTdCnt, TreeSet<String> tdSet) {
         this.endTradeDate = endTradeDate;
         this.endHMS = endHMS;
         mSdLength = sdLength;
 
         mMatchedQrCnt = matchedQrCnt;
         mMatchedTdCnt = matchedTdCnt;
+        mTdSet = tdSet;
     }
     public QualRange(String endTradeDate, String endHMS) {
-        this(endTradeDate, endHMS, -1, -1, -1);
+        this(endTradeDate, endHMS, -1, -1, -1, new TreeSet<String>());
     }
     public QualRange(QualRange qr) {
         this(qr.getEndDate(), qr.getEndHMS(), qr.getSdLength(), 
-                qr.getMatchedQrCnt(), qr.getMatchedTdCnt());
+                qr.getMatchedQrCnt(), qr.getMatchedTdCnt(), qr.getTdSet());
     }
 
 
@@ -65,9 +67,32 @@ public class QualRange implements Comparable<QualRange> {
     public int getMatchedTdCnt() {
         return mMatchedTdCnt;
     }
+    public TreeSet<String> getTdSet() {
+        return mTdSet;
+    }
+    public void setTdSet(TreeSet<String> tdSet) {
+        mTdSet = tdSet;
+        //mTdSet.addAll(tdSet);
+    }
     public void print() {
-        System.out.format("%s %s %4d %4d %4d\n", 
-                endTradeDate, endHMS, mSdLength, mMatchedQrCnt, mMatchedTdCnt);
+        System.out.format("%s %s %4d %4d %4d %s\n", 
+                endTradeDate, endHMS, mSdLength, mMatchedQrCnt, mMatchedTdCnt, getSimpleMatchedExpr());
+    }
+    //if more pairs with equal tradedate are matched, only one is returned
+    public String getSimpleMatchedExpr() {
+        String sExpr = "";
+
+        HashSet<String> tradeDateSet = new HashSet<String>();
+        for(String expr: mTdSet) {
+            String endDate = expr.split(":")[0];
+            if(tradeDateSet.contains(endDate))
+                continue;
+
+            tradeDateSet.add(endDate);
+            sExpr += expr + " ";
+        }
+
+        return sExpr;
     }
 
 
