@@ -30,9 +30,10 @@ public class AnalyzeTools{
         System.err.println("       commands are listed below:");
         System.err.println("       [ getvalue | setvalue | makeanalysistxt | priceamp |\n" +
                 "         getamcorrel | getupprice | getdownprice | getam | decode |\n" +
-                "         getrel | getabs | rgetabs |\n" +
+                "         getrel | getabs | rgetabs | getrangeanalysis |\n" +
                 "         ssinstance | ssinstances | getfullss | checksstable | getsstable |\n" +
                 "         getentrust | checkabss | submitabs | makerrp |\n" +
+                "         nexttradedate | prevtradedate |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify |\n" +
                 "         mminstance | qualrange | qrmaxmatch | qrverify |\n" +
                 "         makessdates | ssdmaxmatchS| ssdmaxmatchA | make1mamcmap ]");
@@ -82,6 +83,12 @@ public class AnalyzeTools{
         } else if (sOption.equals("rgetabs")) {
             SdTime1Helper sth = new SdTime1Helper();
             sth.rgetAbs(args);
+        } else if (sOption.equals("getrangeanalysis")) {
+            AnalysisTxtHelper.getRange(args);
+        } else if (sOption.equals("nexttradedate")) {
+            TradeDatesHelper.nextTradeDate(args);
+        } else if (sOption.equals("prevtradedate")) {
+            TradeDatesHelper.prevTradeDate(args);
         } else if (sOption.equals("ssinstance")) {
             SSInstanceHelper ssih = new SSInstanceHelper();
             ssih.run(args);

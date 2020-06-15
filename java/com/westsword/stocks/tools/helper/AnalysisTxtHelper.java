@@ -16,17 +16,60 @@
  
 package com.westsword.stocks.tools.helper;
 
-import com.westsword.stocks.am.AmManager;
-import com.westsword.stocks.base.time.Time;
+import java.util.*;
+
+import com.westsword.stocks.am.*;
+import com.westsword.stocks.base.time.*;
 
 public class AnalysisTxtHelper {
+    public static void getRange(String args[]) {
+        if(args.length != 4) {
+            usage();
+        }
+
+        String stockCode = args[1];
+        String startS = args[2];
+        String endS = args[3];
+
+        String[] fields = startS.split("_");
+        String startDate = fields[0];
+        String startHMS = fields[1];
+
+        fields = endS.split("_");
+        String endDate = fields[0];
+        String endHMS = fields[1];
+
+        SdTime1 sdTime = new SdTime1(stockCode);
+        StockDates stockDates = new StockDates(stockCode);
+        ArrayList<String> dates = new ArrayList<String>();
+        String next = startDate;
+        while(next!=null && next.compareTo(endDate)<=0) {
+            //System.out.format("%s\n", next);
+            dates.add(next);
+            next = stockDates.nextDate(next);
+        }
+
+        AmManager am = new AmManager(stockCode, dates);
+        NavigableMap<Integer, AmRecord> itemMap = am.getItemMap(startDate, startHMS, endDate, endHMS);
+        for(Integer k: itemMap.keySet()) {
+            AmRecord r = itemMap.get(k);
+            r.print();
+        }
+    }
+    private static void usage() {
+        System.err.println("usage: java AnalyzeTools getrangeanalysis stockCode sDate_sHMS eDate_eHMS ");
+        System.exit(-1);
+    }
+
+
+
+
     public static void getPrice(String args[]) {
         if(args.length != 4) {
             if(args[0].equals("getupprice"))
                 usage2();
             else
                 usage3();
-            return;
         }
 
         String stockCode = args[1];
