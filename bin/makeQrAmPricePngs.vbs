@@ -14,7 +14,7 @@ sAnalysisDir = objArgs(0)
 
 Dim xlMacros
 Set xlMacros = xlApp.Workbooks.Open("d:\Stocks\doc\macros.xlsm", 0, True) 
-xlApp.Run "macros.xlsm!makeAmPricePngs", ""+sAnalysisDir
+xlApp.Run "macros.xlsm!AmPrice.makePngs", ""+sAnalysisDir
 
 'close all workbooks
 Dim workbooks

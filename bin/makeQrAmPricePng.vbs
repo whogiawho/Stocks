@@ -16,7 +16,7 @@ sPngDir = objArgs(1)
 
 Dim xlMacros
 Set xlMacros = xlApp.Workbooks.Open("d:\Stocks\doc\macros.xlsm", 0, True) 
-xlApp.Run "macros.xlsm!makeAmPricePng", ""+sAnalysisFile, ""+sPngDir
+xlApp.Run "macros.xlsm!AmPrice.makePng", ""+sAnalysisFile, ""+sPngDir
 
 'close all workbooks
 Dim workbooks
