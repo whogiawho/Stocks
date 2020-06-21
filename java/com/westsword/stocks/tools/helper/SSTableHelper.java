@@ -75,10 +75,10 @@ public class SSTableHelper {
             sAmCorrels = AnsiColor.getColorString(sAmCorrels, AnsiColor.ANSI_RED);
             double inPrice = sstr.getInPrice(am, tradeDate);
             if(bEval) {
-                String sFormat = "%-30s %s %4d %4d " + 
+                String sFormat = "%s %-30s %s %4d %4d " + 
                                  "%8.3f %8.3f %s\n";
                 System.out.format(sFormat, 
-                        sstr.sTableName, sstr.sMatchExp, sstr.sTDistance, sstr.tradeType, 
+                        tradeDate, sstr.sTableName, sstr.sMatchExp, sstr.sTDistance, sstr.tradeType, 
                         inPrice, sstr.threshold, sAmCorrels);
             }
         }

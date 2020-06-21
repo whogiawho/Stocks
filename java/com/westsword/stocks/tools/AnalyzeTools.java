@@ -30,7 +30,7 @@ public class AnalyzeTools{
         System.err.println("       commands are listed below:");
         System.err.println("       [ getvalue | setvalue | makeanalysistxt | priceamp |\n" +
                 "         getamcorrel | getupprice | getdownprice | getam | decode |\n" +
-                "         getrel | getabs | rgetabs | getrangeanalysis |\n" +
+                "         getrel | getabs | rgetabs | getanalysis |\n" +
                 "         ssinstance | ssinstances | getfullss | checksstable | getsstable |\n" +
                 "         getentrust | checkabss | submitabs | makerrp |\n" +
                 "         nexttradedate | prevtradedate |\n" +
@@ -83,7 +83,7 @@ public class AnalyzeTools{
         } else if (sOption.equals("rgetabs")) {
             SdTime1Helper sth = new SdTime1Helper();
             sth.rgetAbs(args);
-        } else if (sOption.equals("getrangeanalysis")) {
+        } else if (sOption.equals("getanalysis")) {
             AnalysisTxtHelper.getRange(args);
         } else if (sOption.equals("nexttradedate")) {
             TradeDatesHelper.nextTradeDate(args);
