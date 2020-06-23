@@ -25,7 +25,7 @@ function makeAnalysisTxtFromQr {
 
         [[ ! -z $startDate ]] && {
             mkdir -p $sOutDir/$endDate
-            java -jar $analyzetoolsJar getrangeanalysis $stockCode ${startDate}_${startHMS} ${endDate}_${endHMS} \
+            java -jar $analyzetoolsJar getanalysis $stockCode ${startDate}_${startHMS} ${endDate}_${endHMS} \
                 >$sOutDir/$endDate/${i}_${nDays}.txt 2>/dev/null
             #echo $sOutDir/$endDate/${i}_${nDays}.txt ${startDate}_${startHMS} ${endDate}_${endHMS}
         }
@@ -81,3 +81,27 @@ function getQrChar {
         ln "$qrGraphDir\\$qrgDir\\$tradeDate\\${tradeDate}_${hms}_${nDays}.png" $dstDir; 
     done
 }
+
+#qrMatchFile - data/qr/qrmaxmatch_900_0.50.txt
+#qrgDir - 900_0.50_1
+function getQrGroupExtreme {
+    local qrMatchFile=$1
+    local qrgDir=$2
+
+    local nDays=${qrgDir##*_}
+    local i
+    for i in `cat $qrMatchFile |sed "s/ /\n/g"|grep ":"`; 
+    do 
+        local tradeDate=${i%:*}; 
+        local hms=${i#*:}; 
+        local qrFile="$qrDir\\$qrgDir\\$tradeDate\\${tradeDate}_${hms}_${nDays}.txt"
+        local min=`awk '{print $3}' $qrFile|sort -n|head -n1`
+        local max=`awk '{print $3}' $qrFile|sort -n|tail -n1`
+        local avg=`getListAvg $qrFile 3`
+        local maxB=`substract $max $avg`
+        local minB=`substract $min $avg`
+        local delta=`substract $max $min`
+        printf "%10s %10s %-10d %-10d %15.3f %15.3f %15.3f %15.3f\n" $tradeDate $hms $min $max $avg $minB $maxB $delta
+    done
+}
+
