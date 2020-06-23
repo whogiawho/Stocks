@@ -150,19 +150,19 @@ function getListAvg {
     local fList=$1
     local colN=$2
 
-    awk "BEGIN{count=0; sum=0}{sum+=\$$colN; count++;}END{avg=sum/count; print avg}" $fList
+    awk "BEGIN{count=0; sum=0}{sum+=\$$colN; count++;}END{avg=sum/count; printf \"%8.3f\",avg}" $fList
 }
 function getListSum {
     local fList=$1
     local colN=$2
 
-    awk "BEGIN{count=0; sum=0}{sum+=\$$colN; count++;}END{print sum}" $fList
+    awk "BEGIN{count=0; sum=0}{sum+=\$$colN; count++;}END{printf \"%8.3f\",sum}" $fList
 }
 function getListStdDev {
     local fList=$1
     local colN=$2
 
-    awk "{sum+=\$$colN; sumsq+=\$$colN*\$$colN} END {print sqrt(sumsq/NR - (sum/NR)**2)}" $fList
+    awk "{sum+=\$$colN; sumsq+=\$$colN*\$$colN} END {printf \"%8.3f\",sqrt(sumsq/NR-(sum/NR)**2)}" $fList
 }
 
 BuyStockServiceRate=${BuyStockServiceRate:-0.0003}
