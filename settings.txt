@@ -1,9 +1,9 @@
 stockCode=600030
-currentDate=20200623
+currentDate=20200624
 
 
-currentDateCloseQuotationTime=5ef1a870
-currentDateLastRawTradeDetailTime=5ef1a8ac
+currentDateCloseQuotationTime=5ef2f9f0
+currentDateLastRawTradeDetailTime=5ef2fa2c
 
 
 PriceDecimalFormat=#.##

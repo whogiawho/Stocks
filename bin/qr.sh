@@ -34,28 +34,11 @@ function makeAnalysisTxtFromQr {
     echo $sOutDir
 }
 
-#analysisTxtDir - "d:\\Stocks\\data\\qr\\300_0.50_1"
-function makeQrPng {
+function makeQrAmPricePngs {
     local analysisTxtDir=$1
 
-    local dir0=`basename $analysisTxtDir`
-    dir0="$qrGraphDir\\$dir0"
-
-    local i
-    for i in `ls $analysisTxtDir`
-    do
-        i=`basename $i`
-        local dir1="$dir0\\$i"
-        mkdir -p "$dir1"
-
-        local j
-        for j in `find $analysisTxtDir/$i -type f`
-        do
-            cscript.exe "$rootDir\\bin\\makeQrPng.vbs" "$j" "$dir1"
-        done
-    done
+    cscript.exe "$rootDir\\bin\\makeQrAmPricePngs.vbs" "$analysisTxtDir"
 }
-
 function makeQrPngs {
     local analysisTxtDir=$1
 
@@ -65,7 +48,7 @@ function makeQrPngs {
 
 #qrMatchFile - data/qr/qrmaxmatch_900_0.50.txt
 #qrgDir - 900_0.50_1
-function getQrChar {
+function groupQrPngs {
     local qrMatchFile=$1
     local qrgDir=$2
     local dstDir=$3
@@ -101,7 +84,37 @@ function getQrGroupExtreme {
         local maxB=`substract $max $avg`
         local minB=`substract $min $avg`
         local delta=`substract $max $min`
-        printf "%10s %10s %-10d %-10d %15.3f %15.3f %15.3f %15.3f\n" $tradeDate $hms $min $max $avg $minB $maxB $delta
+        printf "%10s %10s %-10d %-10d %15.3f %15.3f %15.3f %15.3f\n" \
+            $tradeDate $hms $min $max $avg $minB $maxB $delta
+    done
+}
+
+
+
+
+
+
+
+
+#analysisTxtDir - "d:\\Stocks\\data\\qr\\300_0.50_1"
+function _makeQrPngs {
+    local analysisTxtDir=$1
+
+    local dir0=`basename $analysisTxtDir`
+    dir0="$qrGraphDir\\$dir0"
+
+    local i
+    for i in `ls $analysisTxtDir`
+    do
+        i=`basename $i`
+        local dir1="$dir0\\$i"
+        mkdir -p "$dir1"
+
+        local j
+        for j in `find $analysisTxtDir/$i -type f`
+        do
+            cscript.exe "$rootDir\\bin\\makeQrAmPricePng.vbs" "$j" "$dir1"
+        done
     done
 }
 
