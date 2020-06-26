@@ -17,6 +17,7 @@
 package com.westsword.stocks.tools.helper;
 
 
+import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.time.*;
 
 public class SdTime1Helper {
@@ -64,7 +65,7 @@ public class SdTime1Helper {
         System.out.format("%s\n", sSdTime);
     }
     public void rgetAbs(String args[]) {
-        if(args.length != 3) {
+        if(args.length != 3 && args.length != 4) {
             rgetabsUsage();
             return;
         }
@@ -73,7 +74,14 @@ public class SdTime1Helper {
         Integer abssdtime = Integer.valueOf(args[2]);
 
         SdTime1 sdTime = new SdTime1(stockCode);
-        long tp = sdTime.rgetAbs(abssdtime);
+        int sdt = 0;
+        if(args.length==4) {
+            String[] fields = args[3].split(",");
+            //System.out.format("%s %s\n", fields[0], fields[1]);
+            sdt = sdTime.getAbs(fields[0], fields[1]);
+        } 
+
+        long tp = sdTime.rgetAbs(abssdtime+sdt);
         
         System.out.format("%x\n", tp);
     }
@@ -91,7 +99,7 @@ public class SdTime1Helper {
         System.exit(-1);
     }
     private static void rgetabsUsage() {
-        System.err.println("usage: java AnalyzeTools rgetabs stockCode abssdtime");
+        System.err.println("usage: java AnalyzeTools rgetabs stockCode abssdtime [startDate,startHMS]");
         System.exit(-1);
     }
 }
