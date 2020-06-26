@@ -22,13 +22,15 @@ import com.westsword.stocks.base.time.*;
 
 public class TradeDatesHelper {
     public static void nextTradeDate(String args[]) {
-        if(args.length != 4) {
+        if(args.length !=3 && args.length != 4) {
             usageNext();
         }
 
         String stockCode = args[1];
         String tradeDate = args[2];
-        int nDays = Integer.valueOf(args[3]);
+        int nDays = 1;
+        if(args.length == 4)
+            nDays = Integer.valueOf(args[3]);
         StockDates stockDates = new StockDates(stockCode);
 
         String sNext = stockDates.nextDate(tradeDate, nDays, true);
@@ -37,7 +39,7 @@ public class TradeDatesHelper {
         System.out.format("%s\n", sNext);
     }
     private static void usageNext() {
-        System.err.println("usage: java AnalyzeTools nexttradedate stockCode tradeDate nDays");
+        System.err.println("usage: java AnalyzeTools nexttradedate stockCode tradeDate [nDays]");
         System.exit(-1);
     }
 
@@ -45,13 +47,15 @@ public class TradeDatesHelper {
 
 
     public static void prevTradeDate(String args[]) {
-        if(args.length != 4) {
+        if(args.length !=3 && args.length != 4) {
             usagePrev();
         }
 
         String stockCode = args[1];
         String tradeDate = args[2];
-        int nDays = Integer.valueOf(args[3]);
+        int nDays = 1;
+        if(args.length == 4)
+            nDays = Integer.valueOf(args[3]);
         StockDates stockDates = new StockDates(stockCode);
 
         String sPrev = stockDates.prevDate(tradeDate, nDays, true);
@@ -60,7 +64,7 @@ public class TradeDatesHelper {
         System.out.format("%s\n", sPrev);
     }
     private static void usagePrev() {
-        System.err.println("usage: java AnalyzeTools prevtradedate stockCode tradeDate nDays");
+        System.err.println("usage: java AnalyzeTools prevtradedate stockCode tradeDate [nDays]");
         System.exit(-1);
     }
 }
