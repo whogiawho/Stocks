@@ -60,17 +60,23 @@ function unformalizeHMSList {
 
 function convertDec2Time {
     local dec=$1
+    local bSimple=$2
 
-    date -d @$dec "+%F %H:%M:%S"
+    [[ -z $bSimple ]] && {
+        date -d @$dec "+%F %H:%M:%S"
+    } || {
+        date -d @$dec "+%Y%m%d,%H%M%S"
+    }
 }
 
 function convertHex2Time {
     local hex=$1
-    local dec=
+    local bSimple=$2
 
+    local dec=
     hex=0x$hex
     dec=`printf "%d" $hex`
-    convertDec2Time $dec
+    convertDec2Time $dec $bSimple
 }
 
 #sTime format,   MM-DD hh:mm:ss
