@@ -64,6 +64,25 @@ function groupQrPngs {
         ln "$qrGraphDir\\$qrgDir\\$tradeDate\\${tradeDate}_${hms}_${nDays}.png" $dstDir; 
     done
 }
+#qrMatchFile - data/qr/qrmaxmatch_900_0.50.txt
+#qrgDir - 900_0.50_1
+function groupQrs {
+    local qrMatchFile=$1
+    local qrgDir=$2
+    local dstDir=$3
+
+    mkdir -p $dstDir
+
+    local nDays=${qrgDir##*_}
+    local i
+    for i in `cat $qrMatchFile |sed "s/ /\n/g"|grep ":"`; 
+    do 
+        local tradeDate=${i%:*}; 
+        local hms=${i#*:}; 
+        ln "$qrDir\\$qrgDir\\$tradeDate\\${tradeDate}_${hms}_${nDays}.txt" $dstDir; 
+    done
+}
+
 
 #qrMatchFile - data/qr/qrmaxmatch_900_0.50.txt
 #qrgDir - 900_0.50_1
@@ -89,6 +108,24 @@ function getQrGroupExtreme {
     done
 }
 
+
+#qrEndYMDHMS - 20090722,142400
+function convertSdTime2YMDHMS {
+    local stockCode=$1
+    local qrEndYMDHMS=$2
+    local startSd=$3
+    local endSd=$4
+
+    local qrEndDate=${qrEndYMDHMS%,*}
+    local qrEndHMS=${qrEndYMDHMS#*,}
+    local startYMDHMS=`getPrevTradeDate $stockCode $qrEndDate`,$qrEndHMS
+
+    local startHexTp=`java -jar $analyzetoolsJar rgetabs $stockCode $startSd $startYMDHMS 2>/dev/null`
+    local endHexTp=`java -jar $analyzetoolsJar rgetabs $stockCode $endSd $startYMDHMS 2>/dev/null`
+
+    convertHex2Time $startHexTp y
+    convertHex2Time $endHexTp y
+}
 
 
 
