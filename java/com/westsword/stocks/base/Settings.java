@@ -36,7 +36,7 @@ public class Settings extends FileLoader {
         setValue(StockPaths.getSettingFile(), key, value);
     }
     public void setValue(String file, String key, String value) {
-        if(!Utils.existFile(file)) {
+        if(!Utils.isFile(file)) {
             appendValue(file, key, value);
             return;
         }

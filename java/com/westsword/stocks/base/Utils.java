@@ -30,9 +30,9 @@ import com.westsword.stocks.base.time.*;
 public class Utils {
 
 
-    public static boolean existFile(String path) {
+    public static boolean isFile(String path) {
         File f = new File(path);
-        return f.exists();
+        return f.isFile();
     }
     //mkdir path if not exist
     public static void mkDir(String path) {

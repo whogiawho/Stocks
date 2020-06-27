@@ -45,7 +45,7 @@ public class SSTableHelper {
         String ssTableName = args[3];
 
         String sSSTable = StockPaths.getSSTableFile(ssTableName);
-        if(!Utils.existFile(sSSTable)) {
+        if(!Utils.isFile(sSSTable)) {
             String line = String.format("%s does not exist!\n", sSSTable);
             line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);
             System.out.format("%s", line);
