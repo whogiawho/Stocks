@@ -35,8 +35,8 @@ public class AnalyzeTools{
                 "         getentrust | checkabss | submitabs | makerrp |\n" +
                 "         nexttradedate | prevtradedate |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify |\n" +
-                "         mminstance | qualrange | qrmaxmatch | qrverify |\n" +
-                "         makessdates | ssdmaxmatchS| ssdmaxmatchA | make1mamcmap ]");
+                "         mminstance | qualrange | qrmaxmatch | qrverify | qrsearchss |\n" +
+                "         makessdates | ssdmaxmatchS | ssdmaxmatchA | make1mamcmap ]");
 
         System.exit(-1);
     }
@@ -116,6 +116,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("qrverify")) {
             QualRangeHelper qrh = new QualRangeHelper();
             qrh.verify(args);
+        } else if (sOption.equals("qrsearchss")) {
+            QualRangeHelper qrh = new QualRangeHelper();
+            qrh.searchSS(args);
         } else if (sOption.equals("makessdates")) {
             SSDatesHelper ssdh = new SSDatesHelper();
             ssdh.make(args);

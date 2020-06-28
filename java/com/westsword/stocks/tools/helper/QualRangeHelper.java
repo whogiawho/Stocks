@@ -263,4 +263,84 @@ public class QualRangeHelper {
         System.err.println("         matchedSdLen by sdtime");
         System.exit(-1);
     }
+
+
+
+    public void searchSS(String[] args) {
+        CommandLine cmd = getCommandLine(args);
+        String[] newArgs = cmd.getArgs();
+        if(newArgs.length != 5) {
+            searchSSUsage();
+            return;
+        }
+
+        String stockCode = newArgs[0];
+        String qrFile = newArgs[1];
+        String sStart = newArgs[2];
+        String sEnd = newArgs[3];
+        String qrgDir = newArgs[4];
+
+        //threshold
+        double threshold = getThreshold(cmd);
+        System.out.format("threshold=%8.3f\n", threshold);
+
+        //load qrFile
+        AmRecordLoader l = new AmRecordLoader();
+        TreeMap<Integer, AmRecord> map0 = new TreeMap<Integer, AmRecord>();
+        l.load(null, map0, null, qrFile);
+        System.out.format("%s size=%d\n", qrFile, map0.size());
+        //load <sStart, sEnd> into modeMap
+        SdTime1 sdTime = new SdTime1(stockCode);
+        String[] fields = sStart.split(",");
+        int sdt0 = sdTime.getAbs(fields[0], fields[1]);
+        fields = sEnd.split(",");
+        int sdt1 = sdTime.getAbs(fields[0], fields[1]);
+        NavigableMap<Integer, AmRecord> modeMap = map0.subMap(sdt0, true, sdt1, true);
+        System.out.format("sdt0=%d, sdt1=%d, modeMap size=%d\n", sdt0, sdt1, modeMap.size());
+
+        if(Utils.isFile(qrgDir)) {
+            TreeMap<Integer, AmRecord> targetMap = new TreeMap<Integer, AmRecord>();
+            l.load(null, targetMap, null, qrgDir);
+            searchMode(modeMap, targetMap, qrgDir, sdTime, threshold);
+        } else {
+            //loop all qrgDir's files
+            String[] qrList = Utils.getSubNames(qrgDir);
+            for(int i=0; i<qrList.length; i++) {
+                String sPath = qrgDir+"\\"+qrList[i];
+                TreeMap<Integer, AmRecord> targetMap = new TreeMap<Integer, AmRecord>();
+                l.load(null, targetMap, null, sPath);
+                searchMode(modeMap, targetMap, sPath, sdTime, threshold);
+            }
+        }
+    }
+    private void searchMode(NavigableMap<Integer, AmRecord> modeMap, TreeMap<Integer, AmRecord> map0, 
+            String qrFile, SdTime1 sdTime, double threshold) {
+        int mS = modeMap.firstKey();
+        int mE = modeMap.lastKey();
+        int length = mE - mS;
+
+        int ckptInterval = Settings.getCkptInterval();
+        for(int s=map0.firstKey(); s<map0.lastKey()-length; s+=ckptInterval) {
+            int e = s + length;
+            NavigableMap<Integer, AmRecord> map1 = map0.subMap(s, true, e, true);
+            double amCorrel = AmManager.getAmCorrel(modeMap, map1);
+            //System.out.format("amCorrel=%8.3f map1.size()=%d\n", amCorrel, map1.size());
+            if(amCorrel>=threshold) {
+                //print map1
+                long startTp = sdTime.rgetAbs(s);
+                long endTp = sdTime.rgetAbs(e);
+                String sStart = Time.getTimeYMDHMS(startTp, false, false).replace("_", ",");
+                String sEnd = Time.getTimeYMDHMS(endTp, false, false).replace("_", ",");
+                System.out.format("%x %x %s %s\n", 
+                        startTp, endTp, sStart, sEnd);
+            }
+        }
+    }
+    private void searchSSUsage() {
+        System.err.println("usage: java AnalyzeTools qrsearchss [-h] stockCode srcQrFile sDate,sHMS eDate,eHMS target");
+        System.err.println("       search similar range <srcQrFile, sDate,sHMS_eDate,eHMS> in target");
+        System.err.println("       target can either be a qrFile or a dir containing qrFiles");
+        System.err.println("       -h threshold ;  ");
+        System.exit(-1);
+    }
 }

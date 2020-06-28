@@ -325,24 +325,6 @@ public class AmManager {
 
         return getAmCorrel(map0, map1);
     }
-    public double getAmCorrel(NavigableMap<Integer, AmRecord> map0, NavigableMap<Integer, AmRecord> map1) {
-        int size0 = map0.size(); 
-        int size1 = map1.size(); 
-        double[] x = new double[size0];
-        double[] y = new double[size1];
-        int i=0,j=0;
-        for(Integer key: map0.keySet()) {
-            x[i] = map0.get(key).am;
-            i++;
-        }
-        for(Integer key: map1.keySet()) {
-            y[j] = map1.get(key).am;
-            j++;
-        }
-        //System.out.format("%d %d %s %s\n", size0, size1, Arrays.toString(x), Arrays.toString(y));
-        
-        return new PearsonsCorrelation().correlation(x, y);
-    }
     //support 2 kinds:
     //  startHMS<endHMS - f0&f1 is in one day
     //  startHMS>endHMS - f0&f1 is in 2 continuous days
@@ -581,4 +563,27 @@ public class AmManager {
             this.riskDelta = riskDelta;
         }
     }
+
+
+
+
+    public static double getAmCorrel(NavigableMap<Integer, AmRecord> map0, NavigableMap<Integer, AmRecord> map1) {
+        int size0 = map0.size(); 
+        int size1 = map1.size(); 
+        double[] x = new double[size0];
+        double[] y = new double[size1];
+        int i=0,j=0;
+        for(Integer key: map0.keySet()) {
+            x[i] = map0.get(key).am;
+            i++;
+        }
+        for(Integer key: map1.keySet()) {
+            y[j] = map1.get(key).am;
+            j++;
+        }
+        //System.out.format("%d %d %s %s\n", size0, size1, Arrays.toString(x), Arrays.toString(y));
+        
+        return new PearsonsCorrelation().correlation(x, y);
+    }
+
 }
