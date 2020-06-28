@@ -40,7 +40,7 @@ public class SSInstanceHelper {
         int tradeType = SSUtils.getTradeType(cmd);
 
         String tradeDate0 = newArgs[0];              //tradeDate0 must >= startDate
-        if(!SSUtils.checkDates(startDate, tradeDate0)) {
+        if(!SSUtils.checkDate(startDate, tradeDate0)) {
             usage();
             return;
         }

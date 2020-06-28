@@ -180,6 +180,17 @@ public class SSUtils {
     }
 
 
+    public static ArrayList<String> getSimilarTradeDates(SSTRInstance r, AmManager am) {
+        return getSimilarTradeDates(r.stockCode, r.startDate, r.threshold,
+                r.sMatchExp, am);
+    }
+    public static ArrayList<String> getSimilarTradeDates(String stockCode, String startDate, double threshold, 
+            String sMatchExp, AmManager am) {
+        ArrayList<String> tradeDateList = new ArrayList<String>();
+
+        return tradeDateList;
+    }
+
     public static String getInHMS(String hmsList) {
         String[] fields = HMS.getHMSArray(hmsList);
         String inHMS = fields[fields.length-1];
@@ -202,7 +213,19 @@ public class SSUtils {
         return sTargetRate.matches(regEx);
     }
 
-    public static boolean checkDates(String startDate, String tradeDate) {
+    public static boolean checkDates(String startDate, ArrayList<String> tradeDateList) {
+        boolean bCheck = true;
+        for(int i=0; i<tradeDateList.size(); i++) {
+            String tradeDate = tradeDateList.get(i);
+            if(!checkDate(startDate, tradeDate)) {
+                bCheck = false;
+                break;
+            }
+        }
+
+        return bCheck;
+    }
+    public static boolean checkDate(String startDate, String tradeDate) {
         boolean bCheck = true;
         if(tradeDate.compareTo(startDate)<0) {
             String line = String.format("tradeDate=%s < startDate=%s", tradeDate, startDate);
