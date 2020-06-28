@@ -24,22 +24,10 @@ import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 
-public class SSTableRecord {
+public class SSTableRecord extends BaseSSTR {
     public String sTableName;
 
     public int tradeCount;                 //traded volume
-
-    public String stockCode;
-    public String startDate;
-    public double threshold;
-    public int sTDistance;
-    public int tradeType;
-
-    public int maxCycle;
-    public double targetRate;
-
-    public String sMatchExp;
-
 
     private Boolean mbEvalResult;
     private TreeSet<AtomExpr> mExprSet;
@@ -48,24 +36,16 @@ public class SSTableRecord {
     public SSTableRecord (int tradeCount, 
             String stockCode, String startDate, double threshold, int sTDistance, int tradeType, 
             int maxCycle, double targetRate, String sMatchExp, String sTableName) {
+        super(stockCode, startDate, threshold, sTDistance, tradeType,
+                maxCycle, targetRate, sMatchExp);
+
         this.sTableName = sTableName;
 
         this.tradeCount = tradeCount;
 
-        this.stockCode = stockCode;
-        this.startDate = startDate;
-        this.threshold = threshold;
-        this.sTDistance = sTDistance;
-        this.tradeType = tradeType;
-
-        this.maxCycle = maxCycle;
-        this.targetRate = targetRate;
-
-        this.sMatchExp = sMatchExp;
-
         mbEvalResult = null;
         mExprSet = getAtomExprSet();
-        mExprStack = getAtomExprStack();
+        mExprStack = getAtomExprStack(mExprSet);
     }
     public SSTableRecord(SSTableRecord r) {
         this(r.tradeCount, 
@@ -96,67 +76,7 @@ public class SSTableRecord {
         if(bOnlyTraded && bEval || !bOnlyTraded)
             System.out.format("%-8s in %-4s at %s:\n %s\n", sPrefix, sTableName, Time.current(), sOut);
     }
-    public Stack<AtomExpr> getAtomExprStack() {
-        Stack<AtomExpr> atomStack = new Stack<AtomExpr>();
 
-        for(AtomExpr e: mExprSet.descendingSet()) {
-            atomStack.push(e);
-        }
-
-        return atomStack;
-    }
-    public TreeSet<AtomExpr> getAtomExprSet() {
-        TreeSet<AtomExpr> atomSet = new TreeSet<AtomExpr>();
-
-        String[] fields = getComponents();
-        for(int i=0; i<fields.length; i++) {
-            String[] subFields = fields[i].split(":");
-            //subFields[0] - tradeDate; subFields[1] - hmsList
-            String[] hmss = subFields[1].split("_");
-            AtomExpr expr = new AtomExpr(hmss[hmss.length-1], fields[i]);
-            /*
-            System.out.format("%s: adding %s %s\n", 
-                    Utils.getCallerName(getClass()), hmss[hmss.length-1], fields[i]);
-            */
-            atomSet.add(expr);
-        }
-
-        return atomSet;
-    }
-    public String[] getComponents() {
-        return sMatchExp.split("\\&|\\|");
-    }
-    public int getComponentSize() {
-        return getComponents().length;
-    }
-    public ArrayList<String> getTradeDates() {
-        ArrayList<String> sTradeDateList = new ArrayList<String>();
-
-        String[] fields = getComponents();
-        //System.out.format("%s: fields.length=%d\n", Utils.getCallerName(getClass()), fields.length);
-        for(int i=0; i<fields.length; i++) {
-            //System.out.format("%s: %s\n", Utils.getCallerName(getClass()), fields[i]);
-            String[] subFields = fields[i].split(":");
-            //System.out.format("%s: subFields.length=%d\n", Utils.getCallerName(getClass()), subFields.length);
-            //subFields[0] - tradeDate; subFields[1] - hmsList
-            sTradeDateList.add(subFields[0]);
-        }
-
-        return sTradeDateList;
-    }
-
-    //currentTp==null - an evaluation is forced to be done
-    //currentTp!=null - a check is done whether to be evaluated
-    public Boolean _eval(long currentTp, AmManager am, TreeMap<Integer, AmRecord> amrMap, SdTime1 sdTime) {
-        if(mbEvalResult==null) {
-            if(eligible(currentTp)) {
-                String currentDate = Time.getTimeYMD(currentTp, false);
-                mbEvalResult = eval(am, amrMap, currentDate, sdTime, null);
-            }
-        }
-
-        return mbEvalResult;
-    }
     public Boolean eval(long currentTp, AmManager am, TreeMap<Integer, AmRecord> amrMap, SdTime1 sdTime) {
         if(mbEvalResult==null) {
             if(!mExprStack.empty()) {
@@ -265,43 +185,27 @@ public class SSTableRecord {
     }
 
 
-    public static ArrayList<String> getTradeDates(ArrayList<SSTableRecord> list) {
-        TreeSet<String> sTradeDateSet = new TreeSet<String>();
-        for(int i=0; i<list.size(); i++) {
-            SSTableRecord r = list.get(i);
-            sTradeDateSet.addAll(r.getTradeDates());
+
+
+
+
+
+
+
+
+
+    //currentTp==null - an evaluation is forced to be done
+    //currentTp!=null - a check is done whether to be evaluated
+    public Boolean _eval(long currentTp, AmManager am, TreeMap<Integer, AmRecord> amrMap, SdTime1 sdTime) {
+        if(mbEvalResult==null) {
+            if(eligible(currentTp)) {
+                String currentDate = Time.getTimeYMD(currentTp, false);
+                mbEvalResult = eval(am, amrMap, currentDate, sdTime, null);
+            }
         }
 
-        return new ArrayList<String>(sTradeDateSet);
+        return mbEvalResult;
     }
-    public static String getAmCorrels(double[] ret) {
-        String sAmCorrels = "";
-        for(int i=0; i<ret.length; i++) {
-            sAmCorrels += String.format("%8.3f", ret[i]);
-        }
-        return sAmCorrels;
-    }
-
-
-
-
-    public static class AtomExpr implements Comparable<AtomExpr> {
-        public String sLastHMS;
-        public String sExpr;
-
-        public AtomExpr(String sLastHMS, String sExpr) {
-            this.sLastHMS = sLastHMS;
-            this.sExpr = sExpr;
-        }
-
-        public int compareTo(AtomExpr e) {
-            return sLastHMS.compareTo(e.sLastHMS);
-        }
-    }
-
-
-
-
     public boolean eligible(long currentTp) {
         boolean bEligible = true;
 
@@ -328,5 +232,4 @@ public class SSTableRecord {
 
         return hmsList;
     }
-
 }
