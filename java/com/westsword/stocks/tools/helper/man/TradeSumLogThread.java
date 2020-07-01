@@ -49,6 +49,27 @@ public class TradeSumLogThread extends Thread {
 
 
 
+    public static void write(String sMatchExp, SSInstance.BufR br, boolean bStdout) {
+        double winRate, avgNetRevenue, avgMaxRevenue, expRisk0, expRisk1;
+        int matchedCnt = br.getMatchedCount();
+        if(matchedCnt!=0) {
+            String sMatchedTradeDates = br.sMatchedTradeDates.trim();
+            sMatchedTradeDates = sMatchedTradeDates.replaceAll(" ", ",");
+            winRate = ((double)br.okCount)/matchedCnt;
+            avgNetRevenue = br.netRevenue/matchedCnt;
+            avgMaxRevenue = br.maxRevenue/matchedCnt;
+            expRisk0 = br.failCount==0?Double.NaN:br.risk0/br.failCount;
+            expRisk1 = br.okCount==0?Double.NaN:br.risk1/br.okCount;
+
+            String sFormat = "%s %4d %8.1f%% %8.3f %8.3f %8.3f %8.3f %s %8.3f\n";
+            String line = String.format(sFormat, 
+                    sMatchExp, matchedCnt, winRate*100, avgNetRevenue, avgMaxRevenue, expRisk0, expRisk1, 
+                    sMatchedTradeDates, br.netRevenue/br.maxHangCount);
+
+            if(bStdout)
+                System.out.format("%s", line);
+        }
+    }
     public static void write(String tradeDate, String sTradeSumFile,
             String hmsList, SSInstance.BufR br, boolean bLog2TradeSumFile, boolean bStdout) {
         double winRate, avgNetRevenue, avgMaxRevenue, expRisk0, expRisk1;
@@ -68,7 +89,7 @@ public class TradeSumLogThread extends Thread {
                     tradeDate, matchedCnt, winRate*100, avgNetRevenue, avgMaxRevenue, expRisk0, expRisk1, 
                     sMatchedTradeDates, hmsList, br.netRevenue/br.maxHangCount);
 
-            if(bLog2TradeSumFile)
+            if(bLog2TradeSumFile && sTradeSumFile!=null)
                 Utils.append2File(sTradeSumFile, line);
             if(bStdout)
                 System.out.format("%s", line);
