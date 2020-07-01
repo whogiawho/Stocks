@@ -33,7 +33,7 @@ public class AnalyzeTools{
                 "         getrel | getabs | rgetabs | getanalysis |\n" +
                 "         ssinstance | ssinstances | getfullss | checksstable | getsstable |\n" +
                 "         getentrust | checkabss | submitabs | makerrp |\n" +
-                "         nexttradedate | prevtradedate |\n" +
+                "         nexttradedate | prevtradedate | sstrinstance |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify |\n" +
                 "         mminstance | qualrange | qrmaxmatch | qrverify | qrsearchss |\n" +
                 "         makessdates | ssdmaxmatchS | ssdmaxmatchA | make1mamcmap ]");
@@ -95,6 +95,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("ssinstances")) {
             SSInstancesHelper ssih = new SSInstancesHelper();
             ssih.run(args);
+        } else if (sOption.equals("sstrinstance")) {
+            SSTRInstanceHelper sstrih = new SSTRInstanceHelper();
+            sstrih.run(args);
         } else if (sOption.equals("ssgroupchar")) {
             SSGroupHelper ssgh = new SSGroupHelper();
             ssgh.listChar(args);

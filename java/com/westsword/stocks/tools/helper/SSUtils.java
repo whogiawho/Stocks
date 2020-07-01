@@ -21,10 +21,11 @@ import java.util.*;
 import org.apache.commons.cli.*;
 
 import com.westsword.stocks.am.AmManager;
-import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.utils.AnsiColor;
+import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.tools.helper.man.*;
+import com.westsword.stocks.analyze.ssanalyze.*;
 
 public class SSUtils {
     public final static String Default_StockCode = Settings.getStockCode();
@@ -188,6 +189,34 @@ public class SSUtils {
             String sMatchExp, AmManager am) {
         ArrayList<String> tradeDateList = new ArrayList<String>();
 
+        TradeDates tradeDates = new TradeDates(stockCode);
+        String tradeDate0 = startDate;
+        while(tradeDate0 != null) {
+            String[] fields = sMatchExp.split("\\&|\\|");
+
+            boolean bHMSMatched = true;
+            for(int i=0; i<fields.length; i++) {
+                String[] subFields = fields[i].split(":");
+                String tradeDate = subFields[0];
+                String hmsList = subFields[1];
+                String[] hms = hmsList.split("_");
+
+                String[] out = new String[1]; 
+                bHMSMatched = isHMSMatched(tradeDate0, tradeDate, hms, am, threshold, out);
+                if(!bHMSMatched) {
+                    break;
+                }
+                /*
+                System.out.format("%s %s %s %s\n", 
+                        tradeDate0, tradeDate, hmsList, out[0]);
+                */
+            }
+            if(bHMSMatched)
+                tradeDateList.add(tradeDate0);
+
+            tradeDate0 = tradeDates.nextDate(tradeDate0);
+        }
+
         return tradeDateList;
     }
 
@@ -261,4 +290,17 @@ public class SSUtils {
 
         return way;
     }
+
+    public static ArrayList<SSTableRecord> getSSTableRecordList(String sSSTableFile) {
+        ArrayList<SSTableRecord> list = new ArrayList<SSTableRecord>();
+
+        if(sSSTableFile != null) {
+            SSTableLoader l = new SSTableLoader();
+            l.load(list, sSSTableFile, "");
+        }
+
+        return list;
+    }
+
+
 }

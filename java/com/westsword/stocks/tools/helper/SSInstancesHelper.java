@@ -71,7 +71,7 @@ public class SSInstancesHelper {
                     "", "", maxCycle, targetRate);
 
         if(sSSTableFile != null) {
-            ArrayList<SSTableRecord> list = getSSTableRecordList(sSSTableFile);
+            ArrayList<SSTableRecord> list = SSUtils.getSSTableRecordList(sSSTableFile);
             handle01(template, list,
                     bLog2Files, bResetLog, bStdout,
                     stockDates, am, ssim);
@@ -85,7 +85,7 @@ public class SSInstancesHelper {
     private static void handle01(SSInstance template, ArrayList<SSTableRecord> list, 
             boolean bLog2Files, boolean bResetLog, boolean bStdout,
             StockDates stockDates, AmManager am, SSiManager ssim) {
-        //loop the tradeSumList 
+        //loop the SSTableRecord list
         for(int i=0; i<list.size(); i++) {
             SSTableRecord ts = list.get(i);
 
@@ -178,17 +178,6 @@ public class SSInstancesHelper {
         }
     }
 
-    private static ArrayList<SSTableRecord> getSSTableRecordList(String sSSTableFile) {
-        ArrayList<SSTableRecord> list = new ArrayList<SSTableRecord>();
-
-        if(sSSTableFile != null) {
-            SSTableLoader l = new SSTableLoader();
-            l.load(list, sSSTableFile, "");
-        }
-
-        return list;
-    }
-
 
     private static void usage() {
         String sPrefix = "usage: java AnalyzeTools ";
@@ -216,7 +205,7 @@ public class SSInstancesHelper {
             String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
             Options options = SSInstanceHelper.getOptions();
 
-            options.addOption("f", true,  "a tradeSum file");
+            options.addOption("f", true,  "a ssTable file");
             options.addOption("m", true,  "hmsList");
             options.addOption("a", true,  "the start hmsList(inclusive) to be looped");
             options.addOption("b", true,  "the end hmsList(exclusive) to be looped");
