@@ -125,10 +125,10 @@ public class Settings extends FileLoader {
     public static String getSdStartTime() {
         return getString("SdStartTime");
     }
-    public static Integer getSdInterval() {
+    public static Integer getSdInterval() {   //in seconds
         return getInteger("SdInterval");
     }
-    public static Integer getCkptInterval() {
+    public static Integer getCkptInterval() { //in seconds
         return getInteger("CkptInterval");
     }
 

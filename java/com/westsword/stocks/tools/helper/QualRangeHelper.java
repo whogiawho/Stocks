@@ -26,7 +26,6 @@ import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.ckpt.*;
 import com.westsword.stocks.base.utils.*;
-import com.westsword.stocks.base.Settings;
 
 public class QualRangeHelper {
     public void findQualified(String args[]) {
@@ -95,7 +94,7 @@ public class QualRangeHelper {
         String stockCode = newArgs[0];
         String sqrFile = newArgs[1];
 
-        CmManager cmm = new CmManager();
+        CmManager cm = new CmManager();
         QualRangeManager qrm = new QualRangeManager(stockCode);
         qrm.load(sqrFile);
 
@@ -108,9 +107,10 @@ public class QualRangeHelper {
         for(int i=start; i<=end; i++) {
             int sdLength = ckptIntSdLen*i;
             qrm.setSdLength(sdLength);
-            double[][] cm = qrm.getCorrMatrix(cmm);
-            qrm.getMatchedSet(cm, qrSet, threshold);
+            double[][] cmm = qrm.getCorrMatrix(cm);
+            qrm.getMatchedSet(cmm, qrSet, threshold);
         }
+        cm.close();
 
         //print max elements of qrSet
         QualRange qr = qrSet.last();
@@ -128,7 +128,7 @@ public class QualRangeHelper {
         return SSUtils.getInteger(cmd, "e", 1);
     }
     private double getThreshold(CommandLine cmd) {
-        return SSUtils.getDouble(cmd, "h", SSUtils.Default_Threshold);
+        return SSUtils.getThreshold(cmd, SSUtils.Default_Threshold);
     }
     private void maxmatchUsage() {
         System.err.println("usage: java AnalyzeTools qrmaxmatch [-hse] stockCode qrFile");
@@ -166,7 +166,7 @@ public class QualRangeHelper {
 
 
     public void verify(String[] args) {
-        CommandLine cmd = getCommandLine(args);
+        CommandLine cmd = getCommandLine(args); //share -h
         String[] newArgs = cmd.getArgs();
         if(newArgs.length != 7) {
             verifyUsage();
@@ -188,7 +188,7 @@ public class QualRangeHelper {
 
         int sdInterval = Settings.getSdInterval();
         int cycleSdLength = (int)Utils.roundUp((double)cycle/sdInterval, "#");
-        int ckptIntSdLen = Utils.getCkptIntervalSdLength();
+        //int ckptIntSdLen = Utils.getCkptIntervalSdLength();
 
         SdTime1 sdt = new SdTime1(stockCode);
         QualRange qr = new QualRange(endDate, endHMS);
@@ -267,7 +267,7 @@ public class QualRangeHelper {
 
 
     public void searchSS(String[] args) {
-        CommandLine cmd = getCommandLine(args);
+        CommandLine cmd = getCommandLine(args);  //share -h
         String[] newArgs = cmd.getArgs();
         if(newArgs.length != 5) {
             searchSSUsage();
@@ -319,8 +319,8 @@ public class QualRangeHelper {
         int mE = modeMap.lastKey();
         int length = mE - mS;
 
-        int ckptInterval = Settings.getCkptInterval();
-        for(int s=map0.firstKey(); s<map0.lastKey()-length; s+=ckptInterval) {
+        int ckptIntSdLen = Utils.getCkptIntervalSdLength();
+        for(int s=map0.firstKey(); s<map0.lastKey()-length; s+=ckptIntSdLen) {
             int e = s + length;
             NavigableMap<Integer, AmRecord> map1 = map0.subMap(s, true, e, true);
             double amCorrel = AmManager.getAmCorrel(modeMap, map1);
@@ -343,4 +343,7 @@ public class QualRangeHelper {
         System.err.println("       -h threshold ;  ");
         System.exit(-1);
     }
+
+
+
 }

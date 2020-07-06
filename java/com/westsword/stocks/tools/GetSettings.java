@@ -630,7 +630,7 @@ public class GetSettings{
         //testTradeDates(stockCode, "20090105", "20191231");
         //testTradeDates(stockCode, "20160108", "20191231");
         //testTradeDatesList(stockCode);
-        testSSTable(stockCode);
+        //testSSTable(stockCode);
 
         //testSettings();       
         //testMisc();       
@@ -654,14 +654,14 @@ public class GetSettings{
         //testAmManager(stockCode, true);
         //testAmMatrix(stockCode);
         //testMatlab(stockCode);
-        //testCkpt(stockCode);
-        //testCombination(stockCode);
+        testCkpt(stockCode);
+        testCombination(stockCode);
         //testTradeSumLoader(stockCode);
         //testTaskManager(stockCode);
         //testFinal(stockCode);
         //testGetAmCorrel(stockCode);
         //testDouble(stockCode);
-        testString(stockCode);
+        //testString(stockCode);
         //testRoundUp(stockCode);
         //testQualRange(stockCode);
         //testBackSlash(stockCode);
@@ -669,7 +669,7 @@ public class GetSettings{
         //listStockDates(stockCode, "20090101", "20200112");
         //testStockDatesDistance(stockCode, 10);
         //testNextDate(stockCode);
-        testSplit(stockCode);
+        //testSplit(stockCode);
     }
 
 }

@@ -27,8 +27,9 @@ public class QualRange implements Comparable<QualRange> {
     private int mSdLength;          //the length before <endTradeDate, endHMS>
 
     private int mMatchedQrCnt;
-    private int mMatchedTdCnt;      //matched tradedate count
-    private TreeSet<String> mTdSet; // 
+
+    private int mMatchedTdCnt;      //size of mTdSet
+    private TreeSet<String> mTdSet; //matched <tradedate,endhms>
 
     public QualRange(String endTradeDate, String endHMS, int sdLength, 
             int matchedQrCnt, int matchedTdCnt, TreeSet<String> tdSet) {
@@ -78,7 +79,7 @@ public class QualRange implements Comparable<QualRange> {
         System.out.format("%s %s %4d %4d %4d %s\n", 
                 endTradeDate, endHMS, mSdLength, mMatchedQrCnt, mMatchedTdCnt, getSimpleMatchedExpr());
     }
-    //if more pairs with equal tradedate are matched, only one is returned
+    //if more pairs with equal tradedate are matched, only the first one is returned
     public String getSimpleMatchedExpr() {
         String sExpr = "";
 
