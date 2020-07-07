@@ -70,6 +70,9 @@ public class SSUtils {
     public static String getStockCode(CommandLine cmd) {
         return getString(cmd, "c", Default_StockCode);
     }
+    public static double getThreshold(CommandLine cmd, double defaultThres) {
+        return SSUtils.getDouble(cmd, "h", defaultThres);
+    }
     public static double getThreshold(CommandLine cmd) {
         return getDouble(cmd, "h", Default_Threshold);
     }

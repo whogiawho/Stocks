@@ -33,9 +33,9 @@ public class AnalyzeTools{
                 "         getrel | getabs | rgetabs | getanalysis |\n" +
                 "         ssinstance | ssinstances | getfullss | checksstable | getsstable |\n" +
                 "         getentrust | checkabss | submitabs | makerrp |\n" +
-                "         nexttradedate | prevtradedate | sstrinstance |\n" +
-                "         ssgroupchar | ssgroupchars | ssgroupverify |\n" +
-                "         mminstance | qualrange | qrmaxmatch | qrverify | qrsearchss |\n" +
+                "         nexttradedate | prevtradedate | sstrinstance | mminstance |\n" +
+                "         ssgroupchar | ssgroupchars | ssgroupverify | qrvgetstats |\n" +
+                "         qualrange | qrmaxmatch | qrverify | qrsearchss | shrinkqrv |\n" +
                 "         makessdates | ssdmaxmatchS | ssdmaxmatchA | make1mamcmap ]");
 
         System.exit(-1);
@@ -122,6 +122,12 @@ public class AnalyzeTools{
         } else if (sOption.equals("qrsearchss")) {
             QualRangeHelper qrh = new QualRangeHelper();
             qrh.searchSS(args);
+        } else if (sOption.equals("shrinkqrv")) {
+            QrvHelper qrvh = new QrvHelper();
+            qrvh.shrink(args);
+        } else if (sOption.equals("qrvgetstats")) {
+            QrvHelper qrvh = new QrvHelper();
+            qrvh.getstats(args);
         } else if (sOption.equals("makessdates")) {
             SSDatesHelper ssdh = new SSDatesHelper();
             ssdh.make(args);

@@ -184,6 +184,29 @@ public class AmManager {
 
         return m;
     }
+    //sdLength - the whole sdLength for each Qrv
+    //idx[]  - start&end idx for each Qrv from Combinations
+    public double[][] getAmMatrix(ArrayList<Qrv> qrvList, int sdLength, int[] idx) {
+        double[][] m = null;
+
+        if(qrvList!=null) {
+            int w = qrvList.size();
+            int ckptIntSdLen = Utils.getCkptIntervalSdLength();
+            int h = (idx[1] - idx[0])*ckptIntSdLen;
+            m = new double[h][w];
+
+            for(int i=0; i<w; i++) {
+                Qrv qrv = qrvList.get(i);
+                int start = qrv.getSdTime(mSdTime, sdLength, idx[0]*ckptIntSdLen);
+                for(int j=0; j<h; j++) {
+                    AmRecord r = mAmRecordMap.get(start+j);
+                    m[j][i] = (double)r.am;
+                }
+            }
+        }
+
+        return m;
+    }
 
 
     //out[0] - maxNetRevenue
