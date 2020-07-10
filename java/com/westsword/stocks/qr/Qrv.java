@@ -69,7 +69,10 @@ public class Qrv {
         int endIdx1 = qrv.getEndSdt(sdt);
         int startIdx1 = endIdx1 - sdLength;
 
-        return am.getAmCorrel(startIdx0, endIdx0, startIdx1, endIdx1);
+        if(startIdx0>=0&&endIdx0>=0&&startIdx1>=0&&endIdx1>=0)
+            return am.getAmCorrel(startIdx0, endIdx0, startIdx1, endIdx1);
+        else
+            return Double.NaN;
     }
 
     public int getStartSdt(SdTime1 sdt, int sdLength) {

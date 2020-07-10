@@ -117,8 +117,8 @@ public class AnalyzeTools{
             QualRangeHelper qrh = new QualRangeHelper();
             qrh.maxmatch(args);
         } else if (sOption.equals("qrverify")) {
-            QualRangeHelper qrh = new QualRangeHelper();
-            qrh.verify(args);
+            QrVerifier qrv = new QrVerifier();
+            qrv.verify(args);
         } else if (sOption.equals("qrsearchss")) {
             QualRangeHelper qrh = new QualRangeHelper();
             qrh.searchSS(args);

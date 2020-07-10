@@ -316,8 +316,11 @@ public class AmManager {
         int size1 = map1.size(); int expSize1 = endIdx1-startIdx1+1;
         if(!checkSizes(size0, expSize0, size1, expSize1, 
                     "", "", "", "",
-                    "", "", "", ""))
+                    "", "", "", "")) {
+            System.out.format("%s: %d,%d %d,%d\n", 
+                    Utils.getCallerName(getClass()), startIdx0, endIdx0, startIdx1, endIdx1);
             return amCorrel;
+        }
 
         return getAmCorrel(map0, map1);
     }
