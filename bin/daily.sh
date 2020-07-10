@@ -60,7 +60,18 @@ function routinesAfterCloseQuotation {
 
     #generate analysis.txt
     java -jar $analyzetoolsJar makeanalysistxt $stockCode $tradeDate
+
+    write2CheckAllTable $stockCode $tradeDate
 }
+#write today's checkAllSSTable output to fCheckAllTable
+function write2CheckAllTable {
+    local stockCode=$1
+    local tradeDate=$2
+
+    echo $tradeDate |tee -a $fCheckAllTable
+    checkAllSSTable $stockCode $tradeDate |tee -a $fCheckAllTable
+}
+
 #convert rawPankou&rawTradeDetails, generate copylist and run realtimeAnalyze
 function _realtimeAnalyze {
     local stockCode=$1
@@ -217,6 +228,7 @@ function autoTrade {
         return
     }
 
+    sleep $SLEEP_INTERVAL
     #login qs client
     autoLoginQs
 
