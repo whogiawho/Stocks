@@ -1,5 +1,6 @@
 #!/bin/bash
 
+fCheckAllTable=${fCheckAllTable:-~/analysis/checkAllTable.txt}
 ssTableDir=${ssTableDir:-$rootDirCygdrive/data/ssTable}
 intersectionDir=${intersectionDir:-$rootDirCygdrive/data/intersection}
 
@@ -120,6 +121,52 @@ function ssGetMatchedCounts {
 }
 
 
+function extendSSTable {
+    local fSSTable=$1
+    local fSSTROut=$2
+    local maxCycle=${maxCycle:-5}
+
+    local a b c d e f g h i j k l m
+    local fTmp=`mktemp`
+
+    #write those sMatchExpr whose cycle>$maxCycle to $fTmp
+    local line
+    local bPrint=0; 
+    cat $fSSTROut |while read line; 
+    do 
+        read a b c d e f g h i j k l m<<<`echo $line`;  
+        [[ $bPrint == 1 ]] && {  
+            echo $a|grep -q "&" && { 
+                echo $a; 
+                bPrint=0; 
+            }; 
+            continue; 
+        }; 
+        [[ $l -gt $maxCycle ]] && { 
+            bPrint=1; 
+        }; 
+    done | tee $fTmp
+
+    echo
+
+    local fTmp1=`mktemp`
+    #remove those items in $fTmp from $fSSTable, and save them to $fTmp1
+    for i in `cat $fTmp`; 
+    do 
+        sed -i -e "/$i/{w /dev/stdout" -e "d"} $fSSTable; 
+    done | tee $fTmp1
+
+    #modify 1.100 to 1.150
+    sed -i "s/1\.100/1\.150/g" $fSSTable
+
+    echo >>$fSSTable
+    echo >>$fSSTable
+    echo >>$fSSTable
+    #append $fTmp1 to $fSSTable
+    cat $fTmp1 >>$fSSTable
+
+    rm -rf $fTmp1 $fTmp
+}
 
 
 
