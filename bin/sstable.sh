@@ -24,16 +24,6 @@ function checkSSTable {
 }
 
 
-function getHmsListDelta {
-    local stockCode=$1
-    local tradeDate=$2
-    local hmsList=$3
-
-    local start end
-    read start end<<<`java -jar build/jar/analyzetools.jar getabs $stockCode $tradeDate $hmsList 2>/dev/null`
-
-    echo $((end-start))
-}
 #dir=data/similarStack/600030/20160108_0.90_T1L
 function makeIntersection {
     local dir=$1
