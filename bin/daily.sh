@@ -62,6 +62,11 @@ function routinesAfterCloseQuotation {
     java -jar $analyzetoolsJar makeanalysistxt $stockCode $tradeDate
 
     write2CheckAllTable $stockCode $tradeDate
+
+    makeStandardizedAmPriceChart
+}
+function makeStandardizedAmPriceChart {
+    cscript.exe "$rootDir\\bin\\makeStandardAmPricePng.vbs"
 }
 #write today's checkAllSSTable output to fCheckAllTable
 function write2CheckAllTable {
@@ -228,7 +233,7 @@ function autoTrade {
         return
     }
 
-    sleep $SLEEP_INTERVAL
+    sleep $((SLEEP_INTERVAL/4))
     #login qs client
     autoLoginQs
 
