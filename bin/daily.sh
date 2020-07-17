@@ -63,10 +63,10 @@ function routinesAfterCloseQuotation {
 
     write2CheckAllTable $stockCode $tradeDate
 
-    makeStandardizedAmPriceChart
+    makeSTDAmPricePng
 }
-function makeStandardizedAmPriceChart {
-    cscript.exe "$rootDir\\bin\\makeStandardAmPricePng.vbs"
+function makeSTDAmPricePng {
+    cscript.exe "$rootDir\\bin\\makeSTDAmPricePng.vbs"
 }
 #write today's checkAllSSTable output to fCheckAllTable
 function write2CheckAllTable {

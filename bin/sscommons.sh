@@ -163,8 +163,12 @@ function _ssGetIntersection {
 
         local cnt=`wc $fTmp|awk '{print $1}'`; 
         local maxCycle=`sort -nk12,12 $fTmp|tail -n1|awk '{print $12}'`; 
+        local minProfit=`sort -rnk7,7 $fTmp|tail -n1|awk '{print $7}'`
+        #echo $minProfit 
+        local bmpgt0=0
+        [[ ! -z $minProfit ]] && bmpgt0=`gt $minProfit 0` 
 
-        [[ $cnt != 0 && $maxCycle -le $maxWaitThres ]] && {
+        [[ $cnt != 0 && $maxCycle -le $maxWaitThres && $bmpgt0 == 1 ]] && {
             [[ $endHMS2 > $endHMS1 ]] && {
                 printf "%s %s %s %s %4d %4d\n" $tradeDate2 $i $tradeDate1 $hmsList1 $cnt $maxCycle; 
             } || {

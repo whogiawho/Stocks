@@ -240,3 +240,23 @@ function getHmsListDelta {
     echo $((end-start))
 }
 
+#If 3 parms, startHMS is of format HHMMSS_HHMMSS
+#if 4 parms, startHMS&endHMS is of format HHMMSS
+function viewTradeDateAmRange {
+    local stockCode=$1
+    local tradeDate=$2
+    local startHMS=$3
+    local endHMS=$4
+
+    [[ -z $endHMS ]] && {
+        endHMS=${startHMS#*_}
+        startHMS=${startHMS%_*}
+    }
+    #convert startHMS to startHexTp
+    local startHexTp=`convertTime2Hex $tradeDate $startHMS`
+    #convert endHMS to endHexTp
+    local endHexTp=`convertTime2Hex $tradeDate $endHMS`
+
+    cscript.exe "$rootDir\\bin\\viewTradeDateRange.vbs" $stockCode $tradeDate $startHexTp $endHexTp $startHMS $endHMS
+}
+
