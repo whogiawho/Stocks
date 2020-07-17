@@ -9,12 +9,12 @@ xlApp.DisplayAlerts = False
 
 Dim objArgs
 set objArgs = Wscript.Arguments
-Dim sAnalysisDir
-sAnalysisDir = objArgs(0)
+Dim sAnalysis
+sAnalysis= objArgs(0)
 
 Dim xlMacros
 Set xlMacros = xlApp.Workbooks.Open("d:\Stocks\doc\macros.xlsm", 0, True) 
-xlApp.Run "macros.xlsm!AmPrice.makePngs", ""+sAnalysisDir
+xlApp.Run "macros.xlsm!Standardized.makeAmPriceChartFromFile", ""+sAnalysis
 
 'close all workbooks
 Dim workbooks
