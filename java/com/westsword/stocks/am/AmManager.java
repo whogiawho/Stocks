@@ -372,6 +372,13 @@ public class AmManager {
 
         return amCorrel;
     }
+    public double[] stdprice(int startSd, int endSd) {
+        double[] amSereis = null;
+
+        NavigableMap<Integer, AmRecord> map0 = mAmRecordMap.subMap(startSd, true, endSd, true);
+
+        return amSereis;
+    }
 
 
     

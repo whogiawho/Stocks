@@ -24,7 +24,7 @@ import easytrader
 from easytrader import grid_strategies
 
 def marketBuy(stockCode, marketPrice, amount):
-    marketPrice = float(1+0.07)*float(marketPrice)
+    marketPrice = float(1+0.04)*float(marketPrice)
     d = user.buy(stockCode, price=marketPrice, amount=amount)
     return d
 

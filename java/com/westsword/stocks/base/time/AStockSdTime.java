@@ -81,6 +81,9 @@ public class AStockSdTime extends SdTime {
     public static long getCloseQuotationTime(String tradeDate) {
         return Time.getSpecificTime(tradeDate, getCloseQuotationTime());
     }
+    public static long getCallAuctionEndTime(String tradeDate) {
+        return Time.getSpecificTime(tradeDate, getCallAuctionEndTime());
+    }
 
 
     public static long getRrpStartTime(long timepoint) {

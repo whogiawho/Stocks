@@ -432,6 +432,21 @@ public class GetSettings{
         System.out.format("s0=%d\n", s0.hashCode());
         System.out.format("l=%s\n", l.toString());
     }
+    public static void test2EndCkpt(String stockCode) {
+        System.out.format("\n test2EndCkpt: \n");
+
+        CheckPoint0 ckpt = new CheckPoint0();
+        int length = ckpt.getLength();
+        Combinations c = new Combinations(length, 2);
+        //loop hmsList combination(n,2)
+        Iterator<int[]> itr = c.iterator();
+        while(itr.hasNext()) {
+            int[] e = itr.next();
+            String hmsList = ckpt.getHMSList(e);
+
+            System.out.format("%s\n", hmsList);
+        }
+    }
     public static void testCkpt(String stockCode) {
         System.out.format("\n testCkpt: \n");
 
@@ -654,8 +669,9 @@ public class GetSettings{
         //testAmManager(stockCode, true);
         //testAmMatrix(stockCode);
         //testMatlab(stockCode);
-        testCkpt(stockCode);
-        testCombination(stockCode);
+        //testCkpt(stockCode);
+        test2EndCkpt(stockCode);
+        //testCombination(stockCode);
         //testTradeSumLoader(stockCode);
         //testTaskManager(stockCode);
         //testFinal(stockCode);

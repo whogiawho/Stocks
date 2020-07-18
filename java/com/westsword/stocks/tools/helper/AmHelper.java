@@ -17,6 +17,7 @@
 package com.westsword.stocks.tools.helper;
 
 import com.westsword.stocks.am.AmManager;
+import com.westsword.stocks.base.time.SdTime1;
 import com.westsword.stocks.base.time.StockDates;
 
 public class AmHelper {
@@ -41,11 +42,39 @@ public class AmHelper {
         System.out.format("%d\n", aM);
     }
 
-
-
-
     private static void usage() {
         System.err.println("usage: java AnalyzeTools getam stockCode tradeDate hmsList");
         System.exit(-1);
     }
+
+
+
+    public static void stdprice(String args[]) {
+        if(args.length != 4) {
+            stdUsage();
+            return;
+        }
+
+        String stockCode = args[1];
+        String startTradeDate = args[2];
+        String endTradeDate = args[3];
+
+        SdTime1 sdTime = new SdTime1(stockCode);
+
+        AmManager am = new AmManager(stockCode, startTradeDate, endTradeDate);
+
+        long startTp = sdTime.getCallAuctionEndTime(startTradeDate);
+        long endTp = sdTime.getCloseQuotationTime(endTradeDate);
+
+        int startSd = sdTime.getAbs(startTp);
+        int endSd = sdTime.getAbs(endTp);
+        System.out.format("startSd=%d, endSd=%d\n", startSd, endSd);
+
+        double[] stdAMs = am.stdprice(startSd, endSd);
+    }
+    private static void stdUsage() {
+        System.err.println("usage: java AnalyzeTools stdprice stockCode startTradeDate endTradeDate");
+        System.exit(-1);
+    }
+
 }
