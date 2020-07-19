@@ -235,7 +235,7 @@ function getHmsListDelta {
     local hmsList=$3
 
     local start end
-    read start end<<<`java -jar build/jar/analyzetools.jar getabs $stockCode $tradeDate $hmsList 2>/dev/null`
+    read start end<<<`java -jar $analyzetoolsJar getabs $stockCode $tradeDate $hmsList 2>/dev/null`
 
     echo $((end-start))
 }
@@ -258,5 +258,35 @@ function viewTradeDateAmRange {
     local endHexTp=`convertTime2Hex $tradeDate $endHMS`
 
     cscript.exe "$rootDir\\bin\\viewTradeDateRange.vbs" $stockCode $tradeDate $startHexTp $endHexTp $startHMS $endHMS
+}
+
+#a Png file is made at the dir - dirname(sAnalysis), with ${basename(sAnalysis)%.txt}.png
+function makeSTDAmPricePngFromFile {
+    local sAnalysis=$1
+
+    cscript.exe "$rootDir\\bin\\makeSTDAmPricePngFromFile.vbs" "$sAnalysis"
+}
+function makeSTDAmPricePngs {
+    local stockCode=$1
+    local nDays=$2
+
+    mkdir -p $TMP/$stockCode/$nDays
+    local i=
+    for i in `getTradeDateList $stockCode y |tac`
+    do
+        local fOut=$TMP/$stockCode/$nDays/$i.txt
+        local startDate=`java -jar $analyzetoolsJar prevtradedate $stockCode $i $nDays 2>/dev/null`
+        [[ ! -z $startDate ]] && {
+            local j=
+            for j in `getTradeDateRange $stockCode $startDate $i`; 
+            do 
+                cat "$dailyDir/$stockCode/$j/analysis.txt"; 
+            done >$fOut
+
+            makeSTDAmPricePngFromFile  "`getWindowPathOfFile $fOut`"
+
+            rm -rf $fOut
+        }
+    done
 }
 
