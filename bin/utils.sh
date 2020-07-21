@@ -240,6 +240,9 @@ function getHmsListDelta {
     echo $((end-start))
 }
 
+
+
+
 #If 3 parms, startHMS is of format HHMMSS_HHMMSS
 #if 4 parms, startHMS&endHMS is of format HHMMSS
 function viewTradeDateRange {
@@ -261,14 +264,13 @@ function viewTradeDateRange {
     #convert endHMS to endHexTp
     local endHexTp=`convertTime2Hex $tradeDate $endHMS`
 
-    cscript.exe "$rootDir\\bin\\viewTradeDateRange.vbs" $stockCode $tradeDate $startHexTp $endHexTp $startHMS $endHMS
+    cscript.exe "$rootDir\\vbs\\viewTradeDateRange.vbs" $stockCode $tradeDate $startHexTp $endHexTp $startHMS $endHMS
 }
-
 #a Png file is made at the dir - dirname(sAnalysis), with ${basename(sAnalysis)%.txt}.png
 function makeSTDAmPricePngFromFile {
     local sAnalysis=$1
 
-    cscript.exe "$rootDir\\bin\\makeSTDAmPricePngFromFile.vbs" "$sAnalysis"
+    cscript.exe "$rootDir\\vbs\\makeSTDAmPricePngFromFile.vbs" "$sAnalysis"
 }
 function makeSTDAmPricePngs {
     local stockCode=$1

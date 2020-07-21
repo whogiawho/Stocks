@@ -37,12 +37,12 @@ function makeAnalysisTxtFromQr {
 function makeQrAmPricePngs {
     local analysisTxtDir=$1
 
-    cscript.exe "$rootDir\\bin\\makeQrAmPricePngs.vbs" "$analysisTxtDir"
+    cscript.exe "$rootDir\\vbs\\makeQrAmPricePngs.vbs" "$analysisTxtDir"
 }
 function makeQrPngs {
     local analysisTxtDir=$1
 
-    cscript.exe "$rootDir\\bin\\makeQrPngs.vbs" "$analysisTxtDir"
+    cscript.exe "$rootDir\\vbs\\makeQrPngs.vbs" "$analysisTxtDir"
 }
 
 
@@ -150,7 +150,7 @@ function _makeQrPngs {
         local j
         for j in `find $analysisTxtDir/$i -type f`
         do
-            cscript.exe "$rootDir\\bin\\makeQrAmPricePng.vbs" "$j" "$dir1"
+            cscript.exe "$rootDir\\vbs\\makeQrAmPricePng.vbs" "$j" "$dir1"
         done
     done
 }
