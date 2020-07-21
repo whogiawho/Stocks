@@ -61,9 +61,9 @@ function routinesAfterCloseQuotation {
     #generate analysis.txt
     java -jar $analyzetoolsJar makeanalysistxt $stockCode $tradeDate
 
-    write2CheckAllTable $stockCode $tradeDate
-
     makeSTDAmPricePng
+
+    write2CheckAllTable $stockCode $tradeDate
 }
 function makeSTDAmPricePng {
     cscript.exe "$rootDir\\bin\\makeSTDAmPricePng.vbs"

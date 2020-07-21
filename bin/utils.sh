@@ -242,12 +242,16 @@ function getHmsListDelta {
 
 #If 3 parms, startHMS is of format HHMMSS_HHMMSS
 #if 4 parms, startHMS&endHMS is of format HHMMSS
-function viewTradeDateAmRange {
+function viewTradeDateRange {
     local stockCode=$1
     local tradeDate=$2
     local startHMS=$3
     local endHMS=$4
 
+    [[ -z $startHMS ]] && {
+        startHMS=${tradeDate#*:}
+        tradeDate=${tradeDate%:*}
+    }
     [[ -z $endHMS ]] && {
         endHMS=${startHMS#*_}
         startHMS=${startHMS%_*}

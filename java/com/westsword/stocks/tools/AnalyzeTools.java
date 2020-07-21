@@ -30,10 +30,11 @@ public class AnalyzeTools{
         System.err.println("       commands are listed below:");
         System.err.println("       [ getvalue | setvalue | makeanalysistxt | priceamp |\n" +
                 "         getamcorrel | getupprice | getdownprice | getam | decode |\n" +
+                "         nexttradedate | prevtradedate |\n" +
                 "         getrel | getabs | rgetabs | getanalysis | stdprice |\n" +
-                "         ssinstance | ssinstances | getfullss | checksstable | getsstable |\n" +
+                "         ssinstance | ssinstances | filterssi | sstrinstance | mminstance |\n" +
+                "         getfullss | checksstable | getsstable |\n" +
                 "         getentrust | checkabss | submitabs | makerrp |\n" +
-                "         nexttradedate | prevtradedate | sstrinstance | mminstance |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify | qrvgetstats |\n" +
                 "         qualrange | qrmaxmatch | qrverify | qrsearchss | shrinkqrv |\n" +
                 "         makessdates | ssdmaxmatchS | ssdmaxmatchA | make1mamcmap ]");
@@ -97,6 +98,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("ssinstances")) {
             SSInstancesHelper ssih = new SSInstancesHelper();
             ssih.run(args);
+        } else if (sOption.equals("filterssi")) {
+            SSIFilterHelper ssif = new SSIFilterHelper();
+            ssif.run(args);
         } else if (sOption.equals("sstrinstance")) {
             SSTRInstanceHelper sstrih = new SSTRInstanceHelper();
             sstrih.run(args);
