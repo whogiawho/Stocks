@@ -34,16 +34,6 @@ function makeAnalysisTxtFromQr {
     echo $sOutDir
 }
 
-function makeQrAmPricePngs {
-    local analysisTxtDir=$1
-
-    cscript.exe "$rootDir\\vbs\\makeQrAmPricePngs.vbs" "$analysisTxtDir"
-}
-function makeQrPngs {
-    local analysisTxtDir=$1
-
-    cscript.exe "$rootDir\\vbs\\makeQrPngs.vbs" "$analysisTxtDir"
-}
 
 
 #qrMatchFile - data/qr/qrmaxmatch_900_0.50.txt
@@ -133,25 +123,4 @@ function convertSdTime2YMDHMS {
 
 
 
-#analysisTxtDir - "d:\\Stocks\\data\\qr\\300_0.50_1"
-function _makeQrPngs {
-    local analysisTxtDir=$1
-
-    local dir0=`basename $analysisTxtDir`
-    dir0="$qrGraphDir\\$dir0"
-
-    local i
-    for i in `ls $analysisTxtDir`
-    do
-        i=`basename $i`
-        local dir1="$dir0\\$i"
-        mkdir -p "$dir1"
-
-        local j
-        for j in `find $analysisTxtDir/$i -type f`
-        do
-            cscript.exe "$rootDir\\vbs\\makeQrAmPricePng.vbs" "$j" "$dir1"
-        done
-    done
-}
 
