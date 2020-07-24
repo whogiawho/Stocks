@@ -59,3 +59,20 @@ function getPart081File {
     echo $sPart081File
 }
 
+function checkHexinServer {
+    #get server(Addr, Port, Type)
+    local serverAddr=
+    local serverPort=
+    local serverType=
+    local others=
+    local line=`getHexinServerList |grep -E "56000001|56000000" |head -n 1`
+    [[ ! -z $line ]] && {
+        read serverAddr serverPort serverType others <<<`echo $line`
+        echo $serverAddr:$serverPort:$serverType
+        return 0
+    } || {
+        printf "checkHexinServer: %s\n" "there is no valid server!"
+        return 1
+    }
+}
+

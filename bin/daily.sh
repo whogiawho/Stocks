@@ -190,6 +190,56 @@ function autoGetLoginParms {
 function autoLoginQs {
     python -u $rootDir\\python\\autologin.py
 }
+function autoQuitQs {
+    python -u $rootDir\\python\\killXiadan.py
+}
+function autoTrade {
+    local stockCode=$1
+    local tradeDate=$2
+
+    #getLoginParms
+    autoGetLoginParms
+    checkHexinServer
+    [[ $? != 0 ]] && return
+
+    sleep $((SLEEP_INTERVAL/4))
+    #login qs client
+    autoLoginQs
+
+
+    setupCfgFile $stockCode $tradeDate 
+
+    #start cygwin32, and run getInstantData
+    execGetInstantData $stockCode $tradeDate $serverAddr $serverPort $serverType $sEnv
+
+    local currentDir="$dailyDir\\$stockCode\\$tradeDate"
+    mkdir -p "$currentDir"
+    #cp doc/instantWatch.xlsm 
+    cp "$rootDir\\doc\\instantWatch.xlsm" "$currentDir"
+    #cp prevTradeDate/analysis.txt
+    local prevTradeDate=`getPrevTradeDate $stockCode $tradeDate`
+    cp "$rootDir\\$stockCode\\$prevTradeDate\\analysis.txt" "$currentDir"
+
+    realtimeAnalyze $stockCode $tradeDate
+}
+
+function execDailyGetJob {
+    local tradeDate=$1
+    local serverAddr=$2
+    local serverPort=$3
+    local serverType=$4
+    local sEnv=$5
+
+    local runGetInstantData=N
+    local runDailyGetJob=$tradeDate:$serverAddr:$serverPort:$serverType
+
+    export HOME=$cygwin32RootCygdrive/home/$user;      #32bit cygwin HOME
+    local pathb=$PATH                                  #save PATH
+    resetPATH; 
+    wscript.exe "$cygwin32RootDir\invisible.vbs" "$cygwin32RootDir\_mintty.bat" $sEnv $runGetInstantData $runDailyGetJob; 
+    export HOME=/home/$user;                           #restore HOME to 64bit cygwin
+    export PATH=$pathb                                 #restore PATH
+}
 function execGetInstantData {
     local stockCode=$1
     local tradeDate=$2
@@ -206,38 +256,6 @@ function execGetInstantData {
     wscript.exe "$cygwin32RootDir\invisible.vbs" "$cygwin32RootDir\_mintty.bat" $sEnv $runGetInstantData; 
     export HOME=/home/$user;                           #restore HOME to 64bit cygwin
     export PATH=$pathb                                 #restore PATH
-}
-function autoTrade {
-    local stockCode=$1
-    local tradeDate=$2
-
-    setupCfgFile $stockCode $tradeDate 
-
-    #getLoginParms
-    autoGetLoginParms
-
-    #get server(Addr, Port, Type)
-    local serverAddr=
-    local serverPort=
-    local serverType=
-    local others=
-    local line=`getHexinServerList |grep -E "56000001|56000000" |head -n 1`
-    [[ ! -z $line ]] && {
-        read serverAddr serverPort serverType others <<<`echo $line`
-        echo $serverAddr:$serverPort:$serverType
-    } || {
-        printf "autoTrade: %s\n" "there is no valid server!"
-        return
-    }
-
-    sleep $((SLEEP_INTERVAL/4))
-    #login qs client
-    autoLoginQs
-
-    #start cygwin32, and run getInstantData
-    execGetInstantData $stockCode $tradeDate $serverAddr $serverPort $serverType $sEnv
-
-    realtimeAnalyze $stockCode $tradeDate
 }
 function realtimeAnalyze {
     local stockCode=$1
@@ -259,4 +277,29 @@ function realtimeAnalyze {
     java -jar "$RealtimeJar" "$tradeDetailsDir" "$pankouDir" ""
 }
 
+
+function autoSubmitAbss {
+    autoLoginQs
+
+    java -jar $analyzetoolsJar submitabs
+
+    #quit
+    autoQuitQs
+}
+function autoCheckAbss {
+    autoLoginQs
+
+    java -jar $analyzetoolsJar checkabss
+
+    #quit
+    autoQuitQs
+}
+function autoDailyGetJob {
+    #getLoginParms
+    autoGetLoginParms
+    checkHexinServer
+    [[ $? != 0 ]] && return
+
+    execDailyGetJob $tradeDate $serverAddr $serverPort $serverType $sEnv
+}
 
