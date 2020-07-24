@@ -87,10 +87,10 @@ class XiadanQsClient:
         #wait some time to makre sure xiadan is running
         time.sleep(settings.WaitsAfterStartingProc)
         #connect to xiadan.exe
-        app = pywinauto.Application().connect(path=settings.sXiaDanFile, timeout=10)
+        self.app = pywinauto.Application().connect(path=settings.sXiaDanFile, timeout=10)
         #loop all top_windows until the main window is visible
         while True:
-            mainW = app.top_window()
+            mainW = self.app.top_window()
             mainW.print_ctrl_ids(depth=1)
             mainW.wait("exists enabled visible ready")
     
@@ -115,5 +115,9 @@ class XiadanQsClient:
         ctrls = XiaDanCtrls(afxW)
         #click 退出
         ctrls.quitWindow.click()
+
+    def kill(self):
+        afxW = self.waitForAfxReady()
+        self.app.kill()
 
 
