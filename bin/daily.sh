@@ -199,8 +199,12 @@ function autoTrade {
 
     #getLoginParms
     autoGetLoginParms
-    checkHexinServer
+    local line=`checkHexinServer`
     [[ $? != 0 ]] && return
+    local serverAddr=
+    local serverPort=
+    local serverType=
+    IFS=:; read serverAddr serverPort serverType <<<`echo $line`
 
     sleep $((SLEEP_INTERVAL/4))
     #login qs client
@@ -279,26 +283,41 @@ function realtimeAnalyze {
 
 
 function autoSubmitAbss {
+    local stockCode=$1
+    local tradeDate=$2
+
     autoLoginQs
 
+    setupCfgFile $stockCode $tradeDate
     java -jar $analyzetoolsJar submitabs
 
     #quit
     autoQuitQs
 }
 function autoCheckAbss {
+    local stockCode=$1
+    local tradeDate=$2
+
     autoLoginQs
 
+    setupCfgFile $stockCode $tradeDate
     java -jar $analyzetoolsJar checkabss
 
     #quit
     autoQuitQs
 }
 function autoDailyGetJob {
+    local tradeDate=$1
+
     #getLoginParms
     autoGetLoginParms
-    checkHexinServer
+    local line=`checkHexinServer`
     [[ $? != 0 ]] && return
+    local serverAddr=
+    local serverPort=
+    local serverType=
+    IFS=: read serverAddr serverPort serverType <<<`echo $line`
+    echo serverAddr=$serverAddr serverPort=$serverPort serverType=$serverType IFS=$IFS
 
     execDailyGetJob $tradeDate $serverAddr $serverPort $serverType $sEnv
 }
