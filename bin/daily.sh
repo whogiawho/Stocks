@@ -285,6 +285,12 @@ function realtimeAnalyze {
 function autoSubmitAbss {
     local stockCode=$1
     local tradeDate=$2
+    local bNotRunAutoGetLoginParms=$2
+
+    [[ -z $bNotRunAutoGetLoginParms ]] && {
+        #getLoginParms
+        autoGetLoginParms
+    }
 
     autoLoginQs
 
@@ -308,9 +314,13 @@ function autoCheckAbss {
 }
 function autoDailyGetJob {
     local tradeDate=$1
+    local bRunAutoGetLoginParms=$2
 
-    #getLoginParms
-    autoGetLoginParms
+    [[ ! -z $bRunAutoGetLoginParms ]] && {
+        #getLoginParms
+        autoGetLoginParms
+    }
+
     local line=`checkHexinServer`
     [[ $? != 0 ]] && return
     local serverAddr=
