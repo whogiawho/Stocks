@@ -116,7 +116,7 @@ function getCodeStats {
         |grep -v "$rootDirCygdrive/"|awk '{print $1}'`
 
     local scriptLines=
-    scriptLines=`find $rootDirCygdrive/bin/  -name *.bat -o -name *.sh \
+    scriptLines=`find $rootDirCygdrive/bin/ $rootDirCygdrive/vbs/ -name *.bat -o -name *.sh -o -name *.vbs \
         |grep -v backup|grep -v test|grep -v obso|xargs wc|grep -v "$rootDirCygdrive/"|awk '{print $1}'`
 
     local idcLines=
@@ -127,8 +127,8 @@ function getCodeStats {
     pyLines=`find $rootDirCygdrive/python/  -name *.py \
         |grep -v backup | xargs wc|grep -v "$rootDirCygdrive/"|awk '{print $1}'`
 
-    local sFormat="%8s %8s %12s %8s %8s\n"
-    printf "$sFormat" "Java" "C" "bash&bat" "idc" "python"
+    local sFormat="%8s %8s %15s %8s %8s\n"
+    printf "$sFormat" "Java" "C" "bash&bat&vbs" "idc" "python"
     printf "$sFormat" $javaLiines $cLines $scriptLines $idcLines $pyLines
 }
 
