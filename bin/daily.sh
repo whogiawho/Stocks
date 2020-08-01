@@ -285,7 +285,7 @@ function realtimeAnalyze {
 function autoSubmitAbss {
     local stockCode=$1
     local tradeDate=$2
-    local bNotRunAutoGetLoginParms=$2
+    local bNotRunAutoGetLoginParms=$3
 
     [[ -z $bNotRunAutoGetLoginParms ]] && {
         #getLoginParms
@@ -330,5 +330,15 @@ function autoDailyGetJob {
     echo serverAddr=$serverAddr serverPort=$serverPort serverType=$serverType IFS=$IFS
 
     execDailyGetJob $tradeDate $serverAddr $serverPort $serverType $sEnv
+}
+
+function makeAvi {
+    local stockCode=$1
+    local tradeDate=$2
+
+    local pngDir="$dailyDir\\$stockCode\\$tradeDate\\derivativePng"
+    local targetDir="$dataDir\\amderAvi"
+    cd $pngDir
+    mencoder mf://*.png -mf w=480:h=289:fps=1:type=png -ovc copy -oac copy -o "$targetDir\\$stockCode.$tradeDate.avi"
 }
 
