@@ -25,6 +25,7 @@ import com.westsword.stocks.am.*;
 import com.westsword.stocks.qr.*;
 import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
+import com.westsword.stocks.base.utils.*;
 
 public class QrvHelper {
     public void shrink(String[] args) {
@@ -98,7 +99,7 @@ public class QrvHelper {
         System.exit(-1);
     }
     private int getSdLength(CommandLine cmd) {
-        return SSUtils.getInteger(cmd, "l", Utils.getCkptIntervalSdLength()*4*60);
+        return CmdLineUtils.getInteger(cmd, "l", Utils.getCkptIntervalSdLength()*4*60);
     }
     public static CommandLine qrvGetCommandLine(String[] args) {
         CommandLine cmd = null;

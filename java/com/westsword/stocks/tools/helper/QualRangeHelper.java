@@ -25,6 +25,7 @@ import com.westsword.stocks.qr.*;
 import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.ckpt.*;
+import com.westsword.stocks.base.utils.*;
 
 public class QualRangeHelper {
     public void findQualified(String args[]) {
@@ -121,10 +122,10 @@ public class QualRangeHelper {
         */
     }
     private int getStart(CommandLine cmd) {
-        return SSUtils.getInteger(cmd, "s", 1);
+        return CmdLineUtils.getInteger(cmd, "s", 1);
     }
     private int getEnd(CommandLine cmd) {
-        return SSUtils.getInteger(cmd, "e", 1);
+        return CmdLineUtils.getInteger(cmd, "e", 1);
     }
     public static double getThreshold(CommandLine cmd) {
         return SSUtils.getThreshold(cmd, SSUtils.Default_Threshold);

@@ -57,7 +57,7 @@ public class AnalysisTxtHelper {
         }
     }
     private static void usage() {
-        System.err.println("usage: java AnalyzeTools getrangeanalysis stockCode sDate_sHMS eDate_eHMS ");
+        System.err.println("usage: java AnalyzeTools getanalysis stockCode sDate_sHMS eDate_eHMS ");
         System.exit(-1);
     }
 
