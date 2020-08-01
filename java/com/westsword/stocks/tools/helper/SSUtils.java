@@ -22,7 +22,7 @@ import org.apache.commons.cli.*;
 
 import com.westsword.stocks.am.AmManager;
 import com.westsword.stocks.base.Settings;
-import com.westsword.stocks.base.utils.AnsiColor;
+import com.westsword.stocks.base.utils.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.tools.helper.man.*;
 import com.westsword.stocks.analyze.ssanalyze.*;
@@ -37,77 +37,49 @@ public class SSUtils {
     public final static double MINIMUM_AVG_NET_REVENUE = 0.000;
 
 
-    public static String getString(CommandLine cmd, String sSwitch, String sDefault) {
-        String string = sDefault;
-        if(cmd.hasOption(sSwitch))
-            string = cmd.getOptionValue(sSwitch);
-
-        return string;
-    }
-    public static int getInteger(CommandLine cmd, String sSwitch, int sDefault) {
-        int i = sDefault;
-        if(cmd.hasOption(sSwitch))
-            i = Integer.valueOf(cmd.getOptionValue(sSwitch));
-
-        return i;
-    }
-    public static double getDouble(CommandLine cmd, String sSwitch, double sDefault) {
-        double d = sDefault;
-        if(cmd.hasOption(sSwitch))
-            d = Double.valueOf(cmd.getOptionValue(sSwitch));
-
-        return d;
-    }
-    public static boolean getBoolean(CommandLine cmd, String sSwitch, boolean sDefault) {
-        boolean bSwitch = sDefault;
-        if(cmd.hasOption(sSwitch))
-            bSwitch = !sDefault;
-
-        return bSwitch;
-    }
 
 
     public static String getStockCode(CommandLine cmd) {
-        return getString(cmd, "c", Default_StockCode);
+        return CmdLineUtils.getString(cmd, "c", Default_StockCode);
     }
     public static double getThreshold(CommandLine cmd, double defaultThres) {
-        return SSUtils.getDouble(cmd, "h", defaultThres);
+        return CmdLineUtils.getDouble(cmd, "h", defaultThres);
     }
     public static double getThreshold(CommandLine cmd) {
-        return getDouble(cmd, "h", Default_Threshold);
+        return CmdLineUtils.getDouble(cmd, "h", Default_Threshold);
     }
     public static String getStartDate(CommandLine cmd) {
-        return getString(cmd, "d", Default_StartDate);
+        return CmdLineUtils.getString(cmd, "d", Default_StartDate);
     }
     public static int getNearestOutDist(CommandLine cmd) {
-        return getInteger(cmd, "t", Default_Nearest_Day_To_End_TradeSession);
+        return CmdLineUtils.getInteger(cmd, "t", Default_Nearest_Day_To_End_TradeSession);
     }
     public static int getTradeType(CommandLine cmd) {
-        return getInteger(cmd, "s", Default_TradeType);
+        return CmdLineUtils.getInteger(cmd, "s", Default_TradeType);
     }
     public static boolean getSwitchLog2File(CommandLine cmd) {
-        return getBoolean(cmd, "n", true);
+        return CmdLineUtils.getBoolean(cmd, "n", true);
     }
     public static boolean getSwitchResetLog(CommandLine cmd) {
-        return getBoolean(cmd, "r", false);
+        return CmdLineUtils.getBoolean(cmd, "r", false);
     }
     public static boolean getSwitchStdout(CommandLine cmd) {
-        return getBoolean(cmd, "o", true);
+        return CmdLineUtils.getBoolean(cmd, "o", true);
     }
     public static String getTradeDateList(CommandLine cmd) {
-        return getString(cmd, "l", null);
+        return CmdLineUtils.getString(cmd, "l", null);
     }
     public static String getSSTableFile(CommandLine cmd) {
-        return getString(cmd, "f", null);
+        return CmdLineUtils.getString(cmd, "f", null);
     }
     public static String getHMSList(CommandLine cmd) {
-        return getString(cmd, "m", null);
+        return CmdLineUtils.getString(cmd, "m", null);
     }
     public static String getStartHMSList(CommandLine cmd) {
-        return getString(cmd, "a", null);
+        return CmdLineUtils.getString(cmd, "a", null);
     }
     public static String getEndHMSList(CommandLine cmd) {
-        return getString(cmd, "b", null);
+        return CmdLineUtils.getString(cmd, "b", null);
     }
 
 
