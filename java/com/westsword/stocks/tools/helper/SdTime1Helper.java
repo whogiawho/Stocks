@@ -42,6 +42,18 @@ public class SdTime1Helper {
 
         System.out.format("%s\n", sSdTime);
     }
+    public void rgetRel(String args[]) {
+        if(args.length != 2) {
+            rgetrelUsage();
+            return;
+        }
+
+        int rel = Integer.valueOf(args[1]);
+
+        AStockSdTime sdt = new AStockSdTime();
+        String hms = sdt.rget(rel);
+        System.out.format("%s\n", hms);
+    }
     public void getAbs(String args[]) {
         if(args.length != 4) {
             getabsUsage();
@@ -92,6 +104,10 @@ public class SdTime1Helper {
 
     private static void usage() {
         System.err.println("usage: java AnalyzeTools getrel stockCode hmsList");
+        System.exit(-1);
+    }
+    private static void rgetrelUsage() {
+        System.err.println("usage: java AnalyzeTools rgetrel stockCode rel");
         System.exit(-1);
     }
     private static void getabsUsage() {
