@@ -78,24 +78,16 @@ function makeContAmPricePngs {
     local analysisTxt="$dailyDir/$stockCode/$tradeDate/analysis.txt"; 
 
     local count=`wc $analysisTxt|awk '{print $1}'`
-
-    #replace it with parallel jobs
-    local fTmp=`mktemp`
-    local i=
-    for i in `seq $count`
+    local start=1
+    while [[ $start -lt $count ]]
     do
-        sed -n "1,${i}p" $analysisTxt >$fTmp
-        local hms=`tail -n1 $fTmp|awk '{print $1}'`
-        hms=`convertHex2Time $hms|awk '{print $2}'`
-        hms=${hms//:/}
-        local sHMSFile="$ampricePngDir\\$hms.txt"
-        mv $fTmp $sHMSFile
-        #run makeAmPricePng
-        makeAmPricePng $sHMSFile $ampricePngDir
+        local end=$((start+1999))
+        [[ $end -gt $count ]] && end=$count
+        echo "_makeContAmPricePngs $analysisTxt $ampricePngDir $start $end"
+        _makeContAmPricePngs $analysisTxt $ampricePngDir $start $end &
 
-        rm -rf "$sHMSFile"
+        start=$((start+2000))
     done
-    rm -rf $fTmp
 }
 function _makeContAmPricePngs {
     local analysisTxt=$1
@@ -153,3 +145,16 @@ function _makeAmPricePngs {
     done
 }
 
+
+function getAm {
+    local stockCode=$1
+    local tradeDate=$2
+    local hmsList=$3
+    local endHMS=$4
+
+    [[ ! -z $endHMS ]] && {
+        hmsList=${hmsList}_$endHMS
+    }
+
+   java -jar $analyzetoolsJar getam $stockCode $tradeDate $hmsList 2>/dev/null
+}
