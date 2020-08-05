@@ -240,6 +240,15 @@ function getHmsListDelta {
     echo $((end-start))
 }
 
+macrosJobId=
+function startMacros {
+    excel "$rootDir\\doc\\macros.xlsm" &
+    macrosJobId=$!
+    echo macrosJobId=$macrosJobId
+}
+function closeMacros {
+    cscript "$rootDir\\vbs\\closeMacros.vbs"
+}
 
 
 
