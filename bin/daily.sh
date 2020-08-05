@@ -204,7 +204,7 @@ function autoTrade {
     local serverAddr=
     local serverPort=
     local serverType=
-    IFS=:; read serverAddr serverPort serverType <<<`echo $line`
+    IFS=: read serverAddr serverPort serverType <<<`echo $line`
 
     sleep $((SLEEP_INTERVAL/4))
     #login qs client
@@ -216,16 +216,13 @@ function autoTrade {
     #start cygwin32, and run getInstantData
     execGetInstantData $stockCode $tradeDate $serverAddr $serverPort $serverType $sEnv
 
-    local currentDir="$dailyDir\\$stockCode\\$tradeDate"
-    mkdir -p "$currentDir"
-    #cp doc/instantWatch.xlsm 
-    cp "$rootDir\\doc\\instantWatch.xlsm" "$currentDir"
-    #cp prevTradeDate/analysis.txt
-    local prevTradeDate=`getPrevTradeDate $stockCode $tradeDate`
-    cp "$rootDir\\$stockCode\\$prevTradeDate\\analysis.txt" "$currentDir"
+    #prepareFiles $stockCode $tradeDate
 
+    startMacros
     realtimeAnalyze $stockCode $tradeDate
+    closeMacros
 }
+
 
 function execDailyGetJob {
     local tradeDate=$1
@@ -336,9 +333,27 @@ function makeAvi {
     local stockCode=$1
     local tradeDate=$2
 
+    local curDir=$PWD
     local pngDir="$dailyDir\\$stockCode\\$tradeDate\\derivativePng"
-    local targetDir="$dataDir\\amderAvi"
+    local targetDir="$dataRoot\\amderAvi"
     cd $pngDir
     mencoder mf://*.png -mf w=480:h=289:fps=1:type=png -ovc copy -oac copy -o "$targetDir\\$stockCode.$tradeDate.avi"
+    cd $curDir
+
+    local ampricePng="$dailyDir\\$stockCode\\$tradeDate\\AmPrice.png"
+    cp $ampricePng "$targetDir\\$stockCode.$tradeDate.png"
 }
 
+
+
+
+
+function prepareFiles {
+    local currentDir="$dailyDir\\$stockCode\\$tradeDate"
+    mkdir -p "$currentDir"
+    #cp doc/instantWatch.xlsm 
+    cp "$rootDir\\doc\\instantWatch.xlsm" "$currentDir"
+    #cp prevTradeDate/analysis.txt
+    local prevTradeDate=`getPrevTradeDate $stockCode $tradeDate`
+    cp "$rootDir\\$stockCode\\$prevTradeDate\\analysis.txt" "$currentDir"
+}
