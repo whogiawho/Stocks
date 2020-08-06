@@ -432,6 +432,11 @@ public class GetSettings{
         System.out.format("s0=%d\n", s0.hashCode());
         System.out.format("l=%s\n", l.toString());
     }
+    public static void testMakeAmDerivetivePng(String stockCode, String tradeDate, String hms) {
+        System.out.format("\n testMakeAmDerivetivePng: \n");
+
+        AmDerUtils.makeAmDerPng(stockCode, tradeDate, hms);
+    }
     public static void test2EndCkpt(String stockCode) {
         System.out.format("\n test2EndCkpt: \n");
 
@@ -670,7 +675,8 @@ public class GetSettings{
         //testAmMatrix(stockCode);
         //testMatlab(stockCode);
         //testCkpt(stockCode);
-        test2EndCkpt(stockCode);
+        //test2EndCkpt(stockCode);
+        testMakeAmDerivetivePng(stockCode, "20200803", "093249");
         //testCombination(stockCode);
         //testTradeSumLoader(stockCode);
         //testTaskManager(stockCode);

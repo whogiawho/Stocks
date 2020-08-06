@@ -77,6 +77,9 @@ public class AmManager {
     }
 
 
+    public NavigableMap<Integer, AmRecord> getItemMap(int startSd, int endSd) {
+        return mAmRecordMap.subMap(startSd, true, endSd, true);
+    }
     public NavigableMap<Integer, AmRecord> getItemMap(String startDate, String startHMS,
             String endDate, String endHMS) {
         return AmUtils.getItemMap(mAmRecordMap, mSdTime, startDate, startHMS, endDate, endHMS);
@@ -136,6 +139,9 @@ public class AmManager {
     }
     public AmRecord last() {
         return mAmRecordMap.get(mAmRecordMap.lastKey());
+    }
+    public void add(int sdIdx, AmRecord r) {
+        mAmRecordMap.put(sdIdx, r);
     }
 
 
@@ -292,6 +298,13 @@ public class AmManager {
     }
 
 
+    public TreeMap<Integer, AmRecord> getAmRecordMap() {
+        return mAmRecordMap;
+    }
+    public long getAm(int sd) {
+        AmRecord r = mAmRecordMap.get(sd);
+        return r.am;
+    }
     public long getAm(String tradeDate, String hmsList) {
         long aM = 0;
 

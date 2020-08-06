@@ -232,11 +232,15 @@ public class RealtimeAnalyze {
         ArrayList<RawTradeDetails> rawDetailsList = new ArrayList<RawTradeDetails>();
         RawTradeDetailsList rtdList = new RawTradeDetailsList();
         rtdList.loadPrevRawDetails(rawDetailsList, mDetailsDir.toString());
+        System.out.format("%s: rawDetailsList.size()=%d\n", 
+                Utils.getCallerName(getClass()), rawDetailsList.size());
 
         //the array to contain raw pankou data
         ArrayList<RawRTPankou> rawPankouList = new ArrayList<RawRTPankou>();
         RawRTPankouList rrpList = new RawRTPankouList();
         rrpList.loadPrevPankou(rawPankouList, mRTPankouDir.toString());
+        System.out.format("%s: rawPankouList.size()=%d\n", 
+                Utils.getCallerName(getClass()), rawPankouList.size());
 
         Analyze600030 way = new Analyze600030(this);
         //process previous rawTradeDetails&rawRTPankou already existing
