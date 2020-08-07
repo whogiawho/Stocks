@@ -51,6 +51,7 @@ public class Analyze600030 {
 
     private long mStartAm;
     private TreeMap<Integer, AmRecord> mAmRecordMap;
+    private TreeMap<Integer, AmRecord> mPrevAmRecordMap;
 
 
     Analyze600030(RealtimeAnalyze rtAnalyzeFrame) {
@@ -88,6 +89,18 @@ public class Analyze600030 {
         mStartAm = mAmu.loadPrevLastAm(tradeDate);
         //set mAmRecordMap
         mAmRecordMap = new TreeMap<Integer, AmRecord>();
+
+        //make a copy from AmManager(prevDate).mAmRecordMap
+        StockDates stockDates = new StockDates(stockCode);
+        String prevDate = stockDates.prevDate(tradeDate);
+        ArrayList<String> tradeDateList = new ArrayList<String>();
+        tradeDateList.add(prevDate);
+        AmManager amm = new AmManager(stockCode, tradeDateList);
+        mPrevAmRecordMap = new TreeMap<Integer, AmRecord>(amm.getAmRecordMap());
+
+        //mkdir derivative&derivativePng
+        Utils.mkDir(StockPaths.getDerivativeDir(stockCode, tradeDate));
+        Utils.mkDir(StockPaths.getDerivativePngDir(stockCode, tradeDate));
     }
 
     private long prevRefreshTp=0;
@@ -129,7 +142,7 @@ public class Analyze600030 {
             ArrayList<RawRTPankou> rawPankouList) {
         bCallAuctionComplete = callAuctionCompleted(rawDetailsList, bCallAuctionComplete);
 
-        processRawTradeDetails(mIndexs, rawDetailsList, mAmRecordMap);
+        processRawTradeDetails(mIndexs, rawDetailsList, mAmRecordMap, mPrevAmRecordMap);
         processRawPankou(mIndexs, rawPankouList);
 
         doTsManStuff(mAmRecordMap, mTsMan);
@@ -154,13 +167,8 @@ public class Analyze600030 {
         }
     }
 
-    private void writeRange(int start, int end, long am, AmUtils.TrackExtreme ter, 
-            String sAnalysisFile, long closeTP, TreeMap<Integer, AmRecord> amrMap) {
-        mAmu.writeRange(start, end, am, mTer, 
-                mAnalysisFile, mCloseTP, amrMap);
-    }
     private void processRawTradeDetails(int[] indexs, ArrayList<RawTradeDetails> rawDetailsList, 
-            TreeMap<Integer, AmRecord> amrMap) {
+            TreeMap<Integer, AmRecord> amrMap, TreeMap<Integer, AmRecord> prevAmrMap) {
         int last = indexs[LAST_RAW_DETAILS_IDX];
         int current = rawDetailsList.size()-1;
         //prevSd starts from LAST_RAW_DETAILS_IDX; which can be -1(invalid) or valid ones
@@ -173,9 +181,10 @@ public class Analyze600030 {
             int rSd = mSdTime.getAbs(r.time);
             if(rSd != prevSd) {
                 //skip writeRange if prevSd==-1
-                if(prevSd != -1)
-                    writeRange(prevSd, rSd, am, mTer, 
-                            mAnalysisFile, mCloseTP, amrMap);
+                if(prevSd != -1) {
+                    mAmu.writeRange(prevSd, rSd, am, mTer, mAnalysisFile, mCloseTP, 
+                            amrMap, prevAmrMap);
+                }
                 prevSd = rSd;
                 mTer.resetEx();
             }
