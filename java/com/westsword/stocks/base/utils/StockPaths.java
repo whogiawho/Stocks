@@ -209,9 +209,24 @@ public class StockPaths {
         return sSessionFile;
     }
 
+    public static String getDerivativePngDir(String stockCode, String tradeDate) {
+        return getDailyDir(stockCode, tradeDate) + sSep + "derivativePng" + sSep; 
+    }
+    public static String getDerivativePngFile(String stockCode, String tradeDate, String hms) {
+        return getDerivativePngDir(stockCode, tradeDate) + hms + ".png"; 
+    }
+    public static String getDerivativeDir(String stockCode, String tradeDate) {
+        return getDailyDir(stockCode, tradeDate) + sSep + "derivative" + sSep; 
+    }
+    public static String getDerivativeFile(String stockCode, String tradeDate, String hms) {
+        return getDerivativeDir(stockCode, tradeDate) + hms + ".txt";
+    }
 
 
 
+    public static String getMakeAmDerPngVbs() {
+        return getStockRootDir() + getValueWOS("vbs\\makeAmDerivativePng.vbs", "vbs/makeAmDerivativePng.vbs");
+    }
     public static String getC4TradeDetailsExe() {
         return getStockRootDir() + getValueWOS("bin\\c4tradedetails.exe", "bin/c4tradedetails.exe");
     }

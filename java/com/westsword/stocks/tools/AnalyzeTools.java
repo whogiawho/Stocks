@@ -30,8 +30,8 @@ public class AnalyzeTools{
         System.err.println("       commands are listed below:");
         System.err.println("       [ getvalue | setvalue | makeanalysistxt | priceamp |\n" +
                 "         getamcorrel | getupprice | getdownprice | getam | decode |\n" +
-                "         nexttradedate | prevtradedate |\n" +
-                "         getrel | getabs | rgetabs | getanalysis | stdprice |\n" +
+                "         nexttradedate | prevtradedate | listamderivatives |\n" +
+                "         getrel | rgetrel | getabs | rgetabs | getanalysis | stdprice |\n" +
                 "         ssinstance | ssinstances | filterssi | sstrinstance | mminstance |\n" +
                 "         getfullss | checksstable | getsstable |\n" +
                 "         getentrust | checkabss | submitabs | makerrp |\n" +
@@ -72,12 +72,18 @@ public class AnalyzeTools{
         } else if (sOption.equals("getamcorrel")) {
             AmCorrelHelper ach = new AmCorrelHelper();
             ach.getAmCorrel(args);
+        } else if (sOption.equals("listamderivatives")) {
+            AmDerivativeHelper amdh = new AmDerivativeHelper();
+            amdh.list(args);
         } else if (sOption.equals("getam")) {
             AmHelper amh = new AmHelper();
             amh.getAm(args);
         } else if (sOption.equals("getrel")) {
             SdTime1Helper sth = new SdTime1Helper();
             sth.getRel(args);
+        } else if (sOption.equals("rgetrel")) {
+            SdTime1Helper sth = new SdTime1Helper();
+            sth.rgetRel(args);
         } else if (sOption.equals("getabs")) {
             SdTime1Helper sth = new SdTime1Helper();
             sth.getAbs(args);
