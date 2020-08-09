@@ -1,5 +1,54 @@
 #!/bin/bash
 
+function makeAmDerivativePngs {
+    local stockCode=$1
+    local tradeDate=$2
+
+    local derivativeDir="$dailyDir\\$stockCode\\$tradeDate\\derivative"
+
+    cscript.exe "$rootDir\\vbs\\makeAmDerivativePngs.vbs" "$derivativeDir"
+}
+
+
+function makeAmDerTxtPngs {
+    local stockCode=$1
+    local tradeDate=$2
+
+    local amderTxtDir="$dailyDir\\$stockCode\\$tradeDate\\amderTxt"
+
+    cscript.exe "$rootDir\\vbs\\makeAmDerTxtPngs.vbs" "$amderTxtDir"
+}
+function makeAmDerAnalysis {
+    local stockCode=$1
+    local tradeDate=$2
+    local bwsd=$3
+
+    local amderDir="$dailyDir\\$stockCode\\$tradeDate\\amderTxt"
+    [[ ! -e "$amderDir" ]] && {
+        mkdir -p "$amderDir"
+    }
+
+    #local startTp=`convertTime2Hex $tradeDate $CallAuctionEndTime`
+    #local endTp=`convertTime2Hex $tradeDate $CloseQuotationTime`
+    local startSd=`getAbs $stockCode $tradeDate $CallAuctionEndTime`
+    local endSd=`getAbs $stockCode $tradeDate $CloseQuotationTime`
+    local i=
+    for i in `seq $startSd $endSd`
+    do
+        local tp=`rgetAbs $stockCode $i`
+        local hms=`convertHex2Time $tp y|awk -F, '{print $2}'`
+
+        local ssd=$((i-bwsd))
+        local stp=`rgetAbs $stockCode $ssd`
+        local str=`convertHex2Time $stp y`
+        local sDate=`echo $str|awk -F, '{print $1}'`
+        local sHMS=`echo $str|awk -F, '{print $2}'`
+
+        getAnalysis $stockCode ${sDate} ${sHMS} ${tradeDate} ${hms} >"$amderDir\\$hms.txt"
+    done
+}
+
+
 function tpAmDerStats {
     local fHMS=$1
 
@@ -31,7 +80,6 @@ function tpAmDerStats {
         echo $fHMS,$start,$end,$slope; 
     }
 }
-
 function amDerStats {
     local stockCode=$1
     local tradeDate=$2

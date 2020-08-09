@@ -40,6 +40,7 @@ splitRawTradeDetailsJar="$rootDir\\build\\jar\\splitrawtradedetails.jar"
 
 . bin/settings.sh
 . bin/time.sh
+. bin/sdtime.sh
 . bin/tradetime.sh
 . bin/tradedate.sh
 . bin/hexin.sh
@@ -59,6 +60,7 @@ splitRawTradeDetailsJar="$rootDir\\build\\jar\\splitrawtradedetails.jar"
 . bin/session.sh
 . bin/analysis.sh
 . bin/qr.sh
+. bin/amder.sh
 
 
 
