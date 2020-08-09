@@ -25,7 +25,7 @@ function makeAnalysisTxtFromQr {
 
         [[ ! -z $startDate ]] && {
             mkdir -p $sOutDir/$endDate
-            java -jar $analyzetoolsJar getanalysis $stockCode ${startDate}_${startHMS} ${endDate}_${endHMS} \
+            getAnalysis $stockCode ${startDate} ${startHMS} ${endDate} ${endHMS} \
                 >$sOutDir/$endDate/${i}_${nDays}.txt 2>/dev/null
             #echo $sOutDir/$endDate/${i}_${nDays}.txt ${startDate}_${startHMS} ${endDate}_${endHMS}
         }

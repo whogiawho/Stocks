@@ -1,6 +1,16 @@
 #!/bin/bash
 
 
+function getAnalysis {
+    local stockCode=$1
+    local sDate=$2
+    local sHMS=$3
+    local eDate=$4
+    local eHMS=$5
+
+    java -jar $analyzetoolsJar getanalysis $stockCode ${sDate}_${sHMS} ${eDate}_${eHMS} 2>/dev/null
+}
+
 #If 3 parms, startHMS is of format HHMMSS_HHMMSS
 #if 4 parms, startHMS&endHMS is of format HHMMSS
 function viewTradeDateRange {
@@ -30,8 +40,6 @@ function viewTradeDateRange {
 function makeSTDAmPricePng {
     cscript.exe "$rootDir\\vbs\\makeSTDAmPricePng.vbs"
 }
-
-
 #a Png file is made at the dir - dirname(sAnalysis), with ${basename(sAnalysis)%.txt}.png
 function makeSTDAmPricePngFromFile {
     local sAnalysis=$1
@@ -64,6 +72,16 @@ function makeSTDAmPricePngs {
 
 
 
+function makeAmPricePng {
+    local sAnalysisFile=$1
+    local sPngDir=$2
+
+    cscript.exe "$rootDir\\vbs\\makeAmPricePngFromFile.vbs" "$sAnalysisFile" "$sPngDir"
+}
+
+
+
+#always start from 09:25:00
 function makeContAmPricePngs {
     local stockCode=$1
     local tradeDate=$2
@@ -112,12 +130,6 @@ function _makeContAmPricePngs {
     done
     rm -rf $fTmp
 }
-function makeAmPricePng {
-    local sAnalysisFile=$1
-    local sPngDir=$2
-
-    cscript.exe "$rootDir\\vbs\\makeAmPricePng.vbs" "$sAnalysisFile" "$sPngDir"
-}
 function makeAmPngs {
     local analysisTxtDir=$1
 
@@ -140,7 +152,7 @@ function _makeAmPricePngs {
         local j
         for j in `find $analysisTxtDir/$i -type f`
         do
-            cscript.exe "$rootDir\\vbs\\makeAmPricePng.vbs" "$j" "$dir1"
+            cscript.exe "$rootDir\\vbs\\makeAmPricePngFromFile.vbs" "$j" "$dir1"
         done
     done
 }
