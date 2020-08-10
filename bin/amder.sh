@@ -1,5 +1,42 @@
 #!/bin/bash
 
+function makeAvi {
+    local stockCode=$1
+    local tradeDate=$2
+
+    local targetDir="$dataRoot\\amderAvi"
+    [[ ! -e $targetDir ]] && {
+        mkdir -p $targetDir
+    }
+
+    local curDir=$PWD
+    local pngDir="$dailyDir\\$stockCode\\$tradeDate\\mergedPng"
+    cd $pngDir
+    mencoder mf://*.png -mf w=480:h=289:fps=1:type=png -ovc copy -oac copy -o "$targetDir\\$stockCode.$tradeDate.avi"
+    cd $curDir
+}
+#merge pngs from amdertxtPng and derivativePng
+function mergePng {
+    local stockCode=$1
+    local tradeDate=$2
+
+    local dir0="$dailyDir\\$stockCode\\$tradeDate\\amdertxtPng"
+    local dir1="$dailyDir\\$stockCode\\$tradeDate\\derivativePng"
+    local outDir="$dailyDir\\$stockCode\\$tradeDate\\mergedPng"
+
+    [[ ! -e $outDir ]] && {
+        mkdir -p $outDir
+    }
+
+    local i=
+    for i in `ls $dir0`
+    do
+        local hms=${i%.png}
+        convert "$dir0\\$hms.png" "$dir1\\$hms.png" -append "$outDir\\$hms.png"
+    done
+}
+
+
 function makeAmDerivativePngs {
     local stockCode=$1
     local tradeDate=$2
@@ -8,8 +45,6 @@ function makeAmDerivativePngs {
 
     cscript.exe "$rootDir\\vbs\\makeAmDerivativePngs.vbs" "$derivativeDir"
 }
-
-
 function makeAmDerTxtPngs {
     local stockCode=$1
     local tradeDate=$2

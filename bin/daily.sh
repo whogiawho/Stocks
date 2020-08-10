@@ -329,21 +329,6 @@ function autoDailyGetJob {
     execDailyGetJob $tradeDate $serverAddr $serverPort $serverType $sEnv
 }
 
-function makeAvi {
-    local stockCode=$1
-    local tradeDate=$2
-
-    local curDir=$PWD
-    local pngDir="$dailyDir\\$stockCode\\$tradeDate\\derivativePng"
-    local targetDir="$dataRoot\\amderAvi"
-    cd $pngDir
-    mencoder mf://*.png -mf w=480:h=289:fps=1:type=png -ovc copy -oac copy -o "$targetDir\\$stockCode.$tradeDate.avi"
-    cd $curDir
-
-    local ampricePng="$dailyDir\\$stockCode\\$tradeDate\\AmPrice.png"
-    cp $ampricePng "$targetDir\\$stockCode.$tradeDate.png"
-}
-
 
 
 
