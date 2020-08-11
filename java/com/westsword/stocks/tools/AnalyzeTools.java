@@ -155,7 +155,7 @@ public class AnalyzeTools{
         } else if (sOption.equals("checksstable")) {
             SSTableHelper ssth = new SSTableHelper();
             ssth.checkSSTable(args);
-        } else if (sOption.equals("getsstabname")) {
+        } else if (sOption.equals("getsstable")) {
             SSTableHelper ssth = new SSTableHelper();
             ssth.getSSTableName(args);
         } else if(sOption.equals("checkabss")) {

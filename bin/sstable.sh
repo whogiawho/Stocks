@@ -10,7 +10,7 @@ function checkAllSSTable {
     local tradeDate=$2
 
     local i=
-    for i in `java -jar $analyzetoolsJar getsstabname 2>/dev/null`
+    for i in `java -jar $analyzetoolsJar getsstable 2>/dev/null`
     do
         checkSSTable $stockCode $tradeDate $i
     done
