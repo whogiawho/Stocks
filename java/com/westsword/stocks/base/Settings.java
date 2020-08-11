@@ -226,6 +226,7 @@ public class Settings extends FileLoader {
     public final static int BUFFERING_TRADERESULT = 3;
     public final static int ONLY_LONG_TRADESESSION = 4;
     public final static int MAX_OUT_PRICE = 5;
+    public final static int AM_DERIVATIVE = 6;
     public final static String[] booleanKeys = {
         "noPerformanceLog",
         "switchOfRawData",
@@ -233,8 +234,10 @@ public class Settings extends FileLoader {
         "BufferingTradeResult",
         "OnlyLongTradeSession",
         "MaxOutPrice",
+        "AmDerivative",
     };
     public final static Boolean[] booleanValues = {
+        null,
         null,
         null,
         null,

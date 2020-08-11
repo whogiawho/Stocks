@@ -96,7 +96,10 @@ public class Analyze600030 {
         ArrayList<String> tradeDateList = new ArrayList<String>();
         tradeDateList.add(prevDate);
         AmManager amm = new AmManager(stockCode, tradeDateList);
-        mPrevAmRecordMap = new TreeMap<Integer, AmRecord>(amm.getAmRecordMap());
+        if(Settings.getSwitch(Settings.AM_DERIVATIVE))
+            mPrevAmRecordMap = new TreeMap<Integer, AmRecord>(amm.getAmRecordMap());
+        else
+            mPrevAmRecordMap = null;
 
         //mkdir derivative&derivativePng
         Utils.mkDir(StockPaths.getDerivativeDir(stockCode, tradeDate));
