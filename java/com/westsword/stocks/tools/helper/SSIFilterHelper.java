@@ -18,8 +18,10 @@ package com.westsword.stocks.tools.helper;
 
 import java.util.*;
 import org.apache.commons.cli.*;
+import org.apache.commons.math3.util.Combinations;
 
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.base.ckpt.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.tools.helper.man.*;
 
@@ -44,36 +46,82 @@ public class SSIFilterHelper {
         }
 
         //
-        boolean bStdout = SSUtils.getSwitchStdout(cmd);
-        AmManager am = new AmManager(stockCode, startDate, true);
+        boolean bMatchedTradeDates = SSUtils.getSwitchStdout(cmd);
         StockDates stockDates = new StockDates(stockCode);
 
         String hmsList = newArgs[1];
         int maxCycle = Integer.valueOf(newArgs[2]);
-        System.out.format("%8s %8s %8.2f %8s %15s %4d\n",
-                stockCode, startDate, threshold, tradeDate0, hmsList, maxCycle);
 
-        String fTradeDetails = newArgs[3];
-        //read fTradeDetails, and 
+        //am
+        String sTradeDetailFile = newArgs[3];
+        System.err.format("%8s %8s %8.2f %8s %15s %4d %s\n",
+                stockCode, startDate, threshold, tradeDate0, hmsList, maxCycle, sTradeDetailFile);
+        TradeDetailLoader l = new TradeDetailLoader();
+        ArrayList<TradeDetail> tdList = new ArrayList<TradeDetail>();
+        l.load(sTradeDetailFile, tdList);
+        ArrayList<String> tradeDateList = getTradeDateList(tdList);
+        System.err.format("sizeof(tradeDateList) = %d\n", tradeDateList.size());
+        AmManager am = new AmManager(stockCode, tradeDateList);
+
+        //read sTradeDetailFile, and 
         //  put those matched tradeDates whose cycle<=maxCycle into set0 
-        //  put those matched tradeDates whose cycle>maxCycle into set1 
-        //loop all hmsLists before hmsList.endHMS to make similarSet, and intersect with set0
-        //  only those with size>=40 are considered
-        //then intersect with set1 
-        //  only those whose sum of outPrice(maxCycle) are >0 are considered
+        TreeSet<String> set0 = getMatchedSet(tdList, maxCycle);
+        //ckpt
+        String[] fields = hmsList.split("_");
+        String endHMS = fields[fields.length-1];
+        CheckPoint0 ckpt = new CheckPoint0(endHMS);
+        System.err.format("length(ckpt) = %d\n", ckpt.getLength());
+
+        SSifManager ssifm = new SSifManager();
+        //loop all hmsLists before hmsList.endHMS in set0 to list sorted similarSet 
+        int length = ckpt.getLength();
+        Combinations c = new Combinations(length, 2);
+        Iterator<int[]> itr = c.iterator();
+        while(itr.hasNext()) {
+            int[] e = itr.next();
+            hmsList = ckpt.getHMSList(e);
+
+            ssifm.run(tradeDate0, hmsList, 
+                    tradeDateList, threshold, am, 
+                    set0, bMatchedTradeDates);
+        }
+    }
+
+    private ArrayList<String> getTradeDateList(ArrayList<TradeDetail> tdList) {
+        ArrayList<String> tradeDateList = new ArrayList<String>();
+
+        for(int i=0; i<tdList.size(); i++) {
+            tradeDateList.add(tdList.get(i).matchedTradeDate);
+        }
+
+        return tradeDateList;
+    }
+    //get a set of TradeDates, with cycle<=maxCycle
+    private TreeSet<String> getMatchedSet(ArrayList<TradeDetail> tdList, int maxCycle) {
+        TreeSet<String> mSet = new TreeSet<String>();
+
+        for(int i=0; i<tdList.size(); i++) {
+            if(tdList.get(i).cycle<=maxCycle)
+                mSet.add(tdList.get(i).matchedTradeDate);
+        }
+
+        return mSet;
     }
 
 
-
     public static void commonUsageInfo() {
-        System.err.println("       -o          ; does not write message to stdout");
+        System.err.println("       -o          ; output all matched tradedates");
         System.err.println("       -c stockCode;");
         System.err.println("       -d startDate;");
         System.err.println("       -h threshold;");
     }
     private static void usage() {
         String sPrefix = "usage: java AnalyzeTools ";
-        System.err.println(sPrefix+"ssifilter [-ocdh] tradeDate hmsList maxCycle fTradeDetails");
+        System.err.println(sPrefix+"ssifilter [-ocdh] tradeDate0 hmsList0 maxCycle fTradeDetails");
+        System.err.println("       loop all hmsList before endHMS(hmsList0), to get matched tradeDates");
+        System.err.println("       then intersected with those in fTradeDetails, to get a set"); 
+        System.err.println("       all elements' outCycle of the set must be <= maxCycle "); 
+        System.err.println("       maxCycle   ; those matched dates with quitting date <= maxCycle");
         commonUsageInfo();
 
         System.exit(-1);
@@ -81,7 +129,7 @@ public class SSIFilterHelper {
 
     public static Options getOptions() {
         Options options = new Options();
-        options.addOption("o", false, "does not write message to stdout");
+        options.addOption("o", false, "does not output matched tradedates");
         options.addOption("c", true,  "a stock's code");
         options.addOption("d", true,  "a tradeDate from which a ss search is started");
         options.addOption("h", true,  "a threshold value to get ss for tradeDates");
@@ -102,10 +150,4 @@ public class SSIFilterHelper {
 
         return cmd;
     }
-
-
-
-
-
-
 }
