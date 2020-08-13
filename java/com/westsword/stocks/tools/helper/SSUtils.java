@@ -20,7 +20,7 @@ package com.westsword.stocks.tools.helper;
 import java.util.*;
 import org.apache.commons.cli.*;
 
-import com.westsword.stocks.am.AmManager;
+import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.utils.*;
 import com.westsword.stocks.base.time.*;
@@ -83,23 +83,6 @@ public class SSUtils {
     }
 
 
-    //in case that false is returned, out[0] is not a complete amcorrel for hms[]
-    public static boolean isHMSMatched(String tradeDate0, String tradeDate1, String[] hms, AmManager am, 
-            double threshold, String[] out) {
-        String sAmCorrels = "";
-        boolean bHMSMatched = true;
-        for(int i=1; i<hms.length; i++) {
-            double amcorrel = am.getAmCorrel(tradeDate0, tradeDate1, hms[0], hms[i]);
-            sAmCorrels += String.format("%8.3f ", amcorrel);
-            if(Double.isNaN(amcorrel) || amcorrel<threshold) {
-                bHMSMatched = false;
-                break;
-            }
-        }
-        out[0] = sAmCorrels;
-
-        return bHMSMatched;
-    }
     public static ArrayList<String> getSimilarTradeDates(MMInstance r, AmManager am, double[][] corrM) {
         return getSimilarTradeDates(r.stockCode, r.startDate, r.threshold,
                 r.tradeDate, r.hmsList, am, corrM);
@@ -115,40 +98,48 @@ public class SSUtils {
     }
     public static ArrayList<String> getSimilarTradeDates(String stockCode, String startDate, double threshold, 
             String tradeDate, String hmsList, AmManager am, double[][] corrM) {
+        SimilarTradeDates sDates = new SimilarTradeDates(stockCode, startDate);
+        return sDates.get(threshold, tradeDate, hmsList, am, corrM);
+    }
+    public static void getSimilarTradeDates(String stockCode, String startDate, double threshold, 
+            String tradeDate, double[][] corrM, ArrayList<String> tradeDateList) {
+        SimilarTradeDates sDates = new SimilarTradeDates(stockCode, startDate);
+        sDates.get(threshold, tradeDate, corrM, tradeDateList);
+    }
+
+
+    public static ArrayList<String> getSimilarTradeDates(NavigableSet<String> tradeDateSet, double threshold, 
+            String tradeDate, String hmsList, AmManager am, double[][] corrM) {
         ArrayList<String> tradeDateList = new ArrayList<String>();
 
         if(corrM!=null) {
-            getSimilarTradeDates(stockCode, startDate, threshold,
+            getSimilarTradeDates(tradeDateSet, threshold,
                     tradeDate, corrM, tradeDateList);
         } else {
             String[] hms = hmsList.split("_");
-            TradeDates tradeDates = new TradeDates(stockCode);
-            String tradeDate0 = startDate;
-            while(tradeDate0 != null) {
+            for(String tradeDate0: tradeDateSet) {
                 String[] out = new String[1]; 
-                boolean bHMSMatched = isHMSMatched(tradeDate0, tradeDate, hms, am, threshold, out);
+                boolean bHMSMatched = am.isHMSMatched(tradeDate0, tradeDate, hms, threshold, out);
                 if(bHMSMatched)
                     tradeDateList.add(tradeDate0);
                 /*
                 System.out.format("%s %s %s %s\n", 
                         tradeDate0, tradeDate, hmsList, out[0]);
                 */
-
-                tradeDate0 = tradeDates.nextDate(tradeDate0);
             }
         }
 
         return tradeDateList;
     }
-    public static void getSimilarTradeDates(String stockCode, String startDate, double threshold, 
+    public static void getSimilarTradeDates(NavigableSet<String> tradeDateSet, double threshold, 
             String tradeDate, double[][] corrM, ArrayList<String> tradeDateList) {
-        TradeDates tradeDates = new TradeDates(stockCode, startDate);
-        int idx = tradeDates.getIndex(tradeDate);
+        String[] tdArray = tradeDateSet.toArray(new String[tradeDateSet.size()]);
+        int idx = tradeDateSet.contains(tradeDate)? tradeDateSet.headSet(tradeDate).size(): -1;
         int h = corrM.length;
         int w = corrM[0].length;
         for(int i=0; i<w; i++) {
             if(corrM[idx][i] >= threshold) {
-                String sMatchedDate = tradeDates.getDate(i);
+                String sMatchedDate = tdArray[i];
                 if(tradeDateList!=null)
                     tradeDateList.add(sMatchedDate);
             }
@@ -177,7 +168,7 @@ public class SSUtils {
                 String[] hms = hmsList.split("_");
 
                 String[] out = new String[1]; 
-                bHMSMatched = isHMSMatched(tradeDate0, tradeDate, hms, am, threshold, out);
+                bHMSMatched = am.isHMSMatched(tradeDate0, tradeDate, hms, threshold, out);
                 if(!bHMSMatched) {
                     break;
                 }
@@ -194,6 +185,7 @@ public class SSUtils {
 
         return tradeDateList;
     }
+
 
     public static String getInHMS(String hmsList) {
         String[] fields = HMS.getHMSArray(hmsList);

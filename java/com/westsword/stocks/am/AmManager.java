@@ -427,6 +427,24 @@ public class AmManager {
 
         return max-min;
     }
+    //in case that false is returned, sOut[0] is not a complete amcorrel for hms[]
+    public boolean isHMSMatched(String tradeDate0, String tradeDate1, String[] hms, 
+            double threshold, String[] sOut) {
+        String sAmCorrels = "";
+        boolean bHMSMatched = true;
+        for(int i=1; i<hms.length; i++) {
+            double amcorrel = getAmCorrel(tradeDate0, tradeDate1, hms[0], hms[i]);
+            sAmCorrels += String.format("%8.3f ", amcorrel);
+            if(Double.isNaN(amcorrel) || amcorrel<threshold) {
+                bHMSMatched = false;
+                break;
+            }
+        }
+        if(sOut!=null)
+            sOut[0] = sAmCorrels;
+
+        return bHMSMatched;
+    }
 
 
     private boolean checkSizes(int size0, int expSize0, int size1, int expSize1,
