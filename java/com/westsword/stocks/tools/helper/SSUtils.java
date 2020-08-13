@@ -108,6 +108,10 @@ public class SSUtils {
     }
 
 
+    public static ArrayList<String> getSimilarTradeDates(ArrayList<String> tdList, double threshold,
+            String tradeDate, String hmsList, AmManager am, double[][] corrM) {
+        return getSimilarTradeDates(new TreeSet<String>(tdList), threshold, tradeDate, hmsList, am, corrM);
+    }
     public static ArrayList<String> getSimilarTradeDates(NavigableSet<String> tradeDateSet, double threshold, 
             String tradeDate, String hmsList, AmManager am, double[][] corrM) {
         ArrayList<String> tradeDateList = new ArrayList<String>();
