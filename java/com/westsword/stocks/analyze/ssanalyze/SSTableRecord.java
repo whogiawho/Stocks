@@ -61,7 +61,7 @@ public class SSTableRecord extends BaseSSTR {
 
         return line;
     }
-    public void print(Boolean bEval, boolean bOnlyTraded) {
+    public void print(AmRecord currentR, Boolean bEval, boolean bOnlyTraded) {
         String sPrefix = "";
         String sOut = toString();
         if(bEval != null) {
@@ -74,7 +74,8 @@ public class SSTableRecord extends BaseSSTR {
         }
 
         if(bOnlyTraded && bEval || !bOnlyTraded)
-            System.out.format("%-8s in %-4s at %s:\n %s\n", sPrefix, sTableName, Time.current(), sOut);
+            System.out.format("%-8s in %-4s at %8.3f,%s:\n %s\n", 
+                    sPrefix, sTableName, currentR.getInPrice(tradeType), Time.current(), sOut);
     }
 
     public Boolean eval(long currentTp, AmManager am, TreeMap<Integer, AmRecord> amrMap, SdTime1 sdTime) {

@@ -81,7 +81,7 @@ public class SimilarStackAnalyze {
                         mTsMan.check2OpenSession(sstr, currentR, mName);
                     } 
                     //print sstr of Traded only
-                    sstr.print(bR, true);
+                    sstr.print(currentR, bR, true);
                 }
             }
 
