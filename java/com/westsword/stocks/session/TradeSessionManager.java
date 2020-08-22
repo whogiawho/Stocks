@@ -37,15 +37,13 @@ public class TradeSessionManager {
     public final static double TARGET_YEAR_RATE = 0.10;
 
     private String mStockCode;
-    private String mTradeDate;
 
     private ArrayList<TradeSession> mTradeSessionList = null;
     private int mOpenSession;
     private boolean mBOnlyLongTradeSession = false;
 
-    public TradeSessionManager(String stockCode, String tradeDate) {
+    public TradeSessionManager(String stockCode) {
         mStockCode = stockCode;
-        mTradeDate = tradeDate;
 
         mTradeSessionList = new ArrayList<TradeSession>();
         TradeSession.loadTradeSessions(mTradeSessionList, true);
@@ -56,9 +54,14 @@ public class TradeSessionManager {
         mBOnlyLongTradeSession = Settings.getSwitch(Settings.ONLY_LONG_TRADESESSION);
     }
 
+    public void checkAbnormalSubmittedSessions(boolean bRunTimeCheck) {
+        String tradeDate = Settings.getTradeDate();
+
+        checkAbnormalSubmittedSessions(bRunTimeCheck, tradeDate);
+    }
     //state: c->b c->d
     //take a look at TradeSession.java for more
-    public void checkAbnormalSubmittedSessions(boolean bRunTimeCheck) {
+    public void checkAbnormalSubmittedSessions(boolean bRunTimeCheck, String tradeDate) {
         System.out.format("%s: entering\n", Utils.getCallerName(getClass()));
 
         if(bRunTimeCheck) {
@@ -75,7 +78,7 @@ public class TradeSessionManager {
                 String sEntrustNO = s.getEntrustNO();
                 String state = iThsqs.queryEntrustState(sEntrustNO);
                 if(state.equals(iThsqs.getStringEntrustTraded())) {
-                    entrustComplete(sEntrustNO, s, iThsqs, removedList);
+                    entrustComplete(tradeDate, sEntrustNO, s, iThsqs, removedList);
                 } else {
                     entrustUnchange(s, iThsqs);
                 }
@@ -88,14 +91,14 @@ public class TradeSessionManager {
 
         remove(removedList);
     }
-    private void entrustComplete(String sEntrustNO, TradeSession s, THSQS iThsqs, 
+    private void entrustComplete(String tradeDate, String sEntrustNO, TradeSession s, THSQS iThsqs, 
             ArrayList<TradeSession> removedList) {
         double outPrice = iThsqs.queryEntrustAvgPrice(sEntrustNO);
 
         s.setOutPrice(outPrice);
         s.setActualOutPrice(outPrice);
         String tradeTime = iThsqs.queryTradedTime(sEntrustNO);
-        long outTp = Time.getSpecificTime(mTradeDate, tradeTime);
+        long outTp = Time.getSpecificTime(tradeDate, tradeTime);
         s.setActualOutHexTimePoint(outTp);
 
         s.setClose();
