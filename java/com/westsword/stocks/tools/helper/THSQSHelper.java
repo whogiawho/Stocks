@@ -61,27 +61,47 @@ public class THSQSHelper {
 
 
 
-    public static TradeSessionManager getTradeSessionManager() {
-        String stockCode = Settings.getStockCode();
-        String tradeDate = Settings.getTradeDate();
+    public static TradeSessionManager getTradeSessionManager(String stockCode) {
+        if(stockCode == null)
+            stockCode = Settings.getStockCode();
 
-        TradeSessionManager m = new TradeSessionManager(stockCode, tradeDate);
+        TradeSessionManager m = new TradeSessionManager(stockCode);
 
         return m;
     }
     public static void submitAbs(String[] args) {
-        TradeSessionManager m = getTradeSessionManager();
+        if(args.length != 1 && args.length != 2) {
+            submitAbsUsage();
+            return;
+        }
+
+        String stockCode = null;
+        TradeSessionManager m = null;
+        if(args.length == 2) {
+            stockCode = args[1];
+            System.out.format("stockCode=%s\n", stockCode);
+        }
+        m = getTradeSessionManager(stockCode);
         m.check2SubmitSession();
     }
     public static void checkAbsS(String[] args) {
-        TradeSessionManager m = getTradeSessionManager();
+        TradeSessionManager m = getTradeSessionManager(null);
         m.checkAbnormalSubmittedSessions(false);
     }
     public static void makeRRP(String[] args) {
-        TradeSessionManager m = getTradeSessionManager();
+        TradeSessionManager m = getTradeSessionManager(null);
 
         long tp = System.currentTimeMillis()/1000;
         AmRecord r = new AmRecord(tp, -1, -1, Double.NaN, Double.NaN);
         m.makeRRP(r);
     }
+
+
+
+
+    private static void submitAbsUsage() {
+        System.err.println("usage: java AnalyzeTools submitabs [stockCode]");
+        System.exit(-1);
+    }
+
 }

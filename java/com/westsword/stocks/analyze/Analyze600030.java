@@ -72,7 +72,7 @@ public class Analyze600030 {
         //set mTer
         mTer = new AmUtils.TrackExtreme();
         //set mTsMan
-        mTsMan = new TradeSessionManager(stockCode, tradeDate);
+        mTsMan = new TradeSessionManager(stockCode);
         mTsMan.check2SubmitSession();
         //set mSsAnalyzeh[012] etc
         String[] sSSTable = SSTable.getSSTableNames();
