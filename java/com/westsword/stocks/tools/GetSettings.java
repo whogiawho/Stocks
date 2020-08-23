@@ -456,7 +456,14 @@ public class GetSettings{
         System.out.format("\n testCkpt: \n");
 
         CheckPoint0 ckpt = new CheckPoint0();
-        ckpt.print();
+
+        System.out.format("testCkpt: %s\n", "part0");
+        CheckPoint s0 = ckpt.sub("092500", true, "113000", true);
+        s0.print();
+
+        System.out.format("\ntestCkpt: %s\n", "part1");
+        CheckPoint s1 = ckpt.sub("130000", true, "145600", true);
+        s1.print();
     }
     public static void testCombination(String stockCode) {
         System.out.format("\n testCombination: \n");
@@ -674,9 +681,9 @@ public class GetSettings{
         //testAmManager(stockCode, true);
         //testAmMatrix(stockCode);
         //testMatlab(stockCode);
-        //testCkpt(stockCode);
+        testCkpt(stockCode);
         //test2EndCkpt(stockCode);
-        testMakeAmDerivetivePng(stockCode, "20200803", "093249");
+        //testMakeAmDerivetivePng(stockCode, "20200803", "093249");
         //testCombination(stockCode);
         //testTradeSumLoader(stockCode);
         //testTaskManager(stockCode);
