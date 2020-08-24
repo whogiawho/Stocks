@@ -24,6 +24,8 @@ import com.westsword.stocks.base.ckpt.*;
 import com.westsword.stocks.base.Settings;
 
 public class CheckPoint0 extends CheckPoint {
+
+    //always starts from 09:25:00
     //interval - in seconds
     public CheckPoint0(int interval, String endHMS) {
         super();
@@ -32,7 +34,7 @@ public class CheckPoint0 extends CheckPoint {
         long endTp = Time.getSpecificTime(currentDate, endHMS);
 
         //add 09:25:00
-        add(AStockSdTime.getCallAuctionEndTime0());
+        add(AStockSdTime.getCallAuctionEndTime());
 
         //skip 09:30:00
         //add [09:31:00, 11:30:00]
@@ -50,10 +52,10 @@ public class CheckPoint0 extends CheckPoint {
         }
     }
 
-    public CheckPoint0() {
-        this(Settings.getCkptInterval(), "14:56:00");
-    }
     public CheckPoint0(String endHMS) {
         this(Settings.getCkptInterval(), endHMS);
+    }
+    public CheckPoint0() {
+        this("14:56:00");
     }
 }

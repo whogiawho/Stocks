@@ -60,7 +60,7 @@ public class AmUtils {
         Utils.deleteFile(sAnalysisFile);
 
         long am = startAm;
-        long caeTp = Time.getSpecificTime(tradeDate, mSdTime.getCallAuctionEndTime0());
+        long caeTp = Time.getSpecificTime(tradeDate, mSdTime.getCallAuctionEndTime());
         int caeSd = mSdTime.getAbs(caeTp);
         int prevSd = caeSd;                //prevSd starts from callAuctionEndTime
         for(int i=0; i<lSize; i++) {
