@@ -14,7 +14,7 @@
  /* Written by whogiawho <whogiawho@gmail.com>. */
  
  
-package com.westsword.stocks.base;
+package com.westsword.stocks.base.utils;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

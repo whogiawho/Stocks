@@ -25,8 +25,7 @@ import java.util.Calendar;
 
 import com.westsword.stocks.base.Stock;
 import com.westsword.stocks.base.time.Time;
-import com.westsword.stocks.base.utils.FileLoader;
-import com.westsword.stocks.base.ConvertDD2Double;
+import com.westsword.stocks.base.utils.*;
 
 public class ToPost0 extends FileLoader {
     public void write2File(BufferedWriter w, long time, int upCount, double upQ, int downCount, double downQ, double lastPrice) {

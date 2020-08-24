@@ -20,8 +20,7 @@ import java.io.*;
 import java.util.*;
 
 import com.westsword.stocks.base.Utils;
-import com.westsword.stocks.base.utils.FileLoader;
-import com.westsword.stocks.base.ConvertDD2Double;
+import com.westsword.stocks.base.utils.*;
 
 public class RawTradeDetailsList extends FileLoader {
     private ConvertDD2Double cDD = new ConvertDD2Double();

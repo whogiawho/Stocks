@@ -16,7 +16,7 @@
  
 package com.westsword.stocks.tools.helper;
 
-import com.westsword.stocks.base.ConvertDD2Double;
+import com.westsword.stocks.base.utils.ConvertDD2Double;
 
 public class CoderHelper {
     public static void decode(String args[]) {
