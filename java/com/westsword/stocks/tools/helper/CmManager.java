@@ -107,7 +107,7 @@ public class CmManager {
         mWThread.setPriority(Thread.MAX_PRIORITY);
         mWThread.start();
 
-        //wait until the cmMap.size()>=1
+        //wait until the cmMap.size()>=5
         while(cmMap.size()<MAX_CORRMATRIX_BUFF_SIZE);
     }
 

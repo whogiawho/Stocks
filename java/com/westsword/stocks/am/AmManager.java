@@ -145,16 +145,30 @@ public class AmManager {
     }
 
 
+    private int getEndIdx(String startHMS, String endHMS, String currentDate) {
+        int end;
+        if(startHMS.compareTo(endHMS)<0) {
+            end = mSdTime.getAbs(currentDate, endHMS);
+        } else {
+            StockDates stockDates = new StockDates(mStockCode, false);
+            String nextTradeDate = stockDates.nextDate(currentDate);
+            end = mSdTime.getAbs(nextTradeDate, endHMS);
+        }
+
+        return end;
+    }
     //
     public double[][] getAmMatrix(String hmsList, String[] sTradeDates) {
         int w = sTradeDates.length;
 
+        //both startHMS<endHMS && startHMS>=endHMS should be considered
         String[] fields = hmsList.split("_");
         String startHMS = fields[0];
         String endHMS = fields[1];
-        int start = mSdTime.get(startHMS);
-        int end = mSdTime.get(endHMS);
-        int h = end-start+1;
+        String currentD = Time.currentDate();
+        int start = mSdTime.getAbs(currentD, startHMS);
+        int end = getEndIdx(startHMS, endHMS, currentD);
+        int h = end-start+1;          
 
         double[][] m = new double[h][w];
         //set values to m
@@ -366,7 +380,7 @@ public class AmManager {
     }
     //support 2 kinds:
     //  startHMS<endHMS - f0&f1 is in one day
-    //  startHMS>endHMS - f0&f1 is in 2 continuous days
+    //  startHMS>=endHMS - f0&f1 is in 2 continuous days
     public double getAmCorrel(String tradeDate0, String tradeDate1, String startHMS, String endHMS) {
         double amCorrel = Double.NaN;
 
