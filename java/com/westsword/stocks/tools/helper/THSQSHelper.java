@@ -69,23 +69,35 @@ public class THSQSHelper {
 
         return m;
     }
+    public static String getStockCode(String[] args) {
+        String stockCode = Settings.getStockCode();
+        if(args.length == 2) {
+            stockCode = args[1];
+            System.out.format("stockCode=%s\n", stockCode);
+        }
+
+        return stockCode;
+    }
+
+
     public static void submitAbs(String[] args) {
         if(args.length != 1 && args.length != 2) {
             submitAbsUsage();
             return;
         }
 
-        String stockCode = null;
-        TradeSessionManager m = null;
-        if(args.length == 2) {
-            stockCode = args[1];
-            System.out.format("stockCode=%s\n", stockCode);
-        }
-        m = getTradeSessionManager(stockCode);
+        String stockCode = getStockCode(args);
+        TradeSessionManager m = getTradeSessionManager(stockCode);
         m.check2SubmitSession();
     }
-    public static void checkAbsS(String[] args) {
-        TradeSessionManager m = getTradeSessionManager(null);
+    public static void checkAbss(String[] args) {
+        if(args.length != 1 && args.length != 2) {
+            checkAbssUsage();
+            return;
+        }
+
+        String stockCode = getStockCode(args);
+        TradeSessionManager m = getTradeSessionManager(stockCode);
         m.checkAbnormalSubmittedSessions(false);
     }
     public static void makeRRP(String[] args) {
@@ -101,6 +113,10 @@ public class THSQSHelper {
 
     private static void submitAbsUsage() {
         System.err.println("usage: java AnalyzeTools submitabs [stockCode]");
+        System.exit(-1);
+    }
+    private static void checkAbssUsage() {
+        System.err.println("usage: java AnalyzeTools checkabss [stockCode]");
         System.exit(-1);
     }
 

@@ -159,7 +159,7 @@ public class AnalyzeTools{
             SSTableHelper ssth = new SSTableHelper();
             ssth.getSSTableName(args);
         } else if(sOption.equals("checkabss")) {
-            THSQSHelper.checkAbsS(args);
+            THSQSHelper.checkAbss(args);
         } else if(sOption.equals("submitabs")) {
             THSQSHelper.submitAbs(args);
         } else if(sOption.equals("makerrp")) {
