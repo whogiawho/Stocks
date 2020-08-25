@@ -452,6 +452,28 @@ public class GetSettings{
             System.out.format("%s\n", hmsList);
         }
     }
+    public static void testHMSPath0(String stockCode) {
+        System.out.format("\n testHMSPath0: \n");
+
+        HMSPath0 p = new HMSPath0("092500_093100", "094000_094200");
+        ArrayList<String> hmsList = new ArrayList<String>();
+
+        p.make(hmsList, 0);
+        p.print();
+    }
+    public static void testHMSPath(String stockCode) {
+        System.out.format("\n testHMSPath: \n");
+
+        HMSPath p = new HMSPath();
+
+        CheckPoint0 ckpt = new CheckPoint0();
+        CheckPoint s0 = ckpt.sub("092500", true, "093200", true);
+        CheckPoint s1 = ckpt.sub("093300", true, "093600", true);
+        p.add(s0);
+        p.add(s1);
+        p.make("", 0);
+        p.print();
+    }
     public static void testCkpt(String stockCode) {
         System.out.format("\n testCkpt: \n");
 
@@ -681,7 +703,9 @@ public class GetSettings{
         //testAmManager(stockCode, true);
         //testAmMatrix(stockCode);
         //testMatlab(stockCode);
-        testCkpt(stockCode);
+        //testCkpt(stockCode);
+        //testHMSPath(stockCode);
+        testHMSPath0(stockCode);
         //test2EndCkpt(stockCode);
         //testMakeAmDerivetivePng(stockCode, "20200803", "093249");
         //testCombination(stockCode);
