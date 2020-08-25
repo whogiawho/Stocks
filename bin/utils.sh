@@ -202,7 +202,7 @@ function cleardmp {
 }
 function cleartmp {
     set -x
-    rm -rf $TMP/tmp* $TMP/sh-thd.* 
+    rm -rf $TMP/tmp* $TMP/sh-thd.* $TMP/*.TMP
     rm -rf $TMP/Diagnostics $TMP/PhotoCache $TMP/PowerQuery $TMP/VBE
     rm -rf $TMP/\{*
     set +x

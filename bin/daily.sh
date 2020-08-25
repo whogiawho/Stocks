@@ -197,6 +197,8 @@ function autoTrade {
     local stockCode=$1
     local tradeDate=$2
 
+    setupCfgFile $stockCode $tradeDate 
+
     #getLoginParms
     autoGetLoginParms
     local line=`checkHexinServer`
@@ -209,9 +211,6 @@ function autoTrade {
     sleep $((SLEEP_INTERVAL/4))
     #login qs client
     autoLoginQs
-
-
-    setupCfgFile $stockCode $tradeDate 
 
     #start cygwin32, and run getInstantData
     execGetInstantData $stockCode $tradeDate $serverAddr $serverPort $serverType $sEnv

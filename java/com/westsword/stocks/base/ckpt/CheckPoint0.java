@@ -55,6 +55,7 @@ public class CheckPoint0 extends CheckPoint {
     public CheckPoint0(String endHMS) {
         this(Settings.getCkptInterval(), endHMS);
     }
+    //[09:25:00, 09:30:01-11:30:00, 13:01:00-14:56:00]
     public CheckPoint0() {
         this("14:56:00");
     }
