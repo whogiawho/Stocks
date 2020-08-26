@@ -22,6 +22,7 @@ import org.apache.commons.cli.*;
 import org.apache.commons.math3.util.Combinations;
 
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.ckpt.*;
 import com.westsword.stocks.base.utils.AnsiColor;
@@ -82,7 +83,7 @@ public class SSInstancesHelper {
         }
     }
 
-    private static void handle01(SSInstance template, ArrayList<SSTableRecord> list, 
+    private void handle01(SSInstance template, ArrayList<SSTableRecord> list, 
             boolean bLog2Files, boolean bResetLog, boolean bStdout,
             StockDates stockDates, AmManager am, SSiManager ssim) {
         //loop the SSTableRecord list
@@ -112,7 +113,7 @@ public class SSInstancesHelper {
                     bLog2Files, bResetLog, bStdout);
         }
     }
-    private static void handleX0(SSInstance template, String hmsList,
+    private void handleX0(SSInstance template, String hmsList,
             boolean bLog2Files, boolean bResetLog, boolean bStdout,
             StockDates stockDates, AmManager am, SSiManager ssim, CommandLine cmd) {
         CmManager cm = new CmManager();
@@ -123,46 +124,53 @@ public class SSInstancesHelper {
                     bLog2Files, bResetLog, bStdout,
                     stockDates, am, ssim, cm);
         } else {
-            CheckPoint0 ckpt = new CheckPoint0();
-            String startHMSList = SSUtils.getStartHMSList(cmd);
-            int[] startIdxs = null;
-            if(startHMSList!=null)
-                startIdxs = ckpt.getIdxList(startHMSList);
-            String endHMSList = SSUtils.getEndHMSList(cmd);
-            int[] endIdxs = null;
-            if(endHMSList!=null)
-                endIdxs = ckpt.getIdxList(endHMSList);
-
-            cm.startWorker(template.stockCode, template.startDate, 
-                    startHMSList, endHMSList, am);
-
-            int length = ckpt.getLength();
-            Combinations c = new Combinations(length, 2);
-            Comparator<int[]> iC = c.comparator();
-            //loop hmsList combination(n,2)
-            Iterator<int[]> itr = c.iterator();
-            while(itr.hasNext()) {
-                int[] e = itr.next();
-                hmsList = ckpt.getHMSList(e);
-                if(startIdxs!=null && iC.compare(e, startIdxs)<0) {
-                    System.out.format("handleX0: skipping %s\n", hmsList);
-                    continue;
-                }
-                if(endIdxs!=null && iC.compare(e, endIdxs)>=0) {
-                    break;
-                }
-
-                //clear am's trBuf(optionaly)
-                loopTradeDates(template, hmsList, tradeDates,
-                        bLog2Files, bResetLog, bStdout,
-                        stockDates, am, ssim, cm);
-            }
-            System.out.format("handleX0: %s\n", "finished!");
+            handleAB0(template, tradeDates, cm,
+                    bLog2Files, bResetLog, bStdout,
+                    stockDates, am, ssim, cmd);
         }
 
         cm.close();
     }
-    private static void loopTradeDates(SSInstance template, String hmsList, TradeDates tradeDates,
+    private void handleAB0(SSInstance template, TradeDates tradeDates, CmManager cm, 
+            boolean bLog2Files, boolean bResetLog, boolean bStdout, 
+            StockDates stockDates, AmManager am, SSiManager ssim, CommandLine cmd) {
+        CheckPoint0 ckpt = new CheckPoint0();
+        String startHMSList = SSUtils.getStartHMSList(cmd);
+        int[] startIdxs = null;
+        if(startHMSList!=null)
+            startIdxs = ckpt.getIdxList(startHMSList);
+        String endHMSList = SSUtils.getEndHMSList(cmd);
+        int[] endIdxs = null;
+        if(endHMSList!=null)
+            endIdxs = ckpt.getIdxList(endHMSList);
+
+        cm.startWorker(template.stockCode, template.startDate, 
+                startHMSList, endHMSList, am);
+
+        int length = ckpt.getLength();
+        Combinations c = new Combinations(length, 2);
+        Comparator<int[]> iC = c.comparator();
+        //loop hmsList combination(n,2)
+        Iterator<int[]> itr = c.iterator();
+        while(itr.hasNext()) {
+            int[] e = itr.next();
+            String hmsList = ckpt.getHMSList(e);
+            if(startIdxs!=null && iC.compare(e, startIdxs)<0) {
+                System.out.format("%s: skipping %s\n", Utils.getCallerName(getClass()), hmsList);
+                continue;
+            }
+            if(endIdxs!=null && iC.compare(e, endIdxs)>=0) {
+                break;
+            }
+
+            //clear am's trBuf(optionaly)
+            loopTradeDates(template, hmsList, tradeDates,
+                    bLog2Files, bResetLog, bStdout,
+                    stockDates, am, ssim, cm);
+        }
+        System.out.format("%s: %s\n", Utils.getCallerName(getClass()), "finished!");
+    }
+    private void loopTradeDates(SSInstance template, String hmsList, TradeDates tradeDates,
             boolean bLog2Files, boolean bResetLog, boolean bStdout,
             StockDates stockDates, AmManager am, SSiManager ssim, CmManager cm) {
         double[][] corrM = cm.getCorrMatrix(template.stockCode, template.startDate, hmsList, am);
@@ -179,7 +187,7 @@ public class SSInstancesHelper {
     }
 
 
-    private static void usage() {
+    private void usage() {
         String sPrefix = "usage: java AnalyzeTools ";
         System.err.println(sPrefix+"ssinstances [-rnocdhtsfm] maxCycle targetRate");
         System.err.println("       targetRate      ; something like [0-9]{1,}.[0-9]{1,3}");
@@ -199,7 +207,7 @@ public class SSInstancesHelper {
         System.exit(-1);
     }
 
-    public static CommandLine getCommandLine(String[] args) {
+    public CommandLine getCommandLine(String[] args) {
         CommandLine cmd = null;
         try {
             String[] newArgs = Arrays.copyOfRange(args, 1, args.length);

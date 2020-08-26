@@ -269,6 +269,10 @@ public class Analyze600030 {
                 //sum as&ab during callAuction;
                 for(int i=0; i<rawDetailsList.size(); i++) {
                     RawTradeDetails element = rawDetailsList.get(i);
+                    if(Settings.getSwitch(Settings.SWITCH_OF_RAW_DATA)) {
+                        System.out.format("%x %8.3f %4d %4d\n", 
+                                element.time, element.price, element.count, element.type);
+                    }
                     if(element.time > callAuctionTime)
                         break;
 
