@@ -69,6 +69,9 @@ public class SSUtils {
     public static String getTradeDateList(CommandLine cmd) {
         return CmdLineUtils.getString(cmd, "l", null);
     }
+    public static boolean getSwitchExtraHMSList(CommandLine cmd) {
+        return CmdLineUtils.getBoolean(cmd, "e", false);
+    }
     public static String getSSTableFile(CommandLine cmd) {
         return CmdLineUtils.getString(cmd, "f", null);
     }

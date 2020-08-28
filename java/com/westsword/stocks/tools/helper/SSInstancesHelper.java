@@ -54,7 +54,8 @@ public class SSInstancesHelper {
 
         String sSSTableFile = SSUtils.getSSTableFile(cmd);
         String hmsList = SSUtils.getHMSList(cmd);
-        if(sSSTableFile!=null&&hmsList!=null) {
+        boolean bExtra = SSUtils.getSwitchExtraHMSList(cmd);
+        if(!isOptionLegal(sSSTableFile, hmsList, bExtra)) {      
             usage();
             return;
         }
@@ -71,18 +72,29 @@ public class SSInstancesHelper {
         SSInstance template = new SSInstance(stockCode, startDate, threshold, sTDistance, tradeType,
                     "", "", maxCycle, targetRate);
 
-        if(sSSTableFile != null) {
+        if(bExtra) {                                                //-e
+            handleExtra(template, bLog2Files, bResetLog, bStdout,
+                    stockDates, am, ssim);
+        } else if(sSSTableFile != null) {                           //-f
             ArrayList<SSTableRecord> list = SSUtils.getSSTableRecordList(sSSTableFile);
             handle01(template, list,
                     bLog2Files, bResetLog, bStdout,
                     stockDates, am, ssim);
-        } else {
+        } else {                                                   //-m|-ab|None
             handleX0(template, hmsList, 
                     bLog2Files, bResetLog, bStdout,
                     stockDates, am, ssim, cmd);
         }
     }
 
+    private boolean isOptionLegal(String sSSTableFile, String hmsList, boolean bExtra) {
+        boolean bLegal0 = sSSTableFile!=null&&hmsList==null&&!bExtra;//-f
+        boolean bLegal1 = hmsList!=null&&sSSTableFile==null&&!bExtra;//-m
+        boolean bLegal2 = hmsList==null&&sSSTableFile==null&&!bExtra;//-ab|None
+        boolean bLegal3 = bExtra&&sSSTableFile==null&&hmsList==null; //-e
+
+        return bLegal0||bLegal1||bLegal2||bLegal3;
+    }
     private void handle01(SSInstance template, ArrayList<SSTableRecord> list, 
             boolean bLog2Files, boolean bResetLog, boolean bStdout,
             StockDates stockDates, AmManager am, SSiManager ssim) {
@@ -119,17 +131,34 @@ public class SSInstancesHelper {
         CmManager cm = new CmManager();
 
         TradeDates tradeDates = new TradeDates(template.stockCode, template.startDate);
-        if(hmsList!=null) {
+        if(hmsList!=null) {                                       //-m
             loopTradeDates(template, hmsList, tradeDates,
                     bLog2Files, bResetLog, bStdout,
                     stockDates, am, ssim, cm);
         } else {
-            handleAB0(template, tradeDates, cm,
+            handleAB0(template, tradeDates, cm,                   //-ab|None
                     bLog2Files, bResetLog, bStdout,
                     stockDates, am, ssim, cmd);
         }
 
         cm.close();
+    }
+    private void handleExtra(SSInstance template, boolean bLog2Files, boolean bResetLog, boolean bStdout,
+            StockDates stockDates, AmManager am, SSiManager ssim) {
+        TradeDates tradeDates = new TradeDates(template.stockCode, template.startDate);
+
+        CmManager cm = new CmManager();
+        cm.startWorker(template.stockCode, template.startDate, am);
+
+        HMSPath1 p = new HMSPath1();
+        Iterator<String> itr = p.iterator();
+        while(itr.hasNext()) {
+            String hmsList = itr.next();
+
+            loopTradeDates(template, hmsList, tradeDates,
+                    bLog2Files, bResetLog, bStdout,
+                    stockDates, am, ssim, cm);
+        }
     }
     private void handleAB0(SSInstance template, TradeDates tradeDates, CmManager cm, 
             boolean bLog2Files, boolean bResetLog, boolean bStdout, 
@@ -189,21 +218,21 @@ public class SSInstancesHelper {
 
     private void usage() {
         String sPrefix = "usage: java AnalyzeTools ";
-        System.err.println(sPrefix+"ssinstances [-rnocdhtsfm] maxCycle targetRate");
+        System.err.println(sPrefix+"ssinstances [-rnocdhtsfmabe] maxCycle targetRate");
         System.err.println("       targetRate      ; something like [0-9]{1,}.[0-9]{1,3}");
         System.err.println("                       relative(<=1): targetRate"); 
         System.err.println("                       absolute(>1) : targetRate-1");
 
-             String line = "       only one, either -f or -m or None can be enabled!";
+             String line = "       only one, -f|-m|-ab|-e|None can be enabled!";
         line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);
         System.err.println(line);
         SSInstanceHelper.commonUsageInfo();
 
-        System.err.println("       -f sSSTableFile; [tradeDate, hmsList] in the file; exclusive to -m");
-        System.err.println("       -m hmsList      ; loop all [tradeDate, hmsList]; exclusive to -f");
+        System.err.println("       -f sSSTableFile; [tradeDate, hmsList] in the file");
+        System.err.println("       -m hmsList      ; loop all [tradeDate, hmsList]");
         System.err.println("       -a startHMSList ; loop from startHMSList(inclusive)");
         System.err.println("       -b endHMSList   ; loop until endHMSList(exclusive)");
-        System.err.println("                         effective only when no -fm");
+        System.err.println("       -e              ; extra hmsLists");
         System.exit(-1);
     }
 
@@ -217,6 +246,7 @@ public class SSInstancesHelper {
             options.addOption("m", true,  "hmsList");
             options.addOption("a", true,  "the start hmsList(inclusive) to be looped");
             options.addOption("b", true,  "the end hmsList(exclusive) to be looped");
+            options.addOption("e", false, "extra hmsLists trans 2 tradeDates are considered");
             CommandLineParser parser = new DefaultParser();
             cmd = parser.parse(options, newArgs);
         } catch (Exception e) {

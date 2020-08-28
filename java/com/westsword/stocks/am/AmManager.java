@@ -177,7 +177,10 @@ public class AmManager {
             start = mSdTime.getAbs(tradeDate, startHMS);
             for(int j=0; j<h; j++) {
                 AmRecord r = mAmRecordMap.get(start+j);
-                m[j][i] = (double)r.am;
+                if(r!=null)
+                    m[j][i] = (double)r.am;
+                else
+                    m[j][i] = Double.NaN;
             }
         }
 

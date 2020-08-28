@@ -110,8 +110,8 @@ public class CmManager {
         //wait until the cmMap.size()>=5
         while(cmMap.size()<MAX_CORRMATRIX_BUFF_SIZE);
     }
-
     public class Worker extends Thread {
+        boolean bExtra = false;
 
         //mEng&cmMap are outer members of CmManager
         private String[] sTradeDates;
@@ -127,6 +127,15 @@ public class CmManager {
             this.endHMSList = endHMSList;
             this.am = am;
             this.key0 = key0;
+
+            bExtra = false;
+        }
+        public Worker(String[] sTradeDates, AmManager am, String key0) {
+            this.sTradeDates = sTradeDates;
+            this.am = am;
+            this.key0 = key0;
+
+            bExtra = true;
         }
 
         private void fillCmMap() {
@@ -177,7 +186,29 @@ public class CmManager {
             }
         }
         public void run() {
-            fillCmMap();
+            if(!bExtra)
+                fillCmMap();
+            else {
+                fillCmMapE();
+            }
         }
+        private void fillCmMapE() {
+        }
+    }
+
+
+
+
+    //start a thread to fill cmMap for Extra hmsLists
+    public void startWorker(String stockCode, String startDate, AmManager am) {
+        String[] sTradeDates = new TradeDates(stockCode, startDate).getAllDates();
+        String key0 = stockCode+startDate;
+
+        mWThread = new Worker(sTradeDates, am, key0);
+        mWThread.setPriority(Thread.MAX_PRIORITY);
+        mWThread.start();
+
+        //wait until the cmMap.size()>=5
+        while(cmMap.size()<MAX_CORRMATRIX_BUFF_SIZE);
     }
 }
