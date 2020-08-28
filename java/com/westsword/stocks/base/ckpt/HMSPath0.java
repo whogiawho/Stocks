@@ -29,8 +29,8 @@ public class HMSPath0 extends HMSPath {
         super();
 
         mCkpt = new CheckPoint0();
-        add(mCkpt);
-        add(mCkpt);
+        addCkpt(mCkpt);
+        addCkpt(mCkpt);
 
 
         int length = mCkpt.getLength();

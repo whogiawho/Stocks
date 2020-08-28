@@ -30,9 +30,20 @@ public class HMSPath {
 
         mPathList = new ArrayList<String>();
     }
+    public HMSPath(HMSPath p) {
+        this();
+        add(p);
+    }
 
-    public void add(CheckPoint ckpt) {
+    public void addCkpt(CheckPoint ckpt) {
         mCkptList.add(ckpt);
+    }
+    public void add(HMSPath p) {
+        Iterator<String> itr = p.iterator();
+        while(itr.hasNext()) {
+            String s = itr.next();
+            mPathList.add(s);
+        }
     }
 
     public void make(String sPath, int n) {

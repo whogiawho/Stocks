@@ -452,6 +452,12 @@ public class GetSettings{
             System.out.format("%s\n", hmsList);
         }
     }
+    public static void testHMSPath1(String stockCode) {
+        System.out.format("\n testHMSPath1: \n");
+
+        HMSPath1 p = new HMSPath1();
+        p.print();
+    }
     public static void testHMSPath0(String stockCode) {
         System.out.format("\n testHMSPath0: \n");
 
@@ -469,8 +475,8 @@ public class GetSettings{
         CheckPoint0 ckpt = new CheckPoint0();
         CheckPoint s0 = ckpt.sub("092500", true, "093200", true);
         CheckPoint s1 = ckpt.sub("093300", true, "093600", true);
-        p.add(s0);
-        p.add(s1);
+        p.addCkpt(s0);
+        p.addCkpt(s1);
         p.make("", 0);
         p.print();
     }
@@ -705,7 +711,8 @@ public class GetSettings{
         //testMatlab(stockCode);
         //testCkpt(stockCode);
         //testHMSPath(stockCode);
-        testHMSPath0(stockCode);
+        //testHMSPath0(stockCode);
+        testHMSPath1(stockCode);
         //test2EndCkpt(stockCode);
         //testMakeAmDerivetivePng(stockCode, "20200803", "093249");
         //testCombination(stockCode);
