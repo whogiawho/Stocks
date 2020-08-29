@@ -52,17 +52,25 @@ public class AmDerivativeHelper {
         }
     }
 
+    private static AmManager getAmManager(String stockCode, String tradeDate, int sdbw, String hms) {
+        SdTime1 sdt = new SdTime1(stockCode);
+        int sd = sdt.getAbs(tradeDate, hms);
+        int sSd = sd - sdbw;
+        long sTp = sdt.rgetAbs(sSd);
+        String sDate = Time.getTimeYMD(sTp, false);
+        String[] sTradates = new TradeDates(stockCode, sDate, tradeDate).getAllDates();
+        //System.out.format("sTradates=%s\n", Arrays.toString(sTradates));
+
+        AmManager amm = new AmManager(stockCode, sTradates);
+
+        return amm;
+    }
     public static void handleAll(String stockCode, String tradeDate, CommandLine cmd) {
         double threshold = AmDerUtils.getThreshold(cmd);
         int sdbw = AmDerUtils.getBackwardSd(cmd);
         int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
 
-        StockDates stockDates = new StockDates(stockCode);
-        String prevTradeDate = stockDates.prevDate(tradeDate);
-        ArrayList<String> tradeDateList = new ArrayList<String>();
-        tradeDateList.add(prevTradeDate);
-        tradeDateList.add(tradeDate);
-        AmManager amm = new AmManager(stockCode, tradeDateList);
+        AmManager amm = getAmManager(stockCode, tradeDate, sdbw, AStockSdTime.getCallAuctionEndTime());
 
         //loop all sds of tradeDate
         SdTime1 sdt = new SdTime1(stockCode);
@@ -83,12 +91,7 @@ public class AmDerivativeHelper {
         int sdbw = AmDerUtils.getBackwardSd(cmd);
         int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
 
-        StockDates stockDates = new StockDates(stockCode);
-        String prevTradeDate = stockDates.prevDate(tradeDate);
-        ArrayList<String> tradeDateList = new ArrayList<String>();
-        tradeDateList.add(prevTradeDate);
-        tradeDateList.add(tradeDate);
-        AmManager amm = new AmManager(stockCode, tradeDateList);
+        AmManager amm = getAmManager(stockCode, tradeDate, sdbw, hms);
 
         SdTime1 sdt = new SdTime1(stockCode);
         long tp = Time.getSpecificTime(tradeDate, hms);
