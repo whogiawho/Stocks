@@ -66,7 +66,7 @@ public class AmDerivativeHelper {
         return amm;
     }
     public static void handleAll(String stockCode, String tradeDate, CommandLine cmd) {
-        double threshold = AmDerUtils.getThreshold(cmd);
+        double r2Threshold = AmDerUtils.getR2Threshold(cmd);
         int sdbw = AmDerUtils.getBackwardSd(cmd);
         int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
 
@@ -82,12 +82,12 @@ public class AmDerivativeHelper {
             String hms = Time.getTimeHMS(tp, false);
             String sDerivativeFile = StockPaths.getDerivativeFile(stockCode, tradeDate, hms);
 
-            listSingleSd(sd, threshold, sdbw, minSkippedSD,
+            listSingleSd(sd, r2Threshold, sdbw, minSkippedSD,
                     amm, false, sDerivativeFile);
         }
     }
     public static void handleSingle(String stockCode, String tradeDate, String hms, CommandLine cmd) {
-        double threshold = AmDerUtils.getThreshold(cmd);
+        double r2Threshold = AmDerUtils.getR2Threshold(cmd);
         int sdbw = AmDerUtils.getBackwardSd(cmd);
         int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
 
@@ -98,13 +98,13 @@ public class AmDerivativeHelper {
         int sd = sdt.getAbs(tp);
         System.err.format("%s_%s tp=%x, sd=%d am=%d\n", tradeDate, hms, tp, sd, amm.getAm(sd));
 
-        listSingleSd(sd, threshold, sdbw, minSkippedSD, 
+        listSingleSd(sd, r2Threshold, sdbw, minSkippedSD, 
                 amm, true, null);
     } 
-    public static void listSingleSd(int sd, double threshold, int sdbw, int minSkippedSD, 
+    public static void listSingleSd(int sd, double r2Threshold, int sdbw, int minSkippedSD, 
             AmManager amm, boolean bStdOut, String sDerivativeFile) {
 
-        AmDerUtils.listSingleSd(sd, threshold, sdbw, minSkippedSD,
+        AmDerUtils.listSingleSd(sd, r2Threshold, sdbw, minSkippedSD,
                 amm.getAmRecordMap(), bStdOut, sDerivativeFile);
     }
 
@@ -112,9 +112,9 @@ public class AmDerivativeHelper {
     private static void usage() {
         System.err.println("usage: java AnalyzeTools listamderivatives [-bhm] stockCode tradeDate [hms]");
         System.err.println("       only print but not write to file when hms is specified");
-        System.err.println("       -b sdbw     ; at most sdbw shall be looked backward; default 300");
-        System.err.println("       -h threshold; default 0.5");
-        System.err.println("       -m mindist  ; default 5");
+        System.err.println("       -b sdbw       ; at most sdbw shall be looked backward; default 300");
+        System.err.println("       -h r2Threshold; default 0.5");
+        System.err.println("       -m mindist    ; default 5");
         System.exit(-1);
     }
 

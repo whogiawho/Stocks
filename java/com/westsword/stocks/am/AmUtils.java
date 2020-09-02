@@ -123,12 +123,12 @@ public class AmUtils {
         String sDerivativeFile = StockPaths.getDerivativeFile(mStockCode, tradeDate, hms);
         //get sd from r.timeIndex
         int sd = r.timeIndex;
-        //get default threshold&sdbw&minSkippedSD
-        double threshold = AmDerUtils.getThreshold(null);
+        //get default r2Threshold&sdbw&minSkippedSD
+        double r2Threshold = AmDerUtils.getR2Threshold(null);
         int sdbw = AmDerUtils.getBackwardSd(null);
         int minSkippedSD = AmDerUtils.getMinimumSkipSd(null);
         //call AmDerUtils.listSingleSd
-        AmDerUtils.listSingleSd(sd, threshold, sdbw, minSkippedSD,
+        AmDerUtils.listSingleSd(sd, r2Threshold, sdbw, minSkippedSD,
                 amrMap, false, sDerivativeFile);
     }
     public void writeRange(int start, int end, long am, 

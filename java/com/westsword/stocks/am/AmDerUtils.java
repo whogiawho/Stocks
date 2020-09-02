@@ -25,22 +25,51 @@ import com.westsword.stocks.base.utils.CmdLineUtils;
 
 public class AmDerUtils {
     public final static int Default_Backward_SD = 60*5;
-    public final static double Default_Threshold = 0.5;
+    public final static double Default_R2Threshold = 0.5;
+    public final static double Default_NaThreshold = 0.9;
     public final static int Default_Minimum_Skipped_SD = 5;
 
 
     public static int getBackwardSd(CommandLine cmd) {
         return CmdLineUtils.getInteger(cmd, "b", Default_Backward_SD);
     }
-    public static double getThreshold(CommandLine cmd) {
-        return CmdLineUtils.getDouble(cmd, "h", Default_Threshold);
+    public static int getBackwardSd(CommandLine cmd, int defaultSdbw) {
+        return CmdLineUtils.getInteger(cmd, "b", defaultSdbw);
+    }
+    public static double getR2Threshold(CommandLine cmd) {
+        return CmdLineUtils.getDouble(cmd, "h", Default_R2Threshold);
+    }
+    public static double getNaThreshold(CommandLine cmd) {
+        return CmdLineUtils.getDouble(cmd, "n", Default_NaThreshold);
     }
     public static int getMinimumSkipSd(CommandLine cmd) {
         return CmdLineUtils.getInteger(cmd, "m", Default_Minimum_Skipped_SD);
     }
 
 
-    public static void listSingleSd(int sd, double threshold, int sdbw, int minSkippedSD,
+    public static double getNaRate(int sd, double r2Threshold, int sdbw, int minSkippedSD,
+            TreeMap<Integer, AmRecord> amrMap) {
+        int naCount=0;
+        int minDist=minSkippedSD;
+        int count=sdbw-minDist+1;
+        for(int dist=sdbw; dist>=minDist; dist--) {
+            int start=sd-dist;
+            int end=sd;
+            SimpleRegression sr = new SimpleRegression();
+            for(int i=start; i<=end; i++) {
+                int x = i - start;
+                long y = amrMap.get(i).am;
+                sr.addData((double)x, (double)y);
+            }
+
+            double r2 = sr.getRSquare();
+            if(r2<r2Threshold)
+                naCount++;
+        }
+
+        return (double)naCount/(double)count;
+    }
+    public static void listSingleSd(int sd, double r2Threshold, int sdbw, int minSkippedSD,
             TreeMap<Integer, AmRecord> amrMap, boolean bStdOut, String sDerivativeFile) {
         
         int minDist=minSkippedSD;
@@ -55,7 +84,7 @@ public class AmDerUtils {
             }
             //0: direct
             //1: indirect
-            String sSlope = translateSlope(1, sr, threshold, sr.getRSquare());
+            String sSlope = translateSlope(1, sr, r2Threshold, sr.getRSquare());
             String line = String.format("%-8.3f %8s\n", sr.getRSquare(), sSlope);
             if(bStdOut)
                 System.out.format("%s", line);
@@ -65,20 +94,20 @@ public class AmDerUtils {
             }
         }
     }
-    private static String translateSlope(int type, SimpleRegression sr, double threshold, double r2) {
+    private static String translateSlope(int type, SimpleRegression sr, double r2Threshold, double r2) {
         String sSlope = translateSlopeD(sr);  //default directly
         if(type==1)    //ind
-            sSlope = translateSlopeInd(sr, threshold, r2);
+            sSlope = translateSlopeInd(sr, r2Threshold, r2);
 
         return sSlope;
     }
     private static String translateSlopeD(SimpleRegression sr) {
         return ""+Utils.roundUp(sr.getSlope());
     }
-    private static String translateSlopeInd(SimpleRegression sr, double threshold, double r2) {
+    private static String translateSlopeInd(SimpleRegression sr, double r2Threshold, double r2) {
         String sSlope = "#N/A";
 
-        if(r2>=threshold)
+        if(r2>=r2Threshold)
             sSlope = ""+Utils.roundUp(sr.getSlope(), "#.###");
 
         return sSlope;
