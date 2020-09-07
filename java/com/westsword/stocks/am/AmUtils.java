@@ -31,6 +31,8 @@ public class AmUtils {
         mStockCode = stockCode;
         mSdTime = new SdTime1(stockCode);   //get sdStartDate&sdStartTime&interval from settings.txt
         mStockDates = new StockDates(stockCode);
+
+        mAdm = new AmDerManager();
     }
 
     public void writeAllAmRecords() {
@@ -105,31 +107,11 @@ public class AmUtils {
                 if(prevAmrMap!=null) {
                     prevAmrMap.put(i, r);
 
-                    //convert r.hexTimePoint to hms
-                    String tradeDate = Time.getTimeYMD(r.hexTimePoint, false);
-                    String hms = Time.getTimeHMS(r.hexTimePoint, false);
-                    //make derivative file for r 
-                    makeAmDerivativeFile(r, tradeDate, hms, prevAmrMap, mSdTime);
-                    //call cscript 
-                    AmDerUtils.makeAmDerPng(mStockCode, tradeDate, hms);
+                    mAdm.run(mStockCode, r, prevAmrMap, mSdTime);
                 }
                 r.append2File(sAnalysisFile);
             }
         }
-    }
-    private void makeAmDerivativeFile(AmRecord r, String tradeDate, String hms, 
-            TreeMap<Integer, AmRecord> amrMap, SdTime1 sdt) {
-        //get sDerivativeFile
-        String sDerivativeFile = StockPaths.getDerivativeFile(mStockCode, tradeDate, hms);
-        //get sd from r.timeIndex
-        int sd = r.timeIndex;
-        //get default r2Threshold&sdbw&minSkippedSD
-        double r2Threshold = AmDerUtils.getR2Threshold(null);
-        int sdbw = AmDerUtils.getBackwardSd(null);
-        int minSkippedSD = AmDerUtils.getMinimumSkipSd(null);
-        //call AmDerUtils.listSingleSd
-        AmDerUtils.listSingleSd(sd, r2Threshold, sdbw, minSkippedSD,
-                amrMap, false, sDerivativeFile);
     }
     public void writeRange(int start, int end, long am, 
             TrackExtreme ter, String sAnalysisFile, long closeTP) {
@@ -183,6 +165,7 @@ public class AmUtils {
     private String mStockCode;
     private StockDates mStockDates;
     private SdTime1 mSdTime;
+    private AmDerManager mAdm;
 
     public static class TrackExtreme {
         public double maxUP;

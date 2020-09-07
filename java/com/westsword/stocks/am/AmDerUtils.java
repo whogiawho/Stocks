@@ -79,8 +79,11 @@ public class AmDerUtils {
             SimpleRegression sr = new SimpleRegression();
             for(int i=start; i<=end; i++) {
                 int x = i - start;
-                long y = amrMap.get(i).am;
-                sr.addData((double)x, (double)y);
+                AmRecord r = amrMap.get(i);
+                if(r!=null) {
+                    long y = r.am;
+                    sr.addData((double)x, (double)y);
+                }
             }
             //0: direct
             //1: indirect

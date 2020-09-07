@@ -61,15 +61,14 @@ public class AmHoleManager extends TaskManager {
 
         @Override
         public void runTask() {
-            //run ssinstance
+            //run instance
             double naRate = AmDerUtils.getNaRate(sdIdx, r2Threshold, sdbw, minSkippedSD, amrMap);
+            long tp = sdt.rgetAbs(sdIdx);
+            String tradeDate = Time.getTimeYMD(tp, false);
+            String hms = Time.getTimeHMS(tp, false);
+            System.out.format("%10d %8s %8s %8.3f\n", sdIdx, tradeDate, hms, naRate);
             if(naRate >= naThreshold) {
-                long tp = sdt.rgetAbs(sdIdx);
-                String tradeDate = Time.getTimeYMD(tp, false);
-                String hms = Time.getTimeHMS(tp, false);
-                System.out.format("%10d %8s %8s %8.3f\n", sdIdx, tradeDate, hms, naRate);
             } else {
-                System.out.format("%10d %8s %8s %8.3f\n", sdIdx, tradeDate, hms, naRate);
             }
         }
     }

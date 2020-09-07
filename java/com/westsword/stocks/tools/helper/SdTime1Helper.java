@@ -107,7 +107,7 @@ public class SdTime1Helper {
         System.exit(-1);
     }
     private static void rgetrelUsage() {
-        System.err.println("usage: java AnalyzeTools rgetrel stockCode rel");
+        System.err.println("usage: java AnalyzeTools rgetrel rel");
         System.exit(-1);
     }
     private static void getabsUsage() {

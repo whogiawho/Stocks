@@ -70,9 +70,9 @@ function amderSearchHMS {
 
         local bCmp=`ge $rate $naThreshold`
         [[ $bCmp == 1 ]] && {
-            printf "%10d %8s %8s\n" $i $tradeDate $hms
+            printf "%10d %8s %8s %8.3f\n" $i $tradeDate $hms $rate
         } || {
-            printf "%10d\n" $i
+            printf "%10d %8.3f\n" $i $rate
         }
     done
 }
