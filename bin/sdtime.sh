@@ -15,3 +15,14 @@ function rgetAbs {
     java -jar $analyzetoolsJar rgetabs $stockCode $sd 2>/dev/null
 }
 
+function rgetRel {
+    local rel=$1
+    local bComplex=$2
+
+    local line=`java -jar $analyzetoolsJar rgetrel $rel 2>/dev/null`
+    [[ -z $bComplex ]] && {
+        echo $line|sed "s/://g"
+    } || {
+        echo $line
+    }
+}
