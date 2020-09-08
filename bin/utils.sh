@@ -232,10 +232,12 @@ function checkProcKilled {
 }
 
 function getHmsListDelta {
-    local stockCode=$1
-    local tradeDate=$2
-    local hmsList=$3
+    local hmsList=$1
+    local stockCode=$2
+    local tradeDate=$3
 
+    [[ -z $stockCode ]] && stockCode=600030
+    [[ -z $tradeDate ]] && tradeDate=`date +%Y%m%d`
     local start end
     read start end<<<`java -jar $analyzetoolsJar getabs $stockCode $tradeDate $hmsList 2>/dev/null`
 
