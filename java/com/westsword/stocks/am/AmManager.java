@@ -77,6 +77,9 @@ public class AmManager {
     }
 
 
+    public TreeMap<Integer, AmRecord> getAmRecordMap() {
+        return mAmRecordMap;
+    }
     public NavigableMap<Integer, AmRecord> getItemMap(int startSd, int endSd) {
         return mAmRecordMap.subMap(startSd, true, endSd, true);
     }
@@ -84,6 +87,8 @@ public class AmManager {
             String endDate, String endHMS) {
         return AmUtils.getItemMap(mAmRecordMap, mSdTime, startDate, startHMS, endDate, endHMS);
     }
+
+
     public double getInPrice(int tradeType, long inTime) {
         AmRecord r = getFloorItem(inTime);
         return r.getInPrice(tradeType);
@@ -315,9 +320,6 @@ public class AmManager {
     }
 
 
-    public TreeMap<Integer, AmRecord> getAmRecordMap() {
-        return mAmRecordMap;
-    }
     public long getAm(int sd) {
         AmRecord r = mAmRecordMap.get(sd);
         return r.am;
@@ -336,6 +338,8 @@ public class AmManager {
 
         return aM;
     }
+
+
     public double getAmCorrel(int startIdx0, int endIdx0, int startIdx1, int endIdx1) {
         double amCorrel = Double.NaN;
 
