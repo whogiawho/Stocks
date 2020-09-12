@@ -3,8 +3,8 @@ Option Explicit
 On Error Resume Next
 
 Dim xlApp 
-Set xlApp = GetObject("d:\stocks\doc\macros.xlsm").Application
-xlApp.Visible = True
+xlApp.Visible = False
+Set xlApp = GetObject("d:\Stocks\doc\macros.xlsm").Application
 xlApp.DisplayAlerts = False
 
 Dim objArgs
@@ -14,8 +14,10 @@ Dim sPngFile
 sAmDerivativeFile = objArgs(0)
 sPngFile = objArgs(1)
 
-Dim xlMacros
-Set xlMacros = xlApp.Workbooks.Open("d:\Stocks\doc\macros.xlsm", 0, True) 
-xlApp.Run "macros.xlsm!AmDerivative.makePng", ""+sAmDerivativeFile, ""+sPngFile
+xlApp.ScreenUpdating = False
+  Dim xlMacros
+  Set xlMacros = xlApp.Workbooks.Open("d:\Stocks\doc\macros.xlsm", 0, True) 
+  xlApp.Run "macros.xlsm!AmDerivative.makePng", ""+sAmDerivativeFile, ""+sPngFile
+xlApp.ScreenUpdating = True
 
 Set xlApp = Nothing 
