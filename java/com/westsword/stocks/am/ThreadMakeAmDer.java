@@ -32,6 +32,10 @@ public class ThreadMakeAmDer extends Thread {
     }
 
     public void run() {
+        run(stockCode, tradeDate, hms);
+    }
+
+    public static void run(String stockCode, String tradeDate, String hms) {
         try {
             String sCommand = "";
             sCommand += "cscript";

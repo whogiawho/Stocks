@@ -107,7 +107,8 @@ public class AmUtils {
                 if(prevAmrMap!=null) {
                     prevAmrMap.put(i, r);
 
-                    mAdm.run(mStockCode, r, prevAmrMap, mSdTime);
+                    //clone prevAmrMap to avoid writing synchronized codes
+                    mAdm.run(mStockCode, r, new TreeMap<Integer, AmRecord>(prevAmrMap), mSdTime);
                 }
                 r.append2File(sAnalysisFile);
             }

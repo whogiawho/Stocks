@@ -20,15 +20,26 @@ package com.westsword.stocks.am;
 import java.util.*;
 
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
-import com.westsword.stocks.base.Task;
-import com.westsword.stocks.base.TaskManager;
-import com.westsword.stocks.base.utils.StockPaths;
+import com.westsword.stocks.base.utils.*;
 
 public class AmDerManager extends TaskManager {
+    private TreeSet<Long> mHexTpSet = new TreeSet<Long>();
 
     public void run(String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt) {
+        String hms = Time.getTimeHMS(r.hexTimePoint, false);
+        if(mHexTpSet.contains(r.hexTimePoint)) {
+            String line = String.format("%s: %x(%s) was already processed!", 
+                    Utils.getCallerName(getClass()), r.hexTimePoint, hms);
+            line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);
+            System.err.format("%s\n", line);
+            return;
+        }
+
         maxThreadsCheck();
+        //System.err.format("%s: add %x(%s)\n", Utils.getCallerName(getClass()), r.hexTimePoint, hms);
+        mHexTpSet.add(r.hexTimePoint);
 
         Thread t = new AmDerTask(this, stockCode, r, prevAmrMap, sdt);
         t.setPriority(Thread.MAX_PRIORITY);
@@ -54,15 +65,15 @@ public class AmDerManager extends TaskManager {
 
         @Override
         public void runTask() {
-            //run ssinstance
-            
             //convert r.hexTimePoint to hms
             String tradeDate = Time.getTimeYMD(r.hexTimePoint, false);
             String hms = Time.getTimeHMS(r.hexTimePoint, false);
+
             //make derivative file for r 
             makeAmDerivativeFile(r, tradeDate, hms, prevAmrMap, sdt);
+
             //call cscript 
-            AmDerUtils.makeAmDerPng(stockCode, tradeDate, hms);
+            ThreadMakeAmDer.run(stockCode, tradeDate, hms);
         }
 
         private void makeAmDerivativeFile(AmRecord r, String tradeDate, String hms, 
