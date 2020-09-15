@@ -23,8 +23,8 @@ import java.nio.file.attribute.*;
 import static java.nio.file.StandardWatchEventKinds.*;
 import static java.nio.file.LinkOption.*;
 
-import com.westsword.stocks.base.Utils;
-import com.westsword.stocks.base.Settings;
+import com.westsword.stocks.base.*;
+import com.westsword.stocks.base.utils.*;
 
 /**
  * Example to watch a directory (or tree) for changes to files.
@@ -85,6 +85,11 @@ public class RealtimeAnalyze {
     private Path mRTPankouDir=null;
     private String mOutAnalysisFile="";
 
+    //RawTradeDetails
+    TreeSet<String> mRawDetailsSet = new TreeSet<String>();
+    private boolean isRawDetailFileProcessed(String inFile) {
+        return mRawDetailsSet.contains(inFile);
+    }
     private void processRawDetails(String inFile, ArrayList<RawTradeDetails> rawDetailsList) {
         if(inFile == null) {
             return;
@@ -92,6 +97,12 @@ public class RealtimeAnalyze {
 
         RawTradeDetailsList rtdList = new RawTradeDetailsList();
         rtdList.load(rawDetailsList, inFile);
+    }
+
+    //RawPankou
+    TreeSet<String> mRawPankouSet = new TreeSet<String>();
+    private boolean isRawPankouProcessed(String inFile) {
+        return mRawPankouSet.contains(inFile);
     }
     private void processRawPankou(String inFile, ArrayList<RawRTPankou> rawPankouList) {
         if(inFile == null) {
@@ -185,6 +196,7 @@ public class RealtimeAnalyze {
                 WatchEvent<Path> ev = cast(event);
                 Path name = ev.context();
                 Path child = dir.resolve(name);
+                String sChildAbsName = child.toString();
 
                 // print out event
                 if(trace)
@@ -192,14 +204,11 @@ public class RealtimeAnalyze {
 
                 if(kind.name().equals("ENTRY_MODIFY")) {
                     // read file to memory
-                    if(child.toString().contains(mDetailsDir.toString())) {
-                        // to rawDetailsList
-                        processRawDetails(child.toString(), rawDetailsList);
-                    } else if(child.toString().contains(mRTPankouDir.toString())) {
-                        // to rawPankouList
-                        processRawPankou(child.toString(), rawPankouList); 
+                    if(skip2Process(sChildAbsName)) {      //process sChildAbsName only once
+                        fileProcessed(sChildAbsName);
+                        continue;
                     } else {
-                        System.out.println("unsupported path:" + child.toString());
+                        processWatchedFile(sChildAbsName, rawDetailsList, rawPankouList);
                     }
 
                     way.startAnalyze(rawDetailsList, rawPankouList);
@@ -224,6 +233,41 @@ public class RealtimeAnalyze {
             }
         }
     }
+    private void fileProcessed(String sFile) {
+        if(trace) {
+            String line = String.format("%s: %s was already processed!", 
+                    Utils.getCallerName(getClass()), sFile);
+            line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);
+            System.err.format("%s\n", line);
+        }
+    }
+    private void processWatchedFile(String sChildAbsName, 
+            ArrayList<RawTradeDetails> rawDetailsList, ArrayList<RawRTPankou> rawPankouList) {
+        if(sChildAbsName.contains(mDetailsDir.toString())) {
+            mRawDetailsSet.add(sChildAbsName);
+            // to rawDetailsList
+            processRawDetails(sChildAbsName, rawDetailsList);
+        } else if(sChildAbsName.contains(mRTPankouDir.toString())) {
+            mRawPankouSet.add(sChildAbsName);
+            // to rawPankouList
+            processRawPankou(sChildAbsName, rawPankouList); 
+        } else {
+            System.err.println("unsupported path:" + sChildAbsName);
+        }
+    }
+    private boolean skip2Process(String sChildAbsName) {
+        boolean bSkip = false;
+        if(sChildAbsName.contains(mDetailsDir.toString())) {
+            if(isRawDetailFileProcessed(sChildAbsName))
+                bSkip = true;
+        } else if(sChildAbsName.contains(mRTPankouDir.toString())) {
+            if(isRawPankouProcessed(sChildAbsName))
+                bSkip = true;
+        }
+
+        return bSkip;
+    }
+
     /**
      * Process all events for keys queued to the watcher
      */
