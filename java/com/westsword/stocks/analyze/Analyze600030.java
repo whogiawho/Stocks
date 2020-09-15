@@ -170,6 +170,17 @@ public class Analyze600030 {
         }
     }
 
+    private void debugPrint0(RawTradeDetails r) {
+        //print r.time
+        System.err.format("%s: %x\n", Utils.getCallerName(getClass()), r.time);
+    }
+    private void debugPrint1(int prevSd, int rSd) {
+        //print
+        long prevTp = mSdTime.rgetAbs(prevSd);
+        long rTp = mSdTime.rgetAbs(rSd);
+        System.err.format("%s: (%x, %x)\n", 
+                Utils.getCallerName(getClass()), prevTp, rTp);
+    }
     private void processRawTradeDetails(int[] indexs, ArrayList<RawTradeDetails> rawDetailsList, 
             TreeMap<Integer, AmRecord> amrMap, TreeMap<Integer, AmRecord> prevAmrMap) {
         int last = indexs[LAST_RAW_DETAILS_IDX];
@@ -181,10 +192,13 @@ public class Analyze600030 {
         while(current > last) {
             last++;
             RawTradeDetails r = rawDetailsList.get(last);
+            //debugPrint0(r);
+
             int rSd = mSdTime.getAbs(r.time);
             if(rSd != prevSd) {
                 //skip writeRange if prevSd==-1
                 if(prevSd != -1) {
+                    //debugPrint1(prevSd, rSd);
                     mAmu.writeRange(prevSd, rSd, am, mTer, mAnalysisFile, mCloseTP, 
                             amrMap, prevAmrMap);
                 }
