@@ -33,10 +33,14 @@ function getRawPankou {
     local serverType=$5
     local noCheck=$6
 
+    local callAuctionTime=$CallAuctionEndTime
+    local closeQuotationTime=$CloseQuotationTime
+
     local sFormat="getRawPankou: ($stockCode, $tradeDate) %20s\n"
     while [[ 1 ]]
     do
-        _getRawPankou $stockCode $tradeDate $serverAddr $serverPort $serverType
+        _getRawPankou $stockCode $tradeDate $serverAddr $serverPort $serverType \
+            $callAuctionTime $closeQuotationTime
         [[ ! -z $noCheck ]] && break
         checkRawPankou $stockCode $tradeDate && {
             printf "$sFormat" "ok!"
