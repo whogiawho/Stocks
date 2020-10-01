@@ -31,10 +31,15 @@ function getRawPankou {
     local serverAddr=$3
     local serverPort=$4
     local serverType=$5
-    local noCheck=$6
+    local bHMSCleared=$6
+    local noCheck=$7
 
     local callAuctionTime=$CallAuctionEndTime
     local closeQuotationTime=$CloseQuotationTime
+    [[ ! -z $bHMSCleared ]] && {
+        callAuctionTime=
+        closeQuotationTime=
+    }
 
     local sFormat="getRawPankou: ($stockCode, $tradeDate) %20s\n"
     while [[ 1 ]]
@@ -166,7 +171,7 @@ function getRaw {
     local serverType=$5
     local noCheck=$6
 
-    getRawPankou $stockCode $tradeDate $serverAddr $serverPort $serverType $noCheck
+    getRawPankou $stockCode $tradeDate $serverAddr $serverPort $serverType hmsCleared $noCheck
     getRawTradeDetails $stockCode $tradeDate $serverAddr $serverPort $serverType $noCheck
 }
 
