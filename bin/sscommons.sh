@@ -135,6 +135,7 @@ function ssGetIntersection {
         }
     done
 }
+#to extend _ssGetIntersection, run "analyzetools filterssi"
 #dir[12]=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 function _ssGetIntersection {
     local dir1=$1

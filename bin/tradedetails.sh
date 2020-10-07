@@ -54,7 +54,7 @@ function checkRawTradeDetails {
         firstTradeTime=`head -n 1 $rawZuBiFile|awk '{print $1}'`
         firstTradeTime=`convertHex2Time $firstTradeTime|awk '{print $2}'`
         firstTradeTime=${firstTradeTime:0:4}
-        [[ $firstTradeTime =~ "09:2" ]] && {
+        [[ $firstTradeTime =~ "09:2" || $firstTradeTime =~ "09:3" ]] && {
             return 0
         } || {
             return 1
