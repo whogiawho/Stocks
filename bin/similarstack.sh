@@ -5,6 +5,36 @@ MinMatchedCount=${MinMatchedCount:-100}
 #re100="100\.\?[0-9]*%"
 re100="100\.0%"
 
+function modCurrentHangCount {
+    local fSS=$1
+
+    local stackOutHex=
+    local a b c d e f g h i j k l m
+    while read a b c d e f g h i j k l m
+    do
+        local pushedHex=`convertTime2Hex $c $d`
+        local outDateCQT=`convertTime2Hex $a $CloseQuotationTime`
+
+        #pop the elements before outDateCQT from stackOutHex
+        local bStackOutHex=
+        local n=
+        for n in $stackOutHex
+        do
+            [[ $n < $outDateCQT ]] && continue 
+            bStackOutHex="$bStackOutHex$n "
+        done
+        stackOutHex=$bStackOutHex
+
+        #add pushedHex to stackOutHex
+        stackOutHex="$pushedHex $stackOutHex"
+
+        #let m = number of stackOutHex
+        m=`echo $stackOutHex|wc|awk '{print $2}'`
+
+        local sFormat="%s %s %s %s %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %4d %4d"
+        printf "$sFormat\n" $a $b $c $d $e $f $g $h $i $j $k $l $m
+    done <$fSS
+}
 
 #dir=data/similarStack/600030/20160108_0.90_T1L
 function listSSTableStats {
@@ -125,8 +155,53 @@ function getSSFullWinStats {
 
     done <$fFullWin >$fTmp
 }
-#dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
+
+#dir=data/similarStack/600030/20160108_0.90_T1L
 function getMinMaxProfitGe {
+    local stockCode=$1
+    local dir=$2
+    local profitThres=$3
+    local maxCycle=${4:-180}
+    local targetRate=${5:-1.100}
+
+    local max=10
+    local cnt=0
+    local i=
+    for i in `getTradeDateList $stockCode`
+    do
+        _getMinMaxProfitGe $dir/${i}_${maxCycle}_${targetRate} $profitThres &
+        cnt=$((cnt+1))
+        [[ $cnt -ge $max ]] && {
+            wait
+            cnt=0
+        }
+    done
+}
+#dir=data/similarStack/600030/20160108_0.90_T1L
+function getMinMaxProfitGeRange {
+    local stockCode=$1
+    local dir=$2
+    local profitThres=$3
+    local start=$4
+    local end=$5
+    local maxCycle=${6:-180}
+    local targetRate=${7:-1.100}
+
+    local max=10
+    local cnt=0
+    local i=
+    for i in `getTradeDateRange $stockCode $start $end`
+    do
+        _getMinMaxProfitGe $dir/${i}_${maxCycle}_${targetRate} $profitThres &
+        cnt=$((cnt+1))
+        [[ $cnt -ge $max ]] && {
+            wait
+            cnt=0
+        }
+    done
+}
+#dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
+function _getMinMaxProfitGe {
     local dir=$1
     local profitThres=$2
 
@@ -143,6 +218,7 @@ function getMinMaxProfitGe {
         } 
     done
 }
+
 #dir=data/similarStack/600030/20160108_0.90_T1L/20160111_180_1.100
 function getMaxCycleLe {
     local dir=$1
