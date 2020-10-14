@@ -23,6 +23,7 @@ import java.math.*;
 import java.text.*;
 import java.nio.charset.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.math3.util.CombinatoricsUtils;
 
 import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.time.*;
@@ -217,4 +218,19 @@ public class Utils {
 
         return sdLength;
     }
+
+
+    public static long[] getFactorials(int n) {
+        long[] factorials = new long[n];
+        for(int i=0; i<n; i++) {
+            factorials[i] = CombinatoricsUtils.factorial(i);
+        }
+
+        return factorials;
+    }
+    public static long[] getFactorials(int[] idxs) {
+        int n=idxs.length;
+        return getFactorials(n);
+    }
+
 }

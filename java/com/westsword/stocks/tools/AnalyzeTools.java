@@ -30,7 +30,7 @@ public class AnalyzeTools{
         System.err.println("       commands are listed below:");
         System.err.println("       [ getvalue | setvalue | makeanalysistxt | priceamp |\n" +
                 "         getamcorrel | getupprice | getdownprice | getam | decode |\n" +
-                "         nexttradedate | prevtradedate | listamderivatives |\n" +
+                "         nexttradedate | prevtradedate | getpermcoord | listamderivatives |\n" +
                 "         getrel | rgetrel | getabs | rgetabs | getanalysis | stdprice |\n" +
                 "         ssinstance | ssinstances | filterssi | sstrinstance | mminstance |\n" +
                 "         getfullss | checksstable | getsstable | ssamhole |\n" +
@@ -78,6 +78,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("getam")) {
             AmHelper amh = new AmHelper();
             amh.getAm(args);
+        } else if (sOption.equals("getpermcoord")) {
+            PermHelper ph = new PermHelper();
+            ph.getPermIdx(args);
         } else if (sOption.equals("getrel")) {
             SdTime1Helper sth = new SdTime1Helper();
             sth.getRel(args);
