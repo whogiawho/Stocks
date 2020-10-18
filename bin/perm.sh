@@ -1,5 +1,11 @@
 #!/bin/bash
 
+function getPermCoord {
+    local permIdx=$1
+
+    java -jar $analyzetoolsJar getpermcoord $permIdx 2>/dev/null
+}
+
 function _permStats {
     local fPerm=$1
     local i=$2

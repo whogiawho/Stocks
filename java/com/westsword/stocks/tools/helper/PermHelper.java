@@ -28,6 +28,15 @@ public class PermHelper {
         }
         long permIdx = Long.valueOf(args[1]);
 
+        String sCoord = _getPermIdx(permIdx, permDim); 
+        System.out.format("%s\n", sCoord);
+    }
+
+
+    public static String getPermIdx(long permIdx) {
+        return _getPermIdx(permIdx, permDim);
+    }
+    public static String _getPermIdx(long permIdx, int permDim) {
         String sCoord = "";
         long[] factorials = Utils.getFactorials(permDim);
         for(int i=0; i<permDim; i++) {
@@ -36,8 +45,10 @@ public class PermHelper {
             permIdx = (long)(permIdx % factorials[n]);
             sCoord += coord + ",";
         }
-        System.out.format("%s\n", sCoord);
+
+        return sCoord;
     }
+
 
     private static void usage() {
         System.err.println("usage: java AnalyzeTools getpermcoord permIdx");
