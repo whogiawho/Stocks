@@ -221,6 +221,9 @@ public class StockPaths {
     public static String getDerivativeFile(String stockCode, String tradeDate, String hms) {
         return getDerivativeDir(stockCode, tradeDate) + hms + ".txt";
     }
+    public static String getAmDerivativeFile(String stockCode, String tradeDate) {
+        return getDailyDir(stockCode, tradeDate) + sSep + "amderivative.txt"; 
+    }
 
 
 

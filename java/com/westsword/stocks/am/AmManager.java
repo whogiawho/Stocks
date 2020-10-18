@@ -670,5 +670,23 @@ public class AmManager {
         
         return new PearsonsCorrelation().correlation(x, y);
     }
+    public static AmManager get(String stockCode, String tradeDate, String hms, int sdbw, StockDates stockDates) {
+        SdTime1 sdt = new SdTime1(stockCode);
+        int sd = sdt.getAbs(tradeDate, hms);
+        int sSd = sd - sdbw;
+        long sTp = sdt.rgetAbs(sSd);
+        String sDate = Time.getTimeYMD(sTp, false);
+
+        //considering nextDate
+        if(stockDates!=null && stockDates.nextDate(tradeDate)!=null)
+            tradeDate = stockDates.nextDate(tradeDate);
+
+        String[] sTradates = new TradeDates(stockCode, sDate, tradeDate).getAllDates();
+        //System.out.format("sTradates=%s\n", Arrays.toString(sTradates));
+
+        AmManager amm = new AmManager(stockCode, sTradates);
+
+        return amm;
+    }
 
 }

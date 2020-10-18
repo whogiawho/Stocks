@@ -45,6 +45,9 @@ public class AmDerUtils {
     public static int getMinimumSkipSd(CommandLine cmd) {
         return CmdLineUtils.getInteger(cmd, "m", Default_Minimum_Skipped_SD);
     }
+    public static boolean getHighest(CommandLine cmd) {
+        return CmdLineUtils.getBoolean(cmd, "s", false);
+    }
 
 
     public static double getNaRate(int sd, double r2Threshold, int sdbw, int minSkippedSD,
@@ -74,6 +77,7 @@ public class AmDerUtils {
         
         int minDist=minSkippedSD;
         for(int dist=sdbw; dist>=minDist; dist--) {
+
             int start=sd-dist;
             int end=sd;
             SimpleRegression sr = new SimpleRegression();
@@ -85,8 +89,7 @@ public class AmDerUtils {
                     sr.addData((double)x, (double)y);
                 }
             }
-            //0: direct
-            //1: indirect
+
             String sSlope = translateSlope(1, sr, r2Threshold, sr.getRSquare());
             String line = String.format("%-8.3f %8s\n", sr.getRSquare(), sSlope);
             if(bStdOut)
@@ -97,17 +100,19 @@ public class AmDerUtils {
             }
         }
     }
-    private static String translateSlope(int type, SimpleRegression sr, double r2Threshold, double r2) {
+    //type=0: direct
+    //type=1: indirect
+    public static String translateSlope(int type, SimpleRegression sr, double r2Threshold, double r2) {
         String sSlope = translateSlopeD(sr);  //default directly
         if(type==1)    //ind
             sSlope = translateSlopeInd(sr, r2Threshold, r2);
 
         return sSlope;
     }
-    private static String translateSlopeD(SimpleRegression sr) {
+    public static String translateSlopeD(SimpleRegression sr) {
         return ""+Utils.roundUp(sr.getSlope());
     }
-    private static String translateSlopeInd(SimpleRegression sr, double r2Threshold, double r2) {
+    public static String translateSlopeInd(SimpleRegression sr, double r2Threshold, double r2) {
         String sSlope = "#N/A";
 
         if(r2>=r2Threshold)

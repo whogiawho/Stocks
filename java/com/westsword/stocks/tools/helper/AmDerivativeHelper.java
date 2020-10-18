@@ -41,36 +41,155 @@ public class AmDerivativeHelper {
             hms = newArgs[2];
         }
 
-        if(hms!=null) {
-            handleSingle(stockCode, tradeDate, hms, cmd);
-        } else {
-            //mkdir derivative
-            Utils.resetDir(StockPaths.getDerivativeDir(stockCode, tradeDate));
+        
+        boolean bHighestR2 = AmDerUtils.getHighest(cmd);
+        if(!bHighestR2) {
+            if(hms!=null) {
+                handleSingleHMS(stockCode, tradeDate, hms, cmd);
+            } else {
+                //mkdir derivative
+                Utils.resetDir(StockPaths.getDerivativeDir(stockCode, tradeDate));
 
-            //make am derivatives for all sds of tradeDate
-            handleAll(stockCode, tradeDate, cmd);
+                //make am derivatives for all sds of tradeDate
+                handleAllHMS(stockCode, tradeDate, cmd);
+            }
+        } else {
+            //divide the backward sdtimes into segments
+            //for each segment, there is a highest R2
+            //the biggest one is selected, and the others are listed as following for reference
+            writeAmDerivateives(stockCode, tradeDate);
         }
     }
 
-    private static AmManager getAmManager(String stockCode, String tradeDate, int sdbw, String hms) {
-        SdTime1 sdt = new SdTime1(stockCode);
-        int sd = sdt.getAbs(tradeDate, hms);
-        int sSd = sd - sdbw;
-        long sTp = sdt.rgetAbs(sSd);
-        String sDate = Time.getTimeYMD(sTp, false);
-        String[] sTradates = new TradeDates(stockCode, sDate, tradeDate).getAllDates();
-        //System.out.format("sTradates=%s\n", Arrays.toString(sTradates));
 
-        AmManager amm = new AmManager(stockCode, sTradates);
+    private static int getCodec(int[] idxs, double[] slopes, long[] factorials) {
+        int codec = 0;
+        int n=idxs.length;
+        int[] coords = new int[n];
+        for(int i=0; i<n; i++) {
+            int cnt = 0;
+            int idxBase = idxs[i];
+            for(int j=0; j<i; j++) {
+                int idx = idxs[j];
+                if(slopes[idxBase]>slopes[idx])
+                    cnt++;
+            }
+            coords[i] = cnt;
+            codec += coords[i] * factorials[i];
+        }
 
-        return amm;
+        return codec;
+    } 
+    private static int baseU=60;
+    private static int maxL=143;
+    private static int[] idxs0 = {
+        9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
+    };
+    static int[] sdbwList = {
+        baseU*1, baseU*2, baseU*4, baseU*7, baseU*12, baseU*20, baseU*33, baseU*54, baseU*88, baseU*maxL,
+    };
+    private static double getPrice(TreeMap<Integer, AmRecord> amrMap, int sd) {
+        double price = Double.NaN;
+        AmRecord r0 = amrMap.get(sd);
+        if(r0!=null)
+            price = r0.upPrice;
+        return price;
     }
-    public static void handleAll(String stockCode, String tradeDate, CommandLine cmd) {
+    private static double getMaxPrice(TreeMap<Integer, AmRecord> amrMap, int startSd, int endSd) {
+        if(startSd>endSd)
+            return amrMap.get(endSd).downPrice;
+
+        double maxPrice = 0;
+        for(int sd=startSd; sd<=endSd; sd++) {
+            AmRecord r = amrMap.get(sd);
+            if(r!=null) {
+                double currentPrice = r.downPrice;
+                if(currentPrice>maxPrice)
+                    maxPrice = currentPrice;
+            }
+        }
+        return maxPrice;
+    }
+    private static void writeAmDerivateives(String stockCode, String tradeDate) {
+        StockDates stockDates = new StockDates(stockCode);
+
+        //reset sAmDerivativeFile
+        String sAmDerivativeFile = StockPaths.getAmDerivativeFile(stockCode, tradeDate);
+        Utils.deleteFile(sAmDerivativeFile);
+
+        AmManager amm = AmManager.get(stockCode, tradeDate, AStockSdTime.getCallAuctionEndTime(), baseU*maxL, stockDates);
+        TreeMap<Integer, AmRecord> amrMap = amm.getAmRecordMap();
+
+        long[] factorials0 = Utils.getFactorials(idxs0);
+        SdTime1 sdt = new SdTime1(stockCode);
+        int startSd = sdt.getAbs(sdt.getCallAuctionEndTime(tradeDate));
+        int endSd = sdt.getAbs(sdt.getCloseQuotationTime(tradeDate));
+        String nD1 = stockDates.nextDate(tradeDate);
+        int endSdNd1 = endSd;
+        if(nD1!=null)
+            endSdNd1 = sdt.getAbs(sdt.getCloseQuotationTime(nD1));
+        /*
+        System.out.format("tradeDate=%s, nD1=%s endSd=%d, endSdNd1=%d\n", 
+                tradeDate, nD1, endSd, endSdNd1);
+        */
+        //cqPricet0
+        double cqPricet0 = getPrice(amrMap, endSd);
+
+        for(int sd=startSd; sd<=endSd; sd++) {
+            long hexTp = sdt.rgetAbs(sd);
+            String hms = Time.getTimeHMS(hexTp, false);
+            double price = getPrice(amrMap, sd);
+            //t0
+            double maxPricet0 = getMaxPrice(amrMap, sd+1, endSd);
+            //t1
+            double maxPricet1 = getMaxPrice(amrMap, sd+1, endSdNd1);
+
+            String sAmDer = String.format("%x %8s %8.3f %8.3f %8.3f", 
+                    hexTp, hms, price, maxPricet0-price, maxPricet1-price);
+            sAmDer = getString(sd, sAmDer, amrMap, factorials0);
+
+            String line = String.format("%s\n", sAmDer);
+            System.out.format("%s", line);
+        }
+    }
+    private static String getString(int sd, String sPrefix, TreeMap<Integer, AmRecord> amrMap, 
+            long[] factorials0) {
+        String sAmDer = sPrefix;
+
+        double[] slopes = new double[sdbwList.length];
+
+        for(int i=0; i<sdbwList.length; i++) {
+            int sdbw = sdbwList[i];
+
+            int start = sd - sdbw;
+            int end = sd;
+            SimpleRegression sr = new SimpleRegression();
+            for(int j=start; j<=end; j++) {
+                int x = j - start;
+                AmRecord r = amrMap.get(j);
+                if(r!=null) {
+                    long y = r.am;
+                    sr.addData((double)x, (double)y);
+                }
+            }
+            String sSlope = AmDerUtils.translateSlopeD(sr);
+            slopes[i] = Double.valueOf(sSlope);
+
+            sAmDer = String.format("%s %8s", sAmDer, sSlope); 
+        }
+        int codec0 = getCodec(idxs0, slopes, factorials0);
+        sAmDer = String.format("%s %10d", sAmDer, codec0);
+
+        return sAmDer;
+    }
+
+
+    public static void handleAllHMS(String stockCode, String tradeDate, CommandLine cmd) {
         double r2Threshold = AmDerUtils.getR2Threshold(cmd);
         int sdbw = AmDerUtils.getBackwardSd(cmd);
         int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
 
-        AmManager amm = getAmManager(stockCode, tradeDate, sdbw, AStockSdTime.getCallAuctionEndTime());
+        AmManager amm = AmManager.get(stockCode, tradeDate, AStockSdTime.getCallAuctionEndTime(), sdbw, null);
 
         //loop all sds of tradeDate
         SdTime1 sdt = new SdTime1(stockCode);
@@ -86,12 +205,12 @@ public class AmDerivativeHelper {
                     amm, false, sDerivativeFile);
         }
     }
-    public static void handleSingle(String stockCode, String tradeDate, String hms, CommandLine cmd) {
+    public static void handleSingleHMS(String stockCode, String tradeDate, String hms, CommandLine cmd) {
         double r2Threshold = AmDerUtils.getR2Threshold(cmd);
         int sdbw = AmDerUtils.getBackwardSd(cmd);
         int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
 
-        AmManager amm = getAmManager(stockCode, tradeDate, sdbw, hms);
+        AmManager amm = AmManager.get(stockCode, tradeDate, hms, sdbw, null);
 
         SdTime1 sdt = new SdTime1(stockCode);
         long tp = Time.getSpecificTime(tradeDate, hms);
@@ -115,6 +234,7 @@ public class AmDerivativeHelper {
         System.err.println("       -b sdbw       ; at most sdbw shall be looked backward; default 300");
         System.err.println("       -h r2Threshold; default 0.5");
         System.err.println("       -m mindist    ; default 5");
+        System.err.println("       -s            ; list only the one with highest R2 from all backward sdtimes");
         System.exit(-1);
     }
 
@@ -137,11 +257,10 @@ public class AmDerivativeHelper {
         options.addOption("b", true,  "at most sdtime shall be looked backward when calculating derivatives");
         options.addOption("h", true,  "a R2 threshold for effective derivative");
         options.addOption("m", true,  "minimum skipped sd distance from current time");
+        options.addOption("s", false, "list only the one with highest R2 from all backward sdtimes");
 
         return options;
     }
-
-
 
 
 }
