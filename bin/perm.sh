@@ -14,8 +14,18 @@ function _permStats {
     local fTmp=`mktemp`
     grep " $i$" $fPerm |sort -nk4,4 >$fTmp
     local permCount=`wc $fTmp|awk '{print $1}'`
-    local minmaxProfit=`head -n1 $fTmp|awk '{print $4}'`
-    printf "%10s %10s %8.3f\n" $i $permCount $minmaxProfit |tee -a $fOut
+    local cntGe009=`awk '$5>0.09' $fTmp|wc|awk '{print $1}'`
+    local rCntGe009=`divide $cntGe009 $permCount`
+
+    local minmaxProfit0=`head -n1 $fTmp|awk '{print $4}'`
+    local minmaxProfit1=`head -n1 $fTmp|awk '{print $5}'`
+
+    local cmdPostFix=
+    [[ ! -z $fOut ]] && {
+        cmdPostFix="|tee -a $fOut"
+    }
+    eval printf \"%10s %10s %8.3f %8.3f %8.3f\\n\" \
+        $i $permCount $rCntGe009 $minmaxProfit0 $minmaxProfit1 $cmdPostFix
 
     rm -rf $fTmp
 }
