@@ -163,6 +163,26 @@ function getMaxPriceBetween {
 
     awk "strtonum(\"0x\"\$1)>=$startHMS&&strtonum(\"0x\"\$1)<=$endHMS{print \$$idxPrice}" $analysisTxt|sort -n|tail -n 1
 }
+function getMinPriceBetween {
+    local stockCode=$1
+    local tradeDate=$2
+    local startHMS=$3
+    local endHMS=$4
+    local tradeType=$5
+
+    local analysisTxt="$dailyDir\\$stockCode\\$tradeDate\\analysis.txt"
+    local idxPrice=
+    [[ $tradeType == 5 ]] && {
+        idxPrice=4
+    } || {
+        idxPrice=5
+    }
+
+    startHMS=0x`convertTime2Hex $tradeDate $startHMS`
+    endHMS=0x`convertTime2Hex $tradeDate $endHMS`
+
+    awk "strtonum(\"0x\"\$1)>=$startHMS&&strtonum(\"0x\"\$1)<=$endHMS{print \$$idxPrice}" $analysisTxt|sort -n|head -n 1
+}
 
 
 function getPrevCloseQuotationHexPrice {
