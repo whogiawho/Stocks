@@ -80,13 +80,20 @@ public class AmDerivativeHelper {
 
         return codec;
     } 
-    private static int baseU=60;
-    private static int maxL=143;
     private static int[] idxs0 = {
         9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
     };
+    /*    group0
+    private static int baseU=60;
+    private static int maxL=143;
     static int[] sdbwList = {
         baseU*1, baseU*2, baseU*4, baseU*7, baseU*12, baseU*20, baseU*33, baseU*54, baseU*88, baseU*maxL,
+    };
+    */
+    private static int baseU=1;
+    private static int maxL=10;
+    static int[] sdbwList = {
+        baseU*1, baseU*2, baseU*3, baseU*4, baseU*5, baseU*6, baseU*7, baseU*8, baseU*9, baseU*maxL,
     };
     private static double getPrice(TreeMap<Integer, AmRecord> amrMap, int sd) {
         double price = Double.NaN;

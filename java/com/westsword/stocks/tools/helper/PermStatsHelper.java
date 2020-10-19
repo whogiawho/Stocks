@@ -44,6 +44,7 @@ public class PermStatsHelper {
     public static class AmDerSeriesLoader extends FileLoader {
         private int prevPermIdx = -1;
         private int matchedCnt = 0;
+        private int cnt1Gt009 = 0;
         private double minmaxProfit0 = Double.POSITIVE_INFINITY;
         private double minmaxProfit1 = Double.POSITIVE_INFINITY;
         private TreeSet<String> matchedDateSet = new TreeSet<String>();
@@ -64,19 +65,23 @@ public class PermStatsHelper {
                 if(maxProfit1<minmaxProfit1) {
                     minmaxProfit1 = maxProfit1;
                 }
+                if(maxProfit1>0.09) {
+                    cnt1Gt009++;
+                }
                 if(!matchedDateSet.contains(ymd))
                     matchedDateSet.add(ymd);
             } else {                            //print prevPermIdx
                 if(prevPermIdx != -1) {
-                    int matchedDateCnt = matchedDateSet.size();
-                    String sCoord = PermHelper.getPermIdx(prevPermIdx);
-                    System.out.format("%-10d %8d %8d %8.3f %8.3f %25s\n", 
-                            prevPermIdx, matchedCnt, matchedDateCnt, minmaxProfit0, minmaxProfit1, sCoord);
+                    printElement();
                 }
                 prevPermIdx = permIdx;
                 matchedCnt = 1;
                 minmaxProfit0 = maxProfit0;
                 minmaxProfit1 = maxProfit1;
+                cnt1Gt009=0;
+                if(maxProfit1>0.09) {
+                    cnt1Gt009=1;
+                }
                 matchedDateSet.clear();
                 matchedDateSet.add(ymd);
                 //System.out.format("stats for %d\n", prevPermIdx);
@@ -84,15 +89,20 @@ public class PermStatsHelper {
 
             return true;
         }
+        private void printElement() {
+            int matchedDateCnt = matchedDateSet.size();
+            double rCntGe009 = (double)cnt1Gt009/(double)matchedCnt;
+            String sCoord = PermHelper.getPermIdx(prevPermIdx);
+            System.out.format("%-10d %8d %8d %8.3f %8.3f %8.3f %25s\n", 
+                    prevPermIdx, matchedCnt, matchedDateCnt, minmaxProfit0, minmaxProfit1, rCntGe009, sCoord);
+        }
+
 
         public void load(String sAmDerSorted) {
             super.load(sAmDerSorted);
 
             //last element
-            int matchedDateCnt = matchedDateSet.size();
-            String sCoord = PermHelper.getPermIdx(prevPermIdx);
-                    System.out.format("%-10d %8d %8d %8.3f %8.3f %25s\n", 
-                    prevPermIdx, matchedCnt, matchedDateCnt, minmaxProfit0, minmaxProfit1, sCoord);
+            printElement();
         }
     }
 }
