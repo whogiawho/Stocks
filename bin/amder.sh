@@ -1,5 +1,45 @@
 #!/bin/bash
 
+function getCodecSeries {
+    local fAmDer=$1
+    local hextp=$2
+    local bwsd=$3
+
+    echo $hextp|grep -q "," && {
+        local ymd=${hextp%,*}
+        local hms=${hextp#*,}
+        hextp=`convertTime2Hex $ymd $hms`
+    }
+    local startHexTp=$(("0x"$hextp-bwsd))
+    startHexTp=`printf "%x" $startHexTp`
+
+    sed -n "/$startHexTp/,/$hextp/p" $fAmDer|awk '{print $12}'|tr "\n" ","
+}
+function makeAmDers {
+    local stockCode=$1
+
+    local amderDir=/tmp/amderivatives
+    mkdir -p $amderDir
+    JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
+
+    local max=10
+    local cnt=0
+    local tradeDates=`getTradeDateList $stockCode y|tail -n +2`
+    local i=
+    for i in $tradeDates
+    do
+        java -jar $analyzetoolsJar listamderivatives -s $stockCode $i >$amderDir/$i.txt &
+
+        cnt=$((cnt+1))
+        echo cnt=$cnt
+        [[ $cnt -ge $max ]] && {
+            wait -n
+            cnt=$((cnt-1))
+        }
+    done
+}
+
+
 function makeAvi {
     local stockCode=$1
     local tradeDate=$2
