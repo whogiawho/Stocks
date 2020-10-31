@@ -59,7 +59,7 @@ public class TradeDates extends Dates {
 
 
     //[startDate, endDate]
-    private static String[] getTradeDateList(String stockCode, String startDate, String endDate) {
+    public static String[] getTradeDateList(String stockCode, String startDate, String endDate) {
         String[] list = getTradeDateList(""+stockCode);
         TreeSet<String> trSet = new TreeSet<String>(Arrays.asList(list));
 	    //System.out.format("trSet.size = %d, startDate=%s, endDate=%s\n", trSet.size(), startDate, endDate);
