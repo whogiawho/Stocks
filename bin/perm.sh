@@ -1,5 +1,36 @@
 #!/bin/bash
 
+function commonPermIdx {
+    local fPermDir=$1
+
+    local fTmp1=`mktemp`
+    local fTmp=
+    local i=
+    for i in `ls $fPermDir`
+    do
+        [[ $i == "20090721.txt*" || \
+           $i == "20090821.txt*" || \
+           $i == "20140925.txt*" || \
+           $i == "20160107.txt*" || \
+           $i == "20131030.txt*" ]] && {
+            continue
+        }
+        [[ -z $fTmp ]] && {
+            fTmp=`mktemp`
+            awk '{print $16}' $fPermDir/$i|sort >$fTmp
+            continue
+        } || {
+            comm -12 $fTmp <(awk '{print $16}' $fPermDir/$i|sort) >$fTmp1
+            mv $fTmp1 $fTmp
+        }
+
+        local cnt=`wc $fTmp|awk '{print $1}'`
+        echo "$i cnt=$cnt"
+    done
+
+    rm -rf $fTmp1
+}
+
 function getPermCoord {
     local permIdx=$1
 

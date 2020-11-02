@@ -18,12 +18,20 @@ function refresh {
 function buy600030_1000 {
     local price=$1
 
-    python -u $rootDir\\python\\buy.py 600030 $price 100
+    buy 600030 $price 1000
 }
 function sell600030_1000 {
     local price=$1
 
-    sell 600030 $price 100
+    sell 600030 $price 1000
+}
+function buy {
+    local stockCode=$1
+    local price=$2
+    local amount=$3
+
+    python -u $rootDir\\python\\buy.py $stockCode $price $amount
+
 }
 function sell {
     local stockCode=$1
