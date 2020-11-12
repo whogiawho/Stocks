@@ -33,7 +33,7 @@ import com.westsword.stocks.analyze.ssanalyze.SSTableRecord;
 //  check2SubmitSession                         submit abnormal sessions before 09:25:00
 //  makeRRP                                     make RRP trade at 14:56:00
 public class TradeSessionManager {
-    public final static int MAX_OPEN_SESSION = 1;
+    public final static int MAX_OPEN_SESSION = 0;
     public final static double TARGET_YEAR_RATE = 0.10;
 
     private String mStockCode;
