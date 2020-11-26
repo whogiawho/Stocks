@@ -82,10 +82,19 @@ public class AmDerManager extends TaskManager {
             String sDerivativeFile = StockPaths.getDerivativeFile(stockCode, tradeDate, hms);
             //get sd from r.timeIndex
             int sd = r.timeIndex;
+
+            /*
             //get default r2Threshold&sdbw&minSkippedSD
             double r2Threshold = AmDerUtils.getR2Threshold(null);
             int sdbw = AmDerUtils.getBackwardSd(null);
             int minSkippedSD = AmDerUtils.getMinimumSkipSd(null);
+            */
+
+            //get r2Threshold&sdbw&minSkippedSD from settings.txt
+            double r2Threshold = Settings.getR2Threshold();
+            int sdbw = Settings.getBackwardSd();
+            int minSkippedSD = Settings.getMinimumSkipSd();
+            
             //call AmDerUtils.listSingleSd
             AmDerUtils.listSingleSd(sd, r2Threshold, sdbw, minSkippedSD,
                     amrMap, false, sDerivativeFile);

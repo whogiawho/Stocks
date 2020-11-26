@@ -144,7 +144,7 @@ function makeAmDerivativePng {
     amderGetAnalysis $stockCode $tradeDate $hms $bwsd
 
     local amDerTxt="$amderDir\\${hms}_${bwsd}_amder.txt"
-    java -jar $analyzetoolsJar listamderivatives -b$bwsd -h$r2Threshold $stockCode $tradeDate $hms >"$amDerTxt"
+    java -jar $analyzetoolsJar listamderivatives -b$bwsd -h$r2Threshold -m60 $stockCode $tradeDate $hms >"$amDerTxt"
 
     local sPngFile="$amderDir\\${hms}_${bwsd}_amder.png"
     cscript.exe "$rootDir\\vbs\\makeAmDerivativePng.vbs" "$amDerTxt" "$sPngFile"

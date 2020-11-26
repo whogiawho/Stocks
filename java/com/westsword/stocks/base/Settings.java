@@ -254,4 +254,14 @@ public class Settings extends FileLoader {
 
         return booleanValues[idx];
     }
+
+    public static double getR2Threshold() {
+        return getDouble("R2Threshold");
+    }
+    public static int getBackwardSd() {
+        return getInteger("BackwardSd");
+    }
+    public static int getMinimumSkipSd() {
+        return getInteger("MinimumSkipSd");
+    }
 }
