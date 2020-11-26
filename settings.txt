@@ -1,9 +1,9 @@
 stockCode=600030
-currentDate=20200813
+currentDate=20201126
 
 
-currentDateCloseQuotationTime=5f34e4f0
-currentDateLastRawTradeDetailTime=5f34e52c
+currentDateCloseQuotationTime=5fbf5270
+currentDateLastRawTradeDetailTime=5fbf52ac
 
 
 PriceDecimalFormat=#.##
@@ -36,11 +36,17 @@ Locale=zh_CN
 Way2SearchAmRecord=1
 
 
-MaxTasks=24
+MaxTasks=10
 MaxGrowthRate=1.0
 BufferingTradeResult=true
 MaxOutPrice=false
+
 AmDerivative=true
+R2Threshold=0.5
+BackwardSd=3600
+MinimumSkipSd=60
+
+
 
 #0 - jyzq
 #1 - zxzq
