@@ -7,8 +7,10 @@ function getAnalysis {
     local sHMS=$3
     local eDate=$4
     local eHMS=$5
+    local interval=$6                        #optional
 
-    java -jar $analyzetoolsJar getanalysis $stockCode ${sDate}_${sHMS} ${eDate}_${eHMS} 2>/dev/null
+    [[ -z $interval ]] && interval=1
+    java -jar $analyzetoolsJar getanalysis -i$interval $stockCode ${sDate}_${sHMS} ${eDate}_${eHMS} 2>/dev/null
 }
 
 #If 3 parms, startHMS is of format HHMMSS_HHMMSS

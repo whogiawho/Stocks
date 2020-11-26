@@ -64,6 +64,11 @@ function routinesAfterCloseQuotation {
     makeSTDAmPricePng
 
     write2CheckAllTable $stockCode $tradeDate
+
+    #make amderivatives
+    makeAmDerivativePng $stockCode $tradeDate 150000 1 $((14400*5))
+    local dataDir="$dailyDir\\$stockCode\\$tradeDate"
+    cp "$dataDir\\amderTxt\\150000_72000_amder.png" /tmp/amderPng/$tradeDate.png
 }
 #write today's checkAllSSTable output to fCheckAllTable
 function write2CheckAllTable {
@@ -154,17 +159,17 @@ function _getCopyList {
     local dirOutPankou=$3
     local dirOutTradeDetails=$4
 
-    local tmp=`mktemp`
+    local fTmp=`mktemp`
 
     mkdir -p $dirOutPankou
     mkdir -p $dirOutTradeDetails
 
-    getSortedHexFileList $dirPankou $dirOutPankou              >$tmp
-    getSortedHexFileList $dirTradeDetails $dirOutTradeDetails  >>$tmp
+    getSortedHexFileList $dirPankou $dirOutPankou              >$fTmp
+    getSortedHexFileList $dirTradeDetails $dirOutTradeDetails  >>$fTmp
 
-    sort -k1 $tmp
+    sort -k1 $fTmp
 
-    rm -rf $tmp
+    rm -rf $fTmp
 }
 function getSortedHexFileList {
     local hexDir=$1

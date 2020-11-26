@@ -17,19 +17,50 @@
 package com.westsword.stocks.tools.helper;
 
 import java.util.*;
+import org.apache.commons.cli.*;
 
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.time.*;
+import com.westsword.stocks.base.utils.CmdLineUtils;
 
 public class AnalysisTxtHelper {
+    public static Options getOptions() {
+        Options options = new Options();
+        options.addOption("i", true,  "the step to print AmReocrd; default 1");
+
+        return options;
+    }
+    public static CommandLine getCommandLine(String[] args) {
+        CommandLine cmd = null;
+        try {
+            String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
+            Options options = getOptions();
+
+            CommandLineParser parser = new DefaultParser();
+            cmd = parser.parse(options, newArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return cmd;
+    }
+    public static int getInterval(CommandLine cmd) {
+        return CmdLineUtils.getInteger(cmd, "i", 1);
+    }
+
     public static void getRange(String args[]) {
-        if(args.length != 4) {
+        CommandLine cmd = getCommandLine(args);
+        String[] newArgs = cmd.getArgs();
+
+        if(newArgs.length != 3) {
             usage();
         }
 
-        String stockCode = args[1];
-        String startS = args[2];
-        String endS = args[3];
+        String stockCode = newArgs[0];
+        String startS = newArgs[1];
+        String endS = newArgs[2];
+        int interval = getInterval(cmd);
+        //System.out.format("interval=%d\n", interval);
 
         String[] fields = startS.split("_");
         String startDate = fields[0];
@@ -49,15 +80,20 @@ public class AnalysisTxtHelper {
             next = stockDates.nextDate(next);
         }
 
+        int cnt = 0;
         AmManager am = new AmManager(stockCode, dates);
         NavigableMap<Integer, AmRecord> itemMap = am.getItemMap(startDate, startHMS, endDate, endHMS);
         for(Integer k: itemMap.keySet()) {
             AmRecord r = itemMap.get(k);
-            r.print();
+            if(cnt%interval==0) {
+                //System.out.format("cnt=%d\n", cnt);
+                r.print();
+            }
+            cnt++;
         }
     }
     private static void usage() {
-        System.err.println("usage: java AnalyzeTools getanalysis stockCode sDate_sHMS eDate_eHMS ");
+        System.err.println("usage: java AnalyzeTools getanalysis [-i] stockCode sDate_sHMS eDate_eHMS ");
         System.exit(-1);
     }
 
