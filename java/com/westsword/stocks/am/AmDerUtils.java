@@ -28,6 +28,7 @@ public class AmDerUtils {
     public final static double Default_R2Threshold = 0.5;
     public final static double Default_NaThreshold = 0.9;
     public final static int Default_Minimum_Skipped_SD = 5;
+    public final static int Default_Interval = 1;
 
 
     public static int getBackwardSd(CommandLine cmd) {
@@ -47,6 +48,9 @@ public class AmDerUtils {
     }
     public static boolean getHighest(CommandLine cmd) {
         return CmdLineUtils.getBoolean(cmd, "s", false);
+    }
+    public static int getAmDerInterval(CommandLine cmd) {
+        return CmdLineUtils.getInteger(cmd, "i", Default_Interval);
     }
 
 
@@ -72,11 +76,11 @@ public class AmDerUtils {
 
         return (double)naCount/(double)count;
     }
-    public static void listSingleSd(int sd, double r2Threshold, int sdbw, int minSkippedSD,
+    public static void listSingleSd(int sd, double r2Threshold, int sdbw, int minSkippedSD, int interval, 
             TreeMap<Integer, AmRecord> amrMap, boolean bStdOut, String sDerivativeFile) {
         
         int minDist=minSkippedSD;
-        for(int dist=sdbw; dist>=minDist; dist--) {
+        for(int dist=sdbw; dist>=minDist; dist-=interval) {
 
             int start=sd-dist;
             int end=sd;
