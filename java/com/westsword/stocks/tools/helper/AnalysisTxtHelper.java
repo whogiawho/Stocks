@@ -44,9 +44,6 @@ public class AnalysisTxtHelper {
 
         return cmd;
     }
-    public static int getInterval(CommandLine cmd) {
-        return CmdLineUtils.getInteger(cmd, "i", 1);
-    }
 
     public static void getRange(String args[]) {
         CommandLine cmd = getCommandLine(args);
@@ -59,7 +56,7 @@ public class AnalysisTxtHelper {
         String stockCode = newArgs[0];
         String startS = newArgs[1];
         String endS = newArgs[2];
-        int interval = getInterval(cmd);
+        int interval = AmDerUtils.getAmDerInterval(cmd);
         //System.out.format("interval=%d\n", interval);
 
         String[] fields = startS.split("_");
