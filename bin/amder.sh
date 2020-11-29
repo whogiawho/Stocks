@@ -1,43 +1,5 @@
 #!/bin/bash
 
-function getCodecSeries {
-    local fAmDer=$1
-    local hextp=$2
-    local bwsd=$3
-
-    echo $hextp|grep -q "," && {
-        local ymd=${hextp%,*}
-        local hms=${hextp#*,}
-        hextp=`convertTime2Hex $ymd $hms`
-    }
-    local startHexTp=$(("0x"$hextp-bwsd))
-    startHexTp=`printf "%x" $startHexTp`
-
-    sed -n "/$startHexTp/,/$hextp/p" $fAmDer|awk '{print $12}'|tr "\n" ","
-}
-function makeAmDers {
-    local stockCode=$1
-
-    local amderDir=/tmp/amderivatives
-    mkdir -p $amderDir
-    JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
-
-    local max=10
-    local cnt=0
-    local tradeDates=`getTradeDateList $stockCode y|tail -n +2`
-    local i=
-    for i in $tradeDates
-    do
-        java -jar $analyzetoolsJar listamderivatives -s $stockCode $i >$amderDir/$i.txt &
-
-        cnt=$((cnt+1))
-        echo cnt=$cnt
-        [[ $cnt -ge $max ]] && {
-            wait -n
-            cnt=$((cnt-1))
-        }
-    done
-}
 
 
 function makeAvi {
@@ -77,46 +39,6 @@ function mergePng {
 }
 
 
-function amderSearchHMS {
-    local stockCode=$1
-    local startSd=$2                          #optional
-    local endSd=$3                            #optional
-    local step=$4                             #optional
-    local naThreshold=$5                      #optional
-    local bwsd=$6                             #optional
-    local r2Threshold=$7                      #optional
-
-
-    [[ -z $startSd ]] && startSd=$((14405*2))
-    [[ -z $endSd ]] && endSd=40319594
-    [[ -z $step ]] && step=60
-    [[ -z $naThreshold ]] && naThreshold=0.90
-    [[ -z $bwsd ]] && bwsd=$((14405*2))
-    [[ -z $r2Threshold ]] && r2Threshold=0.5
-
-    local amDerTxt=`mktemp`
-    local i=
-    for i in `seq $startSd $step $endSd`
-    do
-        local sTp=`rgetAbs $stockCode $i`
-        local str=`convertHex2Time $sTp y`
-        local tradeDate=`echo $str|awk -F, '{print $1}'`
-        local hms=`echo $str|awk -F, '{print $2}'`
-
-        java -jar $analyzetoolsJar listamderivatives -b$bwsd -h$r2Threshold $stockCode $tradeDate $hms >"$amDerTxt" 2>/dev/null
-        local sum=`wc $amDerTxt|awk '{print $1}'`
-        local naCnt=`awk "\\$1<0.5{print \\$0}" $amDerTxt|wc|awk '{print $1}'`
-        local rate=`divide $naCnt $sum`
-
-        local bCmp=`ge $rate $naThreshold`
-        [[ $bCmp == 1 ]] && {
-            printf "%10d %8s %8s %8.3f\n" $i $tradeDate $hms $rate
-        } || {
-            printf "%10d %8.3f\n" $i $rate
-        }
-    done
-}
-
 
 function makeAmDerivativePngs {
     local stockCode=$1
@@ -142,34 +64,11 @@ function makeAmDerivativePng {
         mkdir -p "$amderDir"
     }
 
-    amderGetAnalysis $stockCode $tradeDate $hms $bwsd $interval 
-
     local amDerTxt="$amderDir\\${hms}_${bwsd}_amder.txt"
-    java -jar $analyzetoolsJar listamderivatives -b$bwsd -h$r2Threshold -m60 $stockCode $tradeDate $hms >"$amDerTxt"
+    java -jar $analyzetoolsJar listamderivatives -b$bwsd -h$r2Threshold -m60 -i${interval} $stockCode $tradeDate $hms >"$amDerTxt"
 
     local sPngFile="$amderDir\\${hms}_${bwsd}_amder.png"
     cscript.exe "$rootDir\\vbs\\makeAmDerivativePng.vbs" "$amDerTxt" "$sPngFile"
-}
-function amderGetAnalysis {
-    local stockCode=$1
-    local tradeDate=$2
-    local hms=$3
-    local bwsd=$4
-    local interval=$5
-
-    local amderDir="$dailyDir\\$stockCode\\$tradeDate\\amderTxt"
-    [[ ! -e "$amderDir" ]] && {
-        mkdir -p "$amderDir"
-    }
-
-    local hmsSd=`getAbs $stockCode $tradeDate $hms`
-    local sSd=$((hmsSd-bwsd))
-    local sTp=`rgetAbs $stockCode $sSd`
-    local str=`convertHex2Time $sTp y`
-    local sDate=`echo $str|awk -F, '{print $1}'`
-    local sHMS=`echo $str|awk -F, '{print $2}'`
-    local hmsTxt="$amderDir\\${hms}_${bwsd}_analysis.txt"
-    getAnalysis $stockCode ${sDate} ${sHMS} ${tradeDate} ${hms} ${interval} >"$hmsTxt"
 }
 
 
@@ -186,6 +85,7 @@ function makeAmDerAnalysis {
     local stockCode=$1
     local tradeDate=$2
     local bwsd=$3
+    local interval=$4
 
     local amderDir="$dailyDir\\$stockCode\\$tradeDate\\amderTxt"
     [[ ! -e "$amderDir" ]] && {
@@ -208,9 +108,12 @@ function makeAmDerAnalysis {
         local sDate=`echo $str|awk -F, '{print $1}'`
         local sHMS=`echo $str|awk -F, '{print $2}'`
 
-        getAnalysis $stockCode ${sDate} ${sHMS} ${tradeDate} ${hms} >"$amderDir\\$hms.txt"
+        getAnalysis $stockCode ${sDate} ${sHMS} ${tradeDate} ${hms} ${interval} >"$amderDir\\$hms.txt"
     done
 }
+
+
+
 
 
 function tpAmDerStats {
@@ -263,3 +166,103 @@ function amDerStats {
         }
     done
 }
+function amderSearchHMS {
+    local stockCode=$1
+    local startSd=$2                          #optional
+    local endSd=$3                            #optional
+    local step=$4                             #optional
+    local naThreshold=$5                      #optional
+    local bwsd=$6                             #optional
+    local r2Threshold=$7                      #optional
+
+
+    [[ -z $startSd ]] && startSd=$((14405*2))
+    [[ -z $endSd ]] && endSd=40319594
+    [[ -z $step ]] && step=60
+    [[ -z $naThreshold ]] && naThreshold=0.90
+    [[ -z $bwsd ]] && bwsd=$((14405*2))
+    [[ -z $r2Threshold ]] && r2Threshold=0.5
+
+    local amDerTxt=`mktemp`
+    local i=
+    for i in `seq $startSd $step $endSd`
+    do
+        local sTp=`rgetAbs $stockCode $i`
+        local str=`convertHex2Time $sTp y`
+        local tradeDate=`echo $str|awk -F, '{print $1}'`
+        local hms=`echo $str|awk -F, '{print $2}'`
+
+        java -jar $analyzetoolsJar listamderivatives -b$bwsd -h$r2Threshold $stockCode $tradeDate $hms >"$amDerTxt" 2>/dev/null
+        local sum=`wc $amDerTxt|awk '{print $1}'`
+        local naCnt=`awk "\\$1<0.5{print \\$0}" $amDerTxt|wc|awk '{print $1}'`
+        local rate=`divide $naCnt $sum`
+
+        local bCmp=`ge $rate $naThreshold`
+        [[ $bCmp == 1 ]] && {
+            printf "%10d %8s %8s %8.3f\n" $i $tradeDate $hms $rate
+        } || {
+            printf "%10d %8.3f\n" $i $rate
+        }
+    done
+}
+function getCodecSeries {
+    local fAmDer=$1
+    local hextp=$2
+    local bwsd=$3
+
+    echo $hextp|grep -q "," && {
+        local ymd=${hextp%,*}
+        local hms=${hextp#*,}
+        hextp=`convertTime2Hex $ymd $hms`
+    }
+    local startHexTp=$(("0x"$hextp-bwsd))
+    startHexTp=`printf "%x" $startHexTp`
+
+    sed -n "/$startHexTp/,/$hextp/p" $fAmDer|awk '{print $12}'|tr "\n" ","
+}
+function makeAmDers {
+    local stockCode=$1
+
+    local amderDir=/tmp/amderivatives
+    mkdir -p $amderDir
+    JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
+
+    local max=10
+    local cnt=0
+    local tradeDates=`getTradeDateList $stockCode y|tail -n +2`
+    local i=
+    for i in $tradeDates
+    do
+        java -jar $analyzetoolsJar listamderivatives -s $stockCode $i >$amderDir/$i.txt &
+
+        cnt=$((cnt+1))
+        echo cnt=$cnt
+        [[ $cnt -ge $max ]] && {
+            wait -n
+            cnt=$((cnt-1))
+        }
+    done
+}
+function amderGetAnalysis {
+    local stockCode=$1
+    local tradeDate=$2
+    local hms=$3
+    local bwsd=$4
+    local interval=$5
+
+    local amderDir="$dailyDir\\$stockCode\\$tradeDate\\amderTxt"
+    [[ ! -e "$amderDir" ]] && {
+        mkdir -p "$amderDir"
+    }
+
+    local hmsSd=`getAbs $stockCode $tradeDate $hms`
+    local sSd=$((hmsSd-bwsd))
+    local sTp=`rgetAbs $stockCode $sSd`
+    local str=`convertHex2Time $sTp y`
+    local sDate=`echo $str|awk -F, '{print $1}'`
+    local sHMS=`echo $str|awk -F, '{print $2}'`
+    local hmsTxt="$amderDir\\${hms}_${bwsd}_analysis.txt"
+    getAnalysis $stockCode ${sDate} ${sHMS} ${tradeDate} ${hms} ${interval} >"$hmsTxt"
+}
+
+
