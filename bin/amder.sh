@@ -39,6 +39,33 @@ function mergePng {
 }
 
 
+function dailyMake5dAmDers {
+    local stockCode=$1
+    local sDate=$2
+    local eDate=$3
+
+    dailyMakeAmDers $stockCode $sDate $eDate $((14400*5))
+}
+function dailyMakeAmDers {
+    local stockCode=$1
+    local sDate=$2
+    local eDate=$3
+    local bwsd=$4
+
+    local tradeDates=`getTradeDateList $stockCode`
+    [[ -z $eDate ]] && {
+        eDate=${tradeDates##* }
+    }
+    [[ -z $sDate ]] && {
+        sDate=`echo $tradeDates|sed "s/ /\n/g"|head -n6|tail -n1`
+    }
+
+    local i=
+    for i in `getTradeDateRange $stockCode $sDate $eDate`
+    do
+        java -jar $analyzetoolsJar listamderivatives -i60 -b$bwsd -m60 -e60 $stockCode $tradeDate
+    done
+}
 
 function makeAmDerivativePngs {
     local stockCode=$1
@@ -220,7 +247,7 @@ function getCodecSeries {
 
     sed -n "/$startHexTp/,/$hextp/p" $fAmDer|awk '{print $12}'|tr "\n" ","
 }
-function makeAmDers {
+function makeAmPerms {
     local stockCode=$1
 
     local amderDir=/tmp/amderivatives

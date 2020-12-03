@@ -134,7 +134,7 @@ function doDailyGetRawJob {
     local serverType=$4
     local noCheck=$5
 
-    local stockList="600030 600036 601318 510300 510900"
+    local stockList="600030 600036 601318 600196 510300 510900"
     local stockCode=
     for stockCode in $stockList
     do
