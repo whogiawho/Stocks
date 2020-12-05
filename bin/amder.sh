@@ -91,11 +91,13 @@ function makeAmDerivativePng {
         mkdir -p "$amderDir"
     }
 
-    local amDerTxt="$amderDir\\${hms}_${bwsd}_amder.txt"
+    local amDerTxt="$amderDir\\${tradeDate}_${hms}_${bwsd}_amder.txt"
     java -jar $analyzetoolsJar listamderivatives -b$bwsd -h$r2Threshold -m60 -i${interval} $stockCode $tradeDate $hms >"$amDerTxt"
 
-    local sPngFile="$amderDir\\${hms}_${bwsd}_amder.png"
+    local sPngFile="$amderDir\\${tradeDate}_${hms}_${bwsd}_amder.png"
     cscript.exe "$rootDir\\vbs\\makeAmDerivativePng.vbs" "$amDerTxt" "$sPngFile"
+
+    rm -rf $amDerTxt
 }
 
 
