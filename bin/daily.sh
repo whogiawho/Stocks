@@ -26,6 +26,8 @@ function doDailyTask {
     continueIfRawTradeDetailsReady $stockCode $tradeDate
 
     routinesAfterCloseQuotation $stockCode $tradeDate skipRA
+
+    write2CheckAllTable $stockCode $tradeDate
 }
 function continueIfRawTradeDetailsReady {
     local stockCode=$1
@@ -62,8 +64,6 @@ function routinesAfterCloseQuotation {
     java -jar $analyzetoolsJar makeanalysistxt $stockCode $tradeDate
 
     makeSTDAmPricePng
-
-    write2CheckAllTable $stockCode $tradeDate
 
     #make amderivatives
     makeAmDerivativePng $stockCode $tradeDate 150000 1 $((14400*5))
