@@ -22,6 +22,8 @@ import java.util.*;
 import java.math.*;
 import java.text.*;
 import java.nio.charset.*;
+import java.util.stream.*;
+import java.util.concurrent.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 
@@ -29,6 +31,7 @@ import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.time.*;
 
 public class Utils {
+    public final static int EXEC_TIMEOUT_SECONDS = 60;
 
 
     public static boolean isFile(String path) {
@@ -231,6 +234,33 @@ public class Utils {
     public static long[] getFactorials(int[] idxs) {
         int n=idxs.length;
         return getFactorials(n);
+    }
+
+
+    public static int wait4ExitValue(Process proc) {
+        int exitVal=-1;
+        try {
+            boolean bRet = proc.waitFor(EXEC_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            if(!bRet) { 
+                Stream<ProcessHandle> sHandles = proc.descendants();
+                Iterator<ProcessHandle> itr = sHandles.iterator();
+                while(itr.hasNext()) {
+                    ProcessHandle h = itr.next();
+                    System.err.format("Utils.wait4ExitValue(): timeOut happened! destroy pid=%d\n", 
+                            h.pid());
+                    h.destroy();
+                }
+                System.err.format("Utils.wait4ExitValue(): timeOut happened! destroy pid=%d\n", 
+                        proc.pid());
+                proc.destroy();
+            } else {
+                exitVal = proc.exitValue();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return exitVal;
     }
 
 }

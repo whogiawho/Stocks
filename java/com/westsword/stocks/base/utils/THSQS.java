@@ -18,15 +18,12 @@ package com.westsword.stocks.base.utils;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.*;
-import java.util.concurrent.*;
 
 import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.utils.StockPaths;
 
 public class THSQS {
-    public final static int EXEC_TIMEOUT_SECONDS = 60;
     public final static String[] sTradedDate = {"成交日期", "成交日期"};
     public final static String[] sTradedTime = {"成交时间", "成交时间"};
     public final static String[] sEntrustTraded = {"已成", "已成"};
@@ -48,31 +45,6 @@ public class THSQS {
             qsIdx = Integer.valueOf(sQSIdx);
         System.err.format("%s: qsIdx = %d\n", Utils.getCallerName(getClass()), qsIdx);
     }
-    private int wait4ExitValue(Process proc) {
-        int exitVal=-1;
-        try {
-            boolean bRet = proc.waitFor(EXEC_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-            if(!bRet) { 
-                Stream<ProcessHandle> sHandles = proc.descendants();
-                Iterator<ProcessHandle> itr = sHandles.iterator();
-                while(itr.hasNext()) {
-                    ProcessHandle h = itr.next();
-                    System.err.format("%s: timeOut happened! destroy pid=%d\n", 
-                            Utils.getCallerName(getClass()), h.pid());
-                    h.destroy();
-                }
-                System.err.format("%s: timeOut happened! destroy pid=%d\n", 
-                        Utils.getCallerName(getClass()), proc.pid());
-                proc.destroy();
-            } else {
-                exitVal = proc.exitValue();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return exitVal;
-    }
     public String execCommand(String sCommand, String[] outValues) {
         String sText = "";
 
@@ -81,7 +53,7 @@ public class THSQS {
             String[] cmd = {"cmd", "/C", sCommand}; 
             Process proc = Runtime.getRuntime().exec(cmd);
 
-            int exitVal=wait4ExitValue(proc);
+            int exitVal=Utils.wait4ExitValue(proc);
             outValues[0] = ""+exitVal;
             System.out.format("%s: Process exitValue: %d\n", 
                     Utils.getCallerName(getClass()), exitVal);

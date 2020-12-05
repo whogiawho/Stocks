@@ -18,6 +18,7 @@ package com.westsword.stocks.am;
 
 import java.util.*;
 
+import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.utils.StockPaths;
 
 public class ThreadMakeAmDer extends Thread {
@@ -42,8 +43,14 @@ public class ThreadMakeAmDer extends Thread {
             sCommand += " " + StockPaths.getMakeAmDerPngVbs();
             sCommand += " " + StockPaths.getDerivativeFile(stockCode, tradeDate, hms);
             sCommand += " " + StockPaths.getDerivativePngFile(stockCode, tradeDate, hms);
+            //System.out.format("ThreadMakeAmDer.run(): %s\n", sCommand);
             String[] cmd = {"cmd", "/C", sCommand};
             Process proc = Runtime.getRuntime().exec(cmd);
+            int exitVal=Utils.wait4ExitValue(proc);
+            if(exitVal!=0) {
+                System.err.format("ThreadMakeAmDer.run(): Process exitValue: %d\n", 
+                        exitVal);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
