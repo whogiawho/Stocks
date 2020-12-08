@@ -115,21 +115,30 @@ public class Utils {
 
 
 
-
-    public static double roundUp(double inD) {
-        return roundUp(inD, null);
-    }
-    public static double roundUp(double inD, String sFormat) {
+    public static double roundDouble(double inD, String sFormat, RoundingMode mode) {
         if(sFormat==null) {
             sFormat = Settings.getPriceDecimalFormat();
         }
         DecimalFormat df = new DecimalFormat(sFormat);
-        df.setRoundingMode(RoundingMode.CEILING);
+        df.setRoundingMode(mode);
 
         //adjust inD to specified Decimal format
         inD = Double.valueOf(df.format(inD));
 
         return inD;
+    }
+
+    public static double roundUp(double inD) {
+        return roundUp(inD, null);
+    }
+    public static double roundUp(double inD, String sFormat) {
+        return roundDouble(inD, sFormat, RoundingMode.CEILING);
+    }
+    public static double roundDown(double inD) {
+        return roundDown(inD, null);
+    }
+    public static double roundDown(double inD, String sFormat) {
+        return roundDouble(inD, sFormat, RoundingMode.FLOOR);
     }
 
 
