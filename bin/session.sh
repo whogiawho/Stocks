@@ -45,3 +45,9 @@ function checkOpenSession {
         printf "%s %8s %12s %12s %4s %8s\n" $i $inPrice $inDate $outDate `getTradeDateDist $stockCode $inDate $outDate` $profit; 
     done
 }
+
+function checkAbss {
+    local stockCode=$1
+
+    java -jar $analyzetoolsJar checkabss $stockCode
+}
