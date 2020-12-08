@@ -110,6 +110,16 @@ public class Settings extends FileLoader {
     public static String getTimeZone() {
         return getString("TimeZone");
     }
+    public static String getSdStartTime() {
+        return getString("SdStartTime");
+    }
+    public static Integer getSdInterval() {   //in seconds
+        return getInteger("SdInterval");
+    }
+    public static Integer getCkptInterval() { //in seconds
+        return getInteger("CkptInterval");
+    }
+
     public static double getPriceStep() {
         return getPriceStep(getStockCode());
     }
@@ -122,19 +132,14 @@ public class Settings extends FileLoader {
     public static String getSdStartDate(String stockCode) {
         return getString(stockCode+".SdStartDate");
     }
-    public static String getSdStartTime() {
-        return getString("SdStartTime");
+    public static String getPriceDecimalFormat() {
+        return getString(getStockCode());
+        //return getString("PriceDecimalFormat");
     }
-    public static Integer getSdInterval() {   //in seconds
-        return getInteger("SdInterval");
-    }
-    public static Integer getCkptInterval() { //in seconds
-        return getInteger("CkptInterval");
+    public static String getPriceDecimalFormat(String stockCode) {
+        return getString(stockCode+".priceDecimalFormat");
     }
 
-    public static String getPriceDecimalFormat() {
-        return getString("PriceDecimalFormat");
-    }
     public static Integer getMaxTasks() {
         return getInteger("MaxTasks");
     }
@@ -263,5 +268,8 @@ public class Settings extends FileLoader {
     }
     public static int getMinimumSkipSd() {
         return getInteger("MinimumSkipSd");
+    }
+    public static int getAmDerInterval() {
+        return getInteger("AmDerInterval");
     }
 }

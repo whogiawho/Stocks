@@ -24,6 +24,8 @@ import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.utils.StockPaths;
 
 public class THSQS {
+    public final static String sPriceFormat = "%.3f";
+
     public final static String[] sTradedDate = {"成交日期", "成交日期"};
     public final static String[] sTradedTime = {"成交时间", "成交时间"};
     public final static String[] sEntrustTraded = {"已成", "已成"};
@@ -86,9 +88,9 @@ public class THSQS {
         sCommand += " ";
         sCommand += StockPaths.pythonSellPath();
         sCommand += " " + stockCode;
-        sCommand += " " + String.format("%.2f", Utils.roundUp(inPrice));
+        sCommand += " " + String.format(sPriceFormat, Utils.roundUp(inPrice));
         sCommand += " " + tradeVol;
-        sCommand += " " + String.format("%.2f", Utils.roundUp(inPrice));
+        sCommand += " " + String.format(sPriceFormat, Utils.roundUp(inPrice));
 
         return sCommand;
     }
@@ -104,7 +106,7 @@ public class THSQS {
         sCommand += " ";
         sCommand += StockPaths.pythonSellPath();
         sCommand += " " + stockCode;
-        sCommand += " " + String.format("%.2f", Utils.roundUp(inPrice));
+        sCommand += " " + String.format(sPriceFormat, Utils.roundUp(inPrice));        
         sCommand += " " + tradeVol;
 
         return sCommand;
@@ -115,37 +117,38 @@ public class THSQS {
         //need to get the entrustno
         return execAndGetEntrustNO(sCommand);
     }
-    private String getBuyCommand(String stockCode, double inPrice, int tradeVol) {
-        String sCommand = "";
-        sCommand += StockPaths.pythonCommand();
-        sCommand += " ";
-        sCommand += StockPaths.pythonBuyPath();
-        sCommand += " " + stockCode;
-        sCommand += " " + String.format("%.2f", Utils.roundUp(inPrice));
-        sCommand += " " + tradeVol;
 
-        return sCommand;
-    }
-    public String buy(String stockCode, double inPrice, int tradeVol) {
-        String sCommand = getBuyCommand(stockCode, inPrice, tradeVol);
-
-        //need to get the entrustno
-        return execAndGetEntrustNO(sCommand);
-    }
     private String getMarketBuyCommand(String stockCode, double inPrice, int tradeVol) {
         String sCommand = "";
         sCommand += StockPaths.pythonCommand();
         sCommand += " ";
         sCommand += StockPaths.pythonBuyPath();
         sCommand += " " + stockCode;
-        sCommand += " " + String.format("%.2f", Utils.roundUp(inPrice));
+        sCommand += " " + String.format(sPriceFormat, Utils.roundDown(inPrice));
         sCommand += " " + tradeVol;
-        sCommand += " " + String.format("%.2f", Utils.roundUp(inPrice));
+        sCommand += " " + String.format(sPriceFormat, Utils.roundDown(inPrice));
 
         return sCommand;
     }
     public String marketBuy(String stockCode, double inPrice, int tradeVol) {
         String sCommand = getMarketBuyCommand(stockCode, inPrice, tradeVol);
+
+        //need to get the entrustno
+        return execAndGetEntrustNO(sCommand);
+    }
+    private String getBuyCommand(String stockCode, double inPrice, int tradeVol) {
+        String sCommand = "";
+        sCommand += StockPaths.pythonCommand();
+        sCommand += " ";
+        sCommand += StockPaths.pythonBuyPath();
+        sCommand += " " + stockCode;
+        sCommand += " " + String.format(sPriceFormat, Utils.roundDown(inPrice));
+        sCommand += " " + tradeVol;
+
+        return sCommand;
+    }
+    public String buy(String stockCode, double inPrice, int tradeVol) {
+        String sCommand = getBuyCommand(stockCode, inPrice, tradeVol);
 
         //need to get the entrustno
         return execAndGetEntrustNO(sCommand);
