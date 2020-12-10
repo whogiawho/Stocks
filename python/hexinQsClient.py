@@ -71,6 +71,8 @@ class HexinQsClient:
         tempOutTxt_path = tempOut_path+".txt"
         sCompletion=subprocess.run([settings.headFile, "-n 1", tempOutTxt_path], capture_output=True)
         sCaptcha=sCompletion.stdout.decode("utf-8")
+        #remove blank
+        sCaptcha.replace(" ", "")
     
         if bRemoveTmpImage:
             os.remove(tempIn_path)
