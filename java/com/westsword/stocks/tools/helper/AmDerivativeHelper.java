@@ -49,6 +49,7 @@ public class AmDerivativeHelper {
             } else {
                 //mkdir derivative
                 Utils.resetDir(StockPaths.getDerivativeDir(stockCode, tradeDate));
+                Utils.resetDir(StockPaths.getDerivativePngDir(stockCode, tradeDate));
 
                 //make am derivatives for all sds of tradeDate
                 handleAllHMS(stockCode, tradeDate, cmd);
@@ -62,24 +63,105 @@ public class AmDerivativeHelper {
     }
 
 
-    private static int getCodec(int[] idxs, double[] slopes, long[] factorials) {
-        int codec = 0;
-        int n=idxs.length;
-        int[] coords = new int[n];
-        for(int i=0; i<n; i++) {
-            int cnt = 0;
-            int idxBase = idxs[i];
-            for(int j=0; j<i; j++) {
-                int idx = idxs[j];
-                if(slopes[idxBase]>slopes[idx])
-                    cnt++;
-            }
-            coords[i] = cnt;
-            codec += coords[i] * factorials[i];
+
+
+    public static void handleAllHMS(String stockCode, String tradeDate, CommandLine cmd) {
+        double r2Threshold = AmDerUtils.getR2Threshold(cmd);
+        int sdbw = AmDerUtils.getBackwardSd(cmd);
+        int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
+        int interval = AmDerUtils.getAmDerInterval(cmd);
+        int step = AmDerUtils.getStep(cmd);
+
+        AmDerManager adm = new AmDerManager();
+        AmManager amm = AmManager.get(stockCode, tradeDate, AStockSdTime.getCallAuctionEndTime(), sdbw, null);
+        TreeMap<Integer, AmRecord> amrMap = amm.getAmRecordMap();
+        SdTime1 sdt = new SdTime1(stockCode);
+
+        //loop all sds of tradeDate
+        int startSd = sdt.getAbs(sdt.getCallAuctionEndTime(tradeDate));
+        int endSd = sdt.getAbs(sdt.getCloseQuotationTime(tradeDate));
+        for(int sd=startSd; sd<=endSd; sd+=step) {
+            //convert sd to sDerivativeFile
+            long tp = sdt.rgetAbs(sd);
+            String hms = Time.getTimeHMS(tp, false);
+            String sDerivativeFile = StockPaths.getDerivativeFile(stockCode, tradeDate, hms);
+
+            AmRecord r = amrMap.get(sd);
+            //call AmDerManager.run to replace listSingleSd(...) to speed up
+            adm.run(stockCode, r, amrMap, sdt,
+                    r2Threshold, sdbw, minSkippedSD, interval);
+
+            /*
+            listSingleSd(sd, r2Threshold, sdbw, minSkippedSD, interval, 
+                    amm, false, sDerivativeFile);
+            */
+        }
+    }
+    public static void handleSingleHMS(String stockCode, String tradeDate, String hms, CommandLine cmd) {
+        double r2Threshold = AmDerUtils.getR2Threshold(cmd);
+        int sdbw = AmDerUtils.getBackwardSd(cmd);
+        int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
+        int interval = AmDerUtils.getAmDerInterval(cmd);
+
+        AmManager amm = AmManager.get(stockCode, tradeDate, hms, sdbw, null);
+
+        SdTime1 sdt = new SdTime1(stockCode);
+        long tp = Time.getSpecificTime(tradeDate, hms);
+        int sd = sdt.getAbs(tp);
+        System.err.format("%s_%s tp=%x, sd=%d am=%d\n", tradeDate, hms, tp, sd, amm.getAm(sd));
+
+        listSingleSd(sd, r2Threshold, sdbw, minSkippedSD, interval,
+                amm, true, null);
+    } 
+    public static void listSingleSd(int sd, double r2Threshold, int sdbw, int minSkippedSD, int interval,
+            AmManager amm, boolean bStdOut, String sDerivativeFile) {
+
+        AmDerUtils.listSingleSd(sd, r2Threshold, sdbw, minSkippedSD, interval,
+                amm.getAmRecordMap(), bStdOut, sDerivativeFile);
+    }
+
+
+    private static void usage() {
+        System.err.println("usage: java AnalyzeTools listamderivatives [-bhm] stockCode tradeDate [hms]");
+        System.err.println("       only print but not write to file when hms is specified");
+        System.err.println("       -b sdbw       ; at most sdbw shall be looked backward; default 300");
+        System.err.println("       -h r2Threshold; default 0.5");
+        System.err.println("       -m mindist    ; default 5");
+        System.err.println("       -i interval   ; default 1");
+        System.err.println("       -s            ; list only the one with highest R2 from all backward sdtimes");
+        System.err.println("       -e step       ; list amderivatives every step sd, exclusive to -s and only effective when no hms;");
+        System.exit(-1);
+    }
+
+    public static CommandLine getCommandLine(String[] args) {
+        CommandLine cmd = null;
+        try {
+            String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
+            Options options = getOptions();
+
+            CommandLineParser parser = new DefaultParser();
+            cmd = parser.parse(options, newArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        return codec;
-    } 
+        return cmd;
+    }
+    public static Options getOptions() {
+        Options options = new Options();
+        options.addOption("b", true,  "at most sdtime shall be looked backward when calculating derivatives");
+        options.addOption("h", true,  "a R2 threshold for effective derivative");
+        options.addOption("m", true,  "minimum skipped sd distance from current time");
+        options.addOption("i", true,  "the step to get am derivative");
+        options.addOption("e", true,  "list amderivatives every step sd");
+        options.addOption("s", false, "list only the one with highest R2 from all backward sdtimes");
+
+        return options;
+    }
+
+
+
+
 
     /*    group0
     private static int baseU=60;
@@ -193,92 +275,22 @@ public class AmDerivativeHelper {
 
         return sAmDer;
     }
-
-
-    public static void handleAllHMS(String stockCode, String tradeDate, CommandLine cmd) {
-        double r2Threshold = AmDerUtils.getR2Threshold(cmd);
-        int sdbw = AmDerUtils.getBackwardSd(cmd);
-        int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
-        int interval = AmDerUtils.getAmDerInterval(cmd);
-
-        AmManager amm = AmManager.get(stockCode, tradeDate, AStockSdTime.getCallAuctionEndTime(), sdbw, null);
-        TreeMap<Integer, AmRecord> amrMap = amm.getAmRecordMap();
-        SdTime1 sdt = new SdTime1(stockCode);
-
-        //loop all sds of tradeDate
-        int startSd = sdt.getAbs(sdt.getCallAuctionEndTime(tradeDate));
-        int endSd = sdt.getAbs(sdt.getCloseQuotationTime(tradeDate));
-        for(int sd=startSd; sd<=endSd; sd++) {
-            //convert sd to sDerivativeFile
-            long tp = sdt.rgetAbs(sd);
-            String hms = Time.getTimeHMS(tp, false);
-            String sDerivativeFile = StockPaths.getDerivativeFile(stockCode, tradeDate, hms);
-
-            AmRecord r = amrMap.get(sd);
-            //call AmDerManager.run to replace listSingleSd(...)
-            listSingleSd(sd, r2Threshold, sdbw, minSkippedSD, interval, 
-                    amm, false, sDerivativeFile);
+    private static int getCodec(int[] idxs, double[] slopes, long[] factorials) {
+        int codec = 0;
+        int n=idxs.length;
+        int[] coords = new int[n];
+        for(int i=0; i<n; i++) {
+            int cnt = 0;
+            int idxBase = idxs[i];
+            for(int j=0; j<i; j++) {
+                int idx = idxs[j];
+                if(slopes[idxBase]>slopes[idx])
+                    cnt++;
+            }
+            coords[i] = cnt;
+            codec += coords[i] * factorials[i];
         }
-    }
-    public static void handleSingleHMS(String stockCode, String tradeDate, String hms, CommandLine cmd) {
-        double r2Threshold = AmDerUtils.getR2Threshold(cmd);
-        int sdbw = AmDerUtils.getBackwardSd(cmd);
-        int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
-        int interval = AmDerUtils.getAmDerInterval(cmd);
 
-        AmManager amm = AmManager.get(stockCode, tradeDate, hms, sdbw, null);
-
-        SdTime1 sdt = new SdTime1(stockCode);
-        long tp = Time.getSpecificTime(tradeDate, hms);
-        int sd = sdt.getAbs(tp);
-        System.err.format("%s_%s tp=%x, sd=%d am=%d\n", tradeDate, hms, tp, sd, amm.getAm(sd));
-
-        listSingleSd(sd, r2Threshold, sdbw, minSkippedSD, interval,
-                amm, true, null);
+        return codec;
     } 
-    public static void listSingleSd(int sd, double r2Threshold, int sdbw, int minSkippedSD, int interval,
-            AmManager amm, boolean bStdOut, String sDerivativeFile) {
-
-        AmDerUtils.listSingleSd(sd, r2Threshold, sdbw, minSkippedSD, interval,
-                amm.getAmRecordMap(), bStdOut, sDerivativeFile);
-    }
-
-
-    private static void usage() {
-        System.err.println("usage: java AnalyzeTools listamderivatives [-bhm] stockCode tradeDate [hms]");
-        System.err.println("       only print but not write to file when hms is specified");
-        System.err.println("       -b sdbw       ; at most sdbw shall be looked backward; default 300");
-        System.err.println("       -h r2Threshold; default 0.5");
-        System.err.println("       -m mindist    ; default 5");
-        System.err.println("       -i interval   ; default 1");
-        System.err.println("       -s            ; list only the one with highest R2 from all backward sdtimes");
-        System.exit(-1);
-    }
-
-    public static CommandLine getCommandLine(String[] args) {
-        CommandLine cmd = null;
-        try {
-            String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
-            Options options = getOptions();
-
-            CommandLineParser parser = new DefaultParser();
-            cmd = parser.parse(options, newArgs);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return cmd;
-    }
-    public static Options getOptions() {
-        Options options = new Options();
-        options.addOption("b", true,  "at most sdtime shall be looked backward when calculating derivatives");
-        options.addOption("h", true,  "a R2 threshold for effective derivative");
-        options.addOption("m", true,  "minimum skipped sd distance from current time");
-        options.addOption("i", true,  "the step to get am derivative");
-        options.addOption("s", false, "list only the one with highest R2 from all backward sdtimes");
-
-        return options;
-    }
-
-
 }

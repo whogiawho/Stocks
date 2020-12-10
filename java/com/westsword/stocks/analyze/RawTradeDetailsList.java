@@ -31,6 +31,7 @@ public class RawTradeDetailsList extends FileLoader {
 
 
     public boolean onLineRead(String line, int counter) {
+                //System.out.format("line=%s\n", line);
                 String[] fields=line.split(" +");
                 //[0] time; [1] price; [2] count; [3] type
                 long time = Long.parseLong(fields[0], 16);

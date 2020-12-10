@@ -29,6 +29,7 @@ public class AmDerUtils {
     public final static double Default_NaThreshold = 0.9;
     public final static int Default_Minimum_Skipped_SD = 5;
     public final static int Default_Interval = 1;
+    public final static int Default_Step = 1;
 
 
     public static int getBackwardSd(CommandLine cmd) {
@@ -51,6 +52,9 @@ public class AmDerUtils {
     }
     public static int getAmDerInterval(CommandLine cmd) {
         return CmdLineUtils.getInteger(cmd, "i", Default_Interval);
+    }
+    public static int getStep(CommandLine cmd) {
+        return CmdLineUtils.getInteger(cmd, "e", Default_Step);
     }
 
 

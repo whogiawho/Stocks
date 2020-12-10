@@ -27,6 +27,15 @@ import com.westsword.stocks.base.utils.*;
 public class AmDerManager extends TaskManager {
     private TreeSet<Long> mHexTpSet = new TreeSet<Long>();
 
+    public void run(String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt, 
+            double r2Threshold, int sdbw, int minSkippedSD, int interval) {
+        maxThreadsCheck();
+
+        Thread t = new AmDerTask(this, stockCode, r, prevAmrMap, sdt, 
+                r2Threshold, sdbw, minSkippedSD, interval);
+        t.setPriority(Thread.MAX_PRIORITY);
+        t.start();
+    }
     public void run(String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt) {
         String hms = Time.getTimeHMS(r.hexTimePoint, false);
         if(mHexTpSet.contains(r.hexTimePoint)) {
@@ -52,15 +61,34 @@ public class AmDerManager extends TaskManager {
         private TreeMap<Integer, AmRecord> prevAmrMap;
         private SdTime1 sdt;
 
+        private double r2Threshold;
+        private int sdbw;
+        private int minSkippedSD;
+        private int interval;
 
         public AmDerTask(AmDerManager ahm, 
-                String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt) {
+                String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt,
+                double r2Threshold, int sdbw, int minSkippedSD, int interval) {
             super(ahm);
 
             this.stockCode = stockCode;
             this.r = r;
             this.prevAmrMap = prevAmrMap;
             this.sdt = sdt;
+
+            this.r2Threshold = r2Threshold;
+            this.sdbw = sdbw;
+            this.minSkippedSD = minSkippedSD;
+            this.interval = interval;
+        }
+        public AmDerTask(AmDerManager ahm, 
+                String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt) {
+            //get r2Threshold&sdbw&minSkippedSD from settings.txt
+            this(ahm, stockCode, r, prevAmrMap, sdt,
+                    Settings.getR2Threshold(),
+                    Settings.getBackwardSd(),
+                    Settings.getMinimumSkipSd(),
+                    Settings.getAmDerInterval());
         }
 
         @Override
@@ -83,20 +111,8 @@ public class AmDerManager extends TaskManager {
             //get sd from r.timeIndex
             int sd = r.timeIndex;
 
-            /*
-            //get default r2Threshold&sdbw&minSkippedSD
-            double r2Threshold = AmDerUtils.getR2Threshold(null);
-            int sdbw = AmDerUtils.getBackwardSd(null);
-            int minSkippedSD = AmDerUtils.getMinimumSkipSd(null);
-            */
-
-            //get r2Threshold&sdbw&minSkippedSD from settings.txt
-            double r2Threshold = Settings.getR2Threshold();
-            int sdbw = Settings.getBackwardSd();
-            int minSkippedSD = Settings.getMinimumSkipSd();
-            
             //call AmDerUtils.listSingleSd
-            AmDerUtils.listSingleSd(sd, r2Threshold, sdbw, minSkippedSD,
+            AmDerUtils.listSingleSd(sd, r2Threshold, sdbw, minSkippedSD, interval,
                     amrMap, false, sDerivativeFile);
         }
     }

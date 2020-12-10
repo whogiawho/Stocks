@@ -90,12 +90,16 @@ public class Analyze600030 {
         //set mAmRecordMap
         mAmRecordMap = new TreeMap<Integer, AmRecord>();
 
-        //make a copy from AmManager(prevDate).mAmRecordMap
+        //make a amrMap copy from tradeDate&Settings.BackwardSd
+        /*
         StockDates stockDates = new StockDates(stockCode);
         String prevDate = stockDates.prevDate(tradeDate);
         ArrayList<String> tradeDateList = new ArrayList<String>();
         tradeDateList.add(prevDate);
         AmManager amm = new AmManager(stockCode, tradeDateList);
+        */
+        int sdbw = Settings.getBackwardSd();
+        AmManager amm = AmManager.get(stockCode, tradeDate, AStockSdTime.getCallAuctionEndTime(), sdbw, null);
         if(Settings.getSwitch(Settings.AM_DERIVATIVE))
             mPrevAmRecordMap = new TreeMap<Integer, AmRecord>(amm.getAmRecordMap());
         else
