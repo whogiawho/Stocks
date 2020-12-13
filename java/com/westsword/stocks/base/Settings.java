@@ -133,7 +133,7 @@ public class Settings extends FileLoader {
         return getString(stockCode+".SdStartDate");
     }
     public static String getPriceDecimalFormat() {
-        return getString(getStockCode());
+        return getPriceDecimalFormat(getStockCode());
         //return getString("PriceDecimalFormat");
     }
     public static String getPriceDecimalFormat(String stockCode) {

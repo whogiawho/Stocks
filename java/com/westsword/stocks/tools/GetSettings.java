@@ -548,10 +548,12 @@ public class GetSettings{
         double d = Double.valueOf("3.1415926");
         double d1 = Utils.roundUp(d);
         double d2 = Utils.roundUp(d, "#");
+        double d3 = Utils.roundUp(1093.370675732416);
 
         System.out.format("d=%f\n", d);
         System.out.format("d1=%f\n", d1);
         System.out.format("d2=%f\n", d2);
+        System.out.format("d3=%f\n", d3);
     }
     public static void testString(String stockCode) {
         System.out.format("\n testString: \n");
@@ -712,7 +714,7 @@ public class GetSettings{
         //testCkpt(stockCode);
         //testHMSPath(stockCode);
         //testHMSPath0(stockCode);
-        testHMSPath1(stockCode);
+        //testHMSPath1(stockCode);
         //test2EndCkpt(stockCode);
         //testMakeAmDerivetivePng(stockCode, "20200803", "093249");
         //testCombination(stockCode);
@@ -722,7 +724,7 @@ public class GetSettings{
         //testGetAmCorrel(stockCode);
         //testDouble(stockCode);
         //testString(stockCode);
-        //testRoundUp(stockCode);
+        testRoundUp(stockCode);
         //testQualRange(stockCode);
         //testBackSlash(stockCode);
         

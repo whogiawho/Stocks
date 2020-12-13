@@ -1,9 +1,9 @@
-stockCode=510300
-currentDate=20201207
+stockCode=600030
+currentDate=20110728
 
 
-currentDateCloseQuotationTime=5fcdd2f0
-currentDateLastRawTradeDetailTime=5fcdd32c
+currentDateCloseQuotationTime=4e3108f0
+currentDateLastRawTradeDetailTime=4e31092c
 
 
 #PriceDecimalFormat=#.##
@@ -21,15 +21,15 @@ CkptInterval=60
 
 600196.SdStartDate=20200102
 600196.priceStep=0.01
-600030.priceDecimalFormat=#.##
+600196.priceDecimalFormat=#.##
 
 510900.SdStartDate=20150105
 510900.priceStep=0.001
-600030.priceDecimalFormat=#.###
+510900.priceDecimalFormat=#.###
 
 510300.SdStartDate=20120528
 510300.priceStep=0.001
-600030.priceDecimalFormat=#.###
+510300.priceDecimalFormat=#.###
 
 #switch to turn on raw data trace: RawRTPankou, RawTradeDetails, and others
 switchOfRawData=false
@@ -53,7 +53,7 @@ MaxGrowthRate=1.0
 BufferingTradeResult=true
 MaxOutPrice=false
 
-AmDerivative=true
+AmDerivative=false
 R2Threshold=0.5
 #group0
 #MinimumSkipSd=60

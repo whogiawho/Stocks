@@ -63,7 +63,8 @@ function dailyMakeAmDers {
     local i=
     for i in `getTradeDateRange $stockCode $sDate $eDate`
     do
-        java -jar $analyzetoolsJar listamderivatives -i60 -b$bwsd -m60 -e60 $stockCode $tradeDate
+        setupCfgFile $stockCode $i
+        java -jar $analyzetoolsJar listamderivatives -i60 -b$bwsd -m60 -e60 $stockCode $i
     done
 }
 
