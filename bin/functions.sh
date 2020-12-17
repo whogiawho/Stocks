@@ -9,6 +9,7 @@ rawZuBiDataDir=${rawZuBiDataDir:-"$dataRoot\\rawTradeDetails"}
 rawPankouDataDir=${rawPankouDataDir:-"$dataRoot\\rawPankou"}
 dailyDir=${dailyDir:-"$dataRoot\\daily"}
 thsRootDirCygdrive=${thsRootDirCygdrive:-"/cygdrive/e/HexinSoftware/Hexin"}
+amderPngDir=${amderPngDir:-"$dataRoot\\amderPng"}
 TYPE_BUY=0
 TYPE_SELL=1
 EXT_PAN=5

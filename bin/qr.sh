@@ -4,6 +4,32 @@ export qrDir=${qrDir:-"$dataRoot\\qr"}
 export qrGraphDir=${qrGraphDir:-"$dataRoot\\qrGraph"}
 
 #sQrFile - data/qr/300_0.50.txt
+function makeAmDerTxtFromQr {
+    local stockCode=$1
+    local sQrFile=$2
+    local bwsd=$3
+
+    local max=10
+    local cnt=0
+    local sOutDir=`basename $sQrFile`
+    sOutDir=${sOutDir%.*}
+    sOutDir=`dirname $sQrFile`/${sOutDir}
+    local i=
+    for i in `awk '{print $1}' $sQrFile`; 
+    do 
+        local tradeDate=${i%_*}; 
+        local hms=${i#*_}; 
+        JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar listamderivatives -b$bwsd -i60 -m60 $stockCode $tradeDate $hms >$sOutDir/${tradeDate}_$hms.txt & 
+
+        cnt=$((cnt+1))
+        [[ $cnt -ge $max ]] && {
+            wait 
+            cnt=0
+        }
+    done
+}
+
+#sQrFile - data/qr/300_0.50.txt
 function makeAnalysisTxtFromQr {
     local stockCode=$1
     local sQrFile=$2
