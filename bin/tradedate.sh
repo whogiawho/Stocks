@@ -70,12 +70,20 @@ function getTradeDateList {
         echo $tradeDateList
     }
 }
+#start - [0-9]\{4} is a year
+#      - else it is a date
 function getTradeDateRange {
     local stockCode=$1
     local start=$2
     local end=$3
 
     local list=`getTradeDateList $stockCode` 
+    [[ $start =~ ^[0-9]{4}$ ]] && {
+        echo $list|sed "s@ @\n@g"|grep "${start}[0-9]\{4\}"
+        return
+    }
+
+
     echo $list|grep -q $start || {
         echo "startDate=$start does not exist!"
         return -1
