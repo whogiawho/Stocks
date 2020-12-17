@@ -68,7 +68,7 @@ function routinesAfterCloseQuotation {
     #make amderivatives
     makeAmDerivativePng $stockCode $tradeDate 150000 1 $((14400*5))
     local dataDir="$dailyDir\\$stockCode\\$tradeDate"
-    cp "$dataDir\\amderTxt\\${tradeDate}_150000_72000_amder.png" /tmp/${stockCode}amderPng/$tradeDate.png
+    cp "$dataDir\\amderTxt\\${tradeDate}_150000_72000_amder.png" "$amderPngDir\\$stockCode\\$tradeDate.png"
 }
 #write today's checkAllSSTable output to fCheckAllTable
 function write2CheckAllTable {
@@ -245,6 +245,49 @@ function realtimeAnalyze {
     java -jar "$RealtimeJar" "$tradeDetailsDir" "$pankouDir" ""
 }
 
+
+function openNextDailyAmPrice {
+    local stockCode=$1
+    local tradeDates=$2
+
+    local i=
+    for i in $tradeDates
+    do
+        i=`getNextTradeDate $stockCode $i`
+        explorer.exe "$dailyDir\\$stockCode\\$i\\AmPrice.png"
+    done
+}
+function openDailyAmPrice {
+    local stockCode=$1
+    local tradeDates=$2
+
+    local i=
+    for i in $tradeDates
+    do
+        explorer.exe "$dailyDir\\$stockCode\\$i\\AmPrice.png"
+    done
+}
+function openNextAmDerPngDir {
+    local stockCode=$1
+    local tradeDates=$2
+
+    local i=
+    for i in $tradeDates
+    do
+        i=`getNextTradeDate $stockCode $i`
+        explorer.exe "$dailyDir\\$stockCode\\$i\\derivativePng"
+    done
+}
+function openAmderPng {
+    local stockCode=$1
+    local tradeDates=$2
+
+    local i=
+    for i in $tradeDates
+    do
+        explorer.exe "$amderPngDir\\$stockCode\\$i.png"
+    done
+}
 
 
 

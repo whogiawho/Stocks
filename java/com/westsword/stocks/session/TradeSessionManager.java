@@ -155,8 +155,8 @@ public class TradeSessionManager {
         return s.getStockCode().equals(stockCode) && s.isOpen() && !s.isNormal() && !s.isSubmitted();
     }
     private void submitTradeSession(TradeSession s, String stockCode, double outPrice) {
-        String line = String.format("%s: submitted %x\n", 
-                Utils.getCallerName(getClass()), s.getInHexTimePoint());
+        String line = String.format("%s: submitted %x with outPrice=%8.3f\n", 
+                Utils.getCallerName(getClass()), s.getInHexTimePoint(), outPrice);
         System.out.format("%s", line);
 
         int amount = s.getTradeVolume();
