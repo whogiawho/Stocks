@@ -88,7 +88,7 @@ public class AmDerivativeHelper {
 
             AmRecord r = amrMap.get(sd);
             //call AmDerManager.run to replace listSingleSd(...) to speed up
-            adm.run(stockCode, r, amrMap, sdt,
+            adm.runWOCopy(stockCode, r, amrMap, sdt,
                     r2Threshold, sdbw, minSkippedSD, interval);
 
             /*
