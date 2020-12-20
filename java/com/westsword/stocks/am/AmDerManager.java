@@ -25,17 +25,27 @@ import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 
 public class AmDerManager extends TaskManager {
-    private TreeSet<Long> mHexTpSet = new TreeSet<Long>();
+    private TreeSet<Long> mHexTpSet; 
+    private CopyManager mCopyMan; 
 
-    public void run(String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt, 
+    public AmDerManager() {
+        mHexTpSet = new TreeSet<Long>();
+
+        mCopyMan = new CopyManager();
+        mCopyMan.start();
+    }
+
+    //for AmDerivativeHelper
+    public void runWOCopy(String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt, 
             double r2Threshold, int sdbw, int minSkippedSD, int interval) {
         maxThreadsCheck();
 
-        Thread t = new AmDerTask(this, stockCode, r, prevAmrMap, sdt, 
+        AmDerTask t = new AmDerTask(this, stockCode, r, prevAmrMap, sdt, 
                 r2Threshold, sdbw, minSkippedSD, interval);
         t.setPriority(Thread.MAX_PRIORITY);
         t.start();
     }
+    //for AmUtils
     public void run(String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt) {
         String hms = Time.getTimeHMS(r.hexTimePoint, false);
         if(mHexTpSet.contains(r.hexTimePoint)) {
@@ -50,7 +60,8 @@ public class AmDerManager extends TaskManager {
         //System.err.format("%s: add %x(%s)\n", Utils.getCallerName(getClass()), r.hexTimePoint, hms);
         mHexTpSet.add(r.hexTimePoint);
 
-        Thread t = new AmDerTask(this, stockCode, r, prevAmrMap, sdt);
+        AmDerTask t = new AmDerTask(this, stockCode, r, prevAmrMap, sdt);
+        t.setCopyManager(mCopyMan);
         t.setPriority(Thread.MAX_PRIORITY);
         t.start();
     }
@@ -66,6 +77,8 @@ public class AmDerManager extends TaskManager {
         private int minSkippedSD;
         private int interval;
 
+        private CopyManager copyMan;
+
         public AmDerTask(AmDerManager ahm, 
                 String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt,
                 double r2Threshold, int sdbw, int minSkippedSD, int interval) {
@@ -80,6 +93,8 @@ public class AmDerManager extends TaskManager {
             this.sdbw = sdbw;
             this.minSkippedSD = minSkippedSD;
             this.interval = interval;
+
+            this.copyMan = null;
         }
         public AmDerTask(AmDerManager ahm, 
                 String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt) {
@@ -91,23 +106,31 @@ public class AmDerManager extends TaskManager {
                     Settings.getAmDerInterval());
         }
 
+        public void setCopyManager(CopyManager copyMan) {
+            this.copyMan = copyMan;
+        }
         @Override
         public void runTask() {
             //convert r.hexTimePoint to hms
             String tradeDate = Time.getTimeYMD(r.hexTimePoint, false);
             String hms = Time.getTimeHMS(r.hexTimePoint, false);
+            //get sDerivativeFile
+            String sDerivativeFile = StockPaths.getDerivativeFile(stockCode, tradeDate, hms);
 
             //make derivative file for r 
-            makeAmDerivativeFile(r, tradeDate, hms, prevAmrMap, sdt);
+            makeAmDerivativeFile(r, sDerivativeFile, prevAmrMap, sdt);
 
             //call cscript 
             ThreadMakeAmDer.run(stockCode, tradeDate, hms);
+            //copy this png file to the amrate file
+            String sSrcPng = StockPaths.getDerivativePngFile(stockCode, tradeDate, hms);
+            String sDstPng = StockPaths.getAmRatePngFile(stockCode, tradeDate);
+            if(copyMan!=null) 
+                copyMan.requestCopy(sSrcPng, sDstPng);
         }
 
-        private void makeAmDerivativeFile(AmRecord r, String tradeDate, String hms, 
+        private void makeAmDerivativeFile(AmRecord r, String sDerivativeFile, 
                 TreeMap<Integer, AmRecord> amrMap, SdTime1 sdt) {
-            //get sDerivativeFile
-            String sDerivativeFile = StockPaths.getDerivativeFile(stockCode, tradeDate, hms);
             //get sd from r.timeIndex
             int sd = r.timeIndex;
 

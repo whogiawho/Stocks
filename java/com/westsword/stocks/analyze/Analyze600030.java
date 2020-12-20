@@ -53,6 +53,7 @@ public class Analyze600030 {
     private TreeMap<Integer, AmRecord> mAmRecordMap;
     private TreeMap<Integer, AmRecord> mPrevAmRecordMap;
 
+    private AmRateViewer mAmRateViewer;
 
     Analyze600030(RealtimeAnalyze rtAnalyzeFrame) {
         String stockCode = Settings.getStockCode();
@@ -73,7 +74,8 @@ public class Analyze600030 {
         mTer = new AmUtils.TrackExtreme();
         //set mTsMan
         mTsMan = new TradeSessionManager(stockCode);
-        mTsMan.check2SubmitSession();
+        if(Settings.getSwitch(Settings.CHECK_2_SUBMIT_SESSION))
+            mTsMan.check2SubmitSession();
         //set mSsAnalyzeh[012] etc
         String[] sSSTable = SSTable.getSSTableNames();
         mSsAnalyze = new SimilarStackAnalyze[sSSTable.length];
@@ -108,6 +110,10 @@ public class Analyze600030 {
         //mkdir derivative&derivativePng
         Utils.mkDir(StockPaths.getDerivativeDir(stockCode, tradeDate));
         Utils.mkDir(StockPaths.getDerivativePngDir(stockCode, tradeDate));
+
+        mAmRateViewer = new AmRateViewer();
+        //start amrateviewer 
+        mAmRateViewer.start();
     }
 
     private long prevRefreshTp=0;
@@ -142,6 +148,7 @@ public class Analyze600030 {
             tsMan.makeRRP(r);
         }
     }
+
 
     private boolean bNoPerformanceLog = Settings.getSwitch(Settings.NO_PERFORMANCE_LOG);
     private boolean bCallAuctionComplete = false;
