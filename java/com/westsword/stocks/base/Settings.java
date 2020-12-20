@@ -98,6 +98,9 @@ public class Settings extends FileLoader {
 
 
 
+    public static String getAmRateViewer() {
+        return getString("AmRateViewer");
+    }
     public static Integer getQsIdx() {
         return getInteger("QSIDX");
     }
@@ -232,6 +235,7 @@ public class Settings extends FileLoader {
     public final static int ONLY_LONG_TRADESESSION = 4;
     public final static int MAX_OUT_PRICE = 5;
     public final static int AM_DERIVATIVE = 6;
+    public final static int CHECK_2_SUBMIT_SESSION = 7;
     public final static String[] booleanKeys = {
         "noPerformanceLog",
         "switchOfRawData",
@@ -240,8 +244,10 @@ public class Settings extends FileLoader {
         "OnlyLongTradeSession",
         "MaxOutPrice",
         "AmDerivative",
+        "Check2SumitSession",
     };
     public final static Boolean[] booleanValues = {
+        null,
         null,
         null,
         null,

@@ -209,6 +209,9 @@ public class StockPaths {
         return sSessionFile;
     }
 
+    public static String getDerivativePngDir() {
+        return getDerivativePngDir(Settings.getStockCode(), Settings.getTradeDate());
+    }
     public static String getDerivativePngDir(String stockCode, String tradeDate) {
         return getDailyDir(stockCode, tradeDate) + sSep + "derivativePng" + sSep; 
     }
@@ -221,8 +224,16 @@ public class StockPaths {
     public static String getDerivativeFile(String stockCode, String tradeDate, String hms) {
         return getDerivativeDir(stockCode, tradeDate) + hms + ".txt";
     }
+
+
     public static String getAmDerivativeFile(String stockCode, String tradeDate) {
         return getDailyDir(stockCode, tradeDate) + sSep + "amderivative.txt"; 
+    }
+    public static String getAmRatePngFile(String stockCode, String tradeDate) {
+        return getDailyDir(stockCode, tradeDate) + sSep + "amrate.png"; 
+    }
+    public static String getAmRatePngFile() {
+        return getAmRatePngFile(Settings.getStockCode(), Settings.getTradeDate());
     }
 
 

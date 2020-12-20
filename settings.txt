@@ -1,9 +1,9 @@
 stockCode=600030
-currentDate=20110728
+currentDate=20201221
 
 
-currentDateCloseQuotationTime=4e3108f0
-currentDateLastRawTradeDetailTime=4e31092c
+currentDateCloseQuotationTime=5fe047f0
+currentDateLastRawTradeDetailTime=5fe0482c
 
 
 #PriceDecimalFormat=#.##
@@ -53,7 +53,7 @@ MaxGrowthRate=1.0
 BufferingTradeResult=true
 MaxOutPrice=false
 
-AmDerivative=false
+AmDerivative=true
 R2Threshold=0.5
 #group0
 #MinimumSkipSd=60
@@ -72,3 +72,5 @@ AmDerInterval=60
 #it may be override by the system env variable qsIdx 
 QSIDX=0
 
+AmRateViewer=C:\Program Files\JPEGView64\JPEGView.exe
+Check2SumitSession=true
