@@ -49,11 +49,7 @@ public class Task extends Thread {
         Random r = new Random();
         int interval = r.nextInt(10000);
         System.out.format("%s: interval=%d\n", Utils.getCallerName(getClass()), interval);
-        try {
-            Thread.sleep(interval);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Utils.sleep(interval);
     }
 }
 

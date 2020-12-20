@@ -542,6 +542,23 @@ public class GetSettings{
         String sStockCode=Settings.getString("d:\\Stocks\\settings.txt", "stockCode");   //ok
         System.out.format("sStockCode=%s 已撤\n", sStockCode);
     }
+    public static void testAmRateViewer(String stockCode) {
+        System.out.format("\n testAmRateViewer: \n");
+        AmRateViewer v = new AmRateViewer();
+        v.start();
+        CopyManager m = new CopyManager();
+        m.start();
+
+        //start threads to write amrate.png
+        while(true) {
+            Utils.randSleep();
+
+            AmRateWriter w = new AmRateWriter(m);
+            w.start();
+        }
+
+        //System.out.format("\n testAmRateViewer: quitted!\n");
+    }
     public static void testRoundUp(String stockCode) {
         System.out.format("\n testRoundUp: \n");
 
@@ -724,7 +741,8 @@ public class GetSettings{
         //testGetAmCorrel(stockCode);
         //testDouble(stockCode);
         //testString(stockCode);
-        testRoundUp(stockCode);
+        //testRoundUp(stockCode);
+        testAmRateViewer(stockCode);
         //testQualRange(stockCode);
         //testBackSlash(stockCode);
         

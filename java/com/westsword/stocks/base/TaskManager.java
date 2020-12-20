@@ -17,8 +17,6 @@
 package com.westsword.stocks.base;
 
 
-import java.util.*;
-
 import com.westsword.stocks.base.time.Time;
 
 public class TaskManager {
@@ -42,11 +40,7 @@ public class TaskManager {
 
     public void maxThreadsCheck() {
         while(getConcurrent()>=MaxThreads) {
-            try {
-                Thread.sleep(10);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            Utils.sleep(10);
         }
         //System.out.format("%s %s: mConcurrent=%d\n", Time.current(), Utils.getCallerName(getClass()), mConcurrent);
     }
@@ -57,4 +51,5 @@ public class TaskManager {
         Task t = new Task(this);
         t.start();
     }
+
 }

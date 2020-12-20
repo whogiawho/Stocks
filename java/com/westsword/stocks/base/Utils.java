@@ -32,8 +32,33 @@ import com.westsword.stocks.base.time.*;
 
 public class Utils {
     public final static int EXEC_TIMEOUT_SECONDS = 60;
+    public final static Random r = new Random();
 
 
+    public static boolean guardedCopy(String sSrcFile, String sDstFile, int maxTry) {
+        boolean bCopied = false;
+        int i = 0;
+        while(!bCopied && i<maxTry) {
+            bCopied = copyFile(sSrcFile, sDstFile);
+            i++;
+            if(!bCopied) {
+                System.err.format("%s: again try i=%d! %s\n", 
+                        "Utils.guardedCopy", i, sSrcFile);
+            }
+        }
+
+        return bCopied;
+    }
+    public static boolean copyFile(String sSrcFile, String sDstFile) {
+        boolean bCopied = false;
+        try {
+            FileUtils.copyFile(new File(sSrcFile), new File(sDstFile));
+            bCopied = true;
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return bCopied;
+    }
     public static boolean isFile(String path) {
         File f = new File(path);
         return f.isFile();
@@ -271,5 +296,29 @@ public class Utils {
 
         return exitVal;
     }
+    public static boolean wait4Alive(Process proc) {
+        boolean bAmRateViewerStarted = false;
+        int i=0;
+        while(!proc.isAlive()&&i<10) {
+            System.err.format("AmRateViewer._start(): waiting amrateviewer alive!\n");
+            i++;
+        }
+        if(i<10)
+             bAmRateViewerStarted = true;
 
+        return bAmRateViewerStarted;
+    }
+
+    //random sleep [0, 1) second
+    public static void randSleep() {
+        long ts = (long)(r.nextDouble()*1000);
+        Utils.sleep(ts);
+    }
+    public static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }
