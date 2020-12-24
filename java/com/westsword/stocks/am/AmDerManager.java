@@ -28,11 +28,15 @@ public class AmDerManager extends TaskManager {
     private TreeSet<Long> mHexTpSet; 
     private CopyManager mCopyMan; 
 
-    public AmDerManager() {
+    public AmDerManager(boolean bStartCopyManagerThread) {
         mHexTpSet = new TreeSet<Long>();
 
         mCopyMan = new CopyManager();
-        mCopyMan.start();
+        if(bStartCopyManagerThread)
+            mCopyMan.start();
+    }
+    public AmDerManager() {
+        this(true);
     }
 
     //for AmDerivativeHelper

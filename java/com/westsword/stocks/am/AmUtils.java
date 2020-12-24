@@ -27,12 +27,15 @@ import com.westsword.stocks.analyze.RawTradeDetailsList;
 
 
 public class AmUtils {
-    public AmUtils(String stockCode) {
+    public AmUtils(String stockCode, boolean bStartCopyManagerThread) {
         mStockCode = stockCode;
         mSdTime = new SdTime1(stockCode);   //get sdStartDate&sdStartTime&interval from settings.txt
         mStockDates = new StockDates(stockCode);
 
-        mAdm = new AmDerManager();
+        mAdm = new AmDerManager(bStartCopyManagerThread);
+    }
+    public AmUtils(String stockCode) {
+        this(stockCode, true);
     }
 
     public void writeAllAmRecords() {

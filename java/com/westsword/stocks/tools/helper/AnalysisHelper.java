@@ -32,7 +32,7 @@ public class AnalysisHelper {
         if(args.length >= 4)
             tradeDate2 = args[3];
 
-        AmUtils amUtils = new AmUtils(stockCode);
+        AmUtils amUtils = new AmUtils(stockCode, false);
         if(args.length == 3) {
             long startAm = amUtils.loadPrevLastAm(tradeDate1);
             amUtils.writeAmRecords(startAm, tradeDate1);
