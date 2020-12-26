@@ -1,6 +1,76 @@
 #!/bin/bash
 
 
+function makeAllContAmStatsTxt {
+    local stockCode=$1
+    local startDate=$2
+    local endDate=$3
+
+    local max=10
+    local cnt=0
+    local i=
+    for i in `getTradeDateRange $stockCode $startDate $endDate`
+    do
+        makeContAmStatsTxt $stockCode $i &
+
+        cnt=$((cnt+1))
+        [[ $cnt -ge $max ]] && {
+            wait
+            cnt=0
+        }
+    done
+}
+function makeContAmStatsTxt {
+    local stockCode=$1
+    local tradeDate=$2
+
+    local sContAmStatsTxt="$dailyDir\\$stockCode\\$tradeDate\\contamstats.txt"
+    rm -rf $sContAmStatsTxt
+
+    local derivativeDir="$dailyDir\\$stockCode\\$tradeDate\\derivative"
+    local i=
+    for i in `ls $derivativeDir`; 
+    do 
+        local stats=`getContAmStats $derivativeDir/$i`; 
+        echo $stockCode $tradeDate $i $stats |tee -a $sContAmStatsTxt
+    done
+}
+function getContAmStats {
+    local fAmDer=$1
+
+    local posCnt=0 negCnt=0 zeorCnt=0
+    local i=
+    local amTypes=`getContAmType $fAmDer`
+    for i in $amTypes 
+    do
+        [[ $i -eq 1 ]] && posCnt=$((posCnt+1)) || {
+            [[ $i -eq -1 ]] && negCnt=$((negCnt+1)) || {
+                zeorCnt=$((zeorCnt+1))
+            }
+        }
+    done
+    amTypes=`echo $amTypes|sed "s/ /,/g"`
+
+    echo $posCnt $zeorCnt $negCnt $amTypes
+}
+function getContAmType {
+    local fAmDer=$1
+
+    local ams=
+    ams=`awk '{print $2}' $fAmDer`
+
+    local line=
+    echo $ams|sed "s@\( #N/A\)\+@\n@g"|while read line
+    do
+        getAmLineType "$line"
+    done
+}
+function getAmLineType {
+    local line=$1
+
+    JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar getamlinetype -i30 -a150 "$line" 2>/dev/null
+}
+
 
 function makeAvi {
     local stockCode=$1
