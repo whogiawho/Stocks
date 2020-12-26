@@ -96,6 +96,11 @@ function convertTime2Hex {
     local tradeDate=$1
     local tradeTime=$2
 
+    [[ -z $tradeTime ]] && {
+        tradeTime=${tradeDate#*,}
+        tradeDate=${tradeDate%,*}
+    }
+
     tradeDate=`unformalizeTradeDate $tradeDate`
     tradeTime=${tradeTime//:/}
     local year=${tradeDate:0:4}
