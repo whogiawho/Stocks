@@ -39,6 +39,10 @@ public class AmDerManager extends TaskManager {
         this(true);
     }
 
+    public void stopCopyManager() {
+        mCopyMan.stopIt();
+        mCopyMan.interrupt();
+    }
     //for AmDerivativeHelper
     public void runWOCopy(String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt, 
             double r2Threshold, int sdbw, int minSkippedSD, int interval) {

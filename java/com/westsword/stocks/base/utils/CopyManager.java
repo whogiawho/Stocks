@@ -23,10 +23,12 @@ import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.Settings;
 
 public class CopyManager extends Thread {
+    private boolean bStopped;
     private ArrayBlockingQueue<CopyRequest> mRequestQueue; 
 
     public CopyManager() {
-        mRequestQueue = new ArrayBlockingQueue<CopyRequest>(Settings.getMaxTasks());
+        bStopped = false;
+        mRequestQueue = new ArrayBlockingQueue<CopyRequest>(Settings.getMaxTasks()*5);
     }
     public void requestCopy(String sSrcFile, String sDstFile) {
         try {
@@ -35,14 +37,20 @@ public class CopyManager extends Thread {
             e.printStackTrace();
         }
     }
+    public void stopIt() {
+        bStopped = true;
+    }
     public void run() {
-        while(true) {
-            try {
+        try {
+            while(!bStopped) {
                 CopyRequest r = mRequestQueue.take();
                 Utils.guardedCopy(r.sSrc, r.sDst, 5);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
+        } catch (InterruptedException e) {
+            String line = String.format("%s: CopyManager stopped!", Utils.getCallerName(getClass()));
+            line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);
+            System.out.format("%s\n", line);
+            e.printStackTrace();
         }
     }
 

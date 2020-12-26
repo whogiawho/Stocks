@@ -36,7 +36,8 @@ public class AmRateViewer extends Thread {
                     String sCommand = "";
                     sCommand += "\"" + sAmRateViewer + "\"";
                     sCommand += " " + sRateFile;
-                    System.out.format("AmRateViewer._start(): %s\n", sCommand);
+                    System.out.format("%s: %s\n", 
+                            Utils.getCallerName(getClass()), sCommand);
                     String[] cmd = {"cmd", "/C", sCommand};
                     Process proc = Runtime.getRuntime().exec(cmd);
 
@@ -46,7 +47,7 @@ public class AmRateViewer extends Thread {
                 }
             }
         }
-
+        System.out.format("%s: thread AmRateViewer quitted!", 
+                Utils.getCallerName(getClass()));
     }
-
 }

@@ -72,7 +72,7 @@ public class AmDerivativeHelper {
         int interval = AmDerUtils.getAmDerInterval(cmd);
         int step = AmDerUtils.getStep(cmd);
 
-        AmDerManager adm = new AmDerManager();
+        AmDerManager adm = new AmDerManager(false);
         AmManager amm = AmManager.get(stockCode, tradeDate, AStockSdTime.getCallAuctionEndTime(), sdbw, null);
         TreeMap<Integer, AmRecord> amrMap = amm.getAmRecordMap();
         SdTime1 sdt = new SdTime1(stockCode);

@@ -38,6 +38,9 @@ public class AmUtils {
         this(stockCode, true);
     }
 
+    public void stopCopyManager() {
+        mAdm.stopCopyManager();
+    }
     public void writeAllAmRecords() {
         writeAmRecords(mStockDates.firstDate(), mStockDates.lastDate());
     }

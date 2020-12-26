@@ -178,6 +178,8 @@ public class Analyze600030 {
             System.out.format("%s: isLastRawTradeDetailHandled=%b, isLastPankouHandled=%b\n", 
                     Utils.getCallerName(getClass()), isLastRawTradeDetailHandled(), isLastPankouHandled());
             mTsMan.checkAbnormalSubmittedSessions(true);
+            //stop the copyManager
+            mAmu.stopCopyManager();
         }
     }
 
