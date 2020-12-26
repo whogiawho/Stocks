@@ -34,7 +34,7 @@ public class AnalyzeTools{
                 "         getrel | rgetrel | getabs | rgetabs | getanalysis | stdprice |\n" +
                 "         ssinstance | ssinstances | filterssi | sstrinstance | mminstance |\n" +
                 "         getfullss | checksstable | getsstable | ssamhole |\n" +
-                "         getpermcoord | permstats | permsep |\n" +
+                "         getpermcoord | permstats | permsep | getamlinetype |\n" +
                 "         getentrust | checkabss | submitabs | makerrp |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify | qrvgetstats |\n" +
                 "         qualrange | qrmaxmatch | qrverify | qrsearchss | shrinkqrv |\n" +
@@ -167,7 +167,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("permstats")) {
             PermStatsHelper.get(args);
         } else if (sOption.equals("permsep")) {
-            PermSepHelper.get(args);
+            PermStatsHelper.get(args);
+        } else if (sOption.equals("getamlinetype")) {
+            AmLineHelper.getType(args);
         } else if(sOption.equals("checkabss")) {
             THSQSHelper.checkAbss(args);
         } else if(sOption.equals("submitabs")) {

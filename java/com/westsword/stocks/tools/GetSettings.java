@@ -559,6 +559,25 @@ public class GetSettings{
 
         //System.out.format("\n testAmRateViewer: quitted!\n");
     }
+    public static void testPearsonsCorrelation(String stockCode) {
+        System.out.format("\n testPearsonsCorrelation: \n");
+
+        double[] x0 = {1.0, 2.0, 3.0, 4.0, Double.NaN, 5.0, 6.0};
+        double[] y0 = {2.0, 3.0, 4.0, 5.0, 6.0, Double.NaN, 7.0};
+        double[] x1 = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,  6.0};
+        double[] y1 = {2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 117.0};
+        double[] x2 = {1.0, 2.0, 3.0, 4.0, Double.NaN, 5.0, 6.0};
+        double[] y2 = {2.0, 3.0, 4.0, 5.0, 6.0, 6.0, 7.0};
+
+        double correl = new PearsonsCorrelation().correlation(x0, y0);
+        System.out.format("correl(x0, y0)=%8.3f\n", correl);
+
+        correl = new PearsonsCorrelation().correlation(x1, y1);
+        System.out.format("correl(x1, y1)=%8.3f\n", correl);
+
+        correl = new PearsonsCorrelation().correlation(x2, y2);
+        System.out.format("correl(x2, y2)=%8.3f\n", correl);
+    }
     public static void testRoundUp(String stockCode) {
         System.out.format("\n testRoundUp: \n");
 
@@ -742,7 +761,8 @@ public class GetSettings{
         //testDouble(stockCode);
         //testString(stockCode);
         //testRoundUp(stockCode);
-        testAmRateViewer(stockCode);
+        testPearsonsCorrelation(stockCode);
+        //testAmRateViewer(stockCode);
         //testQualRange(stockCode);
         //testBackSlash(stockCode);
         
