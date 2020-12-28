@@ -19,6 +19,7 @@ package com.westsword.stocks.tools;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.math3.util.Combinations;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -559,6 +560,65 @@ public class GetSettings{
 
         //System.out.format("\n testAmRateViewer: quitted!\n");
     }
+    public static void testAmDerLoader(String stockCode) {
+        System.out.format("\n testAmDerLoader: \n");
+
+        String tradeDate0 = "20201217";
+        String[] hms0 = {
+            "105144", 
+            "105145", 
+            "105146", 
+            "105147", 
+            "105148", 
+            "105149", 
+            "105150", 
+            "105151", 
+            "105152", 
+            "105153", 
+            "105154", 
+            "105155", 
+            "105156", 
+            "105157", 
+            "105158", 
+            "105159", 
+            "105200", 
+            "105201", 
+            "105202", 
+            "105203", 
+            "105204", 
+            "105205", 
+            "105206", 
+            "105207", 
+            "105208", 
+            "105209", 
+            "105210", 
+            "105211", 
+            "105212", 
+            "105213", 
+        };
+        for(int i=0; i<hms0.length; i++) {
+            String sAmderFile = "D:\\Stocks\\data\\daily\\" + stockCode + "\\" + 
+                tradeDate0 + "\\derivative\\" + hms0[i] + ".txt";
+            AmDerLoader l = new AmDerLoader();
+            ArrayList<Double> amderList = new ArrayList<Double>();
+            l.load(amderList, sAmderFile);
+            Double[] X = amderList.toArray(new Double[0]);
+            double[] x = ArrayUtils.toPrimitive(X);
+
+
+            String tradeDate1 = "20090630";
+            String hms1 = "105157";
+            sAmderFile = "D:\\Stocks\\data\\daily\\" + stockCode + "\\" + 
+                tradeDate1 + "\\derivative\\" + hms1 + ".txt";
+            amderList = new ArrayList<Double>();
+            l.load(amderList, sAmderFile);
+            Double[] Y = amderList.toArray(new Double[0]);
+            double[] y = ArrayUtils.toPrimitive(Y);
+
+            System.out.format("hms0[i]=%s, amcorrel=%8.3f\n", 
+                    hms0[i], new PearsonsCorrelation().correlation(x, y));
+        }
+    }
     public static void testPearsonsCorrelation(String stockCode) {
         System.out.format("\n testPearsonsCorrelation: \n");
 
@@ -761,7 +821,8 @@ public class GetSettings{
         //testDouble(stockCode);
         //testString(stockCode);
         //testRoundUp(stockCode);
-        testPearsonsCorrelation(stockCode);
+        //testPearsonsCorrelation(stockCode);
+        testAmDerLoader(stockCode);
         //testAmRateViewer(stockCode);
         //testQualRange(stockCode);
         //testBackSlash(stockCode);

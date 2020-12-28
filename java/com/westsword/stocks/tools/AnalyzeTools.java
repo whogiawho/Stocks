@@ -33,7 +33,7 @@ public class AnalyzeTools{
                 "         nexttradedate | prevtradedate | listamderivatives |\n" +
                 "         getrel | rgetrel | getabs | rgetabs | getanalysis | stdprice |\n" +
                 "         ssinstance | ssinstances | filterssi | sstrinstance | mminstance |\n" +
-                "         getfullss | checksstable | getsstable | ssamhole |\n" +
+                "         getfullss | checksstable | getsstable | ssamhole | searchsam |\n" +
                 "         getpermcoord | permstats | permsep | getamlinetype |\n" +
                 "         getentrust | checkabss | submitabs | makerrp |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify | qrvgetstats |\n" +
@@ -164,6 +164,8 @@ public class AnalyzeTools{
             ssth.getSSTableName(args);
         } else if (sOption.equals("ssamhole")) {
             AmHoleHelper.search(args);
+        } else if (sOption.equals("searchsam")) {
+            AmHelper.search(args);
         } else if (sOption.equals("permstats")) {
             PermStatsHelper.get(args);
         } else if (sOption.equals("permsep")) {
