@@ -278,7 +278,7 @@ function openNextAmDerPngDir {
         explorer.exe "$dailyDir\\$stockCode\\$i\\derivativePng"
     done
 }
-function openAmderPng {
+function openAmderPngs {
     local stockCode=$1
     local tradeDates=$2
 
@@ -289,6 +289,18 @@ function openAmderPng {
     done
 }
 
+function openAmderPng {
+    local stockCode=$1
+    local tradeDate=$2
+    local hms=$3
+
+    [[ -z $hms ]] && {
+        hms=${tradeDate#*,}
+        tradeDate=${tradeDate%,*}
+    }
+
+    JPEGView.exe "$dailyDir\\$stockCode\\$tradeDate\\derivativePng\\$hms.png" &
+}
 
 
 

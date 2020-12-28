@@ -134,6 +134,10 @@ function getUpPrice {
     local tradeDate=$2
     local hms=$3
  
+    [[ -z $hms ]] && {
+        hms=${tradeDate#*,}
+        tradeDate=${tradeDate%,*}
+    }
     getPrice $stockCode $tradeDate $hms 5
 }
 function getDownPrice {
