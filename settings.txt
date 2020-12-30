@@ -1,9 +1,9 @@
 stockCode=600030
-currentDate=20201221
+currentDate=20201230
 
 
-currentDateCloseQuotationTime=5fe047f0
-currentDateLastRawTradeDetailTime=5fe0482c
+currentDateCloseQuotationTime=5fec2570
+currentDateLastRawTradeDetailTime=5fec25ac
 
 
 #PriceDecimalFormat=#.##
@@ -30,6 +30,10 @@ CkptInterval=60
 510300.SdStartDate=20120528
 510300.priceStep=0.001
 510300.priceDecimalFormat=#.###
+
+512880.SdStartDate=20160808
+512880.priceStep=0.001
+512880.priceDecimalFormat=#.###
 
 #switch to turn on raw data trace: RawRTPankou, RawTradeDetails, and others
 switchOfRawData=false
