@@ -105,7 +105,7 @@ public class MinStdDevR {
         int count = 0;
         for(int j=0; j<corrM.length; j++) {
             Double amcorrel = corrM[idx][j];
-            if(amcorrel != Double.NaN) {
+            if(!Double.isNaN(amcorrel)) {
                 avgAmCorrel += amcorrel;
                 count++;
                 amcorrelList.add(amcorrel);
@@ -128,7 +128,7 @@ public class MinStdDevR {
 
             Double amcorrel = AmcMap.getAmCorrel(tradeDate0, tradeDate1, hms[0], hms[1], 
                     am, stockCode);
-            if(amcorrel != Double.NaN) {
+            if(!Double.isNaN(amcorrel)) {
                 avgAmCorrel += amcorrel;
                 count++;
                 amcorrelList.add(amcorrel);
