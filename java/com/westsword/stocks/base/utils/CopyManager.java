@@ -28,7 +28,7 @@ public class CopyManager extends Thread {
 
     public CopyManager() {
         bStopped = false;
-        mRequestQueue = new ArrayBlockingQueue<CopyRequest>(Settings.getMaxTasks()*5);
+        mRequestQueue = new ArrayBlockingQueue<CopyRequest>(Settings.getMaxTasks()*10);
     }
     public void requestCopy(String sSrcFile, String sDstFile) {
         try {
