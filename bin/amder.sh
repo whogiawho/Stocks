@@ -1,6 +1,7 @@
 #!/bin/bash
 
 
+
 function makeAllContAmStatsTxt {
     local stockCode=$1
     local startDate=$2
@@ -153,6 +154,7 @@ function makeAmDerivativePng {
     local interval=$4 
     local bwsd=$5                             #optional
     local r2Threshold=$6                      #optional
+    local bSaveTxt=$7                         #optional
 
     [[ -z $bwsd ]] && bwsd=300
     [[ -z $r2Threshold ]] && r2Threshold=0.5
@@ -168,7 +170,7 @@ function makeAmDerivativePng {
     local sPngFile="$amderDir\\${tradeDate}_${hms}_${bwsd}_amder.png"
     cscript.exe "$rootDir\\vbs\\makeAmDerivativePng.vbs" "$amDerTxt" "$sPngFile"
 
-    rm -rf $amDerTxt
+    [[ -z $bSaveTxt ]] && rm -rf $amDerTxt
 }
 
 
@@ -266,7 +268,51 @@ function amDerStats {
         }
     done
 }
+function amderSearch {
+    local stockCode=$1
+    local minAMCnt=$2
+    local maxAMCnt=$3
+    local fOut=$4
+
+    local max=10
+    local cnt=0
+    local i=
+    for i in `getTradeDateList $stockCode`
+    do
+        amderSearchHMS $stockCode $i $minAMCnt $maxAMCnt $fOut&
+
+        cnt=$((cnt+1))
+        [[ $cnt -ge $max ]] && {
+            wait
+            cnt=0
+        }
+    done
+}
 function amderSearchHMS {
+    local stockCode=$1
+    local tradeDate=$2
+    local minAMCnt=$3
+    local maxAMCnt=$4
+    local fOut=$5
+
+    local derivativeDir="$dailyDir\\$stockCode\\$tradeDate\\derivative"
+    local i=
+    for i in `ls $derivativeDir`; 
+    do 
+        local ams=
+        ams=`awk '{print $2}' $derivativeDir/$i`
+
+        local line=
+        echo $ams|sed "s@\( #N/A\)\+@\n@g"|while read line
+        do
+            local wordCnt=`echo $line|wc|awk '{print $2}'`
+            [[ $wordCnt -ge $minAMCnt && $wordCnt -le $maxAMCnt ]] && {
+                echo $stockCode $tradeDate $i \"$line\" >>$fOut
+            }
+        done
+    done
+}
+function _amderSearchHMS {
     local stockCode=$1
     local startSd=$2                          #optional
     local endSd=$3                            #optional
