@@ -21,8 +21,16 @@ import java.util.*;
 import com.westsword.stocks.base.utils.FileLoader;
 
 public class AmDerLoader extends FileLoader {
-    private final static int MAX_NA_ADJUSTED = 30;
+    private final static int DEFAULT_MAX_NA_ADJUSTED = 30;
 
+    public AmDerLoader() {
+        this(DEFAULT_MAX_NA_ADJUSTED);
+    }
+    public AmDerLoader(int maxNAAdjusted) {
+        mMaxNAAdjusted = maxNAAdjusted;
+    }
+
+    private int mMaxNAAdjusted;
     private int mNACnt=0;
     private ArrayList<Double> mAmderList = null;
     private double mPrev = Double.NaN;
@@ -36,7 +44,7 @@ public class AmDerLoader extends FileLoader {
             amder = Double.valueOf(sAmder);
             mPrev = amder;
         } else {
-            if(mNACnt<MAX_NA_ADJUSTED) {
+            if(mNACnt<mMaxNAAdjusted) {
                 amder = mPrev;
                 mNACnt++;
             }

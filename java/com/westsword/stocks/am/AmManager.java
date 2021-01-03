@@ -108,14 +108,35 @@ public class AmManager {
             String endDate, String endHMS) {
         return AmUtils.getItemMap(mAmRecordMap, mSdTime, startDate, startHMS, endDate, endHMS);
     }
+    public double[] getExtremePrice(String startDate, String startHMS, String endDate, String endHMS) {
+        NavigableMap<Integer, AmRecord> map0 = getItemMap(startDate, startHMS, endDate, endHMS);
 
+        double[] v = new double[2];
+        v[0] = Double.MIN_VALUE; v[1] = Double.MAX_VALUE;
+        for(Integer key: map0.keySet()) {
+            AmRecord r = map0.get(key);
+
+            if(r.downPrice > v[0])
+                v[0] = r.downPrice;
+            if(r.upPrice < v[1])
+                v[1] = r.upPrice;
+        }
+
+        return v;
+    }
 
     public double getInPrice(int tradeType, long inTime) {
         AmRecord r = getFloorItem(inTime);
         return r.getInPrice(tradeType);
     }
+    public double getUpPrice(String tradeDate, String hms) {
+        return getUpPrice(Time.getSpecificTime(tradeDate, hms));
+    }
     public double getUpPrice(long inTime) {
         return getInPrice(Stock.TRADE_TYPE_UP, inTime);
+    }
+    public double getDownPrice(String tradeDate, String hms) {
+        return getDownPrice(Time.getSpecificTime(tradeDate, hms));
     }
     public double getDownPrice(long inTime) {
         return getInPrice(Stock.TRADE_TYPE_DOWN, inTime);
