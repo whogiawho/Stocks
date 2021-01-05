@@ -166,9 +166,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("ssamhole")) {
             AmHoleHelper.search(args);
         } else if (sOption.equals("searchsam0")) {
-            SAmHelper.search0(args);
+            SAm0Helper.search(args);
         } else if (sOption.equals("searchsam1")) {
-            SAmHelper.search1(args);
+            SAm1Helper.search(args);
         } else if (sOption.equals("getlsprofit")) {
             LSProfitHelper.get(args);
         } else if (sOption.equals("permstats")) {
