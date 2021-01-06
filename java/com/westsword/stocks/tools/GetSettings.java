@@ -19,11 +19,13 @@ package com.westsword.stocks.tools;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
+import org.apache.commons.math3.fitting.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.math3.util.Combinations;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 
 import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
@@ -560,6 +562,46 @@ public class GetSettings{
 
         //System.out.format("\n testAmRateViewer: quitted!\n");
     }
+    public static void testApachePolynomial(String stockCode) {
+        System.out.format("\n testApachePolynomial: \n");
+
+        final WeightedObservedPoints obs = new WeightedObservedPoints();
+        obs.add(10, 100);
+        obs.add(20, 350);
+        obs.add(40, 1500);
+        obs.add(80, 6700);
+        obs.add(160, 20160);
+        obs.add(200, 40000);
+        List<WeightedObservedPoint> obl = obs.toList();
+        double[] x0 = new double[obl.size()];
+        for(int i=0; i<obl.size(); i++)
+           x0[i] = obl.get(i).getY(); 
+
+        final PolynomialCurveFitter fitter = PolynomialCurveFitter.create(3);
+        final double[] coeff = fitter.fit(obl);
+        for(int i=coeff.length-1; i>=0; i--) {
+            System.out.format("%.2f ", coeff[i]);
+        }
+
+        final PolynomialFunction fitted = new PolynomialFunction(coeff);
+        double[] x1 = new double[obl.size()];
+        for(int i=0; i<obl.size(); i++)
+            x1[i] = fitted.value(obl.get(i).getX());
+
+        double r = new PearsonsCorrelation().correlation(x0, x1);
+        double r2 = r*r; 
+        System.out.format("r2=%.3f\n", r2);
+    }
+    public static void testPolynomial(String stockCode) {
+        System.out.format("\n testPolynomial: \n");
+
+        double[] x = { 10, 20, 40, 80, 160, 200 };
+        double[] y = { 100, 350, 1500, 6700, 20160, 40000 };
+        PolynomialRegression regression = new PolynomialRegression(x, y, 3);
+
+        // Use System.out.println() so that it works with either stdlib.jar or algs4.jar version
+        System.out.println(regression);
+    }
     public static void testAmDerLoader(String stockCode) {
         System.out.format("\n testAmDerLoader: \n");
 
@@ -822,7 +864,9 @@ public class GetSettings{
         //testString(stockCode);
         //testRoundUp(stockCode);
         //testPearsonsCorrelation(stockCode);
-        testAmDerLoader(stockCode);
+        //testAmDerLoader(stockCode);
+        testPolynomial(stockCode);
+        testApachePolynomial(stockCode);
         //testAmRateViewer(stockCode);
         //testQualRange(stockCode);
         //testBackSlash(stockCode);
