@@ -47,7 +47,7 @@ public class AmRateViewer extends Thread {
                 }
             }
         }
-        System.out.format("%s: thread AmRateViewer quitted!", 
+        System.out.format("%s: thread AmRateViewer quitted!\n", 
                 Utils.getCallerName(getClass()));
     }
 }

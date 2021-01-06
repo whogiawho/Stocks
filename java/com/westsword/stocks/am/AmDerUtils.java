@@ -98,7 +98,7 @@ public class AmDerUtils {
                 }
             }
 
-            String sSlope = translateSlope(1, sr, r2Threshold, sr.getRSquare());
+            String sSlope = translateSlope(1, sr.getSlope(), r2Threshold, sr.getRSquare());
             String line = String.format("%-8.3f %8s\n", sr.getRSquare(), sSlope);
             if(bStdOut)
                 System.out.format("%s", line);
@@ -110,21 +110,21 @@ public class AmDerUtils {
     }
     //type=0: direct
     //type=1: indirect
-    public static String translateSlope(int type, SimpleRegression sr, double r2Threshold, double r2) {
-        String sSlope = translateSlopeD(sr);  //default directly
+    public static String translateSlope(int type, double slope, double r2Threshold, double r2) {
+        String sSlope = translateSlopeD(slope);  //default directly
         if(type==1)    //ind
-            sSlope = translateSlopeInd(sr, r2Threshold, r2);
+            sSlope = translateSlopeInd(slope, r2Threshold, r2);
 
         return sSlope;
     }
-    public static String translateSlopeD(SimpleRegression sr) {
-        return ""+Utils.roundUp(sr.getSlope());
+    public static String translateSlopeD(double slope) {
+        return ""+Utils.roundUp(slope);
     }
-    public static String translateSlopeInd(SimpleRegression sr, double r2Threshold, double r2) {
+    public static String translateSlopeInd(double slope, double r2Threshold, double r2) {
         String sSlope = "#N/A";
 
         if(r2>=r2Threshold)
-            sSlope = ""+Utils.roundUp(sr.getSlope(), "#.###");
+            sSlope = ""+Utils.roundUp(slope, "#.###");
 
         return sSlope;
     }
