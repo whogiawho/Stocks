@@ -21,7 +21,7 @@ import org.apache.commons.cli.*;
 import org.apache.commons.math3.stat.regression.*;
 
 import com.westsword.stocks.base.Utils;
-import com.westsword.stocks.base.utils.CmdLineUtils;
+import com.westsword.stocks.base.utils.*;
 
 public class AmDerUtils {
     public final static int Default_Backward_SD = 60*5;
@@ -133,5 +133,16 @@ public class AmDerUtils {
     public static void makeAmDerPng(String stockCode, String tradeDate, String hms) {
         ThreadMakeAmDer t = new ThreadMakeAmDer(stockCode, tradeDate, hms);
         t.start();
+    }
+
+
+    public static void loadAmder(ArrayList<Double> amderList, 
+            String stockCode, String tradeDate, String hms) {
+        AmDerLoader l = new AmDerLoader(0);
+
+        String sSrcDerivativeDir = StockPaths.getDerivativeDir(stockCode, tradeDate);
+        String sSrcFile = sSrcDerivativeDir + hms + ".txt";
+        //System.out.format("sSrcFile=%s\n", sSrcFile);
+        l.load(amderList, sSrcFile);
     }
 }

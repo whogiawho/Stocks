@@ -108,6 +108,8 @@ public class AmManager {
             String endDate, String endHMS) {
         return AmUtils.getItemMap(mAmRecordMap, mSdTime, startDate, startHMS, endDate, endHMS);
     }
+    //[0] - outPrice for Long 
+    //[1] - outPrice for Short 
     public double[] getExtremePrice(String startDate, String startHMS, String endDate, String endHMS) {
         NavigableMap<Integer, AmRecord> map0 = getItemMap(startDate, startHMS, endDate, endHMS);
 

@@ -265,7 +265,7 @@ public class AmDerivativeHelper {
                     sr.addData((double)x, (double)y);
                 }
             }
-            String sSlope = AmDerUtils.translateSlopeD(sr);
+            String sSlope = AmDerUtils.translateSlopeD(sr.getSlope());
             slopes[i] = Double.valueOf(sSlope);
 
             sAmDer = String.format("%s %8s", sAmDer, sSlope); 

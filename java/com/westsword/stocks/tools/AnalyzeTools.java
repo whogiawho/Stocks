@@ -34,7 +34,7 @@ public class AnalyzeTools{
                 "         getrel | rgetrel | getabs | rgetabs | getanalysis | stdprice |\n" +
                 "         ssinstance | ssinstances | filterssi | sstrinstance | mminstance |\n" +
                 "         getfullss | checksstable | getsstable | ssamhole |\n" +
-                "         getlsprofit | searchsam0 | searchsam1 |\n" +
+                "         getlsprofit | searchsam0 | searchsam1 |searchsam2 |\n" +
                 "         getpermcoord | permstats | permsep | getamlinetype |\n" +
                 "         getentrust | checkabss | submitabs | makerrp |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify | qrvgetstats |\n" +
@@ -169,6 +169,9 @@ public class AnalyzeTools{
             SAm0Helper.search(args);
         } else if (sOption.equals("searchsam1")) {
             SAm1Helper.search(args);
+        } else if (sOption.equals("searchsam2")) {
+            SAm2Helper sam2h = new SAm2Helper();
+            sam2h.search(args);
         } else if (sOption.equals("getlsprofit")) {
             LSProfitHelper.get(args);
         } else if (sOption.equals("permstats")) {
