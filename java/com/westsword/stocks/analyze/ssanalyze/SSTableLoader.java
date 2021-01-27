@@ -19,11 +19,13 @@ package com.westsword.stocks.analyze.ssanalyze;
 
 import java.util.*;
 
+import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.utils.FileLoader;
 
 public class SSTableLoader extends FileLoader {
     private ArrayList<SSTableRecord> mList = null;
     private String mName = null;
+    private String mStockCode = null;
 
     public boolean onLineRead(String line, int count) {
         if(line.matches("^ *#.*")||line.matches("^ *$"))
@@ -39,19 +41,26 @@ public class SSTableLoader extends FileLoader {
         int maxCycle = Integer.valueOf(fields[6]);
         double targetRate = Double.valueOf(fields[7]);
         String sMatchExp = fields[8];
-        SSTableRecord r = new SSTableRecord(tradeCount, 
-                stockCode, startDate, threshold, sTDistance, tradeType,
-                maxCycle, targetRate, sMatchExp, mName);
+        SSTableRecord r = null;
+        if(mStockCode.equals(stockCode)) {
+            r = new SSTableRecord(tradeCount, 
+                    stockCode, startDate, threshold, sTDistance, tradeType,
+                    maxCycle, targetRate, sMatchExp, mName);
+        }
 
-        if(mList != null)
+        if(r!=null && mList != null)
             mList.add(r);
 
         return true;
     }
 
     public void load(ArrayList<SSTableRecord> rList, String sFile, String sName) {
+        load(rList, sFile, sName, Settings.getStockCode());
+    }
+    public void load(ArrayList<SSTableRecord> rList, String sFile, String sName, String stockCode) {
         mList = rList;
         mName = sName;
+        mStockCode = stockCode;
 
         load(sFile);
     }

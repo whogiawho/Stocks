@@ -42,7 +42,7 @@ public class SimilarStackAnalyze {
 
         //set mSSTableRecordList
         mSSTableRecordList = new ArrayList<SSTableRecord>();
-        loadSSTable(mSSTableRecordList, sName);
+        loadSSTable(stockCode, mSSTableRecordList, sName);
 
         //set mAm
         ArrayList<String> tradeDateList = SSTableRecord.getTradeDates(mSSTableRecordList);
@@ -53,10 +53,11 @@ public class SimilarStackAnalyze {
     public void setTradeSessionManager(TradeSessionManager m) {
         mTsMan = m;
     }
-    private void loadSSTable(ArrayList<SSTableRecord> sstrList, String sName) {
+    //only the records of stockCode are loaded
+    private void loadSSTable(String stockCode, ArrayList<SSTableRecord> sstrList, String sName) {
         SSTableLoader loader = new SSTableLoader();
         String sSSTable = StockPaths.getSSTableFile(sName);
-        loader.load(sstrList, sSSTable, sName);
+        loader.load(sstrList, sSSTable, sName, stockCode);
         System.out.format("%s: sSSTable=%s, size=%d\n", 
                 Utils.getCallerName(getClass()), sSSTable, sstrList.size());
     }
