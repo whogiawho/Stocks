@@ -194,7 +194,8 @@ public class TradeSessionManager {
         double avaiRemains = iThsqs.getAvaiRemains();
         int amount = (int)(avaiRemains/1000)*10;
         double price = 1.00;
-        if(amount<=0) {
+        if(amount<=100) {
+            bRRPDone = true;
             System.out.format("%s: not enough balance\n", 
                     Utils.getCallerName(getClass()));
             return;
