@@ -25,7 +25,10 @@ import java.nio.charset.*;
 import java.util.stream.*;
 import java.util.concurrent.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.math3.fitting.*;
 import org.apache.commons.math3.util.CombinatoricsUtils;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 
 import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.time.*;
@@ -320,5 +323,37 @@ public class Utils {
         } catch(InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static double getPolynomialR2(List<WeightedObservedPoint> obl, double[] coeff) {
+        double[] x0 = new double[obl.size()];
+        for(int i=0; i<obl.size(); i++)
+           x0[i] = obl.get(i).getY(); 
+
+        final PolynomialFunction fitted = new PolynomialFunction(coeff);
+        double[] x1 = new double[obl.size()];
+        for(int i=0; i<obl.size(); i++)
+            x1[i] = fitted.value(obl.get(i).getX());
+
+        double r = new PearsonsCorrelation().correlation(x0, x1);
+        double r2 = r*r; 
+
+        return r2;
+    }
+
+    public static String toPN0String(double[] coeff) {
+        String s01 = "";
+        for(int i=0; i<coeff.length; i++) {
+            s01 += coeff[i]>0?"+":coeff[i]<0?"-":"0";
+        }
+        return s01;
+    }
+    public static String toSneString(double[] coeff) {
+        String s01 = "";
+        for(int i=0; i<coeff.length; i++) {
+            s01 += String.format("%.1e,", coeff[i]);
+        }
+        return s01;
     }
 }

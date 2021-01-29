@@ -25,7 +25,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.math3.util.Combinations;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
-import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 
 import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
@@ -37,6 +36,8 @@ import com.westsword.stocks.qr.*;
 import com.westsword.stocks.tools.helper.*;
 import com.westsword.stocks.tools.helper.man.*;
 import com.westsword.stocks.analyze.ssanalyze.*;
+import com.westsword.stocks.analyze.sam.*;
+import com.westsword.stocks.analyze.sam2.*;
 import com.westsword.stocks.tools.matlab.*;
 
 public class GetSettings{
@@ -562,6 +563,51 @@ public class GetSettings{
 
         //System.out.format("\n testAmRateViewer: quitted!\n");
     }
+    public static void testZeroArray(String stockCode) {
+        System.out.format("\n testZeroArray: \n");
+
+        int[] zeroArray = new int[0];
+        System.out.format("zeroArray.length=%d\n", zeroArray.length);
+    }
+    public static void testSAmOffset(String stockCode) {
+        System.out.format("\n testSAmOffset: \n");
+
+        Offset offset = new Offset620();
+        ArrayList<SAm> negLists = offset.getNegativeSAms();
+        ArrayList<SAm> posLists = offset.getPositiveSAms();
+        System.out.format("negSize=%d posSize=%d\n", negLists.size(), posLists.size());
+        double[][] m = new double[negLists.size()][posLists.size()];
+        for(int i=0; i<negLists.size(); i++) {
+            SAm negL = negLists.get(i);
+            Segment maxS0 = negL.getSegmentOfMaxLen();
+
+            for(int j=0; j<posLists.size(); j++) {
+                SAm posL = posLists.get(j);
+                Segment maxS1 = posL.getSegmentOfMaxLen();
+
+                double correl = SAm.getCorrel(maxS0.eList, maxS1.eList, SAm.START_BASED);
+                m[i][j] = correl;
+                System.out.format("%8.3f ", correl);
+            }
+            System.out.format("\n");
+        }
+        for(int i=0; i<negLists.size(); i++) {
+            double maxCorrel = Double.NEGATIVE_INFINITY;
+            for(int j=0; j<posLists.size(); j++) {
+                if(m[i][j] > maxCorrel)
+                    maxCorrel = m[i][j];
+            }
+            System.out.format("neg %d: %8.3f\n", i, maxCorrel);
+        }
+        for(int i=0; i<posLists.size(); i++) {
+            double maxCorrel = Double.NEGATIVE_INFINITY;
+            for(int j=0; j<negLists.size(); j++) {
+                if(m[j][i] > maxCorrel)
+                    maxCorrel = m[j][i];
+            }
+            System.out.format("pos %d: %8.3f\n", i, maxCorrel);
+        }
+    }
     public static void testApachePolynomial(String stockCode) {
         System.out.format("\n testApachePolynomial: \n");
 
@@ -573,23 +619,14 @@ public class GetSettings{
         obs.add(160, 20160);
         obs.add(200, 40000);
         List<WeightedObservedPoint> obl = obs.toList();
-        double[] x0 = new double[obl.size()];
-        for(int i=0; i<obl.size(); i++)
-           x0[i] = obl.get(i).getY(); 
 
         final PolynomialCurveFitter fitter = PolynomialCurveFitter.create(3);
         final double[] coeff = fitter.fit(obl);
+        double r2 = Utils.getPolynomialR2(obl, coeff); 
+
         for(int i=coeff.length-1; i>=0; i--) {
             System.out.format("%.2f ", coeff[i]);
         }
-
-        final PolynomialFunction fitted = new PolynomialFunction(coeff);
-        double[] x1 = new double[obl.size()];
-        for(int i=0; i<obl.size(); i++)
-            x1[i] = fitted.value(obl.get(i).getX());
-
-        double r = new PearsonsCorrelation().correlation(x0, x1);
-        double r2 = r*r; 
         System.out.format("r2=%.3f\n", r2);
     }
     public static void testPolynomial(String stockCode) {
@@ -865,8 +902,10 @@ public class GetSettings{
         //testRoundUp(stockCode);
         //testPearsonsCorrelation(stockCode);
         //testAmDerLoader(stockCode);
-        testPolynomial(stockCode);
+        //testPolynomial(stockCode);
         testApachePolynomial(stockCode);
+        //testSAmOffset(stockCode);
+        //testZeroArray(stockCode);
         //testAmRateViewer(stockCode);
         //testQualRange(stockCode);
         //testBackSlash(stockCode);

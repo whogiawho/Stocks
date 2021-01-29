@@ -196,8 +196,8 @@ public class TradeSessionManager {
         double price = 1.00;
         if(amount<=100) {
             bRRPDone = true;
-            System.out.format("%s: not enough balance\n", 
-                    Utils.getCallerName(getClass()));
+            System.out.format("%s: not enough balance; amount=%d\n", 
+                    Utils.getCallerName(getClass()), amount);
             return;
         }
 
