@@ -9,7 +9,7 @@ function getHexinServerList {
     local latestDate=`cat $fTmp1|tail -n +2|head -n 1|awk '{printf "%s *%s\n",$6,$7}'`
 
     local fTmp2=`mktemp`
-    cat $fTmp1|grep "$latestDate"|awk '{print $9}'|sed 's/.txt//g'|sed 's/_/ /g' >$fTmp2
+    cat $fTmp1|grep " $latestDate "|awk '{print $9}'|sed 's/.txt//g'|sed 's/_/ /g' >$fTmp2
 
     printf "%15s %10s %10s %8s %8s\n" "serverAddr" "serverPort" "serverType" "part401" "part081"
     local line=
