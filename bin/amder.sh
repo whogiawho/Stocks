@@ -63,13 +63,18 @@ function getContAmType {
     local line=
     echo $ams|sed "s@\( #N/A\)\+@\n@g"|while read line
     do
-        getAmLineType "$line"
+        getAmLineType "$line" 30 150 
     done
 }
 function getAmLineType {
     local line=$1
+    local min=$2
+    local max=$3
 
-    JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar getamlinetype -i30 -a150 "$line" 2>/dev/null
+    local options=
+    [[ ! -z $min ]] && options=$options"-i$min "
+    [[ ! -z $max ]] && options=$options"-a$max "
+    JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar getamlinetype $options "$line" 2>/dev/null
 }
 
 
