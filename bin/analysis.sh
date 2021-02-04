@@ -74,7 +74,7 @@ function makeSTDAmPricePngs {
 
 
 
-function makeAmPricePng {
+function _makeAmPricePng {
     local sAnalysisFile=$1
     local sPngDir=$2
 
@@ -125,8 +125,8 @@ function _makeContAmPricePngs {
         hms=${hms//:/}
         local sHMSFile="$ampricePngDir\\$hms.txt"
         mv $fTmp $sHMSFile
-        #run makeAmPricePng
-        makeAmPricePng $sHMSFile $ampricePngDir
+        #run _makeAmPricePng
+        _makeAmPricePng $sHMSFile $ampricePngDir
 
         rm -rf "$sHMSFile"
     done
