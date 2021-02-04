@@ -108,6 +108,9 @@ public class AmManager {
             String endDate, String endHMS) {
         return AmUtils.getItemMap(mAmRecordMap, mSdTime, startDate, startHMS, endDate, endHMS);
     }
+    public double getCloseQuotationPrice(String tradeDate) {
+        return getUpPrice(tradeDate, AStockSdTime.getCloseQuotationTime());
+    }
     //[0] - outPrice for Long 
     //[1] - outPrice for Short 
     public double[] getExtremePrice(String startDate, String startHMS, String endDate, String endHMS) {
@@ -364,6 +367,9 @@ public class AmManager {
     }
 
 
+    public long getAm(int start, int end) {
+        return getAm(end) - getAm(start);
+    }
     public long getAm(int sd) {
         AmRecord r = mAmRecordMap.get(sd);
         return r.am;

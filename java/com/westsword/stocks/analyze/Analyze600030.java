@@ -178,7 +178,7 @@ public class Analyze600030 {
             System.out.format("%s: isLastRawTradeDetailHandled=%b, isLastPankouHandled=%b\n", 
                     Utils.getCallerName(getClass()), isLastRawTradeDetailHandled(), isLastPankouHandled());
             //in case that makeRRP is not called at doTsManStuff, call it here
-            mTsMan.makeRRP();
+            mTsMan.makeRRP(mAmRecordMap.get(mAmRecordMap.lastKey()));
 
             mTsMan.checkAbnormalSubmittedSessions(true);
             //stop the copyManager
