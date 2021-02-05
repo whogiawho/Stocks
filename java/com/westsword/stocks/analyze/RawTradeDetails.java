@@ -19,6 +19,7 @@ package com.westsword.stocks.analyze;
 
 import java.util.*;
 
+import com.westsword.stocks.base.utils.*;
 import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.time.Time;
 
@@ -52,4 +53,13 @@ public class RawTradeDetails {
         }
     }
 
+    public static ArrayList<RawTradeDetails> load(String stockCode, String tradeDate) {
+        //load rawTradeDetails to rawDetailsList
+        String sRawTradeDetailsFile = StockPaths.getRawTradeDetailsFile(stockCode, tradeDate);
+        RawTradeDetailsList rtdList = new RawTradeDetailsList();
+        ArrayList<RawTradeDetails> rawDetailsList = new ArrayList<RawTradeDetails>();
+        rtdList.load(rawDetailsList, sRawTradeDetailsFile);
+
+        return rawDetailsList;
+    }
 }

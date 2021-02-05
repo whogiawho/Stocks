@@ -59,7 +59,7 @@ public class AmUtils {
         long closeTP = Time.getSpecificTime(tradeDate, AStockSdTime.getCloseQuotationTime());
         //System.out.format("%s: closeTP=%x\n", Utils.getCallerName(getClass()), closeTP);
         
-        ArrayList<RawTradeDetails> rawDetailsList = loadRawTradeDetails(tradeDate);
+        ArrayList<RawTradeDetails> rawDetailsList = RawTradeDetails.load(mStockCode, tradeDate);
         int lSize = rawDetailsList.size();
         TrackExtreme ter = new TrackExtreme(rawDetailsList);
 
@@ -123,15 +123,6 @@ public class AmUtils {
     public void writeRange(int start, int end, long am, 
             TrackExtreme ter, String sAnalysisFile, long closeTP) {
         writeRange(start, end, am, ter, sAnalysisFile, closeTP, null, null);
-    }
-    private ArrayList<RawTradeDetails> loadRawTradeDetails(String tradeDate) {
-        //load rawTradeDetails to rawDetailsList
-        String sRawTradeDetailsFile = StockPaths.getRawTradeDetailsFile(mStockCode, tradeDate);
-        RawTradeDetailsList rtdList = new RawTradeDetailsList();
-        ArrayList<RawTradeDetails> rawDetailsList = new ArrayList<RawTradeDetails>();
-        rtdList.load(rawDetailsList, sRawTradeDetailsFile);
-
-        return rawDetailsList;
     }
 
     public AmRecord loadPrevLastAmRecord(String tradeDate) {

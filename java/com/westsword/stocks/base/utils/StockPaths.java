@@ -161,6 +161,15 @@ public class StockPaths {
     public static String getAnalysisFile(String stockCode, String tradeDate) {
         return getDailyDir(stockCode, tradeDate)+"analysis.txt";
     }
+    public static String getPVTableDir(String stockCode, String tradeDate) {
+        return getDailyDir(stockCode, tradeDate) + "pvtable" + sSep;
+    }
+    public static String getPVTableFile(String stockCode, String tradeDate) {
+        return getPVTableDir(stockCode, tradeDate)+"full.txt";
+    }
+    public static String getPVTableFile(String stockCode, String tradeDate, String endHMS) {
+        return getPVTableDir(stockCode, tradeDate)+endHMS+".txt";
+    }
 
 
     public static String getSpecialDatesDir() {
@@ -272,4 +281,6 @@ public class StockPaths {
     public static String pythonRefreshPath() {
         return getPythonRootDir() + "refresh.py";
     }
+
+
 }
