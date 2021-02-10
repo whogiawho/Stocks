@@ -14,26 +14,29 @@
  /* Written by whogiawho <whogiawho@gmail.com>. */
 
 
-package com.westsword.stocks.analyze.sam2;
+package com.westsword.stocks.analyze.sam0;
 
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.analyze.sam.*;
 
-public class SAm2Task extends SAmTask {
-    public SAm2Task(SAm2Manager man, 
-            String stockCode, String sDstTradeDate, TradeDates tradeDates, SAm2Option option) {
+public class SAm0Task extends SAmTask {
+    ReGroup mGrp;
+
+    public SAm0Task(SAm0Manager man, 
+            String stockCode, String sDstTradeDate, TradeDates tradeDates, SAmOption option, 
+            ReGroup grp) {
         super(man, stockCode, sDstTradeDate, tradeDates, option);
+        mGrp = grp;
     }
 
     @Override
     public boolean printMatched(SAm dstSAm, TradeDates tradeDates, SAmOption option, AmManager amm) {
         boolean bFound = false;
 
-        SAm2Option sam2Opt = (SAm2Option)option;
-
-        String[] lines = new String[2];
-        if(!SAm2.inTriggered(dstSAm, lines, sam2Opt.filter))
+        SAm0 sam0 = new SAm0();
+        String[] lines = new String[4];
+        if(!sam0.inTriggered(dstSAm, lines, amm, mGrp))
             return bFound;
 
         String stockCode = dstSAm.getStockCode();
@@ -43,10 +46,11 @@ public class SAm2Task extends SAmTask {
         String lastDate = tradeDates.nextDate(tradeDate, option.maxCycle);
 
         String sLong = SAmUtils.getLongInfo(amm, tradeDate, hms, lastDate);
+        String sShort = SAmUtils.getShortInfo(amm, tradeDate, hms, lastDate);
 
-        String sFormat = "%s: %s %s | %s\n";
+        String sFormat = "%s: %s %s %s %3s | %s %s\n";
         System.out.format(sFormat, 
-                dstSAm, lines[0], lines[1], sLong);
+                dstSAm, lines[0], lines[1], lines[2], lines[3], sLong, sShort);
 
         if(!option.bAllHMS)
             bFound = true;

@@ -1,4 +1,4 @@
-/*
+ /*
  Copyright (C) 2019-2050 WestSword, Inc.
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -12,25 +12,18 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
  
  /* Written by whogiawho <whogiawho@gmail.com>. */
+ 
 
+package com.westsword.stocks.analyze.sam;
 
-package com.westsword.stocks.analyze.sam2;
+public class SAmOption {
+    public int maxCycle;
+    public boolean bAllHMS;
 
-import com.westsword.stocks.base.*;
-
-import com.westsword.stocks.base.time.*;
-import com.westsword.stocks.analyze.sam.*;
-
-public class SAm2Manager extends SAmManager {
-    public void run(String stockCode, String sDstTradeDate, 
-            TradeDates tradeDates, SAm2Option option) {
-        maxThreadsCheck();
-
-        Thread t = new SAm2Task(this, stockCode, sDstTradeDate, 
-                tradeDates, option);
-
-        t.setPriority(Thread.MAX_PRIORITY);
-        t.start();
+    public SAmOption(int maxCycle, boolean bAllHMS) {
+        this.maxCycle = maxCycle;
+        this.bAllHMS = bAllHMS;
     }
 }
+
 

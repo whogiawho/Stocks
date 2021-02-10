@@ -30,11 +30,11 @@ public class AnalyzeTools{
         System.err.println("       commands are listed below:");
         System.err.println("       [ getvalue | setvalue | makeanalysistxt | priceamp |\n" +
                 "         getamcorrel | getupprice | getdownprice | getam | decode |\n" +
-                "         nexttradedate | prevtradedate | listamderivatives |\n" +
+                "         nexttradedate | prevtradedate | listamderivatives | makepvtable |\n" +
                 "         getrel | rgetrel | getabs | rgetabs | getanalysis | stdprice |\n" +
                 "         ssinstance | ssinstances | filterssi | sstrinstance | mminstance |\n" +
-                "         getfullss | checksstable | getsstable | ssamhole |\n" +
-                "         getlsprofit | searchsam0 | searchsam1 |searchsam2 |\n" +
+                "         getfullss | checksstable | getsstable | ssamhole | gettoppercent |\n" +
+                "         getlsprofit | searchsam[01345] | searchsam2 |\n" +
                 "         getpermcoord | permstats | permsep | getamlinetype |\n" +
                 "         getentrust | checkabss | submitabs | makerrp |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify | qrvgetstats |\n" +
@@ -166,9 +166,20 @@ public class AnalyzeTools{
         } else if (sOption.equals("ssamhole")) {
             AmHoleHelper.search(args);
         } else if (sOption.equals("searchsam0")) {
-            SAm0Helper.search(args);
+            SAm0Helper sam0h = new SAm0Helper();
+            sam0h.search(args);
         } else if (sOption.equals("searchsam1")) {
-            SAm1Helper.search(args);
+            SAm1Helper sam1h = new SAm1Helper();
+            sam1h.search(args);
+        } else if (sOption.equals("searchsam3")) {
+            SAm3Helper sam3h = new SAm3Helper();
+            sam3h.search(args);
+        } else if (sOption.equals("searchsam4")) {
+            SAm4Helper sam4h = new SAm4Helper();
+            sam4h.search(args);
+        } else if (sOption.equals("searchsam5")) {
+            SAm5Helper sam5h = new SAm5Helper();
+            sam5h.search(args);
         } else if (sOption.equals("searchsam2")) {
             SAm2Helper sam2h = new SAm2Helper();
             sam2h.search(args);
@@ -186,6 +197,10 @@ public class AnalyzeTools{
             THSQSHelper.submitAbs(args);
         } else if(sOption.equals("makerrp")) {
             THSQSHelper.makeRRP(args);
+        } else if(sOption.equals("makepvtable")) {
+            PVTableHelper.make(args);
+        } else if(sOption.equals("gettoppercent")) {
+            TopPercentHelper.get(args);
         } else if(sOption.equals("getentrust")) {
             THSQSHelper.getEntrust(args);
         } else {

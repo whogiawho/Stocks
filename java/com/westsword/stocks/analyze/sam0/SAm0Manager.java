@@ -14,20 +14,20 @@
  /* Written by whogiawho <whogiawho@gmail.com>. */
 
 
-package com.westsword.stocks.analyze.sam2;
+package com.westsword.stocks.analyze.sam0;
 
 import com.westsword.stocks.base.*;
-
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.analyze.sam.*;
 
-public class SAm2Manager extends SAmManager {
+public class SAm0Manager extends SAmManager {
     public void run(String stockCode, String sDstTradeDate, 
-            TradeDates tradeDates, SAm2Option option) {
+            TradeDates tradeDates, SAmOption option, ReGroup grp) {
         maxThreadsCheck();
 
-        Thread t = new SAm2Task(this, stockCode, sDstTradeDate, 
-                tradeDates, option);
+        Thread t = new SAm0Task(this, stockCode, sDstTradeDate, 
+                tradeDates, option, grp);
+        addThread(t);
 
         t.setPriority(Thread.MAX_PRIORITY);
         t.start();

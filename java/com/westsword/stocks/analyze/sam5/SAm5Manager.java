@@ -14,19 +14,18 @@
  /* Written by whogiawho <whogiawho@gmail.com>. */
 
 
-package com.westsword.stocks.analyze.sam2;
+package com.westsword.stocks.analyze.sam5;
 
 import com.westsword.stocks.base.*;
-
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.analyze.sam.*;
 
-public class SAm2Manager extends SAmManager {
+public class SAm5Manager extends SAmManager {
     public void run(String stockCode, String sDstTradeDate, 
-            TradeDates tradeDates, SAm2Option option) {
+            TradeDates tradeDates, SAmOption option) {
         maxThreadsCheck();
 
-        Thread t = new SAm2Task(this, stockCode, sDstTradeDate, 
+        Thread t = new SAm5Task(this, stockCode, sDstTradeDate, 
                 tradeDates, option);
 
         t.setPriority(Thread.MAX_PRIORITY);

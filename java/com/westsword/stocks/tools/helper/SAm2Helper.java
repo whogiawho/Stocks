@@ -25,12 +25,19 @@ import com.westsword.stocks.base.utils.*;
 import com.westsword.stocks.analyze.sam.*;
 import com.westsword.stocks.analyze.sam2.*;
 
+/*
+ *      ^
+ * \
+ *  \
+ *   \
+ *
+*/
 public class SAm2Helper extends SAmHelper {
 
     public SAm2Helper() {
     }
 
-    public static void search(String args[]) {
+    public void search(String args[]) {
         CommandLine cmd = getCommandLine(args);
         String[] newArgs = cmd.getArgs();
         if(newArgs.length!=3) {
@@ -41,52 +48,69 @@ public class SAm2Helper extends SAmHelper {
         String stockCode = newArgs[0];
         String sModelTradeDate = newArgs[1];
         String sModelHMS = newArgs[2];
-        String sModelPrefix = String.format("%s %s %s", stockCode, sModelTradeDate, sModelHMS);
+        SAm modelSAm = new SAm(stockCode, sModelTradeDate, sModelHMS);
+        String sModelPrefix = modelSAm.toString();
         TradeDates tradeDates = new TradeDates(stockCode);
 
-        String sSrcDerivativeDir = StockPaths.getDerivativeDir(stockCode, sModelTradeDate);
-        String sSrcFile = sSrcDerivativeDir + sModelHMS + ".txt";
-        AmDerLoader l = new AmDerLoader(0);
-        ArrayList<Double> amderList = new ArrayList<Double>();
-        l.load(amderList, sSrcFile);
-
         //info of base Model
-        ArrayList<Segment> segList = Segment.make(amderList);
-        System.err.format("%s %8s: size=%-4d\n", 
-                sModelPrefix, "segList", segList.size());
         //max segment
-        Segment maxS = Segment.getMaxLenSegment(segList, SAm2.MAX_SEGMENT_MIN_LENGTH);
-        ArrayList<Double> maxList = maxS.eList;
-        int maxSize = maxList.size();
-        double[] vals = SAm.getSlopeR2(maxList);
+        Segment maxS = modelSAm.getSegmentOfMaxLen();
+        int maxSize = maxS.getLength();
+        double[] vals = maxS.getSlopeR2();
         double slope = vals[0];
-        Double maxE = Collections.max(maxList);
-        int eIdx = maxList.indexOf(maxE);
-        String sFormat = "%s %8s: size=%-4d max=%-8.3f maxEIdx=%-4d allLt0=%b slope=%-8.4f\n";
+        Double maxE = maxS.maxAm();
+        double maxLoc = maxS.getLocationOfMaxAm();
+        String sFormat = "%s %8s: size=%-4d max=%-8.3f maxLoc=%-8.3f allLt0=%b slope=%-8.4f\n";
         System.err.format(sFormat, 
-                sModelPrefix, "maxList", maxSize, maxE, eIdx, SAm.isAllLt0(maxList), slope);
+                sModelPrefix, "maxS", maxSize, maxE, maxLoc, maxS.isAllLt0(), slope);
         //upArrow segment
-        int maxSIdx = segList.indexOf(maxS);
-        Segment uaS = Segment.getUpArrowSegment(segList, maxSIdx+1, 0.5, 0.76);
-        ArrayList<Double> uaList = uaS.eList;
-        maxE = Collections.max(uaList);
-        eIdx = uaList.indexOf(maxE);
-        System.err.format("%s %8s: size=%-4d max=%-8.3f maxEIdx=%-4d allGt0=%b\n", 
-                sModelPrefix, "upArrowS", uaList.size(), maxE, eIdx, SAm.isAllGt0(uaList));
+        int maxSIdx = modelSAm.indexOfSeg(maxS);
+        Segment uaS = modelSAm.getUpArrowSegment(maxSIdx+1, 
+                SAm2.getUaSegmentLThres(), SAm2.getUaSegmentRThres());
+        maxE = uaS.maxAm();
+        maxLoc = uaS.getLocationOfMaxAm();
+        System.err.format("%s %8s: size=%-4d max=%-8.3f maxLoc=%-8.3f allGt0=%b\n", 
+                sModelPrefix, "upArrowS", uaS.getLength(), maxE, maxLoc, uaS.isAllGt0());
 
         SAm2Manager man = new SAm2Manager();
+        //options
+        int maxCycle = getMaxCycle(cmd, 1);
+        boolean bAllHMS = getSwitchAllHMS(cmd);
+        int filter = getFilter(cmd, 0);
+        SAm2Option option = new SAm2Option(maxCycle, bAllHMS, filter);
+        //loop tradeDates
         String startDate = getStartDate(cmd, tradeDates.firstDate());
         String endDate = getEndDate(cmd, tradeDates.lastDate());
-        double threshold = getThreshold(cmd, 0.9);
-        int maxCycle = getMaxCycle(cmd, 1);
         String[] sTradeDates = TradeDates.getTradeDateList(stockCode, startDate, endDate);
         for(int i=0; i<sTradeDates.length; i++) {
             String sDstTradeDate = sTradeDates[i];
-            String sDstDerivativeDir = StockPaths.getDerivativeDir(stockCode, sDstTradeDate);
-            //System.out.format("sDstDerivativeDir=%s\n", sDstDerivativeDir);
 
-            man.run(sDstDerivativeDir, stockCode, sDstTradeDate, 
-                    threshold, tradeDates, maxCycle);
+            man.run(stockCode, sDstTradeDate, tradeDates, option);
         }
     }
+
+    public void searchUsage(String cmdName, String sInstanceName) {
+        System.err.println("usage: java AnalyzeTools " + cmdName + " [-mafse] stockCode tradeDate hms");
+        System.err.println("  specific search those amderivatives like " + 
+                "<" + sInstanceName + ">");
+        System.err.println("       -m maxCycle        ; default 1");
+        System.err.println("       -a                 ; loop all hms of tested tradedate");
+        System.err.println("       -f filterNO        ; enable specific filters; default 0(no filters)");
+        System.err.println("       -s startDate       ; start date to begin search");
+        System.err.println("       -e endDate         ; last date to end search");
+        System.exit(-1);
+    }
+    public Options getOptions() {
+        Options options = new Options();
+        options.addOption("m", true,  "maxCycle to get maxProfit; default 1");
+        options.addOption("a", false, "loop all hms of tested tradedate");
+        options.addOption("f", true,  "use specific filters");
+        options.addOption("s", true,  "starDate to begin; default SdStartDate");
+        options.addOption("e", true,  "endDate to end search; default lastTradeDate of stockCode");
+
+        return options;
+    }
+
+
+
 }

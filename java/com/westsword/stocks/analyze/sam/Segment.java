@@ -17,71 +17,175 @@
 package com.westsword.stocks.analyze.sam;
 
 import java.util.*;
+import org.apache.commons.math3.fitting.*;
 
 public class Segment {
+    private SAm mSam;
+
     public int start;
     public int end;
     public ArrayList<Double> eList;
 
-    public Segment() {
+    public Segment(SAm sam) {
+        mSam = sam;
         eList = new ArrayList<Double>();
     }
+    public Segment() {
+        this(null);
+    }
+    public double maxAm() {
+        return Collections.max(eList);
+    }
+    public double minAm() {
+        return Collections.min(eList);
+    }
+    public int indexOf(double e) {
+        return eList.indexOf(e);
+    }
+    public int getLength() {
+        return eList.size();
+    }
+    public boolean isAllGt0() {
+        return SAmUtils.isAllGt0(eList);
+    }
+    public boolean isAllLt0() {
+        return SAmUtils.isAllLt0(eList);
+    }
+    public double getLocationOfMaxAm() {
+        double maxAm = maxAm(); 
+        int maxAmIdx = indexOf(maxAm);
+        int size = getLength();
 
-    //the segment of max length, and at least >minLen
-    public static Segment getMaxLenSegment(ArrayList<Segment> segList, int minLen) {
-        Segment maxlenS = null;
+        return (double)maxAmIdx/size;
+    }
+    public double getLocationOfMinAm() {
+        double minAm = minAm(); 
+        int minAmIdx = indexOf(minAm);
+        int size = getLength();
 
-        int maxlen = minLen;
-        for(int i=0; i<segList.size(); i++) {
-            Segment s = segList.get(i);
-            int currSize = s.eList.size();
-            if(currSize>maxlen) {
-                maxlenS = s;
-                maxlen = currSize;
-            }
+        return (double)minAmIdx/size;
+    }
+    public int getPosCount() {
+        int count = 0;
+        for(int i=0; i<eList.size(); i++) {
+            if(eList.get(i)>0)
+                count++;
         }
 
-        return maxlenS;
+        return count;
     }
-    //the segment with length>=minLen, and with max amder
-    public static Segment getMaxSegment(ArrayList<Segment> segList, int minLen) {
-        Segment maxS = null;
-
-        double maxAmder = Double.NEGATIVE_INFINITY;
-        for(int i=0; i<segList.size(); i++) {
-            Segment s = segList.get(i);
-            double currMaxAmder = Collections.max(s.eList);
-            if(s.eList.size()>minLen && currMaxAmder>maxAmder) {
-                maxS = s;
-                maxAmder = currMaxAmder;
-            }
+    public int getNegCount() {
+        int count = 0;
+        for(int i=0; i<eList.size(); i++) {
+            if(eList.get(i)<0)
+                count++;
         }
 
-        return maxS;
+        return count;
     }
-    public static Segment getUpArrowSegment(ArrayList<Segment> segList, int startIdx, 
-            double lThres, double rThres) {
-        Segment seg = null;
-        //System.out.format("%f %f\n", lThres, rThres);
+    //[start, end)
+    public double[] getSlopeR2(int start, int end) {
+        return SAmUtils.getSlopeR2(eList.subList(start, end));
+    }
+    public double[] getSlopeR2() {
+        return SAmUtils.getSlopeR2(eList);
+    }
+    public double[] getSlopeR2wMin(int type) {
+        return SAmUtils.getSlopeR2wMin(eList, type);
+    }
+    public double[] getSlopeR2wMax(int type) {
+        return SAmUtils.getSlopeR2wMax(eList, type);
+    }
+    public List<WeightedObservedPoint> getObl() {
+        final WeightedObservedPoints obs = new WeightedObservedPoints();
+        for(int i=0; i<eList.size(); i++)
+            obs.add(i, eList.get(i));
+        return obs.toList();
+    }
+    public List<Double> left(int idx) {
+        return eList.subList(0, idx);
+    }
+    public List<Double> right(int idx) {
+        return eList.subList(idx, eList.size());
+    }
+    public long getAm() {
+        return mSam.getAm(start, end);
+    }
+    public double get(int idx) {
+        return eList.get(idx);
+    }
 
-        for(int i=startIdx; i<segList.size(); i++) {
-            Segment s = segList.get(i);
-            ArrayList<Double> l = s.eList;
-            int size = l.size();
-            double currMaxAmder = Collections.max(l);
-            int maxIdx = l.indexOf(currMaxAmder);
-            double loc = (double)maxIdx/size;
-            //System.out.format("loc=%f\n", loc);
-            if(loc>lThres && loc<rThres) {
-                seg = s;
+
+    //the idx of first local max element starting from start
+    public int getIdxOfLocalMax(int start, int range) {
+        int idx = -1;
+
+        for(int i=start+1; i<eList.size(); i++) {
+            double currE = eList.get(i);
+            //i gt all left elements
+            int j=i-1, cnt=0;
+            while(j>=0 && cnt<range && currE>=eList.get(j)) {
+                if(currE>eList.get(j))
+                    cnt++; 
+                j--;
+            }
+            if(!(j<0||cnt>=range))
+                continue;
+            //i gt all rigth elements
+            j=i+1; cnt=0;
+            while(j<eList.size() && cnt<range && currE>=eList.get(j)) {
+                if(currE>eList.get(j))
+                    cnt++; 
+                j++;
+            }
+            if(!(j>=eList.size()||cnt>=range))
+                continue;
+            else {
+                idx = i;
+                //System.out.format("%f\n", eList.get(idx));
                 break;
             }
         }
 
-        return seg;
+        return idx;
+    }
+    //the idx of first local min element starting from start
+    public int getIdxOfLocalMin(int start, int range) {
+        int idx = -1;
+
+        for(int i=start+1; i<eList.size(); i++) {
+            double currE = eList.get(i);
+            //i lt all left elements
+            int j=i-1, cnt=0;
+            while(j>=0 && cnt<range && currE<=eList.get(j)) {
+                if(currE<eList.get(j))
+                    cnt++; 
+                j--;
+            }
+            if(!(j<0||cnt>=range))
+                continue;
+            //i lt all rigth elements
+            j=i+1; cnt=0;
+            while(j<eList.size() && cnt<range && currE<=eList.get(j)) {
+                if(currE<eList.get(j))
+                    cnt++; 
+                j++;
+            }
+            if(!(j>=eList.size()||cnt>=range))
+                continue;
+            else {
+                idx = i;
+                //System.out.format("%f\n", eList.get(idx));
+                break;
+            }
+        }
+
+        return idx;
     }
 
-    public static ArrayList<Segment> make(ArrayList<Double> amderList) {
+
+
+    public static ArrayList<Segment> make(SAm sam, ArrayList<Double> amderList) {
         ArrayList<Segment> segList = new ArrayList<Segment>();
 
         int size = amderList.size();
@@ -93,7 +197,7 @@ public class Segment {
             if(i>=size)
                 break;
 
-            Segment s = new Segment();
+            Segment s = new Segment(sam);
             s.start = i;
             while(i<size && !Double.isNaN(amderList.get(i))) {
                 s.eList.add(amderList.get(i));

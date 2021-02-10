@@ -25,17 +25,17 @@ import com.westsword.stocks.analyze.sam.*;
 public class SAmHelper {
 
 
-    public static void searchUsage(String cmdName, String sInstanceName) {
-        System.err.println("usage: java AnalyzeTools " + cmdName + " [-mhse] stockCode tradeDate hms");
+    public void searchUsage(String cmdName, String sInstanceName) {
+        System.err.println("usage: java AnalyzeTools " + cmdName + " [-mase] stockCode tradeDate hms");
         System.err.println("  specific search those amderivatives like " + 
                 "<" + sInstanceName + ">");
         System.err.println("       -m maxCycle        ; default 1");
-        System.err.println("       -h threshold       ; default 0.8");
+        System.err.println("       -a                 ; loop all hms of tested tradedate");
         System.err.println("       -s startDate       ; start date to begin search");
         System.err.println("       -e endDate         ; last date to end search");
         System.exit(-1);
     }
-    public static CommandLine getCommandLine(String[] args) {
+    public CommandLine getCommandLine(String[] args) {
         CommandLine cmd = null;
         try {
             String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
@@ -49,27 +49,32 @@ public class SAmHelper {
 
         return cmd;
     }
-    public static Options getOptions() {
+    public Options getOptions() {
         Options options = new Options();
         options.addOption("m", true,  "maxCycle to get maxProfit; default 1");
-        options.addOption("h", true,  "a threshold to list similar amder hms or not");
+        options.addOption("a", false, "loop all hms of tested tradedate");
         options.addOption("s", true,  "starDate to begin; default SdStartDate");
         options.addOption("e", true,  "endDate to end search; default lastTradeDate of stockCode");
 
         return options;
     }
 
-    public static String getStartDate(CommandLine cmd, String defaultDate) {
+    public String getStartDate(CommandLine cmd, String defaultDate) {
         return CmdLineUtils.getString(cmd, "s", defaultDate);
     }
-    public static String getEndDate(CommandLine cmd, String defaultDate) {
+    public String getEndDate(CommandLine cmd, String defaultDate) {
         return CmdLineUtils.getString(cmd, "e", defaultDate);
     }
-    public static double getThreshold(CommandLine cmd, double defaultThreshold) {
+    public double getThreshold(CommandLine cmd, double defaultThreshold) {
         return CmdLineUtils.getDouble(cmd, "h", defaultThreshold);
     }
-    public static int getMaxCycle(CommandLine cmd, int defaultMaxCycle) {
+    public int getMaxCycle(CommandLine cmd, int defaultMaxCycle) {
         return CmdLineUtils.getInteger(cmd, "m", defaultMaxCycle);
     }
-
+    public int getFilter(CommandLine cmd, int defaultFilter) {
+        return CmdLineUtils.getInteger(cmd, "f", defaultFilter);
+    }
+    public boolean getSwitchAllHMS(CommandLine cmd) {
+        return CmdLineUtils.getBoolean(cmd, "a", false);
+    }
 }

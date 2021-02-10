@@ -19,18 +19,17 @@ package com.westsword.stocks.tools.helper;
 import java.util.*;
 import org.apache.commons.cli.*;
 
-import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.time.*;
-import com.westsword.stocks.base.utils.*;
 import com.westsword.stocks.analyze.sam.*;
-import com.westsword.stocks.analyze.sam1.*;
+import com.westsword.stocks.analyze.sam3.*;
 
-public class SAm1Helper extends SAmHelper {
+public class SAm3Helper extends SAmHelper {
+
     public void search(String args[]) {
         CommandLine cmd = getCommandLine(args);
         String[] newArgs = cmd.getArgs();
         if(newArgs.length!=3) {
-            searchUsage("searchsam1", "600030 20201231 102357");
+            searchUsage("searchsam3", "600030 20210112 105657");
             return;
         }
 
@@ -38,39 +37,60 @@ public class SAm1Helper extends SAmHelper {
         String sModelTradeDate = newArgs[1];
         String sModelHMS = newArgs[2];
         SAm modelSAm = new SAm(stockCode, sModelTradeDate, sModelHMS);
-        String sModelPrefix = modelSAm.toString();
-        TradeDates tradeDates = new TradeDates(stockCode);
+
 
         //info of base Model
-        Segment maxS = modelSAm.getSegmentOfMaxAm();
-        ArrayList<Double> maxList = maxS.eList;
-        System.out.format("%s: maxList.size()=%d\n", sModelPrefix, maxList.size());
-        Double max = maxS.maxAm();
-        int idx = maxS.indexOf(max);
-        System.out.format("%s: max=%8.3f idx=%d\n", sModelPrefix, max, idx);
-        //list L
-        ArrayList<Double> modelListL = new ArrayList<Double>(maxS.left(idx));
-        //list R
-        ArrayList<Double> modelListR = new ArrayList<Double>(maxS.right(idx));
-        System.out.format("%s: modelListL.size()=%d modelListR.size()=%d\n", 
-                sModelPrefix, modelListL.size(), modelListR.size());
+        modelSAmInfo(modelSAm);
 
-        SAm1Manager man = new SAm1Manager();
+
+        SAm3Manager man = new SAm3Manager();
         //options
         int maxCycle = getMaxCycle(cmd, 1);
         boolean bAllHMS = getSwitchAllHMS(cmd);
         SAmOption option = new SAmOption(maxCycle, bAllHMS);
         //loop tradeDates
+        TradeDates tradeDates = new TradeDates(stockCode);
         String startDate = getStartDate(cmd, tradeDates.firstDate());
         String endDate = getEndDate(cmd, tradeDates.lastDate());
         String[] sTradeDates = TradeDates.getTradeDateList(stockCode, startDate, endDate);
         for(int i=0; i<sTradeDates.length; i++) {
             String sDstTradeDate = sTradeDates[i];
 
-            man.run(stockCode, sDstTradeDate, tradeDates, option,
-                    modelListL, modelListR);
+            man.run(stockCode, sDstTradeDate, tradeDates, option);
         }
     }
 
+    private void modelSAmInfo(SAm modelSAm) {
+        String sModelPrefix = modelSAm.toString();
+        //max downArrow segment
+        Segment maxS = modelSAm.getSegmentOfMaxLen();
+        int maxSize = maxS.getLength();
+        Double maxE = maxS.maxAm();
+        Double minE = maxS.minAm();
+        double maxLoc = maxS.getLocationOfMaxAm();
+        double minLoc = maxS.getLocationOfMinAm();
+        int maxSIdx = modelSAm.indexOfSeg(maxS);
+        String sFormat = "%s %8s: size=%-4d min=%-6.2f minLoc=%-6.2f allLt0=%b\n";
+        System.err.format(sFormat, 
+                sModelPrefix, "maxList", maxSize, minE, minLoc, maxS.isAllLt0());
+        //check
+        Segment daS = modelSAm.getDownArrowSegment(maxSIdx, 
+                SAm3.getMaxdaSegmentLThres(), SAm3.getMaxdaSegmentRThres());
+        if(daS!=maxS) {
+            System.err.format("exception: maxLenSegment is not an downArrowSegment!\n");
+            System.exit(-1);
+        }
+
+        Segment nextUaS = modelSAm.getUpArrowSegment(maxSIdx+1, 
+                SAm3.getUaSegmentLThres(), SAm3.getUaSegmentRThres());
+        if(nextUaS==null||!nextUaS.isAllGt0()) {
+            System.exit(-1);
+        }
+        int uaSize = nextUaS.getLength();
+        double uaMaxE = nextUaS.maxAm();
+        double uaMaxER = nextUaS.getLocationOfMaxAm();
+        System.err.format("%s %8s: size=%-4d max=%-6.2f maxLoc=%-6.2f allGt0=%b\n", 
+                sModelPrefix, "upArrowS", uaSize, uaMaxE, uaMaxER, nextUaS.isAllGt0());
+    }
 
 }
