@@ -16,8 +16,10 @@
  
 package com.westsword.stocks.tools.helper;
 
-import com.westsword.stocks.am.AmManager;
-import com.westsword.stocks.base.time.StockDates;
+import java.util.*;
+
+import com.westsword.stocks.am.*;
+import com.westsword.stocks.base.time.*;
 
 public class AmCorrelHelper {
     public static void getAmCorrel(String args[]) {
@@ -43,34 +45,33 @@ public class AmCorrelHelper {
         }
     }
     private static void getAmCorrel(String stockCode, String s0, String e0, String s1, String e1) {
-            String[] fields = s0.split(",");
-            String startDate0 = fields[0];
-            String startHMS0 = fields[1];
-            fields = e0.split(",");
-            String endDate0 = fields[0];
-            String endHMS0 = fields[1];
-            fields = s1.split(",");
-            String startDate1 = fields[0];
-            String startHMS1 = fields[1];
-            fields = e1.split(",");
-            String endDate1 = fields[0];
-            String endHMS1 = fields[1];
+        String[] fields = s0.split(",");
+        String startDate0 = fields[0];
+        String startHMS0 = fields[1];
+        fields = e0.split(",");
+        String endDate0 = fields[0];
+        String endHMS0 = fields[1];
 
-            StockDates stockDates = new StockDates(stockCode);
-            String[] tradeDates = new String[] {
-                startDate0,
-                endDate0, 
-                startDate1,
-                endDate1,
-            };
+        fields = s1.split(",");
+        String startDate1 = fields[0];
+        String startHMS1 = fields[1];
+        fields = e1.split(",");
+        String endDate1 = fields[0];
+        String endHMS1 = fields[1];
 
-            AmManager am = new AmManager(stockCode, tradeDates, true);
+        String[] tradeDates0 = TradeDates.getTradeDateList(stockCode, startDate0, endDate0);
+        String[] tradeDates1 = TradeDates.getTradeDateList(stockCode, startDate1, endDate1);
+        ArrayList<String> tradeDates = new ArrayList<String>(Arrays.asList(tradeDates0));
+        tradeDates.addAll(Arrays.asList(tradeDates1));
+        StockDates stockDates = new StockDates(stockCode);
 
-            String sAmCorrel = "";
-            double amcorrel = am.getAmCorrel(startDate0, startHMS0, endDate0, endHMS0,
-                    startDate1, startHMS1, endDate1, endHMS1); 
-            sAmCorrel += String.format("%8.3f", amcorrel);
-            System.out.format("%s\n", sAmCorrel);
+        AmManager am = new AmManager(stockCode, tradeDates);
+
+        String sAmCorrel = "";
+        double amcorrel = am.getAmCorrel(startDate0, startHMS0, endDate0, endHMS0,
+                startDate1, startHMS1, endDate1, endHMS1); 
+        sAmCorrel += String.format("%8.3f", amcorrel);
+        System.out.format("%s\n", sAmCorrel);
     }
     private static void getAmCorrel(String stockCode, String tradeDate1, String tradeDate2, String hmsList) {
         StockDates stockDates = new StockDates(stockCode);
