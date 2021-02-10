@@ -65,6 +65,12 @@ function getEntrustState {
     #java -jar build/jar/analyzetools.jar getentrust $eNO ${sEntrustStateKeys[$qsIdx]}
     python -u $rootDir\\python\\today_entrusts.py $eNO ${sEntrustStateKeys[$qsIdx]}
 }
+function getPosition {
+    local stockCode=$1
+    local key=$2
+
+    python -u $rootDir\\python\\position.py $stockCode $key
+}
 
 
 function getBalance {
