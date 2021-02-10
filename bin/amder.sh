@@ -376,7 +376,7 @@ function makeAmPerms {
 
     local amderDir=/tmp/amderivatives
     mkdir -p $amderDir
-    JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
+    
 
     local max=10
     local cnt=0
@@ -384,7 +384,7 @@ function makeAmPerms {
     local i=
     for i in $tradeDates
     do
-        java -jar $analyzetoolsJar listamderivatives -s $stockCode $i >$amderDir/$i.txt &
+        JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar listamderivatives -s $stockCode $i >$amderDir/$i.txt &
 
         cnt=$((cnt+1))
         echo cnt=$cnt
