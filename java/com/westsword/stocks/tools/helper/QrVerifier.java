@@ -42,7 +42,7 @@ public class QrVerifier {
         String stockCode = newArgs[0];
         int tradeType = Integer.valueOf(newArgs[1]);
         int cycle = Integer.valueOf(newArgs[2]);
-        double targetProfit = Double.valueOf(newArgs[3]);
+        double targetRate = Double.valueOf(newArgs[3]);
 
         ArrayList<QrMatchComponent> qrMatchList = new ArrayList<QrMatchComponent>();
         initQrMatchComponentList(qrMatchList, newArgs);
@@ -90,8 +90,9 @@ public class QrVerifier {
                     //the 1st component
                     QrMatchComponent component = qrMatchList.get(0);
                     double inPrice = am.getInPrice(tradeType, baseEndTp);
-                    double outPrice = getOutPrice(inPrice, targetProfit, tradeType);
-                    AmRecord ar = am.getTargetAmRecord(baseEndSdt, tradeType, cycleSdLength, targetProfit);
+                    double targetProfit = Trade.getTargetProfit(targetRate, inPrice);
+                    double outPrice = Utils.getOutPrice(inPrice, targetProfit, tradeType);
+                    AmRecord ar = am.getTargetAmRecord(baseEndSdt, tradeType, cycleSdLength, targetRate);
                     if(ar==null) {
                         outPrice = am.getOutPrice(tradeType, baseEndSdt+cycleSdLength);
                     }
@@ -146,21 +147,12 @@ public class QrVerifier {
 
         return profit;
     }
-    public double getOutPrice(double inPrice, double targetProfit, int tradeType) {
-        double outPrice = 0;
-        if(tradeType == Stock.TRADE_TYPE_LONG) 
-            outPrice = inPrice + targetProfit;
-        else
-            outPrice = inPrice - targetProfit;
-
-        return outPrice;
-    }
 
     private void verifyUsage() {
-        System.err.println("usage: java AnalyzeTools qrverify [-h] stockCode tradeType cycle targetProfit endDate0,endHMS0,matchedSdLen [sMatch0] [sMatch1] ...");
+        System.err.println("usage: java AnalyzeTools qrverify [-h] stockCode tradeType cycle targetRate endDate0,endHMS0,matchedSdLen [sMatch0] [sMatch1] ...");
         System.err.println("       stockCode   - which stock is to be operated");
         System.err.println("       tradeType   - long or short");
-        System.err.println("       <cycle, targetProfit>");
+        System.err.println("       <cycle, targetRate>");
         System.err.println("         cycle by seconds");
         System.err.println("       <endDate0, endHMS0, matchedSdLen> - first QrMatchComponent");
         System.err.println("         matchedSdLen by sdtime is positive");

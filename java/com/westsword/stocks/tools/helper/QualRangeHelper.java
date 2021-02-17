@@ -37,18 +37,18 @@ public class QualRangeHelper {
         String stockCode = args[1];
         int tradeType = Integer.valueOf(args[2]);
         int cycle = Integer.valueOf(args[3]);
-        double targetProfit = Double.valueOf(args[4]);
+        double targetRate = Double.valueOf(args[4]);
 
         int sdInterval = Settings.getSdInterval();
         int cycleSdLength = (int)Utils.roundUp((double)cycle/sdInterval, "#");
         System.err.format("cycleSdLength=%d\n", cycleSdLength);
 
-        loopAllSdts(stockCode, tradeType, cycleSdLength, targetProfit);
+        loopAllSdts(stockCode, tradeType, cycleSdLength, targetRate);
     }
-    private void loopAllSdts(String stockCode, int tradeType, int sdLength, double targetProfit) {
+    private void loopAllSdts(String stockCode, int tradeType, int sdLength, double targetRate) {
 
-        CheckPoint0 ckpt0 = new CheckPoint0();
-        TreeSet<String> hmsSet = ckpt0.get();
+        AACheckPoint ckpt = new AACheckPoint(60);
+        TreeSet<String> hmsSet = ckpt.get();
 
         String sFormat = "%s %s %x %x %8.3f %8.3f\n";
         AmManager am = new AmManager(stockCode);
@@ -61,7 +61,7 @@ public class QualRangeHelper {
             for(String hms: hmsSet) {
                 int timeIdx = sdt.getAbs(tradeDate, hms);
 
-                AmRecord r = am.getTargetAmRecord(timeIdx, tradeType, sdLength, targetProfit);
+                AmRecord r = am.getTargetAmRecord(timeIdx, tradeType, sdLength, targetRate);
                 if(r!=null) {
                     long inTp = sdt.rgetAbs(timeIdx);
                     String inYMDHMS = Time.getTimeYMDHMS(inTp, false, false);
@@ -75,7 +75,7 @@ public class QualRangeHelper {
         }
     }
     private void usage() {
-        System.err.println("usage: java AnalyzeTools qualrange stockCode tradeType cycle targetProfit");
+        System.err.println("usage: java AnalyzeTools qualrange stockCode tradeType cycle targetRate");
         System.err.println("       cycle - in seconds");
         System.exit(-1);
     }

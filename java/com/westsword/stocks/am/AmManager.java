@@ -167,7 +167,15 @@ public class AmManager {
         idx = mAmRecordMap.ceilingKey(idx);
         return mAmRecordMap.get(idx);
     }
-    public AmRecord getTargetAmRecord(int startSdt, int tradeType, int sdLength, double targetProfit) {
+    public AmRecord last() {
+        return mAmRecordMap.get(mAmRecordMap.lastKey());
+    }
+    public void add(int sdIdx, AmRecord r) {
+        mAmRecordMap.put(sdIdx, r);
+    }
+
+
+    public AmRecord getTargetAmRecord(int startSdt, int tradeType, int sdLength, double targetRate) {
         AmRecord r = null;
 
         AmRecord inR = mAmRecordMap.get(startSdt);
@@ -175,25 +183,19 @@ public class AmManager {
             return r;
 
         double inPrice = inR.getInPrice(tradeType);
+        double targetProfit = Trade.getTargetProfit(targetRate, inPrice);
         for(int i=startSdt; i<startSdt+sdLength; i++) {
             AmRecord ar = mAmRecordMap.get(i);
             if(ar == null)
                 break;
 
-            if(tradeType == Stock.TRADE_TYPE_LONG && ar.getOutPrice(tradeType)-inPrice>=targetProfit || 
-                    tradeType == Stock.TRADE_TYPE_SHORT && inPrice-ar.getOutPrice(tradeType)>=targetProfit) {
+            if(ar.time2Out(tradeType, inPrice, targetProfit)) {
                 r = ar;
                 break;
             }
         }
 
         return r;
-    }
-    public AmRecord last() {
-        return mAmRecordMap.get(mAmRecordMap.lastKey());
-    }
-    public void add(int sdIdx, AmRecord r) {
-        mAmRecordMap.put(sdIdx, r);
     }
 
 

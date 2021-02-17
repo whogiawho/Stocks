@@ -83,4 +83,15 @@ public class AmRecord implements Comparable<AmRecord> {
     public void print() {
         System.out.format("%s", toString());
     }
+
+    public boolean time2Out(int tradeType, double inPrice, double targetProfit) {
+        boolean bOut = false;
+
+        if(tradeType == Stock.TRADE_TYPE_LONG && getOutPrice(tradeType)-inPrice>=targetProfit) 
+            bOut = true;
+        else if(tradeType == Stock.TRADE_TYPE_SHORT && inPrice-getOutPrice(tradeType)>=targetProfit)
+            bOut = true; 
+
+        return bOut;
+    }
 }
