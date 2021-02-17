@@ -80,25 +80,30 @@ public class AmDerUtils {
 
         return (double)naCount/(double)count;
     }
+
+
+    private static SimpleRegression getSR(TreeMap<Integer, AmRecord> amrMap,  int start, int end) {
+        SimpleRegression sr = new SimpleRegression();
+        for(int i=start; i<=end; i++) {
+            int x = i - start;
+            AmRecord r = amrMap.get(i);
+            if(r!=null) {
+                long y = r.am;
+                sr.addData((double)x, (double)y);
+            }
+        }
+
+        return sr;
+    }
     public static void listSingleSd(int sd, double r2Threshold, int sdbw, int minSkippedSD, int interval, 
             TreeMap<Integer, AmRecord> amrMap, boolean bStdOut, String sDerivativeFile) {
-        
         int minDist=minSkippedSD;
         for(int dist=sdbw; dist>=minDist; dist-=interval) {
-
             int start=sd-dist;
             int end=sd;
-            SimpleRegression sr = new SimpleRegression();
-            for(int i=start; i<=end; i++) {
-                int x = i - start;
-                AmRecord r = amrMap.get(i);
-                if(r!=null) {
-                    long y = r.am;
-                    sr.addData((double)x, (double)y);
-                }
-            }
-
+            SimpleRegression sr = getSR(amrMap, start, end);
             String sSlope = translateSlope(1, sr.getSlope(), r2Threshold, sr.getRSquare());
+
             String line = String.format("%-8.3f %8s\n", sr.getRSquare(), sSlope);
             if(bStdOut)
                 System.out.format("%s", line);
@@ -130,9 +135,24 @@ public class AmDerUtils {
     }
 
 
-    public static void makeAmDerPng(String stockCode, String tradeDate, String hms) {
-        ThreadMakeAmDer t = new ThreadMakeAmDer(stockCode, tradeDate, hms);
-        t.start();
+    public static void listAvgAm(int sd, int sdbw, int minSkippedSD, int interval,
+            TreeMap<Integer, AmRecord> amrMap, boolean bStdOut, String sAvgAmFile) {
+        long endAm = amrMap.get(sd).am;
+        int minDist=minSkippedSD;
+        for(int dist=sdbw; dist>=minDist; dist-=interval) {
+            int start=sd-dist;
+            int end=sd;
+            long startAm = amrMap.get(start).am;
+            double avgAm = (endAm-startAm)/dist;
+
+            String line = String.format("%-20d %8.3f\n", startAm, avgAm);
+            if(bStdOut)
+                System.out.format("%s", line);
+            if(sAvgAmFile!=null) {
+                //write line to derivativeFile
+                Utils.append2File(sAvgAmFile, line);
+            }
+        }
     }
 
 
@@ -144,5 +164,9 @@ public class AmDerUtils {
         String sSrcFile = sSrcDerivativeDir + hms + ".txt";
         //System.out.format("sSrcFile=%s\n", sSrcFile);
         l.load(amderList, sSrcFile);
+    }
+    public static void makeAmDerPng(String stockCode, String tradeDate, String hms) {
+        ThreadMakeAmDer t = new ThreadMakeAmDer(stockCode, tradeDate, hms);
+        t.start();
     }
 }

@@ -26,3 +26,16 @@ function rgetRel {
         echo $line
     }
 }
+
+function nextYMDHMS {
+    local stockCode=$1
+    local tradeDate=$2
+    local hms=$3
+    local interval=$4
+
+    local abs=`getAbs $stockCode $tradeDate $hms`
+    local nextAbs=$((abs+interval))
+
+    local hexTp=`rgetAbs $stockCode $nextAbs`
+    convertHex2Time $hexTp y
+}
