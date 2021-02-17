@@ -1,6 +1,44 @@
 #!/bin/bash
 
 
+function openAmderPngs {
+    local stockCode=$1
+    local tradeDates=$2
+
+    local i=
+    for i in $tradeDates
+    do
+        explorer.exe "$amderPngDir\\$stockCode\\$i.png"
+    done
+}
+function openNextAmderPngDir {
+    local stockCode=$1
+    local tradeDates=$2
+
+    local i=
+    for i in $tradeDates
+    do
+        i=`getNextTradeDate $stockCode $i`
+        explorer.exe "$dailyDir\\$stockCode\\$i\\derivativePng"
+    done
+}
+
+function openAmderPng {
+    local stockCode=$1
+    local tradeDate=$2
+    local hms=$3
+
+    [[ -z $hms ]] && {
+        local sep=_
+        [[ $tradeDate =~ , ]] && sep=,
+
+        hms=${tradeDate#*$sep}
+        tradeDate=${tradeDate%$sep*}
+    }
+
+    JPEGView.exe "$amderDir\\$stockCode\\$tradeDate\\derivativePng\\$hms.png" &
+}
+
 
 function makeAllContAmStatsTxt {
     local stockCode=$1

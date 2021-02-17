@@ -267,41 +267,6 @@ function openDailyAmPrice {
         explorer.exe "$dailyDir\\$stockCode\\$i\\AmPrice.png"
     done
 }
-function openNextAmDerPngDir {
-    local stockCode=$1
-    local tradeDates=$2
-
-    local i=
-    for i in $tradeDates
-    do
-        i=`getNextTradeDate $stockCode $i`
-        explorer.exe "$dailyDir\\$stockCode\\$i\\derivativePng"
-    done
-}
-function openAmderPngs {
-    local stockCode=$1
-    local tradeDates=$2
-
-    local i=
-    for i in $tradeDates
-    do
-        explorer.exe "$amderPngDir\\$stockCode\\$i.png"
-    done
-}
-
-function openAmderPng {
-    local stockCode=$1
-    local tradeDate=$2
-    local hms=$3
-
-    [[ -z $hms ]] && {
-        hms=${tradeDate#*,}
-        tradeDate=${tradeDate%,*}
-    }
-
-    JPEGView.exe "$dailyDir\\$stockCode\\$tradeDate\\derivativePng\\$hms.png" &
-}
-
 
 
 
