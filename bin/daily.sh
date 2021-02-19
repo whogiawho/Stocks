@@ -68,7 +68,7 @@ function routinesAfterCloseQuotation {
     #make amderivatives
     makeAmDerivativePng $stockCode $tradeDate 150000 1 $((14400*5))
     local dataDir="$dailyDir\\$stockCode\\$tradeDate"
-    cp "$dataDir\\amderTxt\\${tradeDate}_150000_72000_amder.png" "$amderPngDir\\$stockCode\\$tradeDate.png"
+    cp "$dataDir\\amderTxt\\${tradeDate}_150000_72000_amder.png" "$amder150000PngDir\\$stockCode\\$tradeDate.png"
 }
 #write today's checkAllSSTable output to fCheckAllTable
 function write2CheckAllTable {

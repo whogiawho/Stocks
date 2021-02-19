@@ -9,7 +9,8 @@ rawZuBiDataDir=${rawZuBiDataDir:-"$dataRoot\\rawTradeDetails"}
 rawPankouDataDir=${rawPankouDataDir:-"$dataRoot\\rawPankou"}
 dailyDir=${dailyDir:-"$dataRoot\\daily"}
 thsRootDirCygdrive=${thsRootDirCygdrive:-"/cygdrive/e/HexinSoftware/Hexin"}
-amderPngDir=${amderPngDir:-"$dataRoot\\amderPng"}
+amderDir=${amderDir:-"$dataRoot\\amder"}
+amder150000PngDir=${amder150000PngDir:-"$dataRoot\\amder150000Png"}
 TYPE_BUY=0
 TYPE_SELL=1
 EXT_PAN=5
@@ -66,6 +67,7 @@ splitRawTradeDetailsJar="$rootDir\\build\\jar\\splitrawtradedetails.jar"
 . bin/perm.sh
 . bin/sam.sh
 . bin/pvtable.sh
+. bin/avgam.sh
 
 
 

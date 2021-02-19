@@ -8,7 +8,7 @@ function openAmderPngs {
     local i=
     for i in $tradeDates
     do
-        explorer.exe "$amderPngDir\\$stockCode\\$i.png"
+        explorer.exe "$amder150000PngDir\\$stockCode\\$i.png"
     done
 }
 function openNextAmderPngDir {

@@ -218,22 +218,43 @@ public class StockPaths {
         return sSessionFile;
     }
 
+    public static String getAmderDir(String stockCode, String tradeDate) {
+        return getAmderDir()+stockCode+sSep+tradeDate+sSep;
+    }
+    public static String getAmderDir() {
+        return getDataDir() + "amder" + sSep;
+    }
     public static String getDerivativePngDir() {
         return getDerivativePngDir(Settings.getStockCode(), Settings.getTradeDate());
     }
     public static String getDerivativePngDir(String stockCode, String tradeDate) {
-        return getDailyDir(stockCode, tradeDate) + sSep + "derivativePng" + sSep; 
+        return getAmderDir(stockCode, tradeDate) + sSep + "derivativePng" + sSep; 
     }
     public static String getDerivativePngFile(String stockCode, String tradeDate, String hms) {
         return getDerivativePngDir(stockCode, tradeDate) + hms + ".png"; 
     }
     public static String getDerivativeDir(String stockCode, String tradeDate) {
-        return getDailyDir(stockCode, tradeDate) + sSep + "derivative" + sSep; 
+        return getAmderDir(stockCode, tradeDate) + sSep + "derivative" + sSep; 
     }
     public static String getDerivativeFile(String stockCode, String tradeDate, String hms) {
         return getDerivativeDir(stockCode, tradeDate) + hms + ".txt";
     }
 
+    public static String getAvgAmPngDir() {
+        return getAvgAmPngDir(Settings.getStockCode(), Settings.getTradeDate());
+    }
+    public static String getAvgAmPngDir(String stockCode, String tradeDate) {
+        return getDailyDir(stockCode, tradeDate) + sSep + "avgamPng" + sSep; 
+    }
+    public static String getAvgAmPngFile(String stockCode, String tradeDate, String hms) {
+        return getAvgAmPngDir(stockCode, tradeDate) + hms + ".png"; 
+    }
+    public static String getAvgAmDir(String stockCode, String tradeDate) {
+        return getDailyDir(stockCode, tradeDate) + sSep + "avgam" + sSep; 
+    }
+    public static String getAvgAmFile(String stockCode, String tradeDate, String hms) {
+        return getAvgAmDir(stockCode, tradeDate) + hms + ".txt";
+    }
 
     public static String getAmDerivativeFile(String stockCode, String tradeDate) {
         return getDailyDir(stockCode, tradeDate) + sSep + "amderivative.txt"; 
