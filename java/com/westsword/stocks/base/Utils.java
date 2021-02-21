@@ -356,4 +356,15 @@ public class Utils {
         }
         return s01;
     }
+
+    //[start, end)
+    public static double[] toDoubleArray(List<String> sList, int start, int end) {
+        double[] array = new double[sList.size()];
+
+        for(int i=start; i<end; i++) {
+            array[i] = Double.valueOf(sList.get(i)); 
+        }
+
+        return array;
+    }
 }

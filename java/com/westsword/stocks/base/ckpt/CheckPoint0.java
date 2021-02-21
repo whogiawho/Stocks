@@ -20,7 +20,6 @@ package com.westsword.stocks.base.ckpt;
 import java.util.*;
 
 import com.westsword.stocks.base.time.*;
-import com.westsword.stocks.base.ckpt.*;
 import com.westsword.stocks.base.Settings;
 
 public class CheckPoint0 extends CheckPoint {

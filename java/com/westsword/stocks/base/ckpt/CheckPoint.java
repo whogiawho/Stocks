@@ -40,6 +40,15 @@ public class CheckPoint {
     public int getLength() {
         return mCkptList.size();
     }
+    public String next(String hms) {
+        return mCkptList.higher(hms);
+    }
+    public String last() {
+        return mCkptList.last();
+    }
+    public String first() {
+        return mCkptList.first();
+    }
 
     public CheckPoint sub(String sStart, boolean fromInclusive, String sEnd, boolean toInclusive) {
         return new CheckPoint(mCkptList.subSet(sStart, fromInclusive, sEnd, toInclusive));

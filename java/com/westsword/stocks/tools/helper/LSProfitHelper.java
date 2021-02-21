@@ -71,7 +71,7 @@ public class LSProfitHelper {
     }
 
     private static void usage() {
-        System.err.println("usage: java AnalyzeTools getlsprofit [-m] stockCode tradeDate hms");
+        System.err.println("usage: java AnalyzeTools getlsprofit [-ms] stockCode tradeDate hms");
         System.err.println("  for<stockCode,tradeDate,hms> within maxCycle get its L&S maxProfit");
         System.err.println("       -m maxCycle        ; default 1 day");
         System.err.println("       -s sdtime          ; default 60");

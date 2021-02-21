@@ -90,11 +90,6 @@ public class AmDerivativeHelper {
             //call AmDerManager.run to replace listSingleSd(...) to speed up
             adm.runWOCopy(stockCode, r, amrMap, sdt,
                     r2Threshold, sdbw, minSkippedSD, interval);
-
-            /*
-            listSingleSd(sd, r2Threshold, sdbw, minSkippedSD, interval, 
-                    amm, false, sDerivativeFile);
-            */
         }
     }
     public static void handleSingleHMS(String stockCode, String tradeDate, String hms, CommandLine cmd) {
@@ -122,7 +117,7 @@ public class AmDerivativeHelper {
 
 
     private static void usage() {
-        System.err.println("usage: java AnalyzeTools listamderivatives [-bhm] stockCode tradeDate [hms]");
+        System.err.println("usage: java AnalyzeTools listamderivatives [-bhmise] stockCode tradeDate [hms]");
         System.err.println("       only print but not write to file when hms is specified");
         System.err.println("       -b sdbw       ; at most sdbw shall be looked backward; default 300");
         System.err.println("       -h r2Threshold; default 0.5");
