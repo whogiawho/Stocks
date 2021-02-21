@@ -1,5 +1,14 @@
 #!/bin/bash
 
+function getLSProfit {
+    local stockCode=$1
+    local tradeDate=$2
+    local hms=$3
+    local option=$4
+
+    JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar getlsprofit -$option $stockCode $tradeDate $hms 2>/dev/null
+}
+
 function getOpenQuotationPrice {
     local stockCode=$1
     local tradeDate=$2
