@@ -484,6 +484,12 @@ public class GetSettings{
         p.make("", 0);
         p.print();
     }
+    public static void testAACheckPoint(String stockCode) {
+        System.out.format("\n testAACheckPoint: \n");
+
+        AACheckPoint aackpt = new AACheckPoint(60);
+        aackpt.print();
+    }
     public static void testCkpt(String stockCode) {
         System.out.format("\n testCkpt: \n");
 
@@ -887,6 +893,7 @@ public class GetSettings{
         //testAmMatrix(stockCode);
         //testMatlab(stockCode);
         //testCkpt(stockCode);
+        testAACheckPoint(stockCode);
         //testHMSPath(stockCode);
         //testHMSPath0(stockCode);
         //testHMSPath1(stockCode);
@@ -903,7 +910,7 @@ public class GetSettings{
         //testPearsonsCorrelation(stockCode);
         //testAmDerLoader(stockCode);
         //testPolynomial(stockCode);
-        testApachePolynomial(stockCode);
+        //testApachePolynomial(stockCode);
         //testSAmOffset(stockCode);
         //testZeroArray(stockCode);
         //testAmRateViewer(stockCode);

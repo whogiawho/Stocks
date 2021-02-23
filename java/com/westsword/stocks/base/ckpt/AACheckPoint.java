@@ -51,4 +51,21 @@ public class AACheckPoint extends CheckPoint {
 
         return sRet;
     }
+
+    public String[] prev(StockDates stockDates, String tradeDate, String hms) {
+        String[] sRet = new String[2];
+
+        if(contains(hms)) {
+            if(hms.equals(first())) {
+                sRet[0] = stockDates.prevDate(tradeDate);
+                sRet[1] = last();
+            } else {
+                sRet[0] = tradeDate;
+                sRet[1] = prev(hms);
+            }
+        }
+
+        return sRet;
+    }
+
 }

@@ -17,27 +17,62 @@
 package com.westsword.stocks.tools.helper;
 
 import java.util.*;
+import org.apache.commons.cli.*;
 
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.ckpt.*;
+import com.westsword.stocks.base.utils.*;
 
 public class AACkptHelper {
     public static void next(String args[]) {
-        if(args.length !=4) {
+        CommandLine cmd = getCommandLine(args);
+        String[] newArgs = cmd.getArgs();
+        if(newArgs.length!=3) {
             usageNext();
         }
 
-        String stockCode = args[1];
-        String tradeDate = args[2];
-        String hms = args[3];
+        boolean bBackward = CmdLineUtils.getBoolean(cmd, "b", false);
+
+        String stockCode = newArgs[0];
+        String tradeDate = newArgs[1];
+        String hms = newArgs[2];
         StockDates stockDates = new StockDates(stockCode);
 
         AACheckPoint aackpt = new AACheckPoint(60);
-        String[] sRet = aackpt.next(stockDates, tradeDate, hms);
+        String[] sRet;
+        if(!bBackward)
+            sRet = aackpt.next(stockDates, tradeDate, hms);
+        else
+            sRet = aackpt.prev(stockDates, tradeDate, hms);
+
         System.out.format("%s %s\n", sRet[0], sRet[1]);
     }
     private static void usageNext() {
-        System.err.println("usage: java AnalyzeTools nextaackpt stockCode tradeDate hms");
+        System.err.println("usage: java AnalyzeTools nextaackpt [-b] stockCode tradeDate hms");
+        System.err.println("       -b            ; look backward to get next aackpt; default false");
         System.exit(-1);
     }
+
+    public static CommandLine getCommandLine(String[] args) {
+        CommandLine cmd = null;
+        try {
+            String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
+            Options options = getOptions();
+
+            CommandLineParser parser = new DefaultParser();
+            cmd = parser.parse(options, newArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return cmd;
+    }
+    public static Options getOptions() {
+        Options options = new Options();
+        options.addOption("b", false,  "look backward to get next aackpt; default false");
+
+        return options;
+    }
+
+
 }

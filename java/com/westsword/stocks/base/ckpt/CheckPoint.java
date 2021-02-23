@@ -43,6 +43,9 @@ public class CheckPoint {
     public String next(String hms) {
         return mCkptList.higher(hms);
     }
+    public String prev(String hms) {
+        return mCkptList.lower(hms);
+    }
     public String last() {
         return mCkptList.last();
     }
