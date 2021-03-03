@@ -297,6 +297,9 @@ public class RealtimeAnalyze {
         // process last record
         processRawDetails(null, rawDetailsList);
         processRawPankou(null, rawPankouList);
+
+        //processEvents quitted
+        System.out.format("%s: quitted!\n", Utils.getCallerName(getClass()));
     }
 
     private static void usage() {
@@ -314,5 +317,8 @@ public class RealtimeAnalyze {
         Path dir1 = Paths.get(args[1]);                                               //pankou dir
         String outAnalysisFile = args[2];                                             //output of the analysis file
         new RealtimeAnalyze(dir0, dir1, outAnalysisFile).processEvents();
+
+        System.out.format("%s: calling System.exit(0)!\n", "main");
+        System.exit(0);
     }
 }

@@ -23,7 +23,7 @@ import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.Settings;
 
 public class CopyManager extends Thread {
-    private boolean bStopped;
+    private volatile boolean bStopped;
     private ArrayBlockingQueue<CopyRequest> mRequestQueue; 
 
     public CopyManager() {
@@ -52,6 +52,8 @@ public class CopyManager extends Thread {
             System.out.format("%s\n", line);
             e.printStackTrace();
         }
+
+        System.out.format("%s: quitted!", Utils.getCallerName(getClass()));
     }
 
     public static class CopyRequest {

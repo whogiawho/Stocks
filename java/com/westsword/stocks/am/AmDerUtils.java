@@ -142,7 +142,7 @@ public class AmDerUtils {
         for(int dist=sdbw; dist>=minDist; dist-=interval) {
             int start=sd-dist;
             int end=sd;
-            long startAm = amrMap.get(start).am;
+            long startAm = amrMap.get(amrMap.floorKey(start)).am;
             double avgAm = (endAm-startAm)/dist;
 
             String line = String.format("%-20d %8.3f\n", startAm, avgAm);
