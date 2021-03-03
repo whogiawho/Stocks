@@ -172,20 +172,29 @@ public class TradeSessionManager {
         s.save();
     }
 
-    private boolean bRRPDone = false;
-    public void makeRRP(AmRecord item) {
-        //System.out.format("%s: entering\n", Utils.getCallerName(getClass()));
+    private boolean canMakeRRP(AmRecord item) {
+        boolean bMakeRRP = true;
 
         if(bRRPDone)
-            return;
+            return false;
+        /*
         if(Utils.isOfflineRun())
-            return;
+            return false;
+        */
 
         long currentItemTp = item.hexTimePoint;
         if(!Utils.isRRPTime(currentItemTp)) {
             //System.out.format("%s: not rrp time %x!\n", Utils.getCallerName(getClass()), currentItemTp);
-            return;
+            return false;
         }
+
+        return bMakeRRP;
+    }
+    private boolean bRRPDone = false;
+    public void makeRRP(AmRecord item, boolean bCheck) {
+        //System.out.format("%s: entering\n", Utils.getCallerName(getClass()));
+        if(bCheck && !canMakeRRP(item))
+            return;
 
         THSQS iThsqs = new THSQS();
 
@@ -207,6 +216,9 @@ public class TradeSessionManager {
                 Utils.getCallerName(getClass()), rrpCode, actualOutPrice, amount);
 
         bRRPDone = true;
+    }
+    public void makeRRP(AmRecord item) {
+        makeRRP(item, true);
     }
     //state: a->b b->c a->e e->d
     //take a look at TradeSession.java for more
