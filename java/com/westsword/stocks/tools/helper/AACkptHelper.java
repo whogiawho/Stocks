@@ -32,13 +32,14 @@ public class AACkptHelper {
         }
 
         boolean bBackward = CmdLineUtils.getBoolean(cmd, "b", false);
+        int interval = CmdLineUtils.getInteger(cmd, "i", 60);
 
         String stockCode = newArgs[0];
         String tradeDate = newArgs[1];
         String hms = newArgs[2];
         StockDates stockDates = new StockDates(stockCode);
 
-        AACheckPoint aackpt = new AACheckPoint(60);
+        AACheckPoint aackpt = new AACheckPoint(interval);
         String[] sRet;
         if(!bBackward)
             sRet = aackpt.next(stockDates, tradeDate, hms);
@@ -48,8 +49,9 @@ public class AACkptHelper {
         System.out.format("%s %s\n", sRet[0], sRet[1]);
     }
     private static void usageNext() {
-        System.err.println("usage: java AnalyzeTools nextaackpt [-b] stockCode tradeDate hms");
+        System.err.println("usage: java AnalyzeTools nextaackpt [-ib] stockCode tradeDate hms");
         System.err.println("       -b            ; look backward to get next aackpt; default false");
+        System.err.println("       -i            ; interval between 2 continuous aackpt; default 60");
         System.exit(-1);
     }
 
@@ -70,6 +72,7 @@ public class AACkptHelper {
     public static Options getOptions() {
         Options options = new Options();
         options.addOption("b", false,  "look backward to get next aackpt; default false");
+        options.addOption("i", true,   "interval between 2 continuous aackpt; default 60");
 
         return options;
     }

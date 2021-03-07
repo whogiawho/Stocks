@@ -316,7 +316,7 @@ public class Analyze600030 {
                 }
 
                 String sFormat = "\nCallAuction Completed! ab/(ab+as) = %8.3f%%\n";
-                System.out.format(sFormat, (double)abSum/(abSum+asSum)*100);
+                //System.out.format(sFormat, (double)abSum/(abSum+asSum)*100);
                 completed= true;
             }
         }

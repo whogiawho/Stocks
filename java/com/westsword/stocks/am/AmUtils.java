@@ -216,6 +216,7 @@ public class AmUtils {
 
         return m;
     }
+    //[(startDate, startHMS), (endDate, endHMS)]
     public static NavigableMap<Integer, AmRecord> getItemMap(NavigableMap<Integer, AmRecord> amrMap, SdTime1 sdTime, 
             String startDate, String startHMS, String endDate, String endHMS) {
         long startTp = Time.getSpecificTime(startDate, startHMS);

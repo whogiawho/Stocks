@@ -179,6 +179,7 @@ public class TradeSession {
         mTargetProfit = s.getDouble(sSessionFile, sKeyTargetProfit);
 
         mStockCode = s.getString(sSessionFile, sKeyStockCode);
+        //System.out.format("%s %s\n", sSessionFile, sKeyTargetYearRate);
         mTargetYearRate = s.getDouble(sSessionFile, sKeyTargetYearRate);
         mInHexTimePoint = s.getLong(sSessionFile, sKeyInHexTimePoint, 16);
         mState = s.getInteger(sSessionFile, sKeyState);
