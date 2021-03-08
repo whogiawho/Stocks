@@ -132,7 +132,7 @@ function makeAvi {
     cd $curDir
 }
 #merge pngs from amdertxtPng and derivativePng
-function mergePng {
+function mergeAmderPng {
     local stockCode=$1
     local tradeDate=$2
 
@@ -178,7 +178,7 @@ function dailyMakeAmDers {
     for i in `getTradeDateRange $stockCode $sDate $eDate`
     do
         setupCfgFile $stockCode $i
-        java -jar $analyzetoolsJar listamderivatives -i60 -b$bwsd -m60 -e60 $stockCode $i
+        java -jar $analyzetoolsJar listamderivatives -b$bwsd -m60 -i60 -e60 $stockCode $i
     done
 }
 
@@ -202,15 +202,15 @@ function makeAmDerivativePng {
     [[ -z $bwsd ]] && bwsd=300
     [[ -z $r2Threshold ]] && r2Threshold=0.5
 
-    local amderDir="$dailyDir\\$stockCode\\$tradeDate\\amderTxt"
-    [[ ! -e "$amderDir" ]] && {
-        mkdir -p "$amderDir"
+    local amdertxtDir="$dailyDir\\$stockCode\\$tradeDate\\amderTxt"
+    [[ ! -e "$amdertxtDir" ]] && {
+        mkdir -p "$amdertxtDir"
     }
 
-    local amDerTxt="$amderDir\\${tradeDate}_${hms}_${bwsd}_amder.txt"
+    local amDerTxt="$amdertxtDir\\${tradeDate}_${hms}_${bwsd}_amder.txt"
     java -jar $analyzetoolsJar listamderivatives -b$bwsd -h$r2Threshold -m60 -i${interval} $stockCode $tradeDate $hms >"$amDerTxt"
 
-    local sPngFile="$amderDir\\${tradeDate}_${hms}_${bwsd}_amder.png"
+    local sPngFile="$amdertxtDir\\${tradeDate}_${hms}_${bwsd}_amder.png"
     cscript.exe "$rootDir\\vbs\\makeAmDerivativePng.vbs" "$amDerTxt" "$sPngFile"
 
     [[ -z $bSaveTxt ]] && rm -rf $amDerTxt
@@ -232,9 +232,9 @@ function makeAmDerAnalysis {
     local bwsd=$3
     local interval=$4
 
-    local amderDir="$dailyDir\\$stockCode\\$tradeDate\\amderTxt"
-    [[ ! -e "$amderDir" ]] && {
-        mkdir -p "$amderDir"
+    local amdertxtDir="$dailyDir\\$stockCode\\$tradeDate\\amderTxt"
+    [[ ! -e "$amdertxtDir" ]] && {
+        mkdir -p "$amdertxtDir"
     }
 
     #local startTp=`convertTime2Hex $tradeDate $CallAuctionEndTime`
@@ -253,7 +253,7 @@ function makeAmDerAnalysis {
         local sDate=`echo $str|awk -F, '{print $1}'`
         local sHMS=`echo $str|awk -F, '{print $2}'`
 
-        getAnalysis $stockCode ${sDate} ${sHMS} ${tradeDate} ${hms} ${interval} >"$amderDir\\$hms.txt"
+        getAnalysis $stockCode ${sDate} ${sHMS} ${tradeDate} ${hms} ${interval} >"$amdertxtDir\\$hms.txt"
     done
 }
 
@@ -412,8 +412,8 @@ function getCodecSeries {
 function makeAmPerms {
     local stockCode=$1
 
-    local amderDir=/tmp/amderivatives
-    mkdir -p $amderDir
+    local ampermDir=/tmp/amderivatives
+    mkdir -p $ampermDir
     
 
     local max=10
@@ -422,7 +422,7 @@ function makeAmPerms {
     local i=
     for i in $tradeDates
     do
-        JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar listamderivatives -s $stockCode $i >$amderDir/$i.txt &
+        JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar listamderivatives -s $stockCode $i >$ampermDir/$i.txt &
 
         cnt=$((cnt+1))
         echo cnt=$cnt
@@ -439,9 +439,9 @@ function amderGetAnalysis {
     local bwsd=$4
     local interval=$5
 
-    local amderDir="$dailyDir\\$stockCode\\$tradeDate\\amderTxt"
-    [[ ! -e "$amderDir" ]] && {
-        mkdir -p "$amderDir"
+    local amdertxtDir="$dailyDir\\$stockCode\\$tradeDate\\amderTxt"
+    [[ ! -e "$amdertxtDir" ]] && {
+        mkdir -p "$amdertxtDir"
     }
 
     local hmsSd=`getAbs $stockCode $tradeDate $hms`
@@ -450,7 +450,7 @@ function amderGetAnalysis {
     local str=`convertHex2Time $sTp y`
     local sDate=`echo $str|awk -F, '{print $1}'`
     local sHMS=`echo $str|awk -F, '{print $2}'`
-    local hmsTxt="$amderDir\\${hms}_${bwsd}_analysis.txt"
+    local hmsTxt="$amdertxtDir\\${hms}_${bwsd}_analysis.txt"
     getAnalysis $stockCode ${sDate} ${sHMS} ${tradeDate} ${hms} ${interval} >"$hmsTxt"
 }
 
