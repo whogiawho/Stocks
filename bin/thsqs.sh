@@ -15,15 +15,15 @@ function refresh {
 }
 
 
-function buy600030_1000 {
+function buy512880_50000 {
     local price=$1
 
-    buy 600030 $price 1000
+    buy 512880 $price 50000
 }
-function sell600030_1000 {
+function sell512880_50000 {
     local price=$1
 
-    sell 600030 $price 1000
+    sell 512880 $price 50000 
 }
 function buy {
     local stockCode=$1

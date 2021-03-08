@@ -1,5 +1,13 @@
 #!/bin/bash
 
+function makePVTable {
+    local stockCode=$1
+    local tradeDate=$2
+
+    JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar makepvtable \
+        $stockCode $tradeDate 2>/dev/null
+}
+
 function getTopPercent {
     local stockCode=$1
     local tradeDate=$2
