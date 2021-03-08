@@ -138,6 +138,20 @@ function getPrice {
         java -jar $analyzetoolsJar getdownprice $stockCode $tradeDate $hms 2>/dev/null
     }
 }
+function _getUpPrice {
+    local stockCode=$1
+    local tradeDate=$2
+    local hms=$3
+
+    [[ -z $hms ]] && {
+        hms=${tradeDate#*,}
+        tradeDate=${tradeDate%,*}
+    }
+
+    local analysisTxt="$dailyDir\\$stockCode\\$tradeDate\\analysis.txt"
+    local hexTp=`convertTime2Hex $tradeDate $hms`
+    grep $hexTp $analysisTxt|awk '{print$4}'
+}
 function getUpPrice {
     local stockCode=$1
     local tradeDate=$2
@@ -195,6 +209,17 @@ function getMinPriceBetween {
     endHMS=0x`convertTime2Hex $tradeDate $endHMS`
 
     awk "strtonum(\"0x\"\$1)>=$startHMS&&strtonum(\"0x\"\$1)<=$endHMS{print \$$idxPrice}" $analysisTxt|sort -n|head -n 1
+}
+function getExtremePriceBetween {
+    local stockCode=$1
+    local tradeDate=$2
+    local startHMS=$3
+    local endHMS=$4
+
+    local max=`getMaxPriceBetween $stockCode $tradeDate $startHMS $endHMS 5`
+    local min=`getMinPriceBetween $stockCode $tradeDate $startHMS $endHMS 1`
+
+    printf "%8s %8s\n" $max $min
 }
 
 
