@@ -51,13 +51,9 @@ public class FileCorrelHelper {
         double[] y = Utils.toDoubleArray(sList1, size1-sdbw, size1);
 
         PearsonsCorrelation pc = new PearsonsCorrelation();
-        double correl = getCorrel(pc, x, y);
+        double correl = pc.correlation(x, y);
         System.out.format("%8.3f\n", correl);
     }
-    private static double getCorrel(PearsonsCorrelation pc, double[] x, double[]y) {
-        return pc.correlation(x, y);
-    }
-
 
 
     private static void usage() {

@@ -58,10 +58,9 @@ public class AmDerUtils {
     }
 
 
-    public static double getNaRate(int sd, double r2Threshold, int sdbw, int minSkippedSD,
+    public static double getNaRate(int sd, double r2Threshold, int sdbw, int minDist,
             TreeMap<Integer, AmRecord> amrMap) {
         int naCount=0;
-        int minDist=minSkippedSD;
         int count=sdbw-minDist+1;
         for(int dist=sdbw; dist>=minDist; dist--) {
             int start=sd-dist;
@@ -95,9 +94,8 @@ public class AmDerUtils {
 
         return sr;
     }
-    public static void listSingleSd(int sd, double r2Threshold, int sdbw, int minSkippedSD, int interval, 
+    public static void listSingleSd(int sd, double r2Threshold, int sdbw, int minDist, int interval, 
             TreeMap<Integer, AmRecord> amrMap, boolean bStdOut, String sDerivativeFile) {
-        int minDist=minSkippedSD;
         for(int dist=sdbw; dist>=minDist; dist-=interval) {
             int start=sd-dist;
             int end=sd;
@@ -135,10 +133,24 @@ public class AmDerUtils {
     }
 
 
-    public static void listAvgAm(int sd, int sdbw, int minSkippedSD, int interval,
+    public static double[] getAvgAm(int sd, int sdbw, int minDist, TreeMap<Integer, AmRecord> amrMap) {
+        double[] avgams = new double[sdbw-minDist+1];
+
+        long endAm = amrMap.get(sd).am;
+        int i=0;
+        for(int dist=sdbw; dist>=minDist; dist--) {
+            int start=sd-dist;
+            int end=sd;
+            long startAm = amrMap.get(amrMap.floorKey(start)).am;
+            double avgAm = (endAm-startAm)/dist;
+            avgams[i++] = avgAm;
+        }
+
+        return avgams;
+    }
+    public static void listAvgAm(int sd, int sdbw, int minDist, int interval,
             TreeMap<Integer, AmRecord> amrMap, boolean bStdOut, String sAvgAmFile) {
         long endAm = amrMap.get(sd).am;
-        int minDist=minSkippedSD;
         for(int dist=sdbw; dist>=minDist; dist-=interval) {
             int start=sd-dist;
             int end=sd;

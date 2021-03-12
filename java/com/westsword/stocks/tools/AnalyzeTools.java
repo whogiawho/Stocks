@@ -30,11 +30,12 @@ public class AnalyzeTools{
         System.err.println("       commands are listed below:");
         System.err.println("       [ getvalue | setvalue | makeanalysistxt | priceamp |\n" +
                 "         getamcorrel | getupprice | getdownprice | getam | decode |\n" +
-                "         nexttradedate | prevtradedate | listamderivatives | listavgams |\n" +
+                "         nexttradedate | prevtradedate | makepvtable | listamderivatives |\n" +
                 "         getrel | rgetrel | getabs | rgetabs | getanalysis | stdprice |\n" +
+                "         getlsprofit | listavgams | avgamdelta |\n" +
                 "         ssinstance | ssinstances | filterssi | sstrinstance | mminstance |\n" +
                 "         getfullss | checksstable | getsstable | ssamhole | gettoppercent |\n" +
-                "         getlsprofit | searchsam[01345] | searchsam2 | makepvtable |\n" +
+                "         searchsam[01345] | searchsam2 |\n" +
                 "         getpermcoord | permstats | permsep | getamlinetype | filecorrel |\n" +
                 "         getentrust | checkabss | submitabs | makerrp | nextaackpt |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify | qrvgetstats |\n" +
@@ -83,6 +84,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("listavgams")) {
             AvgAmHelper aah = new AvgAmHelper();
             aah.list(args);
+        } else if (sOption.equals("avgamdelta")) {
+            AvgAmDeltaHelper aadh = new AvgAmDeltaHelper();
+            aadh.get(args);
         } else if (sOption.equals("getam")) {
             AmHelper amh = new AmHelper();
             amh.getAm(args);

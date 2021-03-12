@@ -18,8 +18,7 @@ package com.westsword.stocks.am;
 
 import java.util.*;
 
-import com.westsword.stocks.base.Stock;
-import com.westsword.stocks.base.Utils;
+import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.StockPaths;
 import com.westsword.stocks.analyze.RawTradeDetails;
@@ -32,14 +31,18 @@ public class AmUtils {
         mSdTime = new SdTime1(stockCode);   //get sdStartDate&sdStartTime&interval from settings.txt
         mStockDates = new StockDates(stockCode);
 
-        mAdm = new AmDerManager(bStartCopyManagerThread);
+        if(Settings.getSwitch(Settings.AM_DERIVATIVE))
+            mAdm = new AmDerManager(bStartCopyManagerThread);
+        else
+            mAdm = null;
     }
     public AmUtils(String stockCode) {
         this(stockCode, true);
     }
 
     public void stopCopyManager() {
-        mAdm.stopCopyManager();
+        if(mAdm!=null)
+            mAdm.stopCopyManager();
     }
     public void writeAllAmRecords() {
         writeAmRecords(mStockDates.firstDate(), mStockDates.lastDate());
@@ -114,7 +117,8 @@ public class AmUtils {
                     prevAmrMap.put(i, r);
 
                     //clone prevAmrMap to avoid writing synchronized codes
-                    mAdm.run(mStockCode, r, new TreeMap<Integer, AmRecord>(prevAmrMap), mSdTime);
+                    if(mAdm!=null)
+                        mAdm.run(mStockCode, r, new TreeMap<Integer, AmRecord>(prevAmrMap), mSdTime);
                 }
                 r.append2File(sAnalysisFile);
             }
