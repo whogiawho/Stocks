@@ -43,24 +43,12 @@ public class LSProfitHelper {
         String tradeDate = newArgs[1];
         String hms = newArgs[2];
         TradeDates tradeDates = new TradeDates(stockCode);
+        SdTime1 sdt = new SdTime1(stockCode);
 
-        String endDate = "";
-        String endHMS = "";
-        if(cmd.hasOption("m")) {
-            int maxCycle = getMaxCycle(cmd, 1);
-            endDate = tradeDates.nextDate(tradeDate, maxCycle);
-            endHMS = AStockSdTime.getCloseQuotationTime();
-        } else {
-            int maxSdt = getMaxSdt(cmd, 60);
-            SdTime1 sdt = new SdTime1(stockCode);
-            long tp = Time.getSpecificTime(tradeDate, hms);
-            int sd = sdt.getAbs(tp);
-            sd += maxSdt;
-            tp = sdt.rgetAbs(sd);
-            endDate = Time.getTimeYMD(tp, false);
-            endHMS = Time.getTimeHMS(tp, false);
-        }
-        //System.out.format("start=%s end=%s\n", tradeDate, endDate);
+        String[] sRet = getEndDateHMS(tradeDate, hms, cmd, tradeDates, sdt);
+        String endDate = sRet[0];
+        String endHMS = sRet[1];
+        //System.out.format("start=%s,%s end=%s,%s\n", tradeDate, hms, endDate, endHMS);
 
         AmManager amm = new AmManager(stockCode, tradeDate, endDate);
         double[] v = amm.getExtremePrice(tradeDate, hms, endDate, endHMS);
@@ -70,6 +58,30 @@ public class LSProfitHelper {
         System.out.format("%8.3f %8.3f\n", v[0]-lInPrice, sInPrice-v[1]);
     }
 
+    public static String[] getEndDateHMS(String tradeDate, String hms, CommandLine cmd, 
+            TradeDates tradeDates, SdTime1 sdt) {
+        String endDate = "";
+        String endHMS = "";
+        if(cmd.hasOption("m")) {
+            int maxCycle = getMaxCycle(cmd, 1);
+            endDate = tradeDates.nextDate(tradeDate, maxCycle);
+            endHMS = AStockSdTime.getCloseQuotationTime();
+        } else {
+            int maxSdt = getMaxSdt(cmd, 60);
+            long tp = Time.getSpecificTime(tradeDate, hms);
+            int sd = sdt.getAbs(tp);
+            sd += maxSdt;
+            tp = sdt.rgetAbs(sd);
+            endDate = Time.getTimeYMD(tp, false);
+            endHMS = Time.getTimeHMS(tp, false);
+        }
+
+        String[] sRet = new String[2];
+        sRet[0] = endDate;
+        sRet[1] = endHMS;
+
+        return sRet;
+    }
     private static void usage() {
         System.err.println("usage: java AnalyzeTools getlsprofit [-ms] stockCode tradeDate hms");
         System.err.println("  for<stockCode,tradeDate,hms> within maxCycle get its L&S maxProfit");

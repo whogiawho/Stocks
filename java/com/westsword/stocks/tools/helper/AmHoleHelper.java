@@ -29,7 +29,6 @@ public class AmHoleHelper {
         String[] newArgs = cmd.getArgs();
         if(newArgs.length!=4) {
             usage();
-            return;
         }
 
         double r2Threshold = AmDerUtils.getR2Threshold(cmd);

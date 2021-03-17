@@ -30,7 +30,6 @@ public class AvgAmDeltaHelper {
         String[] newArgs = cmd.getArgs();
         if(newArgs.length!=2 && newArgs.length!=1) {
             usage();
-            return;
         }
 
         String stockCode = newArgs[0];

@@ -24,7 +24,6 @@ public class SdTime1Helper {
     public void getRel(String args[]) {
         if(args.length != 3) {
             usage();
-            return;
         }
 
         String stockCode = args[1];
@@ -45,7 +44,6 @@ public class SdTime1Helper {
     public void rgetRel(String args[]) {
         if(args.length != 2) {
             rgetrelUsage();
-            return;
         }
 
         int rel = Integer.valueOf(args[1]);
@@ -57,7 +55,6 @@ public class SdTime1Helper {
     public void getAbs(String args[]) {
         if(args.length != 4) {
             getabsUsage();
-            return;
         }
 
         String stockCode = args[1];
@@ -79,7 +76,6 @@ public class SdTime1Helper {
     public void rgetAbs(String args[]) {
         if(args.length != 3 && args.length != 4) {
             rgetabsUsage();
-            return;
         }
 
         String stockCode = args[1];

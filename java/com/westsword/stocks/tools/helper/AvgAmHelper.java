@@ -30,7 +30,6 @@ public class AvgAmHelper {
         String[] newArgs = cmd.getArgs();
         if(newArgs.length!=3 && newArgs.length!=2) {
             usage();
-            return;
         }
 
         String stockCode = newArgs[0];
