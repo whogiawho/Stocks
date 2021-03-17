@@ -27,6 +27,14 @@ function getWindowPathOfFile {
 }
 
 
+function isRealNumber {
+    local sReal=$1
+
+    local val=1
+    [[ $sReal =~ ^[0-9]*.[0-9]+$ ]] && val=0
+
+    return $val
+}
 function divide {
     local f0=$1
     local f1=$2
@@ -164,6 +172,18 @@ function getListStdDev {
 
     awk "{sum+=\$$colN; sumsq+=\$$colN*\$$colN} END {printf \"%8.3f\",sqrt(sumsq/NR-(sum/NR)**2)}" $fList
 }
+function getListMin {
+    local fList=$1
+    local colN=$2
+
+    awk "{print \$$colN}" $fList|sort -n|head -n1
+}
+function getListMax {
+    local fList=$1
+    local colN=$2
+
+    awk "{print \$$colN}" $fList|sort -n|tail -n1
+}
 
 BuyStockServiceRate=${BuyStockServiceRate:-0.0003}
 SellStockServiceRate=${SellStockServiceRate:-0.0003}
@@ -255,4 +275,22 @@ function closeMacros {
 }
 
 
+function cecho(){
+    RED="\033[0;31m"
+    GREEN="\033[0;32m"
+    YELLOW="\033[1;33m"
+    # ... ADD MORE COLORS
+    NC="\033[0m" # No Color
 
+    printf "${!1}${2} ${NC}\n"
+}
+function beep {
+    local cnt=$1
+
+    local i
+    for i in `seq $cnt`
+    do
+        echo $'\a'
+        uSleep 300000
+    done
+}

@@ -71,6 +71,8 @@ function routinesAfterCloseQuotation {
     cp "$dataDir\\amderTxt\\${tradeDate}_150000_72000_amder.png" "$amder150000PngDir\\$stockCode\\$tradeDate.png"
     #make avgam
     dailyMakeAvgamPngs $stockCode $tradeDate $tradeDate 1170
+    #150000
+    makeAvgAmPng $stockCode $tradeDate 150000 1
 
     #make pvtable
     makePVTable $stockCode $tradeDate
