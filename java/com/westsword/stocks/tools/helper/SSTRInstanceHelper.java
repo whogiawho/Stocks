@@ -23,7 +23,7 @@ import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.tools.helper.man.*;
 import com.westsword.stocks.base.utils.AnsiColor;
-import com.westsword.stocks.analyze.ssanalyze.SSTableRecord;
+import com.westsword.stocks.analyze.ss.SSTableRecord;
 
 public class SSTRInstanceHelper {
 

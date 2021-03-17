@@ -24,7 +24,7 @@ import com.westsword.stocks.base.Stock;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.Trade;
 import com.westsword.stocks.tools.helper.SSUtils;
-import com.westsword.stocks.analyze.ssanalyze.BaseSSTR;
+import com.westsword.stocks.analyze.ss.BaseSSTR;
 
 public class SSTRInstance extends BaseSSTR {
 

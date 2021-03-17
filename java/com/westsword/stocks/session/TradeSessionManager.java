@@ -24,7 +24,7 @@ import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
-import com.westsword.stocks.analyze.ssanalyze.SSTableRecord;
+import com.westsword.stocks.analyze.ss.SSTableRecord;
 
 //key methods:
 //  check2OpenSession                           check to open new sessions as needed

@@ -35,7 +35,7 @@ import com.westsword.stocks.am.*;
 import com.westsword.stocks.qr.*;
 import com.westsword.stocks.tools.helper.*;
 import com.westsword.stocks.tools.helper.man.*;
-import com.westsword.stocks.analyze.ssanalyze.*;
+import com.westsword.stocks.analyze.ss.*;
 import com.westsword.stocks.analyze.sam.*;
 import com.westsword.stocks.analyze.sam2.*;
 import com.westsword.stocks.tools.matlab.*;

@@ -23,7 +23,7 @@ import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.utils.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.am.*;
-import com.westsword.stocks.analyze.ssanalyze.*;
+import com.westsword.stocks.analyze.ss.*;
 
 public class SSTableHelper {
 

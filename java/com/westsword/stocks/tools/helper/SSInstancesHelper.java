@@ -27,7 +27,7 @@ import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.ckpt.*;
 import com.westsword.stocks.base.utils.AnsiColor;
 import com.westsword.stocks.tools.helper.man.*;
-import com.westsword.stocks.analyze.ssanalyze.*;
+import com.westsword.stocks.analyze.ss.*;
 
 public class SSInstancesHelper {
 

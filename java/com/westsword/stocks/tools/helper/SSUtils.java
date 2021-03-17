@@ -25,7 +25,7 @@ import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.utils.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.tools.helper.man.*;
-import com.westsword.stocks.analyze.ssanalyze.*;
+import com.westsword.stocks.analyze.ss.*;
 
 public class SSUtils {
     public final static String Default_StockCode = Settings.getStockCode();

@@ -14,7 +14,7 @@
  /* Written by whogiawho <whogiawho@gmail.com>. */
  
  
-package com.westsword.stocks.analyze.ssanalyze;
+package com.westsword.stocks.analyze.ss;
 
 
 import java.util.*;
