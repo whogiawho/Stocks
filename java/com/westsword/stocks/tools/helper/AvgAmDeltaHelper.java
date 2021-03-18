@@ -68,13 +68,13 @@ public class AvgAmDeltaHelper {
         int endSd = sdt.getAbs(endDate, sdt.getCloseQuotationTime());
 
         PearsonsCorrelation pc = new PearsonsCorrelation();
-        double[] prevAvgAm = AmDerUtils.getAvgAm(startSd-1, sdbw, minSkippedSD, amrMap);
+        double[] prevAvgAm = AvgAmUtils.getAvgAm(startSd-1, sdbw, minSkippedSD, amrMap);
         for(int sd=startSd; sd<=endSd; sd++) {
             long hexTp = sdt.rgetAbs(sd);
             String tradeDate = Time.getTimeYMD(hexTp, false);
             String hms = Time.getTimeHMS(hexTp, false);
 
-            double[] avgam = AmDerUtils.getAvgAm(sd, sdbw, minSkippedSD, amrMap);
+            double[] avgam = AvgAmUtils.getAvgAm(sd, sdbw, minSkippedSD, amrMap);
             double correl = pc.correlation(prevAvgAm, avgam);
             System.out.format("%s %s %s %8.3f %8.3f\n", 
                     stockCode, tradeDate, hms, correl, amm.getUpPrice(tradeDate, hms));
@@ -91,8 +91,8 @@ public class AvgAmDeltaHelper {
         int sd = sdt.getAbs(tp);
         AmManager amm = AmManager.get(stockCode, tradeDate, hms, sdbw+1, null);
 
-        double[] avgam0 = AmDerUtils.getAvgAm(sd, sdbw, minSkippedSD, amm.getAmRecordMap());
-        double[] avgam1 = AmDerUtils.getAvgAm(sd-1, sdbw, minSkippedSD, amm.getAmRecordMap());
+        double[] avgam0 = AvgAmUtils.getAvgAm(sd, sdbw, minSkippedSD, amm.getAmRecordMap());
+        double[] avgam1 = AvgAmUtils.getAvgAm(sd-1, sdbw, minSkippedSD, amm.getAmRecordMap());
         PearsonsCorrelation pc = new PearsonsCorrelation();
         double correl = pc.correlation(avgam0, avgam1);
 

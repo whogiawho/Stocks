@@ -73,7 +73,7 @@ public class AvgAmHelper {
             String hms = Time.getTimeHMS(tp, false);
             String sAvgAmFile = StockPaths.getAvgAmFile(stockCode, tradeDate, hms);
 
-            AmDerUtils.listAvgAm(sd, sdbw, minSkippedSD, interval,
+            AvgAmUtils.listAvgAm(sd, sdbw, minSkippedSD, interval,
                     amm.getAmRecordMap(), false, sAvgAmFile);
         }
     }
@@ -89,7 +89,7 @@ public class AvgAmHelper {
         int sd = sdt.getAbs(tp);
         System.err.format("%s_%s tp=%x, sd=%d am=%d\n", tradeDate, hms, tp, sd, amm.getAm(sd));
 
-        AmDerUtils.listAvgAm(sd, sdbw, minSkippedSD, interval,
+        AvgAmUtils.listAvgAm(sd, sdbw, minSkippedSD, interval,
                 amm.getAmRecordMap(), true, null);
     } 
 

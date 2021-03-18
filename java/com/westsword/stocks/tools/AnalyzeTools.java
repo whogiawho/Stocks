@@ -32,7 +32,7 @@ public class AnalyzeTools{
                 "         getamcorrel | getupprice | getdownprice | getam | decode |\n" +
                 "         nexttradedate | prevtradedate | makepvtable | listamderivatives |\n" +
                 "         getrel | rgetrel | getabs | rgetabs | getanalysis | stdprice |\n" +
-                "         getlsprofit | listavgams | avgamdelta |\n" +
+                "         getlsprofit | listavgams | avgamdelta | simavgamdelta |saadstats |\n" +
                 "         ssinstance | ssinstances | filterssi | sstrinstance | mminstance |\n" +
                 "         getfullss | checksstable | getsstable | ssamhole | gettoppercent |\n" +
                 "         searchsam[01345] | searchsam2 |\n" +
@@ -87,6 +87,12 @@ public class AnalyzeTools{
         } else if (sOption.equals("avgamdelta")) {
             AvgAmDeltaHelper aadh = new AvgAmDeltaHelper();
             aadh.get(args);
+        } else if (sOption.equals("simavgamdelta")) {
+            SimAvgAmDeltaHelper saadh = new SimAvgAmDeltaHelper();
+            saadh.get(args);
+        } else if (sOption.equals("saadstats")) {
+            SaadStatsHelper ssh = new SaadStatsHelper();
+            ssh.get(args);
         } else if (sOption.equals("getam")) {
             AmHelper amh = new AmHelper();
             amh.getAm(args);
