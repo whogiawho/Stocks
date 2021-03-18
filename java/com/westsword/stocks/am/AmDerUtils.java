@@ -133,41 +133,6 @@ public class AmDerUtils {
     }
 
 
-    public static double[] getAvgAm(int sd, int sdbw, int minDist, TreeMap<Integer, AmRecord> amrMap) {
-        double[] avgams = new double[sdbw-minDist+1];
-
-        long endAm = amrMap.get(sd).am;
-        int i=0;
-        for(int dist=sdbw; dist>=minDist; dist--) {
-            int start=sd-dist;
-            int end=sd;
-            long startAm = amrMap.get(amrMap.floorKey(start)).am;
-            double avgAm = (endAm-startAm)/dist;
-            avgams[i++] = avgAm;
-        }
-
-        return avgams;
-    }
-    public static void listAvgAm(int sd, int sdbw, int minDist, int interval,
-            TreeMap<Integer, AmRecord> amrMap, boolean bStdOut, String sAvgAmFile) {
-        long endAm = amrMap.get(sd).am;
-        for(int dist=sdbw; dist>=minDist; dist-=interval) {
-            int start=sd-dist;
-            int end=sd;
-            long startAm = amrMap.get(amrMap.floorKey(start)).am;
-            double avgAm = (endAm-startAm)/dist;
-
-            String line = String.format("%-20d %8.3f\n", startAm, avgAm);
-            if(bStdOut)
-                System.out.format("%s", line);
-            if(sAvgAmFile!=null) {
-                //write line to derivativeFile
-                Utils.append2File(sAvgAmFile, line);
-            }
-        }
-    }
-
-
     public static void loadAmder(ArrayList<Double> amderList, 
             String stockCode, String tradeDate, String hms) {
         AmDerLoader l = new AmDerLoader(0);
