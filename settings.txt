@@ -1,9 +1,9 @@
-stockCode=600030
-currentDate=20201230
+stockCode=512880
+currentDate=20210319
 
 
-currentDateCloseQuotationTime=5fec2570
-currentDateLastRawTradeDetailTime=5fec25ac
+currentDateCloseQuotationTime=60544bf0
+currentDateLastRawTradeDetailTime=60544c2c
 
 
 #PriceDecimalFormat=#.##
@@ -57,18 +57,21 @@ MaxGrowthRate=1.0
 BufferingTradeResult=true
 MaxOutPrice=false
 
-AmDerivative=true
-R2Threshold=0.5
+AmDerivative=false
+AmDer.R2Threshold=0.5
 #group0
-#MinimumSkipSd=60
-#BackwardSd=3600
-#AmDerInterval=1
-
+#AmDer.MinimumSkipSd=60
+#AmDer.BackwardSd=3600
+#AmDer.Interval=1
 #group1
-MinimumSkipSd=60
-BackwardSd=72000
-AmDerInterval=60
+AmDer.MinimumSkipSd=60
+AmDer.BackwardSd=72000
+AmDer.Interval=60
 
+AvgAm=true
+AvgAm.MinimumSkipSd=60
+AvgAm.BackwardSd=1170
+AvgAm.Interval=1
 
 
 #0 - jyzq

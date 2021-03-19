@@ -236,6 +236,7 @@ public class Settings extends FileLoader {
     public final static int MAX_OUT_PRICE = 5;
     public final static int AM_DERIVATIVE = 6;
     public final static int CHECK_2_SUBMIT_SESSION = 7;
+    public final static int AVGAM = 8;
     public final static String[] booleanKeys = {
         "noPerformanceLog",
         "switchOfRawData",
@@ -245,8 +246,10 @@ public class Settings extends FileLoader {
         "MaxOutPrice",
         "AmDerivative",
         "Check2SumitSession",
+        "AvgAm",
     };
     public final static Boolean[] booleanValues = {
+        null,
         null,
         null,
         null,
@@ -266,16 +269,27 @@ public class Settings extends FileLoader {
         return booleanValues[idx];
     }
 
-    public static double getR2Threshold() {
-        return getDouble("R2Threshold");
+    public static double getAmDerR2Threshold() {
+        return getDouble("AmDer.R2Threshold");
     }
-    public static int getBackwardSd() {
-        return getInteger("BackwardSd");
+    public static int getAmDerBackwardSd() {
+        return getInteger("AmDer.BackwardSd");
     }
-    public static int getMinimumSkipSd() {
-        return getInteger("MinimumSkipSd");
+    public static int getAmDerMinimumSkipSd() {
+        return getInteger("AmDer.MinimumSkipSd");
     }
     public static int getAmDerInterval() {
-        return getInteger("AmDerInterval");
+        return getInteger("AmDer.Interval");
     }
+    public static int getAvgAmBackwardSd() {
+        return getInteger("AvgAm.BackwardSd");
+    }
+    public static int getAvgAmMinimumSkipSd() {
+        return getInteger("AvgAm.MinimumSkipSd");
+    }
+    public static int getAvgAmInterval() {
+        return getInteger("AvgAm.Interval");
+    }
+
+
 }

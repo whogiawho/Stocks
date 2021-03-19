@@ -29,6 +29,7 @@ public class AmDerManager extends TaskManager {
     private CopyManager mCopyMan; 
 
     public AmDerManager(boolean bStartCopyManagerThread) {
+        super();
         mHexTpSet = new TreeSet<Long>();
 
         mCopyMan = new CopyManager();
@@ -108,9 +109,9 @@ public class AmDerManager extends TaskManager {
                 String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt) {
             //get r2Threshold&sdbw&minSkippedSD from settings.txt
             this(ahm, stockCode, r, prevAmrMap, sdt,
-                    Settings.getR2Threshold(),
-                    Settings.getBackwardSd(),
-                    Settings.getMinimumSkipSd(),
+                    Settings.getAmDerR2Threshold(),
+                    Settings.getAmDerBackwardSd(),
+                    Settings.getAmDerMinimumSkipSd(),
                     Settings.getAmDerInterval());
         }
 
