@@ -217,7 +217,10 @@ public class THSQS {
         return getCommandOutput(sCommand);
     }
     public Double getAvaiRemains() {
-        return Double.valueOf(queryBalance(sBalanceAvaiRemains[qsIdx]));
+        String sBalance = queryBalance(sBalanceAvaiRemains[qsIdx]);
+        sBalance = sBalance.equals("")?"0":sBalance;
+
+        return Double.valueOf(sBalance);
     }
 
 

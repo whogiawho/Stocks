@@ -33,10 +33,11 @@ public class AnalyzeTools{
                 "         nexttradedate | prevtradedate | makepvtable | listamderivatives |\n" +
                 "         getrel | rgetrel | getabs | rgetabs | getanalysis | stdprice |\n" +
                 "         getlsprofit | listavgams | avgamdelta | simavgamdelta |saadstats |\n" +
+                "         filecorrel | avgamcorrel |\n" +
                 "         ssinstance | ssinstances | filterssi | sstrinstance | mminstance |\n" +
                 "         getfullss | checksstable | getsstable | ssamhole | gettoppercent |\n" +
                 "         searchsam[01345] | searchsam2 |\n" +
-                "         getpermcoord | permstats | permsep | getamlinetype | filecorrel |\n" +
+                "         getpermcoord | permstats | permsep | getamlinetype | \n" +
                 "         getentrust | checkabss | submitabs | makerrp | nextaackpt |\n" +
                 "         ssgroupchar | ssgroupchars | ssgroupverify | qrvgetstats |\n" +
                 "         qualrange | qrmaxmatch | qrverify | qrsearchss | shrinkqrv |\n" +
@@ -78,6 +79,9 @@ public class AnalyzeTools{
         } else if (sOption.equals("filecorrel")) {
             FileCorrelHelper fch = new FileCorrelHelper();
             fch.getCorrel(args);
+        } else if (sOption.equals("avgamcorrel")) {
+            AvgAmCorrelHelper aach = new AvgAmCorrelHelper();
+            aach.getCorrel(args);
         } else if (sOption.equals("listamderivatives")) {
             AmDerivativeHelper amdh = new AmDerivativeHelper();
             amdh.list(args);
