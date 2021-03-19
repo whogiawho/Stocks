@@ -55,10 +55,10 @@ public class AvgAmHelper {
 
 
     public static void handleAllHMS(String stockCode, String tradeDate, CommandLine cmd) {
-        int sdbw = AmDerUtils.getBackwardSd(cmd);
-        int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
-        int interval = AmDerUtils.getAmDerInterval(cmd);
-        int step = AmDerUtils.getStep(cmd);
+        int sdbw = AvgAmUtils.getBackwardSd(cmd);
+        int minSkippedSD = AvgAmUtils.getMinimumSkipSd(cmd);
+        int interval = AvgAmUtils.getInterval(cmd);
+        int step = AvgAmUtils.getStep(cmd);
 
         AmManager amm = AmManager.get(stockCode, tradeDate, AStockSdTime.getCallAuctionEndTime(), sdbw, null);
         TreeMap<Integer, AmRecord> amrMap = amm.getAmRecordMap();
@@ -78,9 +78,9 @@ public class AvgAmHelper {
         }
     }
     public static void handleSingleHMS(String stockCode, String tradeDate, String hms, CommandLine cmd) {
-        int sdbw = AmDerUtils.getBackwardSd(cmd);
-        int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
-        int interval = AmDerUtils.getAmDerInterval(cmd);
+        int sdbw = AvgAmUtils.getBackwardSd(cmd);
+        int minSkippedSD = AvgAmUtils.getMinimumSkipSd(cmd);
+        int interval = AvgAmUtils.getInterval(cmd);
 
         AmManager amm = AmManager.get(stockCode, tradeDate, hms, sdbw, null);
 
@@ -97,8 +97,8 @@ public class AvgAmHelper {
     private static void usage() {
         System.err.println("usage: java AnalyzeTools listavgams [-bmie] stockCode tradeDate [hms]");
         System.err.println("       only print but not write to file when hms is specified");
-        System.err.println("       -b sdbw       ; at most sdbw shall be looked backward; default 300");
-        System.err.println("       -m mindist    ; default 5");
+        System.err.println("       -b sdbw       ; at most sdbw shall be looked backward; default 1170");
+        System.err.println("       -m mindist    ; default 60");
         System.err.println("       -i interval   ; default 1");
         System.err.println("       -e step       ; list amderivatives every step sd, and only effective when no hms;");
         System.exit(-1);

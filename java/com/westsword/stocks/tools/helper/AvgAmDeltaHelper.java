@@ -52,8 +52,9 @@ public class AvgAmDeltaHelper {
 
 
     public static void handleAllHMS(String stockCode, CommandLine cmd) {
-        int sdbw = AmDerUtils.getBackwardSd(cmd);
-        int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
+        int sdbw = AvgAmUtils.getBackwardSd(cmd);
+        int minSkippedSD = AvgAmUtils.getMinimumSkipSd(cmd);
+        int interval = AvgAmUtils.getInterval(cmd);
 
         TradeDates tradeDates = new TradeDates(stockCode);
         String startDate = CmdLineUtils.getString(cmd, "s", tradeDates.nextDate(tradeDates.firstDate()));
@@ -68,36 +69,39 @@ public class AvgAmDeltaHelper {
         int endSd = sdt.getAbs(endDate, sdt.getCloseQuotationTime());
 
         PearsonsCorrelation pc = new PearsonsCorrelation();
-        double[] prevAvgAm = AvgAmUtils.getAvgAm(startSd-1, sdbw, minSkippedSD, amrMap);
+        double[] prevAvgAm = AvgAmUtils.getAvgAm(startSd-1, sdbw, minSkippedSD, interval, amrMap);
         for(int sd=startSd; sd<=endSd; sd++) {
             long hexTp = sdt.rgetAbs(sd);
             String tradeDate = Time.getTimeYMD(hexTp, false);
             String hms = Time.getTimeHMS(hexTp, false);
 
-            double[] avgam = AvgAmUtils.getAvgAm(sd, sdbw, minSkippedSD, amrMap);
+            double[] avgam = AvgAmUtils.getAvgAm(sd, sdbw, minSkippedSD, interval, amrMap);
             double correl = pc.correlation(prevAvgAm, avgam);
-            System.out.format("%s %s %s %8.3f %8.3f\n", 
-                    stockCode, tradeDate, hms, correl, amm.getUpPrice(tradeDate, hms));
+            System.out.format("%s %s %s %8.3f %8.3f %8.3f\n", 
+                    stockCode, tradeDate, hms, correl, 
+                    amm.getUpPrice(tradeDate, hms), amm.getDownPrice(tradeDate, hms));
 
             prevAvgAm = avgam;
         }
     }
     public static void handleSingleHMS(String stockCode, String tradeDate, String hms, CommandLine cmd) {
-        int sdbw = AmDerUtils.getBackwardSd(cmd);
-        int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
+        int sdbw = AvgAmUtils.getBackwardSd(cmd);
+        int minSkippedSD = AvgAmUtils.getMinimumSkipSd(cmd);
+        int interval = AvgAmUtils.getInterval(cmd);
 
         SdTime1 sdt = new SdTime1(stockCode);
         long tp = Time.getSpecificTime(tradeDate, hms);
         int sd = sdt.getAbs(tp);
         AmManager amm = AmManager.get(stockCode, tradeDate, hms, sdbw+1, null);
 
-        double[] avgam0 = AvgAmUtils.getAvgAm(sd, sdbw, minSkippedSD, amm.getAmRecordMap());
-        double[] avgam1 = AvgAmUtils.getAvgAm(sd-1, sdbw, minSkippedSD, amm.getAmRecordMap());
+        double[] avgam0 = AvgAmUtils.getAvgAm(sd, sdbw, minSkippedSD, interval, amm.getAmRecordMap());
+        double[] avgam1 = AvgAmUtils.getAvgAm(sd-1, sdbw, minSkippedSD, interval, amm.getAmRecordMap());
         PearsonsCorrelation pc = new PearsonsCorrelation();
         double correl = pc.correlation(avgam0, avgam1);
 
-        System.out.format("%s %s %s %8.3f %8.3f\n", 
-                stockCode, tradeDate, hms, correl, amm.getUpPrice(tradeDate, hms));
+        System.out.format("%s %s %s %8.3f %8.3f %8.3f\n", 
+                stockCode, tradeDate, hms, correl, 
+                amm.getUpPrice(tradeDate, hms), amm.getDownPrice(tradeDate, hms));
     } 
 
 
@@ -105,8 +109,9 @@ public class AvgAmDeltaHelper {
         System.err.println("usage: java AnalyzeTools avgamdelta [-sebm] stockCode [tradeDate,hms]");
         System.err.println("       -s startDate  ; ");
         System.err.println("       -e endDate    ; ");
-        System.err.println("       -b sdbw       ; at most sdbw shall be looked backward; default 300");
-        System.err.println("       -m mindist    ; default 5");
+        System.err.println("       -b sdbw       ; at most sdbw shall be looked backward; default 1170");
+        System.err.println("       -m mindist    ; default 60");
+        System.err.println("       -i interval   ; default 1");
         System.exit(-1);
     }
 
@@ -130,6 +135,7 @@ public class AvgAmDeltaHelper {
         options.addOption("e", true,  "endDate");
         options.addOption("b", true,  "at most sdtime shall be looked backward when calculating derivatives");
         options.addOption("m", true,  "minimum skipped sd distance from current time");
+        options.addOption("i", true,  "the step to get am derivative");
 
         return options;
     }

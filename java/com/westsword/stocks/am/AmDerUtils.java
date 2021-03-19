@@ -25,11 +25,11 @@ import com.westsword.stocks.base.utils.*;
 
 public class AmDerUtils {
     public final static int Default_Backward_SD = 60*5;
-    public final static double Default_R2Threshold = 0.5;
-    public final static double Default_NaThreshold = 0.9;
     public final static int Default_Minimum_Skipped_SD = 5;
     public final static int Default_Interval = 1;
     public final static int Default_Step = 1;
+    public final static double Default_R2Threshold = 0.5;
+    public final static double Default_NaThreshold = 0.9;
 
 
     public static int getBackwardSd(CommandLine cmd) {
@@ -38,23 +38,23 @@ public class AmDerUtils {
     public static int getBackwardSd(CommandLine cmd, int defaultSdbw) {
         return CmdLineUtils.getInteger(cmd, "b", defaultSdbw);
     }
+    public static int getMinimumSkipSd(CommandLine cmd) {
+        return CmdLineUtils.getInteger(cmd, "m", Default_Minimum_Skipped_SD);
+    }
+    public static int getInterval(CommandLine cmd) {
+        return CmdLineUtils.getInteger(cmd, "i", Default_Interval);
+    }
+    public static int getStep(CommandLine cmd) {
+        return CmdLineUtils.getInteger(cmd, "e", Default_Step);
+    }
     public static double getR2Threshold(CommandLine cmd) {
         return CmdLineUtils.getDouble(cmd, "h", Default_R2Threshold);
     }
     public static double getNaThreshold(CommandLine cmd) {
         return CmdLineUtils.getDouble(cmd, "n", Default_NaThreshold);
     }
-    public static int getMinimumSkipSd(CommandLine cmd) {
-        return CmdLineUtils.getInteger(cmd, "m", Default_Minimum_Skipped_SD);
-    }
     public static boolean getHighest(CommandLine cmd) {
         return CmdLineUtils.getBoolean(cmd, "s", false);
-    }
-    public static int getAmDerInterval(CommandLine cmd) {
-        return CmdLineUtils.getInteger(cmd, "i", Default_Interval);
-    }
-    public static int getStep(CommandLine cmd) {
-        return CmdLineUtils.getInteger(cmd, "e", Default_Step);
     }
 
 

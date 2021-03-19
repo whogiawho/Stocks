@@ -17,17 +17,56 @@
 package com.westsword.stocks.am;
  
 import java.util.*;
+import org.apache.commons.cli.*;
 
-import com.westsword.stocks.base.Utils;
+import com.westsword.stocks.base.*;
+import com.westsword.stocks.base.time.*;
+import com.westsword.stocks.base.utils.*;
 
 public class AvgAmUtils {
+    public final static int Default_Backward_SD = 1170;
+    public final static int Default_Minimum_Skipped_SD = 60;
+    public final static int Default_Interval = 1;
+    public final static int Default_Step = 1;
 
-    public static double[] getAvgAm(int sd, int sdbw, int minDist, TreeMap<Integer, AmRecord> amrMap) {
+    public static int getBackwardSd(CommandLine cmd) {
+        return CmdLineUtils.getInteger(cmd, "b", Default_Backward_SD);
+    }
+    public static int getMinimumSkipSd(CommandLine cmd) {
+        return CmdLineUtils.getInteger(cmd, "m", Default_Minimum_Skipped_SD);
+    }
+    public static int getInterval(CommandLine cmd) {
+        return CmdLineUtils.getInteger(cmd, "i", Default_Interval);
+    }
+    public static int getStep(CommandLine cmd) {
+        return CmdLineUtils.getInteger(cmd, "e", Default_Step);
+    }
+
+    public static double[] getAvgAm(String stockCode, String tradeDate, String hms, 
+            SdTime1 sdt, int sdbw, int minSkippedSD, int interval) {
+        AmManager amm = AmManager.get(stockCode, tradeDate, hms, sdbw, null);
+        long tp = Time.getSpecificTime(tradeDate, hms);
+        int sd = sdt.getAbs(tp);
+        double[] avgam = AvgAmUtils.getAvgAm(sd, sdbw, minSkippedSD, interval, amm.getAmRecordMap());
+
+        return avgam;
+    }
+    public static double[] getAvgAm(String stockCode, String tradeDate, String hms, 
+            SdTime1 sdt, CommandLine cmd) {
+        int sdbw = getBackwardSd(cmd);
+        int minSkippedSD = getMinimumSkipSd(cmd);
+        int interval = getInterval(cmd);
+
+        return getAvgAm(stockCode, tradeDate, hms,
+                sdt, sdbw, minSkippedSD, interval);
+    }
+    public static double[] getAvgAm(int sd, int sdbw, int minDist, int interval, 
+            TreeMap<Integer, AmRecord> amrMap) {
         double[] avgams = new double[sdbw-minDist+1];
 
         long endAm = amrMap.get(amrMap.floorKey(sd)).am;
         int i=0;
-        for(int dist=sdbw; dist>=minDist; dist--) {
+        for(int dist=sdbw; dist>=minDist; dist-=interval) {
             int start=sd-dist;
             int end=sd;
             long startAm = amrMap.get(amrMap.floorKey(start)).am;
@@ -36,7 +75,10 @@ public class AvgAmUtils {
         }
 
         return avgams;
+
     }
+
+
     public static void listAvgAm(int sd, int sdbw, int minDist, int interval,
             TreeMap<Integer, AmRecord> amrMap, boolean bStdOut, String sAvgAmFile) {
         long endAm = amrMap.get(sd).am;

@@ -56,7 +56,7 @@ public class AnalysisTxtHelper {
         String stockCode = newArgs[0];
         String startS = newArgs[1];
         String endS = newArgs[2];
-        int interval = AmDerUtils.getAmDerInterval(cmd);
+        int interval = AmDerUtils.getInterval(cmd);
         //System.out.format("interval=%d\n", interval);
 
         String[] fields = startS.split("_");

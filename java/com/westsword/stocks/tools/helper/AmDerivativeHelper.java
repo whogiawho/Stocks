@@ -69,7 +69,7 @@ public class AmDerivativeHelper {
         double r2Threshold = AmDerUtils.getR2Threshold(cmd);
         int sdbw = AmDerUtils.getBackwardSd(cmd);
         int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
-        int interval = AmDerUtils.getAmDerInterval(cmd);
+        int interval = AmDerUtils.getInterval(cmd);
         int step = AmDerUtils.getStep(cmd);
 
         AmDerManager adm = new AmDerManager(false);
@@ -96,7 +96,7 @@ public class AmDerivativeHelper {
         double r2Threshold = AmDerUtils.getR2Threshold(cmd);
         int sdbw = AmDerUtils.getBackwardSd(cmd);
         int minSkippedSD = AmDerUtils.getMinimumSkipSd(cmd);
-        int interval = AmDerUtils.getAmDerInterval(cmd);
+        int interval = AmDerUtils.getInterval(cmd);
 
         AmManager amm = AmManager.get(stockCode, tradeDate, hms, sdbw, null);
 
