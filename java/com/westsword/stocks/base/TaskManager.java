@@ -20,12 +20,16 @@ package com.westsword.stocks.base;
 import com.westsword.stocks.base.time.Time;
 
 public class TaskManager {
-    public final static int MaxThreads = Settings.getMaxTasks();
+    public int mMaxThreads; 
 
     private volatile int mConcurrent;
 
-    public TaskManager() {
+    public TaskManager(int maxThreads) {
         mConcurrent= 0;
+        mMaxThreads = maxThreads;
+    }
+    public TaskManager() {
+        this(Settings.getMaxTasks());
     }
 
     public synchronized void onThreadStarted() {
@@ -39,7 +43,7 @@ public class TaskManager {
     }
 
     public void maxThreadsCheck() {
-        while(getConcurrent()>=MaxThreads) {
+        while(getConcurrent()>=mMaxThreads) {
             Utils.sleep(10);
         }
         //System.out.format("%s %s: mConcurrent=%d\n", Time.current(), Utils.getCallerName(getClass()), mConcurrent);
