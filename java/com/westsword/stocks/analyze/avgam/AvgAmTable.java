@@ -14,15 +14,15 @@
  /* Written by whogiawho <whogiawho@gmail.com>. */
  
  
-package com.westsword.stocks.analyze.ss;
+package com.westsword.stocks.analyze.avgam;
 
 
 import com.westsword.stocks.analyze.Table;
 import com.westsword.stocks.base.utils.StockPaths;;
 
-public class SSTable extends Table {
+public class AvgAmTable extends Table {
     public static String[] getTableNames() {
-        return Table.getTableNames(StockPaths.getSSTableDir());
+        return Table.getTableNames(StockPaths.getAvgAmTableDir());
     }
 }
 

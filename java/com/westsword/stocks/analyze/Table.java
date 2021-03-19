@@ -14,15 +14,24 @@
  /* Written by whogiawho <whogiawho@gmail.com>. */
  
  
-package com.westsword.stocks.analyze.ss;
+package com.westsword.stocks.analyze;
 
 
-import com.westsword.stocks.analyze.Table;
-import com.westsword.stocks.base.utils.StockPaths;;
+import com.westsword.stocks.base.Utils;
 
-public class SSTable extends Table {
-    public static String[] getTableNames() {
-        return Table.getTableNames(StockPaths.getSSTableDir());
+public class Table {
+    public static String[] getTableNames(String sDir) {
+        String[] sTables = Utils.getSubNames(sDir);
+
+        for(int i=0; i<sTables.length; i++) {
+            String sTable = sTables[i];
+
+            //pls make sure all files of ssTableDir are like *.txt
+            //remove .txt
+            sTables[i] = sTable.substring(0, sTable.length()-4);
+        }
+
+        return sTables;
     }
 }
 

@@ -28,7 +28,7 @@ import com.westsword.stocks.analyze.ss.*;
 public class SSTableHelper {
 
     public static void getSSTableName(String[] args) {
-        String[] sTable = SSTable.getSSTableNames();
+        String[] sTable = SSTable.getTableNames();
         for(int i=0; i<sTable.length; i++) {
             System.out.format("%s\n", sTable[i]);
         }

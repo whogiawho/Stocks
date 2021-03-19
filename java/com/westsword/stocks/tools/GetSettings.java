@@ -181,7 +181,7 @@ public class GetSettings{
     public static void testSSTable(String stockCode) {
         System.out.format("\n testSSTable: \n");
 
-        String[] sSSTableFiles = SSTable.getSSTableNames();
+        String[] sSSTableFiles = SSTable.getTableNames();
         System.out.format("sSSTableFiles.size=%d first=%s last=%s\n", 
                 sSSTableFiles.length, sSSTableFiles[0], sSSTableFiles[sSSTableFiles.length-1]);
 
