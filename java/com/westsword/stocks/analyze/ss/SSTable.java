@@ -17,6 +17,8 @@
 package com.westsword.stocks.analyze.ss;
 
 
+import java.util.*;
+
 import com.westsword.stocks.analyze.Table;
 import com.westsword.stocks.base.utils.StockPaths;;
 
@@ -24,5 +26,15 @@ public class SSTable extends Table {
     public static String[] getTableNames() {
         return Table.getTableNames(StockPaths.getSSTableDir());
     }
+
+    //only the records of stockCode are loaded
+    public static void load(String stockCode, ArrayList<SSTableRecord> sstrList, String sName) {
+        SSTableLoader loader = new SSTableLoader();
+        String sSSTable = StockPaths.getSSTableFile(sName);
+        loader.load(sstrList, sSSTable, sName, stockCode);
+        System.out.format("%s: sSSTable=%s, size=%d\n", 
+                "SSTable.load", sSSTable, sstrList.size());
+    }
+
 }
 
