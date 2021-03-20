@@ -17,6 +17,8 @@
 package com.westsword.stocks.analyze.avgam;
 
 
+import java.util.*;
+
 import com.westsword.stocks.analyze.Table;
 import com.westsword.stocks.base.utils.StockPaths;;
 
@@ -24,5 +26,15 @@ public class AvgAmTable extends Table {
     public static String[] getTableNames() {
         return Table.getTableNames(StockPaths.getAvgAmTableDir());
     }
+
+    //only the records of stockCode are loaded
+    public static void load(String stockCode, ArrayList<AvgAmTableRecord> aatrList, String sName) {
+        AvgAmTableLoader loader = new AvgAmTableLoader();
+        String sAvgAmTable = StockPaths.getAvgAmTableFile(sName);
+        loader.load(aatrList, sAvgAmTable, sName, stockCode);
+        System.out.format("%s: sAvgAmTable=%s, size=%d\n", 
+                "AvgAmTable.load", sAvgAmTable, aatrList.size());
+    }
+
 }
 
