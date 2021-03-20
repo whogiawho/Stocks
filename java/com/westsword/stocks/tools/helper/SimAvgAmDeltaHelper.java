@@ -146,13 +146,13 @@ public class SimAvgAmDeltaHelper {
     }
     private static void write2Files(double[][] cm, String sResDir, ArrayList<AvgAmRecord> aarList) {
         for(int i=0; i<cm.length; i++) {
-            AvgAmRecord r = aarList.get(i);
-            String sResFile = sResDir + "\\" + r.tradeDate + "." + r.hms + ".correl";
+            AvgAmRecord r0 = aarList.get(i);
+            String sResFile = sResDir + "\\" + r0.tradeDate + "." + r0.hms + ".correl";
             String line = "";
             for(int j=0; j<cm[i].length; j++) {
-                AvgAmRecord r1 = aarList.get(j);
-                line += String.format("%s %s %s %8.3f %8.3f %8.3f\n", 
-                        r1.stockCode, r1.tradeDate, r1.hms, r1.correl0, r1.upPrice, cm[i][j]);
+                AvgAmRecord r = aarList.get(j);
+                line += String.format("%s %s %s %8.3f %8.3f %8.3f %8.3f\n", 
+                        r.stockCode, r.tradeDate, r.hms, r.correl0, r.upPrice, cm[i][j]);
             }
             Utils.append2File(sResFile, line, false);
         }
