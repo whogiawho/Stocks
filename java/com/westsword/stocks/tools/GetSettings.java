@@ -36,6 +36,7 @@ import com.westsword.stocks.qr.*;
 import com.westsword.stocks.tools.helper.*;
 import com.westsword.stocks.tools.helper.man.*;
 import com.westsword.stocks.analyze.ss.*;
+import com.westsword.stocks.analyze.avgam.*;
 import com.westsword.stocks.analyze.sam.*;
 import com.westsword.stocks.analyze.sam2.*;
 import com.westsword.stocks.tools.matlab.*;
@@ -177,6 +178,12 @@ public class GetSettings{
             System.out.format("%s\n", sTradeDates[i]);
         }
         */
+    }
+    public static void testAvgAmTable(String stockCode) {
+        System.out.format("\n testAvgAmTable: \n");
+
+        ArrayList<AvgAmTableRecord> aatrList = new ArrayList<AvgAmTableRecord>();
+        AvgAmTable.load(stockCode, aatrList, "h0");
     }
     public static void testSSTable(String stockCode) {
         System.out.format("\n testSSTable: \n");
@@ -869,6 +876,7 @@ public class GetSettings{
         //testTradeDates(stockCode, "20160108", "20191231");
         //testTradeDatesList(stockCode);
         //testSSTable(stockCode);
+        testAvgAmTable("512880");
 
         //testSettings();       
         //testMisc();       
@@ -893,7 +901,7 @@ public class GetSettings{
         //testAmMatrix(stockCode);
         //testMatlab(stockCode);
         //testCkpt(stockCode);
-        testAACheckPoint(stockCode);
+        //testAACheckPoint(stockCode);
         //testHMSPath(stockCode);
         //testHMSPath0(stockCode);
         //testHMSPath1(stockCode);

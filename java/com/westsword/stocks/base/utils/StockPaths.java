@@ -146,6 +146,12 @@ public class StockPaths {
 
 
 
+    public static String getAvgAmTableDir() {
+        return getDataDir() + "avgamTable" + sSep;
+    }
+    public static String getAvgAmTableFile(String sName) {
+        return getAvgAmTableDir() + sName + ".txt";
+    }
     public static String getSSTableDir() {
         return getDataDir() + "ssTable" + sSep;
     }
@@ -268,6 +274,9 @@ public class StockPaths {
 
 
 
+    public static String getMakeAvgAmPngVbs() {
+        return getMakeAmDerPngVbs();
+    }
     public static String getMakeAmDerPngVbs() {
         return getStockRootDir() + getValueWOS("vbs\\makeAmDerivativePng.vbs", "vbs/makeAmDerivativePng.vbs");
     }
