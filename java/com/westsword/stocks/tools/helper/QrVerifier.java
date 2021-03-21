@@ -37,7 +37,7 @@ public class QrVerifier {
             return;
         }
 
-        double threshold = QualRangeHelper.getThreshold(cmd);
+        double threshold = SSUtils.getThreshold(cmd, SSUtils.Default_Threshold);
 
         String stockCode = newArgs[0];
         int tradeType = Integer.valueOf(newArgs[1]);

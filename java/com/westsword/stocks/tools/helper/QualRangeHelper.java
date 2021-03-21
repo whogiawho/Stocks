@@ -29,25 +29,29 @@ import com.westsword.stocks.base.utils.*;
 
 public class QualRangeHelper {
     public void findQualified(String args[]) {
-        if(args.length != 5) {
+        CommandLine cmd = getCommandLine(args);
+        String[] newArgs = cmd.getArgs();
+        if(newArgs.length!=4) {
             usage();
-            return;
         }
 
-        String stockCode = args[1];
-        int tradeType = Integer.valueOf(args[2]);
-        int cycle = Integer.valueOf(args[3]);
-        double targetRate = Double.valueOf(args[4]);
+
+        String stockCode = newArgs[0];
+        int tradeType = Integer.valueOf(newArgs[1]);
+        int cycle = Integer.valueOf(newArgs[2]);
+        double targetRate = Double.valueOf(newArgs[3]);
+        int step = CmdLineUtils.getInteger(cmd, "i", 60);
 
         int sdInterval = Settings.getSdInterval();
         int cycleSdLength = (int)Utils.roundUp((double)cycle/sdInterval, "#");
         System.err.format("cycleSdLength=%d\n", cycleSdLength);
 
-        loopAllSdts(stockCode, tradeType, cycleSdLength, targetRate);
+        loopAllSdts(stockCode, tradeType, step, cycleSdLength, targetRate);
     }
-    private void loopAllSdts(String stockCode, int tradeType, int sdLength, double targetRate) {
+    private void loopAllSdts(String stockCode, int tradeType, 
+            int step, int sdLength, double targetRate) {
 
-        AACheckPoint ckpt = new AACheckPoint(60);
+        AACheckPoint ckpt = new AACheckPoint(step);
         TreeSet<String> hmsSet = ckpt.get();
 
         String sFormat = "%s %s %x %x %8.3f %8.3f\n";
@@ -75,67 +79,9 @@ public class QualRangeHelper {
         }
     }
     private void usage() {
-        System.err.println("usage: java AnalyzeTools qualrange stockCode tradeType cycle targetRate");
+        System.err.println("usage: java AnalyzeTools qualrange [-i] stockCode tradeType cycle targetRate");
         System.err.println("       cycle - in seconds");
-        System.exit(-1);
-    }
-
-
-
-
-    public void maxmatch(String[] args) {
-        CommandLine cmd = getCommandLine(args);
-        String[] newArgs = cmd.getArgs();
-        if(newArgs.length<2) {
-            maxmatchUsage();
-            return;
-        }
-
-        String stockCode = newArgs[0];
-        String sqrFile = newArgs[1];
-
-        CmManager cm = new CmManager();
-        QualRangeManager qrm = new QualRangeManager(stockCode);
-        qrm.load(sqrFile);
-
-        int ckptIntSdLen = Utils.getCkptIntervalSdLength();
-
-        TreeSet<QualRange> qrSet = new TreeSet<QualRange>();
-        int start = getStart(cmd);
-        int end = getEnd(cmd);
-        double threshold = getThreshold(cmd);
-        for(int i=start; i<=end; i++) {
-            int sdLength = ckptIntSdLen*i;
-            qrm.setSdLength(sdLength);
-            double[][] cmm = qrm.getCorrMatrix(cm);
-            qrm.getMatchedSet(cmm, qrSet, threshold);
-        }
-        cm.close();
-
-        //print max elements of qrSet
-        QualRange qr = qrSet.last();
-        qr.print();
-
-        /*
-        qr = qrSet.first();
-        qr.print();
-        */
-    }
-    private int getStart(CommandLine cmd) {
-        return CmdLineUtils.getInteger(cmd, "s", 1);
-    }
-    private int getEnd(CommandLine cmd) {
-        return CmdLineUtils.getInteger(cmd, "e", 1);
-    }
-    public static double getThreshold(CommandLine cmd) {
-        return SSUtils.getThreshold(cmd, SSUtils.Default_Threshold);
-    }
-    private void maxmatchUsage() {
-        System.err.println("usage: java AnalyzeTools qrmaxmatch [-hse] stockCode qrFile");
-        System.err.println("       qrFile;  a file generated from qualrange");
-        System.err.println("       -h threshold ;  ");
-        System.err.println("       -s start     ;  the min idx of sdLength");
-        System.err.println("       -e end       ;  the max idx of sdLength");
+        System.err.println("       -i interval   ; default 60");
         System.exit(-1);
     }
     public static CommandLine getCommandLine(String[] args) {
@@ -154,9 +100,7 @@ public class QualRangeHelper {
     }
     public static Options getOptions() {
         Options options = new Options();
-        options.addOption("h", true,  "a threshold value to get matched qr");
-        options.addOption("s", true,  "the min sdLength");
-        options.addOption("e", true,  "the max sdLength");
+        options.addOption("i", true,  "the step to get search qualrange");
 
         return options;
     }
@@ -182,7 +126,7 @@ public class QualRangeHelper {
         String qrgDir = newArgs[4];
 
         //threshold
-        double threshold = getThreshold(cmd);
+        double threshold = SSUtils.getThreshold(cmd, SSUtils.Default_Threshold);
         System.out.format("threshold=%8.3f\n", threshold);
 
         //load qrFile
