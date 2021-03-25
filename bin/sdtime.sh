@@ -7,7 +7,6 @@ function getAbs {
 
     java -jar $analyzetoolsJar getabs $stockCode $tradeDate $hms 2>/dev/null
 }
-
 function rgetAbs {
     local stockCode=$1
     local sd=$2
@@ -25,6 +24,22 @@ function rgetRel {
     } || {
         echo $line
     }
+}
+function getRel {
+    local stockCode=$1
+    local hmsList=$2
+
+    java -jar $analyzetoolsJar getrel $stockCode $hmsList 2>/dev/null
+}
+
+function deltaHMS {
+    local stockCode=$1
+    local baseHMS=$2
+    local delta=$3
+
+    local rel=`getRel $stockCode $baseHMS`
+    rel=$((rel+delta))
+    rgetRel $rel
 }
 
 function nextYMDHMS {

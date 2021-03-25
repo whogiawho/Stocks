@@ -70,7 +70,8 @@ function routinesAfterCloseQuotation {
     local dataDir="$dailyDir\\$stockCode\\$tradeDate"
     cp "$dataDir\\amderTxt\\${tradeDate}_150000_72000_amder.png" "$amder150000PngDir\\$stockCode\\$tradeDate.png"
     #make avgam
-    dailyMakeAvgamPngs $stockCode $tradeDate $tradeDate 1170
+    dailyMakeAvgamPngs $stockCode $tradeDate $tradeDate 
+    dailyMakeTmpAvgamPngs $stockCode $tradeDate
     #150000
     makeAvgAmPng $stockCode $tradeDate 150000 1
 
