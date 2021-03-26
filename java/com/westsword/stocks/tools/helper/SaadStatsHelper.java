@@ -75,7 +75,8 @@ public class SaadStatsHelper {
         SdTime1 sdt = new SdTime1(stockCode);
 
         int count=0, lCnt=0, sCnt=0;
-        String sFormat = "%s %s %s %8.3f %8.3f %8.3f " +  
+        String sFormat = "%s %s %s " + 
+            "%8.3f %8.3f %8.3f %8.3f " +  
             "%8.3f %8.3f\n"; 
         ArrayList<AvgAmRecord> aarList = AvgAmRecord.getList(sAvgAm0);
         for(int i=0; i<aarList.size(); i++) {
@@ -99,7 +100,8 @@ public class SaadStatsHelper {
                 count++;
                 if(!bStats)
                     System.out.format(sFormat, 
-                            r.stockCode, sMatchedTradeDate, sMatchedHMS, r.correl0, r.upPrice, r.correl1, 
+                            r.stockCode, sMatchedTradeDate, sMatchedHMS, 
+                            r.correl0, r.upPrice, r.downPrice, r.correl1, 
                             lProfit, sProfit);
             }
         }

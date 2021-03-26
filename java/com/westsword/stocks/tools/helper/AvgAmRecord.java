@@ -24,6 +24,7 @@ public class AvgAmRecord {
     public String hms;
     public double correl0;           //delta correl with previous sd
     public double upPrice;
+    public double downPrice;
 
     public double correl1;
 
@@ -33,9 +34,10 @@ public class AvgAmRecord {
         hms = fields[2];
         correl0 = Double.valueOf(fields[3]);
         upPrice = Double.valueOf(fields[4]);
+        downPrice = Double.valueOf(fields[5]);
 
-        if(fields.length>=6)
-            correl1=Double.valueOf(fields[5]);
+        if(fields.length>=7)
+            correl1=Double.valueOf(fields[6]);
         else
             correl1=Double.NaN;
     }

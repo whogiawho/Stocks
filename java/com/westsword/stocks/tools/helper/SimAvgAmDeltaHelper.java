@@ -90,8 +90,8 @@ public class SimAvgAmDeltaHelper {
             double[] y = Utils.toDoubleArray(sList1, size1-sdbw, size1);
             double correl = pc.correlation(x, y);
 
-            System.out.format("%s %s %s %8.3f %8.3f %8.3f\n", 
-                    r.stockCode, r.tradeDate, r.hms, r.correl0, r.upPrice, correl);
+            System.out.format("%s %s %s %8.3f %8.3f %8.3f %8.3f\n", 
+                    r.stockCode, r.tradeDate, r.hms, r.correl0, r.upPrice, r.downPrice, correl);
         }
     }
     private static double[][] getAvgAmDeltaMatrix(ArrayList<AvgAmRecord> aarList, String sDir) {
@@ -152,7 +152,7 @@ public class SimAvgAmDeltaHelper {
             for(int j=0; j<cm[i].length; j++) {
                 AvgAmRecord r = aarList.get(j);
                 line += String.format("%s %s %s %8.3f %8.3f %8.3f %8.3f\n", 
-                        r.stockCode, r.tradeDate, r.hms, r.correl0, r.upPrice, cm[i][j]);
+                        r.stockCode, r.tradeDate, r.hms, r.correl0, r.upPrice, r.downPrice, cm[i][j]);
             }
             Utils.append2File(sResFile, line, false);
         }
