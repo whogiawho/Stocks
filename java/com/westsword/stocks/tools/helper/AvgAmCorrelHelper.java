@@ -54,7 +54,7 @@ public class AvgAmCorrelHelper {
 
 
     private static void usage() {
-        System.err.println("usage: java AnalyzeTools [-bmi] stockCode tradeDate0 hms0 tradeDate1 hms1");
+        System.err.println("usage: java AnalyzeTools [-bmi] avgamcorrel stockCode tradeDate0 hms0 tradeDate1 hms1");
         System.err.println("       -b sdbw       ; at most sdbw shall be looked backward; default 300");
         System.err.println("       -m mindist    ; default 5");
         System.err.println("       -i interval   ; default 1");

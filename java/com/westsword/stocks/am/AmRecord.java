@@ -16,9 +16,12 @@
  
 package com.westsword.stocks.am;
 
-import com.westsword.stocks.base.Stock;
-import com.westsword.stocks.base.Utils;
-import com.westsword.stocks.base.utils.Trade;
+import java.util.*;
+
+import com.westsword.stocks.base.*;
+import com.westsword.stocks.base.time.*;
+import com.westsword.stocks.base.utils.*;
+import com.westsword.stocks.analyze.*;
 
 public class AmRecord implements Comparable<AmRecord> {
     public long hexTimePoint;
@@ -93,5 +96,28 @@ public class AmRecord implements Comparable<AmRecord> {
             bOut = true; 
 
         return bOut;
+    }
+
+
+
+    public static AmRecord get(ArrayList<RawTradeDetails> rawDetailsList, long tp, SdTime1 sdt) {
+        int timeIdx = sdt.getAbs(tp);
+
+        double upPrice=Double.NEGATIVE_INFINITY, downPrice=Double.POSITIVE_INFINITY;
+        int am = 0;
+        for(int i=0; i<rawDetailsList.size(); i++) {
+            RawTradeDetails rtd = rawDetailsList.get(i);
+            if(rtd.time == tp) {
+                if(rtd.type == Stock.TRADE_TYPE_LONG) {
+                    upPrice = rtd.price>upPrice? rtd.price:upPrice;
+                    am += rtd.count;
+                } else {
+                    downPrice = rtd.price<downPrice? rtd.price:downPrice;
+                    am -= rtd.count;
+                }
+            }
+        }
+        AmRecord r = new AmRecord(tp, timeIdx, am, upPrice, downPrice);
+        return r;
     }
 }
