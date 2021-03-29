@@ -42,14 +42,14 @@ function deltaHMS {
     rgetRel $rel
 }
 
-function nextYMDHMS {
+function deltaYMDHMS {
     local stockCode=$1
     local tradeDate=$2
     local hms=$3
-    local interval=$4
+    local delta=$4
 
     local abs=`getAbs $stockCode $tradeDate $hms`
-    local nextAbs=$((abs+interval))
+    local nextAbs=$((abs+delta))
 
     local hexTp=`rgetAbs $stockCode $nextAbs`
     convertHex2Time $hexTp y

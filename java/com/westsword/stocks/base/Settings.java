@@ -137,7 +137,6 @@ public class Settings extends FileLoader {
     }
     public static String getPriceDecimalFormat() {
         return getPriceDecimalFormat(getStockCode());
-        //return getString("PriceDecimalFormat");
     }
     public static String getPriceDecimalFormat(String stockCode) {
         return getString(stockCode+".priceDecimalFormat");

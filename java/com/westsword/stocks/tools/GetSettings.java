@@ -179,6 +179,14 @@ public class GetSettings{
         }
         */
     }
+    public static void testBeep(String stockCode) {
+        //String sBeep = "\007";
+        //System.out.format("%s\n", sBeep);
+        //Utils.beep(5);
+
+        Utils.asynBeep(5);
+        System.out.format("%s\n", "completes calling asynBeep");
+    }
     public static void testAvgAmTable(String stockCode) {
         System.out.format("\n testAvgAmTable: \n");
 
@@ -876,7 +884,8 @@ public class GetSettings{
         //testTradeDates(stockCode, "20160108", "20191231");
         //testTradeDatesList(stockCode);
         //testSSTable(stockCode);
-        testAvgAmTable("512880");
+        //testAvgAmTable("512880");
+        testBeep(stockCode);
 
         //testSettings();       
         //testMisc();       

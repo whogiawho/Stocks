@@ -24,6 +24,7 @@ import java.text.*;
 import java.nio.charset.*;
 import java.util.stream.*;
 import java.util.concurrent.*;
+import java.awt.Toolkit;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.fitting.*;
 import org.apache.commons.math3.util.CombinatoricsUtils;
@@ -326,6 +327,16 @@ public class Utils {
     }
 
 
+    public static void asynBeep(int n) {
+        Thread t = new Thread(()-> beep(n));
+        t.start();
+    }
+    public static void beep(int n) {
+        for(int i=0; i<n; i++) {
+            Toolkit.getDefaultToolkit().beep();
+            sleep(300);
+        }
+    }
     public static double getPolynomialR2(List<WeightedObservedPoint> obl, double[] coeff) {
         double[] x0 = new double[obl.size()];
         for(int i=0; i<obl.size(); i++)
