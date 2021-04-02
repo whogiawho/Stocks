@@ -33,7 +33,7 @@ public class AnalyzeTools{
                 "         nexttradedate | prevtradedate | makepvtable | listamderivatives |\n" +
                 "         getrel | rgetrel | getabs | rgetabs | getanalysis | stdprice |\n" +
                 "         getlsprofit | listavgams | avgamdelta | simavgamdelta |saadstats |\n" +
-                "         filecorrel | avgamcorrel | getaal2|\n" +
+                "         filecorrel | avgamcorrel | getaal2 |\n" +
                 "         ssinstance | ssinstances | filterssi | sstrinstance | mminstance |\n" +
                 "         getfullss | checksstable | getsstable | ssamhole | gettoppercent |\n" +
                 "         searchsam[01345] | searchsam2 |\n" +

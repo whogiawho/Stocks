@@ -24,6 +24,7 @@ public class ColLoader extends FileLoader {
     private ArrayList<String> mLines = null;
 
     public boolean onLineRead(String line, int count) {
+        line = line.trim();
         String[] fields=line.split(" +");
 
         if(mIdxCol<fields.length&&mLines != null) {

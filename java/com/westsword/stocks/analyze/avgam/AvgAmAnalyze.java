@@ -27,7 +27,6 @@ import com.westsword.stocks.base.utils.*;
 public class AvgAmAnalyze {
     private String mStockCode;
 
-    private final String mName;
     private SdTime1 mSdTime;
 
     private int mSdbw;
@@ -35,12 +34,10 @@ public class AvgAmAnalyze {
     private int mInterval;
     private PearsonsCorrelation mPC;
 
-    private final ArrayList<AvgAmTableRecord> mAvgAmTableRecordList;
+    private ArrayList<AvgAmTable> mAvgAmTableList;
 
-    public AvgAmAnalyze(String stockCode, String sName, SdTime1 sdTime) {
+    public AvgAmAnalyze(String stockCode, SdTime1 sdTime) {
         mStockCode = stockCode;
-
-        mName = sName;
         mSdTime = sdTime;
 
         mSdbw = Settings.getAvgAmBackwardSd();
@@ -49,17 +46,13 @@ public class AvgAmAnalyze {
 
         mPC = new PearsonsCorrelation();
 
-        //set mAvgAmTableRecordList
-        mAvgAmTableRecordList = new ArrayList<AvgAmTableRecord>();
-        AvgAmTable.load(stockCode, mAvgAmTableRecordList, sName);
-        //load avgams
-        for(int i=0; i<mAvgAmTableRecordList.size(); i++)
-            mAvgAmTableRecordList.get(i).load(mSdTime, mSdbw, mMinDist, mInterval); 
+        mAvgAmTableList = AvgAmTable.make(stockCode, mSdTime);
     }
 
     //[start, end)
     public void analyze(int start, int end, long closeTP, TreeMap<Integer, AmRecord> amrMap) {
         double[] prevAvgam = AvgAmUtils.getAvgAm(start-1, mSdbw, mMinDist, mInterval, amrMap);
+        ArrayList<DeltaAvgAm> deltaList = new ArrayList<DeltaAvgAm>();
 
         for(int i=start; i<end; i++) {
             long tp = mSdTime.rgetAbs(i);
@@ -73,17 +66,34 @@ public class AvgAmAnalyze {
                         ar, deltaCorrel, Utils.getCallerName(getClass()));
                 System.out.format("%s\n", line);
 
-                for(int j=0; j<mAvgAmTableRecordList.size(); j++) {
-                    AvgAmTableRecord aatr = mAvgAmTableRecordList.get(j);
-                    boolean bEval = aatr.eval(hms, deltaCorrel, avgam);
-                    if(bEval) {
-                        line = aatr.toString(ar);
-                        System.out.format("%s\n", line);
-                    }
-                }
+                deltaList.add(new DeltaAvgAm(i, ar, hms, deltaCorrel, avgam));
 
                 prevAvgam = avgam;
             }
+        }
+
+        for(int i=0; i<deltaList.size(); i++) {
+            DeltaAvgAm daa = deltaList.get(i);
+            for(int j=0; j<mAvgAmTableList.size(); j++) {
+                AvgAmTable aat = mAvgAmTableList.get(j);
+                aat.eval(daa);
+            }
+        }
+    }
+
+    public static class DeltaAvgAm {
+        public int sdt;
+        public AmRecord ar;
+        public String hms;
+        public double deltaCorrel;
+        public double[] avgam;
+
+        public DeltaAvgAm(int sdt, AmRecord ar, String hms, double deltaCorrel, double[] avgam) {
+            this.sdt = sdt;
+            this.ar = ar;
+            this.hms= hms;
+            this.deltaCorrel = deltaCorrel;
+            this.avgam = avgam;
         }
     }
 
@@ -92,6 +102,10 @@ public class AvgAmAnalyze {
         String sFormat = "%s: %s %s %s %8.3f %8.3f %8.3f";
         String line = String.format(sFormat,
                 sPrefix, stockCode, tradeDate, hms, deltaCorrel, ar.upPrice, ar.downPrice);
+
+        if(deltaCorrel<0.85) {
+            line = AnsiColor.getColorString(line, AnsiColor.ANSI_YELLOW);
+        }
 
         return line;
     }
