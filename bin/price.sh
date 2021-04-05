@@ -120,7 +120,7 @@ function getMinPrice {
     echo $minPrice $minPriceTime
 }
 
-function getPrice {
+function getInPrice {
     local stockCode=$1
     local tradeDate=$2
     local hms=$3
@@ -161,14 +161,14 @@ function getUpPrice {
         hms=${tradeDate#*,}
         tradeDate=${tradeDate%,*}
     }
-    getPrice $stockCode $tradeDate $hms 5
+    getInPrice $stockCode $tradeDate $hms 5
 }
 function getDownPrice {
     local stockCode=$1
     local tradeDate=$2
     local hms=$3
  
-    getPrice $stockCode $tradeDate $hms 1
+    getInPrice $stockCode $tradeDate $hms 1
 }
 function getMaxPriceBetween {
     local stockCode=$1
