@@ -27,7 +27,9 @@ function checkAvgAmTable {
                 local bCmp=`ge $correl $scThres`
                 [[ $bCmp == 1 ]] && {
                     local inPrice=`getInPrice $stockCode $b $c $tradeType`
-                    echo $aatFile $stockCode $b $c $f $g $correl $tradeType $inPrice
+                    local tName=`echo $aatFile|sed "s/.txt//g"`
+                    local sFormat="%-10s %s %s %s | %s %s %8s %4s %8s\n"
+                    printf "$sFormat" $tName $stockCode $b $c $f $g $correl $tradeType $inPrice
                 }
             done
         done
