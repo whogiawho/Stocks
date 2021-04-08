@@ -1,6 +1,6 @@
 #!/bin/bash
 
-fCheckAllTable=${fCheckAllTable:-~/analysis/checkAllTable.txt}
+fSSAllTable=${fSSAllTable:-~/analysis/ssAllTable.txt}
 ssTableDir=${ssTableDir:-$rootDirCygdrive/data/ssTable}
 intersectionDir=${intersectionDir:-$rootDirCygdrive/data/intersection}
 

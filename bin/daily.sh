@@ -28,6 +28,9 @@ function doDailyTask {
     routinesAfterCloseQuotation $stockCode $tradeDate skipRA
 
     write2CheckAllTable $stockCode $tradeDate
+
+    avgamPredictByLast20m $stockCode $tradeDate
+    write2AvgAmTable $stockCode $tradeDate
 }
 function continueIfRawTradeDetailsReady {
     local stockCode=$1
@@ -78,13 +81,22 @@ function routinesAfterCloseQuotation {
     #make pvtable
     makePVTable $stockCode $tradeDate
 }
-#write today's checkAllSSTable output to fCheckAllTable
+#write today's avgamTable output to fAvgAmAllTable
+function write2AvgAmTable {
+    local stockCode=$1
+    local tradeDate=$2
+
+    echo $tradeDate |tee -a $fAvgAmAllTable
+    checkAvgAmTable $stockCode $tradeDate |tee -a $fAvgAmAllTable
+}
+
+#write today's checkAllSSTable output to fSSAllTable
 function write2CheckAllTable {
     local stockCode=$1
     local tradeDate=$2
 
-    echo $tradeDate |tee -a $fCheckAllTable
-    checkAllSSTable $stockCode $tradeDate |tee -a $fCheckAllTable
+    echo $tradeDate |tee -a $fSSAllTable
+    checkAllSSTable $stockCode $tradeDate |tee -a $fSSAllTable
 }
 
 #convert rawPankou&rawTradeDetails, generate copylist and run realtimeAnalyze

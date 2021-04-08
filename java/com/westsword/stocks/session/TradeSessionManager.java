@@ -215,6 +215,7 @@ public class TradeSessionManager {
         System.out.format("%s: completed with rrpCode=%s, price=%8.3f amount=%d\n", 
                 Utils.getCallerName(getClass()), rrpCode, actualOutPrice, amount);
 
+        iThsqs.refresh();
         bRRPDone = true;
     }
     public void makeRRP(AmRecord item) {
