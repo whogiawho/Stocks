@@ -31,10 +31,16 @@ public class AmUtils {
         mSdTime = new SdTime1(stockCode);   //get sdStartDate&sdStartTime&interval from settings.txt
         mStockDates = new StockDates(stockCode);
 
+        //
         if(Settings.getSwitch(Settings.AM_DERIVATIVE))
             mAdm = new AmDerManager(bStartCopyManagerThread);
         else
             mAdm = null;
+        //
+        if(Settings.getSwitch(Settings.AVGAM))
+            mAam = new AvgAmManager();
+        else
+            mAam = null;
     }
     public AmUtils(String stockCode) {
         this(stockCode, true);
@@ -115,10 +121,13 @@ public class AmUtils {
                 }
                 if(prevAmrMap!=null) {
                     prevAmrMap.put(i, r);
-
                     //clone prevAmrMap to avoid writing synchronized codes
+                    TreeMap<Integer, AmRecord> cMap = new TreeMap<Integer, AmRecord>(prevAmrMap);
+
                     if(mAdm!=null)
-                        mAdm.run(mStockCode, r, new TreeMap<Integer, AmRecord>(prevAmrMap), mSdTime);
+                        mAdm.run(mStockCode, r, cMap, mSdTime);
+                    if(mAam!=null)
+                        mAam.run(mStockCode, r, cMap, mSdTime);
                 }
                 r.append2File(sAnalysisFile);
             }
@@ -168,6 +177,7 @@ public class AmUtils {
     private StockDates mStockDates;
     private SdTime1 mSdTime;
     private AmDerManager mAdm;
+    private AvgAmManager mAam;
 
     public static class TrackExtreme {
         public double maxUP;

@@ -19,22 +19,66 @@ package com.westsword.stocks.analyze.avgam;
 
 import java.util.*;
 
-import com.westsword.stocks.analyze.Table;
-import com.westsword.stocks.base.utils.StockPaths;;
+import com.westsword.stocks.analyze.*;
+import com.westsword.stocks.base.*;
+import com.westsword.stocks.base.time.*;
+import com.westsword.stocks.base.utils.*;;
 
 public class AvgAmTable extends Table {
+    private final String mName;
+    private final ArrayList<AvgAmTableRecord> mAvgAmTableRecordList;
+
+
+    public AvgAmTable(String stockCode, String sName, SdTime1 sdt) {
+        mName = sName;
+
+        int sdbw = Settings.getAvgAmBackwardSd();
+        int minDist = Settings.getAvgAmMinimumSkipSd();
+        int interval = Settings.getAvgAmInterval();
+        mAvgAmTableRecordList = new ArrayList<AvgAmTableRecord>();
+        AvgAmTable.load(stockCode, sName, mAvgAmTableRecordList);
+        //load avgam
+        for(int i=0; i<mAvgAmTableRecordList.size(); i++)
+            mAvgAmTableRecordList.get(i).load(sdt, sdbw, minDist, interval); 
+    }
+
+    public void eval(AvgAmAnalyze.DeltaAvgAm daa) {
+        for(int j=0; j<mAvgAmTableRecordList.size(); j++) {
+            AvgAmTableRecord aatr = mAvgAmTableRecordList.get(j);
+            boolean bEval = aatr.eval(daa.hms, daa.deltaCorrel, daa.avgam);
+            if(bEval) {
+                Utils.asynBeep(30);
+                String line = aatr.toString(daa.ar, daa.avgam);
+                System.out.format("%s\n", line);
+            }
+        }
+    }
+
+
+
+
     public static String[] getTableNames() {
         return Table.getTableNames(StockPaths.getAvgAmTableDir());
     }
-
     //only the records of stockCode are loaded
-    public static void load(String stockCode, ArrayList<AvgAmTableRecord> aatrList, String sName) {
+    public static void load(String stockCode, String sName, ArrayList<AvgAmTableRecord> aatrList) {
         AvgAmTableLoader loader = new AvgAmTableLoader();
-        String sAvgAmTable = StockPaths.getAvgAmTableFile(sName);
-        loader.load(aatrList, sAvgAmTable, sName, stockCode);
-        System.out.format("%s: sAvgAmTable=%s, size=%d\n", 
-                "AvgAmTable.load", sAvgAmTable, aatrList.size());
+        String sAATFile = StockPaths.getAvgAmTableFile(sName);
+        loader.load(aatrList, sAATFile, sName, stockCode);
+        System.out.format("%s: sAATFile=%s, size=%d\n", 
+                "AvgAmTable.load", sAATFile, aatrList.size());
     }
 
+
+    public static ArrayList<AvgAmTable> make(String stockCode, SdTime1 sdt) {
+        ArrayList<AvgAmTable> aatl = new ArrayList<AvgAmTable>();
+
+        String[] sAATName = AvgAmTable.getTableNames();
+        for(int i=0; i<sAATName.length; i++) {
+            aatl.add(new AvgAmTable(stockCode, sAATName[i], sdt));
+        }
+
+        return aatl;
+    }
 }
 

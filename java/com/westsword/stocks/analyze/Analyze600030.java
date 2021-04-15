@@ -20,13 +20,12 @@ package com.westsword.stocks.analyze;
 import java.util.*;
 
 import com.westsword.stocks.am.*;
-import com.westsword.stocks.base.Stock;
-import com.westsword.stocks.base.Utils;
-import com.westsword.stocks.base.Settings;
+import com.westsword.stocks.base.*;
+import com.westsword.stocks.session.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
-import com.westsword.stocks.analyze.ssanalyze.*;
-import com.westsword.stocks.session.*;
+import com.westsword.stocks.analyze.ss.*;
+import com.westsword.stocks.analyze.avgam.*;
 
 public class Analyze600030 {
     public final static long THSQS_REFRESH_INTERVAL = 600;
@@ -46,12 +45,14 @@ public class Analyze600030 {
     private final TradeSessionManager mTsMan;
 
     private final SimilarStackAnalyze[] mSsAnalyze;
+    private final AvgAmAnalyze mAvgAmAnalyze;
 
     private final THSQS iThsqs;
 
     private long mStartAm;
     private TreeMap<Integer, AmRecord> mAmRecordMap;
     private TreeMap<Integer, AmRecord> mPrevAmRecordMap;
+    private TreeMap<Integer, AmRecord> mPrevAmRecordMap4CAC;
 
     private AmRateViewer mAmRateViewer;
 
@@ -77,12 +78,14 @@ public class Analyze600030 {
         if(Settings.getSwitch(Settings.CHECK_2_SUBMIT_SESSION))
             mTsMan.check2SubmitSession();
         //set mSsAnalyzeh[012] etc
-        String[] sSSTable = SSTable.getSSTableNames();
+        String[] sSSTable = SSTable.getTableNames();
         mSsAnalyze = new SimilarStackAnalyze[sSSTable.length];
         for(int i=0; i<sSSTable.length; i++) {
             mSsAnalyze[i] = new SimilarStackAnalyze(stockCode, sSSTable[i], mSdTime);
             mSsAnalyze[i].setTradeSessionManager(mTsMan);
         }
+        //avgam analyze
+        mAvgAmAnalyze = new AvgAmAnalyze(stockCode, mSdTime);
 
         //set iThsqs
         iThsqs = new THSQS();
@@ -92,28 +95,31 @@ public class Analyze600030 {
         //set mAmRecordMap
         mAmRecordMap = new TreeMap<Integer, AmRecord>();
 
-        //make a amrMap copy from tradeDate&Settings.BackwardSd
-        /*
-        StockDates stockDates = new StockDates(stockCode);
-        String prevDate = stockDates.prevDate(tradeDate);
-        ArrayList<String> tradeDateList = new ArrayList<String>();
-        tradeDateList.add(prevDate);
-        AmManager amm = new AmManager(stockCode, tradeDateList);
-        */
-        int sdbw = Settings.getBackwardSd();
-        AmManager amm = AmManager.get(stockCode, tradeDate, AStockSdTime.getCallAuctionEndTime(), sdbw, null);
-        if(Settings.getSwitch(Settings.AM_DERIVATIVE))
-            mPrevAmRecordMap = new TreeMap<Integer, AmRecord>(amm.getAmRecordMap());
-        else
-            mPrevAmRecordMap = null;
-
-        //mkdir derivative&derivativePng
-        Utils.mkDir(StockPaths.getDerivativeDir(stockCode, tradeDate));
-        Utils.mkDir(StockPaths.getDerivativePngDir(stockCode, tradeDate));
+        initAmDerAndAvgAm(stockCode, tradeDate);
 
         mAmRateViewer = new AmRateViewer();
         //start amrateviewer 
         mAmRateViewer.start();
+    }
+    private void initAmDerAndAvgAm(String stockCode, String tradeDate) {
+        //amderivative||avgam
+        int amderSdbw = Settings.getAmDerBackwardSd();
+        int avgamSdbw = Settings.getAvgAmBackwardSd();
+        int sdbw = Math.max(amderSdbw, avgamSdbw);
+        AmManager amm = AmManager.get(stockCode, tradeDate, AStockSdTime.getCallAuctionEndTime(), sdbw, null);
+        if(Settings.getSwitch(Settings.AM_DERIVATIVE)||Settings.getSwitch(Settings.AVGAM)) {
+            mPrevAmRecordMap = new TreeMap<Integer, AmRecord>(amm.getAmRecordMap());
+            mPrevAmRecordMap4CAC = new TreeMap<Integer, AmRecord>(mPrevAmRecordMap);
+        } else {
+            mPrevAmRecordMap = null;
+            mPrevAmRecordMap4CAC = null;
+        }
+        //mkdir derivative&derivativePng
+        Utils.mkDir(StockPaths.getDerivativeDir(stockCode, tradeDate));
+        Utils.mkDir(StockPaths.getDerivativePngDir(stockCode, tradeDate));
+        //mkdir avgam&avgamPng
+        Utils.mkDir(StockPaths.getAvgAmDir(stockCode, tradeDate));
+        Utils.mkDir(StockPaths.getAvgAmPngDir(stockCode, tradeDate));
     }
 
     private long prevRefreshTp=0;
@@ -154,7 +160,7 @@ public class Analyze600030 {
     private boolean bCallAuctionComplete = false;
     public void startAnalyze(ArrayList<RawTradeDetails> rawDetailsList, 
             ArrayList<RawRTPankou> rawPankouList) {
-        bCallAuctionComplete = callAuctionCompleted(rawDetailsList, bCallAuctionComplete);
+        bCallAuctionComplete = callAuctionCompleted(bCallAuctionComplete, rawDetailsList, rawPankouList);
 
         processRawTradeDetails(mIndexs, rawDetailsList, mAmRecordMap, mPrevAmRecordMap);
         processRawPankou(mIndexs, rawPankouList);
@@ -217,6 +223,8 @@ public class Analyze600030 {
                     //debugPrint1(prevSd, rSd);
                     mAmu.writeRange(prevSd, rSd, am, mTer, mAnalysisFile, mCloseTP, 
                             amrMap, prevAmrMap);
+                    //avgam analyze
+                    mAvgAmAnalyze.analyze(prevSd, rSd, mCloseTP, prevAmrMap);
                 }
                 prevSd = rSd;
                 mTer.resetEx();
@@ -286,37 +294,74 @@ public class Analyze600030 {
     }
 
 
-    private boolean callAuctionCompleted(ArrayList<RawTradeDetails> rawDetailsList, 
-            boolean completed) {
+    private void abRate4CAC(ArrayList<RawTradeDetails> rawDetailsList, long callAuctionTime) {
+        int asSum=0, abSum=0;
+        //only include those tradeDetails <= callAuctionTime
+        //sum as&ab during callAuction;
+        for(int i=0; i<rawDetailsList.size(); i++) {
+            RawTradeDetails element = rawDetailsList.get(i);
+            if(Settings.getSwitch(Settings.SWITCH_OF_RAW_DATA)) {
+                System.out.format("%x %8.3f %4d %4d\n", 
+                        element.time, element.price, element.count, element.type);
+            }
+            if(element.time > callAuctionTime)
+                break;
+
+            if(element.type == Stock.TRADE_TYPE_UP)
+                abSum += element.count;
+            else if(element.type == Stock.TRADE_TYPE_DOWN)
+                asSum += element.count;
+            else
+                System.out.format("%s: unsupported type = %d\n", 
+                        Utils.getCallerName(getClass()), element.type);
+        }
+
+        double abRate = (double)abSum/(abSum+asSum)*100;
+        String sFormat = "\nCallAuction Completed! ab=%d as=%d ab/(ab+as)=%-8.3f%%\n";
+        System.out.format(sFormat, abSum, asSum, abRate);
+    }
+    //assuming it is called between [092530, 093000]
+    private void avgamAnalyze4CAC(ArrayList<RawTradeDetails> rawDetailsList, long callAuctionTime, 
+            TreeMap<Integer, AmRecord> amrMap) {
+        if(Settings.getSwitch(Settings.AVGAM) && amrMap !=null) {
+            //clone a new one
+            AmRecord last = amrMap.lastEntry().getValue();
+
+            //modify am with last AmRecord
+            AmRecord r = AmRecord.get(rawDetailsList, callAuctionTime, mSdTime);
+            r.am += last.am;
+            int caeIdx = mSdTime.getAbs(callAuctionTime);
+            amrMap.put(caeIdx, r);
+
+            System.out.format("%s: caeIdx=%d lastIdx=%d callAuctionTime=%x sizeRP=%d am=%d\n", 
+                    Utils.getCallerName(getClass()), caeIdx, last.timeIndex, 
+                    callAuctionTime, rawDetailsList.size(), r.am);
+
+            //avgam analyze
+            mAvgAmAnalyze.analyze(caeIdx, caeIdx+1, mCloseTP, amrMap);
+        }
+    }
+    private boolean callAuctionCompleted(boolean completed, 
+            ArrayList<RawTradeDetails> rawDetailsList, ArrayList<RawRTPankou> rawPankouList) {
         //get the ratio of ab/(ab+as) when call auction completes
-        if(!completed && rawDetailsList.size() != 0) {
-            RawTradeDetails current = rawDetailsList.get(rawDetailsList.size()-1);
-            long callAuctionTime = AStockSdTime.getCallAuctionEndTime(current.time);
+        if(!completed && rawDetailsList.size()!=0 && rawPankouList.size()!=0) {
+            RawTradeDetails currentRTD = rawDetailsList.get(rawDetailsList.size()-1);
+            long callAuctionTime = AStockSdTime.getCallAuctionEndTime(currentRTD.time);
+            RawRTPankou currentRP = rawPankouList.get(rawPankouList.size()-1);
+            long timeRTD = currentRTD.time;
+            long timeRP = currentRP.mSecondsFrom1970Time;
+            int sizeRTD = rawDetailsList.size();
+            int sizeRP = rawPankouList.size();
+            System.out.format("%s: sizeRTD=%d sizeRP=%d timeRTD=%x timeRP=%x callAuctionTime=%x\n",
+                    Utils.getCallerName(getClass()), sizeRTD, sizeRP, timeRTD, timeRP, callAuctionTime);
 
-            if(current.time >= callAuctionTime) {
-                int asSum=0, abSum=0;
-                //only include those tradeDetails <= callAuctionTime
-                //sum as&ab during callAuction;
-                for(int i=0; i<rawDetailsList.size(); i++) {
-                    RawTradeDetails element = rawDetailsList.get(i);
-                    if(Settings.getSwitch(Settings.SWITCH_OF_RAW_DATA)) {
-                        System.out.format("%x %8.3f %4d %4d\n", 
-                                element.time, element.price, element.count, element.type);
-                    }
-                    if(element.time > callAuctionTime)
-                        break;
+            //maybe callAuctionTime+30 is not enough long
+            if(timeRTD >= callAuctionTime && timeRP >= callAuctionTime+30) {
+                abRate4CAC(rawDetailsList, callAuctionTime);
 
-                    if(element.type == Stock.TRADE_TYPE_UP)
-                        abSum += element.count;
-                    else if(element.type == Stock.TRADE_TYPE_DOWN)
-                        asSum += element.count;
-                    else
-                        System.out.format("%s: unsupported type = %d\n", 
-                                Utils.getCallerName(getClass()), element.type);
-                }
+                //avgam analyze specially for 09:25:00
+                avgamAnalyze4CAC(rawDetailsList, callAuctionTime, mPrevAmRecordMap4CAC);
 
-                String sFormat = "\nCallAuction Completed! ab/(ab+as) = %8.3f%%\n";
-                //System.out.format(sFormat, (double)abSum/(abSum+asSum)*100);
                 completed= true;
             }
         }
@@ -341,5 +386,3 @@ public class Analyze600030 {
         return mSdTime.getAbs(r.time); 
     }
 }
-
-
