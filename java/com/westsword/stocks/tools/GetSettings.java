@@ -191,7 +191,7 @@ public class GetSettings{
         System.out.format("\n testAvgAmTable: \n");
 
         ArrayList<AvgAmTableRecord> aatrList = new ArrayList<AvgAmTableRecord>();
-        AvgAmTable.load(stockCode, aatrList, "h0");
+        AvgAmTable.load(stockCode, "h0", aatrList);
     }
     public static void testSSTable(String stockCode) {
         System.out.format("\n testSSTable: \n");

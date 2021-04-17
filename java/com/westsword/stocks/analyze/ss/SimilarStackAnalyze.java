@@ -71,7 +71,9 @@ public class SimilarStackAnalyze {
                     removedList.add(i);
                     if(bR&&mTsMan!=null) {
                         //check to open a new tradeSession
-                        mTsMan.check2OpenSession(sstr, currentR, mName);
+                        TSRecord r = sstr.toTSRecord();
+                        mTsMan.check2OpenSession(r, currentR, mName);
+                        sstr.setSessionOpened(r.getSessionOpened());
                     } 
                     //print sstr of Traded only
                     sstr.print(currentR, bR, true);

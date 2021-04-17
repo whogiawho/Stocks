@@ -24,7 +24,6 @@ import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.Settings;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
-import com.westsword.stocks.analyze.ss.SSTableRecord;
 
 //key methods:
 //  check2OpenSession                           check to open new sessions as needed
@@ -325,7 +324,7 @@ public class TradeSessionManager {
 
     //state: null->a
     //take a look at TradeSession.java for more
-    public void check2OpenSession(SSTableRecord r, AmRecord item, String sName) {
+    public void check2OpenSession(TSRecord r, AmRecord item, String sName) {
         //System.out.format("%s: entering\n", Utils.getCallerName(getClass()));
 
         if(Utils.isOfflineRun())
@@ -362,7 +361,7 @@ public class TradeSessionManager {
         int currentAvai = iThsqs.getStockAvaiVols(stockCode);
         return currentAvai>=tradeVol?true:false;
     }
-    private TradeSession openTradeSession(AmRecord item, SSTableRecord r) {
+    private TradeSession openTradeSession(AmRecord item, TSRecord r) {
         long inHexTimePoint = item.hexTimePoint;
         int tradeType = r.tradeType;
         int sTDistance = r.sTDistance;
@@ -404,7 +403,7 @@ public class TradeSessionManager {
 
         return s;
     }
-    private void setQuitConditions(TradeSession s, SSTableRecord r, int tradeType, int sTDistance) {
+    private void setQuitConditions(TradeSession s, TSRecord r, int tradeType, int sTDistance) {
         if(r.targetRate == Double.NaN) {
             //get outHexTimePoint per (mStockCode, r.tradeDate, r.hmsList, tradeType, sTDistance)
             long outHexTimePoint = getOutHexTimePoint(mStockCode, r, tradeType, sTDistance);
@@ -422,7 +421,7 @@ public class TradeSessionManager {
             }
         }
     }
-    private long getOutHexTimePoint(String stockCode, SSTableRecord r, int tradeType, int sTDistance) {
+    private long getOutHexTimePoint(String stockCode, TSRecord r, int tradeType, int sTDistance) {
         long outTp = -1;
 
         return outTp;

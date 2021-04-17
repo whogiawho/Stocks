@@ -20,7 +20,8 @@ package com.westsword.stocks.analyze.ss;
 import java.util.*;
 
 import com.westsword.stocks.am.*;
-import com.westsword.stocks.base.Utils;
+import com.westsword.stocks.base.*;
+import com.westsword.stocks.session.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 
@@ -232,5 +233,12 @@ public class SSTableRecord extends BaseSSTR {
         }
 
         return hmsList;
+    }
+
+    public TSRecord toTSRecord() {
+        TSRecord r = new TSRecord(tradeCount, sTDistance, tradeType, 
+                targetRate, sMatchExp, getSessionOpened());
+
+        return r;
     }
 }
