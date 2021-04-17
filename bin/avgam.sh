@@ -1,11 +1,14 @@
 #!/bin/bash
 
+fAvgAmAllTable=${fAvgAmAllTable:-~/analysis/avgamAllTable.txt}
+
 function checkAvgAmTable {
     local stockCode=$1
     local tradeDate=$2
 
     local sNull="\"\""
     local fTmp0=`mktemp`
+    local fTmp1=`mktemp`
     java -jar $analyzetoolsJar avgamdelta -s$tradeDate -e$tradeDate $stockCode 2>/dev/null|awk '$4<0.85' >$fTmp0
 
     local dirAvgAmTable="data/avgamTable"
@@ -15,11 +18,10 @@ function checkAvgAmTable {
         local aatFile
         for aatFile in `ls $dirAvgAmTable`
         do
-            local fTmp1=`mktemp`
             cat $dirAvgAmTable/$aatFile|grep -v "stockCode"|grep -v "^$" >$fTmp1
 
-            local e f g sHMS eHMS tradeType k l m n scThres
-            cat $fTmp1 | while read e f g sHMS eHMS tradeType k l m n scThres; do
+            local e f g sHMS eHMS tradeType k l maxCycle n scThres
+            cat $fTmp1 | while read e f g sHMS eHMS tradeType k l maxCycle n scThres; do
                 [[ $sHMS != $sNull  && $c < $sHMS ]] && continue;
                 [[ $eHMS != $sNull  && $c > $eHMS ]] && continue;
 
@@ -28,8 +30,8 @@ function checkAvgAmTable {
                 [[ $bCmp == 1 ]] && {
                     local inPrice=`getInPrice $stockCode $b $c $tradeType`
                     local tName=`echo $aatFile|sed "s/.txt//g"`
-                    local sFormat="%-10s %s %s %s | %s %s %8s %4s %8s\n"
-                    printf "$sFormat" $tName $stockCode $b $c $f $g $correl $tradeType $inPrice
+                    local sFormat="%-10s %s %s %s | %s %s %8s %4s %8s %4s %8s\n"
+                    printf "$sFormat" $tName $stockCode $b $c $f $g $correl $tradeType $inPrice $maxCycle $l
                 }
             done
         done
