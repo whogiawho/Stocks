@@ -81,7 +81,7 @@ function getReadableZuBiFile {
     local tmp0=
     tmp0=`mktemp`
     tmp0=`getWindowPathOfTmpFile $tmp0`
-    $JAVA -jar $topost0Jar $rawZuBiFile $tmp0 $outZuBiFile
+    java -jar $topost0Jar $rawZuBiFile $tmp0 $outZuBiFile
 
     rm -rf $tmp0
 }

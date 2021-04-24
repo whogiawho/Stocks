@@ -294,3 +294,17 @@ function beep {
         uSleep 300000
     done
 }
+
+#    note: dstdir&srcDir must be in one dir
+#dstDir - dir where symlink files are
+#srcDir - dir where source files are
+function lnDirFiles {
+    local srcDir=$1
+    local dstDir=$2
+
+    local i
+    for i in `ls $srcDir`; 
+    do 
+        cmd /C "mklink $dstDir\\$i ..\\$srcDir\\$i"; 
+    done
+}
