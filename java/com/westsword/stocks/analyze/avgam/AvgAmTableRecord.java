@@ -22,6 +22,7 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.*;
+import com.westsword.stocks.session.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 
@@ -42,13 +43,14 @@ public class AvgAmTableRecord {
     public String sMaxCycle;
     public double dcThres;
     public double scThres;
+    public int tSwitch;
 
     public double[] avgam;
     public PearsonsCorrelation mPC;
 
     public AvgAmTableRecord(String stockCode, String tradeDate, String hms,
             String eHMS0, String eHMS1, int tradeType, int tradeCount, double targetRate, String sMaxCycle,
-            double dcThres, double scThres, String sName) {
+            double dcThres, double scThres, int tSwitch, String sName) {
         this.stockCode = stockCode;
         this.tradeDate = tradeDate;
         this.hms = hms;
@@ -60,6 +62,7 @@ public class AvgAmTableRecord {
         this.sMaxCycle = sMaxCycle;
         this.dcThres = dcThres; 
         this.scThres = scThres; 
+        this.tSwitch = tSwitch; 
 
         this.sTableName = sName;
         mPC = new PearsonsCorrelation();
@@ -105,4 +108,24 @@ public class AvgAmTableRecord {
 
         return line;
     }
+
+    public TSRecord toTSRecord() {
+        int sTDistance = 0;
+        String sMatchExp = tradeDate+":"+hms+":"+eHMS0+":"+eHMS1;
+        TSRecord r = new TSRecord(tradeCount, sTDistance, tradeType, 
+                targetRate, sMatchExp, getSessionOpened());
+
+        return r;
+    }
+
+
+    private boolean bSessionOpened;
+    public boolean getSessionOpened() {
+        return bSessionOpened;
+    }
+    public void setSessionOpened(boolean bSessionOpened) {
+        this.bSessionOpened = bSessionOpened;
+    }
+
+
 }

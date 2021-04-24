@@ -44,12 +44,13 @@ public class AvgAmTableLoader extends FileLoader {
         String sMaxCycle = fields[8];
         double dcThres = Double.valueOf(fields[9]);
         double scThres = Double.valueOf(fields[10]);
+        int tSwitch = Integer.valueOf(fields[11]);
 
         AvgAmTableRecord r = null;
         if(mStockCode.equals(stockCode)) {
             r = new AvgAmTableRecord(stockCode, tradeDate, hms, 
                     eHMS0, eHMS1, tradeType, tradeCount, targetRate, sMaxCycle, 
-                    dcThres, scThres, mName);
+                    dcThres, scThres, tSwitch, mName);
         }
 
         if(r!=null && mList != null)

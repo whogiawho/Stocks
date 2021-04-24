@@ -21,6 +21,7 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.*;
+import com.westsword.stocks.session.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 
@@ -36,6 +37,8 @@ public class AvgAmAnalyze {
 
     private ArrayList<AvgAmTable> mAvgAmTableList;
 
+    private TradeSessionManager mTsMan = null;
+
     public AvgAmAnalyze(String stockCode, SdTime1 sdTime) {
         mStockCode = stockCode;
         mSdTime = sdTime;
@@ -49,6 +52,12 @@ public class AvgAmAnalyze {
         mAvgAmTableList = AvgAmTable.make(stockCode, mSdTime);
     }
 
+    public void setTradeSessionManager(TradeSessionManager m) {
+        for(int j=0; j<mAvgAmTableList.size(); j++) {
+            AvgAmTable aat = mAvgAmTableList.get(j);
+            aat.setTradeSessionManager(m);
+        }
+    }
     //[start, end)
     public void analyze(int start, int end, long closeTP, TreeMap<Integer, AmRecord> amrMap) {
         double[] prevAvgam = AvgAmUtils.getAvgAm(start-1, mSdbw, mMinDist, mInterval, amrMap);

@@ -21,6 +21,7 @@ import java.util.*;
 
 import com.westsword.stocks.analyze.*;
 import com.westsword.stocks.base.*;
+import com.westsword.stocks.session.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;;
 
@@ -28,6 +29,7 @@ public class AvgAmTable extends Table {
     private final String mName;
     private final ArrayList<AvgAmTableRecord> mAvgAmTableRecordList;
 
+    private TradeSessionManager mTsMan = null;
 
     public AvgAmTable(String stockCode, String sName, SdTime1 sdt) {
         mName = sName;
@@ -47,6 +49,13 @@ public class AvgAmTable extends Table {
             AvgAmTableRecord aatr = mAvgAmTableRecordList.get(j);
             boolean bEval = aatr.eval(daa.hms, daa.deltaCorrel, daa.avgam);
             if(bEval) {
+                //check2OpenSession
+                if(mTsMan!=null&&aatr.tSwitch==1) {
+                    TSRecord r = aatr.toTSRecord();
+                    mTsMan.check2OpenSession(r, daa.ar, mName);
+                    aatr.setSessionOpened(r.getSessionOpened());
+                }
+
                 Utils.asynBeep(30);
                 String line = aatr.toString(daa.ar, daa.avgam);
                 System.out.format("%s\n", line);
@@ -79,6 +88,10 @@ public class AvgAmTable extends Table {
         }
 
         return aatl;
+    }
+
+    public void setTradeSessionManager(TradeSessionManager m) {
+        mTsMan = m;
     }
 }
 

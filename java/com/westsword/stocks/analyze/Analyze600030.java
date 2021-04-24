@@ -86,6 +86,7 @@ public class Analyze600030 {
         }
         //avgam analyze
         mAvgAmAnalyze = new AvgAmAnalyze(stockCode, mSdTime);
+        mAvgAmAnalyze.setTradeSessionManager(mTsMan);
 
         //set iThsqs
         iThsqs = new THSQS();
