@@ -74,6 +74,8 @@ public class SaadStatsHelper {
         TradeDates tradeDates = new TradeDates(stockCode);
         SdTime1 sdt = new SdTime1(stockCode);
 
+        double minmaxLProfit = Double.POSITIVE_INFINITY;
+        double minmaxSProfit = Double.POSITIVE_INFINITY;
         int count=0, lCnt=0, sCnt=0;
         String sFormat = "%s %s %s " + 
             "%8.3f %8.3f %8.3f %8.3f " +  
@@ -95,8 +97,10 @@ public class SaadStatsHelper {
                 double sInPrice = amm.getDownPrice(sMatchedTradeDate, sMatchedHMS);
                 double lProfit = v[0]-lInPrice;
                 double sProfit = sInPrice-v[1];
-                lCnt = lProfit>0? lCnt+1: lCnt;
-                sCnt = sProfit>0? sCnt+1: sCnt;
+                lCnt = lProfit>0? lCnt+1 : lCnt;
+                sCnt = sProfit>0? sCnt+1 : sCnt;
+                minmaxLProfit = lProfit<minmaxLProfit? lProfit : minmaxLProfit;
+                minmaxSProfit = sProfit<minmaxSProfit? sProfit : minmaxSProfit;
                 count++;
                 if(!bStats)
                     System.out.format(sFormat, 
@@ -108,8 +112,8 @@ public class SaadStatsHelper {
         if(bStats) {
             double lWinRate = (double)lCnt/count;
             double sWinRate = (double)sCnt/count;
-            System.out.format("%s %s %s %4d %8.3f %8.3f\n", 
-                    stockCode, tradeDate, hms, count, lWinRate, sWinRate);
+            System.out.format("%s %s %s %4d %8.3f %8.3f %8.3f %8.3f\n", 
+                    stockCode, tradeDate, hms, count, lWinRate, sWinRate, minmaxLProfit, minmaxSProfit);
         }
     }
     private static void handleAll(CommandLine cmd) {
