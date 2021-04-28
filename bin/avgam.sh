@@ -30,8 +30,8 @@ function checkAvgAmTable {
                 [[ $bCmp == 1 ]] && {
                     local inPrice=`getInPrice $stockCode $b $c $tradeType`
                     local tName=`echo $aatFile|sed "s/.txt//g"`
-                    local sFormat="%-10s %s %s %s | %s %s %8s %4s %8s %4s %8s\n"
-                    printf "$sFormat" $tName $stockCode $b $c $f $g $correl $tradeType $inPrice $maxCycle $l
+                    local sFormat="%-10s %s %s %s %8s | %s %s %8s %4s %8s %4s %8s\n"
+                    printf "$sFormat" $tName $stockCode $b $c $scThres $f $g $correl $tradeType $inPrice $maxCycle $l
                 }
             done
         done
@@ -478,6 +478,29 @@ function listAvgAmRange {
 
 
 
+function rangeAvgAmCorrel {
+    local stockCode=$1
+    local startDate=$2
+    local endDate=$3
+    local tradeDate=$4
+    local hms=$5
+
+
+    local max=2
+    local cnt=0
+    local i=
+    for i in `getTradeDateRange $stockCode $startDate $endDate`
+    do
+        java -jar $analyzetoolsJar avgamcorrel -s$startDate -e$endDate $stockCode $tradeDate $hms 2>/dev/null &
+
+        cnt=$((cnt+1))
+        echo cnt=$cnt
+        [[ $cnt -ge $max ]] && {
+            wait 
+            cnt=0
+        }
+    done
+}
 function sAvgAmFromQr {
     local fQr=$1
     local option=$2
