@@ -20,8 +20,8 @@ function checkAvgAmTable {
         do
             cat $dirAvgAmTable/$aatFile|grep -v "stockCode"|grep -v "^$" >$fTmp1
 
-            local e f g sHMS eHMS tradeType k l maxCycle n scThres
-            cat $fTmp1 | while read e f g sHMS eHMS tradeType k l maxCycle n scThres; do
+            local e f g sHMS eHMS tradeType k l maxCycle n scThres TSwitch
+            cat $fTmp1 | while read e f g sHMS eHMS tradeType k l maxCycle n scThres TSwitch; do
                 [[ $sHMS != $sNull  && $c < $sHMS ]] && continue;
                 [[ $eHMS != $sNull  && $c > $eHMS ]] && continue;
 

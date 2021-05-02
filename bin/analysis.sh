@@ -50,11 +50,13 @@ function makeSTDAmPricePngFromFile {
 }
 function makeSTDAmPricePngs {
     local stockCode=$1
-    local nDays=$2
+    local startDate=$2
+    local endDate=$3
+    local nDays=$4
 
     mkdir -p $TMP/$stockCode/$nDays
     local i=
-    for i in `getTradeDateList $stockCode y |tac`
+    for i in `getTradeDateRange $stockCode $startDate $endDate`
     do
         local fOut=$TMP/$stockCode/$nDays/$i.txt
         local startDate=`java -jar $analyzetoolsJar prevtradedate $stockCode $i $nDays 2>/dev/null`
