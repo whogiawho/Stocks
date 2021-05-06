@@ -35,8 +35,14 @@ public class AmRecordLoader extends FileLoader {
         long am = Long.valueOf(fields[2]);
         double upPrice = Double.valueOf(fields[3]);
         double downPrice = Double.valueOf(fields[4]);
+        //2nd added
+        long abVol = Long.valueOf(fields[5]);
+        long asVol = Long.valueOf(fields[6]);
+        double abAmount = Double.valueOf(fields[7]);
+        double asAmount = Double.valueOf(fields[8]);
                 
-        AmRecord r = new AmRecord(time, sdTime, am, upPrice, downPrice);
+        AmRecord r = new AmRecord(time, sdTime, am, upPrice, downPrice, 
+                abVol, asVol, abAmount, asAmount);
 
         if(mAmRecordList != null)
             mAmRecordList.add(r);

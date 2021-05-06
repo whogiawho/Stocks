@@ -16,7 +16,7 @@
  
 package com.westsword.stocks.tools.helper;
 
-import com.westsword.stocks.am.AmUtils;
+import com.westsword.stocks.am.*;
 
 public class AnalysisHelper {
     public static void makeTxt(String args[]) {
@@ -34,8 +34,8 @@ public class AnalysisHelper {
 
         AmUtils amUtils = new AmUtils(stockCode, false);
         if(args.length == 3) {
-            long startAm = amUtils.loadPrevLastAm(tradeDate1);
-            amUtils.writeAmRecords(startAm, tradeDate1);
+            AmRecord startAmr = amUtils.loadPrevLastAmRecord(tradeDate1);
+            amUtils.writeAmRecords(startAmr, tradeDate1);
         } else if(args.length == 2) {
             amUtils.writeAllAmRecords();
         } else {

@@ -30,12 +30,32 @@ public class AmRecord implements Comparable<AmRecord> {
     public double upPrice;
     public double downPrice;
 
-    public AmRecord(long hexTimePoint, int timeIndex, long am, double upPrice, double downPrice) {
+    //2nd added
+    public long abVol;
+    public double abAmount;
+    public long asVol;
+    public double asAmount;
+    public long trVol;               //trVol=abVol+asVol
+    public double trAmount;          //trAmount=abAmount+asAmount
+
+
+    public AmRecord(long hexTimePoint, int timeIndex, long am, double upPrice, double downPrice,
+            long abVol, long asVol, double abAmount, double asAmount) {
         this.hexTimePoint = hexTimePoint;
         this.timeIndex = timeIndex;
         this.am = am;
         this.upPrice = upPrice;
         this.downPrice = downPrice;
+
+        this.abVol = abVol;
+        this.asVol = asVol;
+        this.abAmount = abAmount;
+        this.asAmount = asAmount;
+        this.trVol = abVol + asVol;
+        this.trAmount = abAmount + asAmount;
+    }
+    public AmRecord(long hexTimePoint, int timeIndex, long am, double upPrice, double downPrice) {
+        this(hexTimePoint, timeIndex, am, upPrice, downPrice, 0, 0, 0, 0);
     }
 
     public double getInPrice(int tradeType) {
@@ -75,8 +95,9 @@ public class AmRecord implements Comparable<AmRecord> {
     }
 
     public String toString() {
-        String sFormat = "%-10x %8d %20d %8.3f %8.3f\n";
-        String line = String.format(sFormat, hexTimePoint, timeIndex, am, upPrice, downPrice);
+        String sFormat = "%-10x %8d %20d %8.3f %8.3f %15d %15d %20.3f %20.3f\n";
+        String line = String.format(sFormat, hexTimePoint, timeIndex, am, upPrice, downPrice,
+                abVol, asVol, abAmount, asAmount);
 
         return line;
     }
@@ -105,19 +126,26 @@ public class AmRecord implements Comparable<AmRecord> {
 
         double upPrice=Double.NEGATIVE_INFINITY, downPrice=Double.POSITIVE_INFINITY;
         int am = 0;
+        long abVol=0, asVol=0;
+        double abAmount=0, asAmount=0;
         for(int i=0; i<rawDetailsList.size(); i++) {
             RawTradeDetails rtd = rawDetailsList.get(i);
             if(rtd.time == tp) {
                 if(rtd.type == Stock.TRADE_TYPE_LONG) {
                     upPrice = rtd.price>upPrice? rtd.price:upPrice;
                     am += rtd.count;
+                    abVol += rtd.count;
+                    abAmount += rtd.count*rtd.price;
                 } else {
                     downPrice = rtd.price<downPrice? rtd.price:downPrice;
                     am -= rtd.count;
+                    asVol += rtd.count;
+                    asAmount += rtd.count*rtd.price;
                 }
             }
         }
-        AmRecord r = new AmRecord(tp, timeIdx, am, upPrice, downPrice);
+        AmRecord r = new AmRecord(tp, timeIdx, am, upPrice, downPrice,
+                abVol, asVol, abAmount, asAmount);
         return r;
     }
 }

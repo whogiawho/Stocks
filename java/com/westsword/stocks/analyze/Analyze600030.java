@@ -49,7 +49,7 @@ public class Analyze600030 {
 
     private final THSQS iThsqs;
 
-    private long mStartAm;
+    private AmRecord mStartAmr;
     private TreeMap<Integer, AmRecord> mAmRecordMap;
     private TreeMap<Integer, AmRecord> mPrevAmRecordMap;
     private TreeMap<Integer, AmRecord> mPrevAmRecordMap4CAC;
@@ -84,15 +84,21 @@ public class Analyze600030 {
             mSsAnalyze[i] = new SimilarStackAnalyze(stockCode, sSSTable[i], mSdTime);
             mSsAnalyze[i].setTradeSessionManager(mTsMan);
         }
+
         //avgam analyze
-        mAvgAmAnalyze = new AvgAmAnalyze(stockCode, mSdTime);
-        mAvgAmAnalyze.setTradeSessionManager(mTsMan);
+        if(Settings.isAvgAmOn()) {
+            mAvgAmAnalyze = new AvgAmAnalyze(stockCode, mSdTime);
+            mAvgAmAnalyze.setTradeSessionManager(mTsMan);
+        } else {
+            mAvgAmAnalyze = null;
+        }
 
         //set iThsqs
         iThsqs = new THSQS();
 
-        //set mStartAm
-        mStartAm = mAmu.loadPrevLastAm(tradeDate);
+        //set mStartAmr
+        mStartAmr = mAmu.loadPrevLastAmRecord(tradeDate);
+        debugPrint2(mStartAmr);
         //set mAmRecordMap
         mAmRecordMap = new TreeMap<Integer, AmRecord>();
 
@@ -102,13 +108,18 @@ public class Analyze600030 {
         //start amrateviewer 
         mAmRateViewer.start();
     }
+    private void debugPrint2(AmRecord amr) {
+        System.out.format("%s: %s\n", Utils.getCallerName(getClass()), amr.toString());
+    }
     private void initAmDerAndAvgAm(String stockCode, String tradeDate) {
+        System.out.format("%s: started!\n", Utils.getCallerName(getClass()));
+
         //amderivative||avgam
         int amderSdbw = Settings.getAmDerBackwardSd();
         int avgamSdbw = Settings.getAvgAmBackwardSd();
         int sdbw = Math.max(amderSdbw, avgamSdbw);
         AmManager amm = AmManager.get(stockCode, tradeDate, AStockSdTime.getCallAuctionEndTime(), sdbw, null);
-        if(Settings.getSwitch(Settings.AM_DERIVATIVE)||Settings.getSwitch(Settings.AVGAM)) {
+        if(Settings.isAmDerOn()||mAvgAmAnalyze!=null) {
             mPrevAmRecordMap = new TreeMap<Integer, AmRecord>(amm.getAmRecordMap());
             mPrevAmRecordMap4CAC = new TreeMap<Integer, AmRecord>(mPrevAmRecordMap);
         } else {
@@ -121,6 +132,8 @@ public class Analyze600030 {
         //mkdir avgam&avgamPng
         Utils.mkDir(StockPaths.getAvgAmDir(stockCode, tradeDate));
         Utils.mkDir(StockPaths.getAvgAmPngDir(stockCode, tradeDate));
+
+        System.out.format("%s: quitted!\n", Utils.getCallerName(getClass()));
     }
 
     private long prevRefreshTp=0;
@@ -210,7 +223,6 @@ public class Analyze600030 {
         int current = rawDetailsList.size()-1;
         //prevSd starts from LAST_RAW_DETAILS_IDX; which can be -1(invalid) or valid ones
         int prevSd = getSdTime(last, rawDetailsList);
-        long am = mStartAm;
 
         while(current > last) {
             last++;
@@ -222,24 +234,19 @@ public class Analyze600030 {
                 //skip writeRange if prevSd==-1
                 if(prevSd != -1) {
                     //debugPrint1(prevSd, rSd);
-                    mAmu.writeRange(prevSd, rSd, am, mTer, mAnalysisFile, mCloseTP, 
+                    mAmu.writeRange(prevSd, rSd, mStartAmr, mTer, mAnalysisFile, mCloseTP, 
                             amrMap, prevAmrMap);
                     //avgam analyze
-                    mAvgAmAnalyze.analyze(prevSd, rSd, mCloseTP, prevAmrMap);
+                    if(mAvgAmAnalyze!=null)
+                        mAvgAmAnalyze.analyze(prevSd, rSd, mCloseTP, prevAmrMap);
                 }
                 prevSd = rSd;
                 mTer.resetEx();
             }
-            if(r.type == Stock.TRADE_TYPE_UP) {
-                am += r.count;
-                mTer.traceUp(r.price);
-            } else {
-                am -= r.count;
-                mTer.traceDown(r.price);
-            }
+
+            mAmu.statsChanged(r, mStartAmr, mTer);
         }
 
-        mStartAm = am;
         indexs[LAST_RAW_DETAILS_IDX] = current;
         checkLastRawTradeDetail(indexs, rawDetailsList);
     }
@@ -324,7 +331,7 @@ public class Analyze600030 {
     //assuming it is called between [092530, 093000]
     private void avgamAnalyze4CAC(ArrayList<RawTradeDetails> rawDetailsList, long callAuctionTime, 
             TreeMap<Integer, AmRecord> amrMap) {
-        if(Settings.getSwitch(Settings.AVGAM) && amrMap !=null) {
+        if(mAvgAmAnalyze!=null && amrMap !=null) {
             //clone a new one
             AmRecord last = amrMap.lastEntry().getValue();
 
@@ -386,4 +393,5 @@ public class Analyze600030 {
         
         return mSdTime.getAbs(r.time); 
     }
+
 }

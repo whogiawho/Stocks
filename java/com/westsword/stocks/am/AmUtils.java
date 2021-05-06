@@ -21,6 +21,8 @@ import java.util.*;
 import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.StockPaths;
+import com.westsword.stocks.am.average.*;
+import com.westsword.stocks.am.derivative.*;
 import com.westsword.stocks.analyze.RawTradeDetails;
 import com.westsword.stocks.analyze.RawTradeDetailsList;
 
@@ -29,15 +31,15 @@ public class AmUtils {
     public AmUtils(String stockCode, boolean bStartCopyManagerThread) {
         mStockCode = stockCode;
         mSdTime = new SdTime1(stockCode);   //get sdStartDate&sdStartTime&interval from settings.txt
-        mStockDates = new StockDates(stockCode);
+        mStockDates = new StockDates(stockCode, false);
 
         //
-        if(Settings.getSwitch(Settings.AM_DERIVATIVE))
+        if(Settings.getAmDerPng())
             mAdm = new AmDerManager(bStartCopyManagerThread);
         else
             mAdm = null;
         //
-        if(Settings.getSwitch(Settings.AVGAM))
+        if(Settings.getAvgAmPng())
             mAam = new AvgAmManager();
         else
             mAam = null;
@@ -56,14 +58,32 @@ public class AmUtils {
     public void writeAmRecords(String tradeDate1, String tradeDate2) {
         tradeDate1 = mStockDates.ceiling(tradeDate1);
         tradeDate2= mStockDates.floor(tradeDate2);
-        long startAm = loadPrevLastAm(tradeDate1);
+        AmRecord startAmr = loadPrevLastAmRecord(tradeDate1);
         while(tradeDate1!=null&&tradeDate2!=null&&tradeDate1.compareTo(tradeDate2)<=0) {
-            startAm = writeAmRecords(startAm, tradeDate1);
+            startAmr = writeAmRecords(startAmr, tradeDate1);
 
             tradeDate1 = mStockDates.nextDate(tradeDate1);
         }
     }
-    public long writeAmRecords(long startAm, String tradeDate) {
+    //r[in]
+    //amr[out]
+    //ter[out]
+    public void statsChanged(RawTradeDetails r, AmRecord amr, TrackExtreme ter) {
+        if(r.type == Stock.TRADE_TYPE_UP) {
+            amr.am += r.count;
+            amr.abVol += r.count;
+            amr.abAmount += r.count*r.price;
+            ter.traceUp(r.price);
+        } else {
+            amr.am -= r.count;
+            amr.asVol += r.count;
+            amr.asAmount += r.count*r.price;
+            ter.traceDown(r.price);
+        }
+        amr.trVol += r.count;
+        amr.trAmount += r.count*r.price;
+    }
+    public AmRecord writeAmRecords(AmRecord amr, String tradeDate) {
         //any tp later than tradeDate's close_quotation_time is not written
         long closeTP = Time.getSpecificTime(tradeDate, AStockSdTime.getCloseQuotationTime());
         //System.out.format("%s: closeTP=%x\n", Utils.getCallerName(getClass()), closeTP);
@@ -76,7 +96,6 @@ public class AmUtils {
         String sAnalysisFile = StockPaths.getAnalysisFile(mStockCode, tradeDate);
         Utils.deleteFile(sAnalysisFile);
 
-        long am = startAm;
         long caeTp = Time.getSpecificTime(tradeDate, mSdTime.getCallAuctionEndTime());
         int caeSd = mSdTime.getAbs(caeTp);
         int prevSd = caeSd;                //prevSd starts from callAuctionEndTime
@@ -86,28 +105,34 @@ public class AmUtils {
             int rSd = mSdTime.getAbs(r.time);
             if(rSd != prevSd) {
                 //write AmRecords between [prevSd, rSd) to sAnalysisFile
-                writeRange(prevSd, rSd, am, ter, sAnalysisFile, closeTP);
+                writeRange(prevSd, rSd, amr, ter, sAnalysisFile, closeTP);
 
                 prevSd = rSd;
                 ter.resetEx();
             }
-            if(r.type == Stock.TRADE_TYPE_UP) {
-                am += r.count;
-                ter.traceUp(r.price);
-            } else {
-                am -= r.count;
-                ter.traceDown(r.price);
-            }
+
+            statsChanged(r, amr, ter);
         }
         //last record
         if(lSize!=0) {
             //System.out.format("%s: %d\n", Utils.getCallerName(getClass()), prevSd);
-            writeRange(prevSd, prevSd+1, am, ter, sAnalysisFile, closeTP);
+            writeRange(prevSd, prevSd+1, amr, ter, sAnalysisFile, closeTP);
         }
-
-        return am;
+        //_print(amr);
+        
+        return amr;
     }
-    public void writeRange(int start, int end, long am, TrackExtreme ter, String sAnalysisFile, long closeTP, 
+    private void _print(AmRecord amr) {
+        System.out.format("%s: trVol=%d trAmount=%-8.3f\n", 
+                Utils.getCallerName(getClass()), amr.trVol, amr.trAmount);
+        System.out.format("%s: abVol=%d abAmount=%-8.3f\n", 
+                Utils.getCallerName(getClass()), amr.abVol, amr.abAmount);
+        System.out.format("%s: asVol=%d asAmount=%-8.3f\n", 
+                Utils.getCallerName(getClass()), amr.asVol, amr.asAmount);
+    }
+    //amrMap[out]
+    //prevAmrMap[out]
+    public void writeRange(int start, int end, AmRecord amr, TrackExtreme ter, String sAnalysisFile, long closeTP, 
             TreeMap<Integer, AmRecord> amrMap, TreeMap<Integer, AmRecord> prevAmrMap) {
         ter.setEx2Prev();
         for(int i=start; i<end; i++) {
@@ -115,7 +140,8 @@ public class AmUtils {
             if(tp<=closeTP) {
                 //String tradeDate = Time.getTimeYMD(tp);
                 //String tradeTime = Time.getTimeHMS(tp);
-                AmRecord r = new AmRecord(tp, i, am, ter.maxUP, ter.minDP);
+                AmRecord r = new AmRecord(tp, i, amr.am, ter.maxUP, ter.minDP,
+                        amr.abVol, amr.asVol, amr.abAmount, amr.asAmount);
                 if(amrMap!=null) {
                     amrMap.put(i, r);
                 }
@@ -133,9 +159,9 @@ public class AmUtils {
             }
         }
     }
-    public void writeRange(int start, int end, long am, 
+    public void writeRange(int start, int end, AmRecord amr, 
             TrackExtreme ter, String sAnalysisFile, long closeTP) {
-        writeRange(start, end, am, ter, sAnalysisFile, closeTP, null, null);
+        writeRange(start, end, amr, ter, sAnalysisFile, closeTP, null, null);
     }
 
     public AmRecord loadPrevLastAmRecord(String tradeDate) {
@@ -145,8 +171,9 @@ public class AmUtils {
             throw new RuntimeException(msg);
         }
 
+        AmRecord nullAmr = new AmRecord(0,0,0,0,0);
         if(tradeDate.equals(mStockDates.firstDate()))
-            return null;
+            return nullAmr;
 
         tradeDate = mStockDates.prevDate(tradeDate);
         String sAnalysisFile = StockPaths.getAnalysisFile(mStockCode, tradeDate);
@@ -155,21 +182,10 @@ public class AmUtils {
         amLoader.load(amList, null, null, sAnalysisFile);
 
         if(amList.size() == 0)
-            return null;
+            return nullAmr;
 
         return amList.get(amList.size()-1);
     }
-    public long loadPrevLastAm(String tradeDate) {
-        long lastAm = 0;
-
-        AmRecord r = loadPrevLastAmRecord(tradeDate);
-        if(r != null)
-            lastAm = r.am;
-        //System.out.format("lastAm=%d\n", lastAm);
-
-        return lastAm;
-    }
-
 
 
 
