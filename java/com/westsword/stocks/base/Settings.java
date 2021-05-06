@@ -236,6 +236,7 @@ public class Settings extends FileLoader {
     public final static int AM_DERIVATIVE = 6;
     public final static int CHECK_2_SUBMIT_SESSION = 7;
     public final static int AVGAM = 8;
+    public final static int AMVOLR = 9;
     public final static String[] booleanKeys = {
         "noPerformanceLog",
         "switchOfRawData",
@@ -246,8 +247,10 @@ public class Settings extends FileLoader {
         "AmDerivative",
         "Check2SumitSession",
         "AvgAm",
+        "AmVolR",
     };
     public final static Boolean[] booleanValues = {
+        null,
         null,
         null,
         null,
@@ -268,6 +271,7 @@ public class Settings extends FileLoader {
         return booleanValues[idx];
     }
 
+    //amder
     public static double getAmDerR2Threshold() {
         return getDouble("AmDer.R2Threshold");
     }
@@ -280,6 +284,10 @@ public class Settings extends FileLoader {
     public static int getAmDerInterval() {
         return getInteger("AmDer.Interval");
     }
+    public static boolean getAmDerPng() {
+        return getBoolean("AmDer.Png");
+    }
+    //avgam
     public static int getAvgAmBackwardSd() {
         return getInteger("AvgAm.BackwardSd");
     }
@@ -289,6 +297,27 @@ public class Settings extends FileLoader {
     public static int getAvgAmInterval() {
         return getInteger("AvgAm.Interval");
     }
+    public static boolean getAvgAmPng() {
+        return getBoolean("AvgAm.Png");
+    }
+    //amvolr
+    public static int getAmVolRBackwardSd() {
+        return getInteger("AmVolR.BackwardSd");
+    }
+    public static int getAmVolRInterval() {
+        return getInteger("AmVolR.Interval");
+    }
+    public static boolean getAmVolRPng() {
+        return getBoolean("AmVolR.Png");
+    }
 
-
+    public static boolean isAvgAmOn() {
+        return Settings.getSwitch(Settings.AVGAM);
+    }
+    public static boolean isAmDerOn() {
+        return Settings.getSwitch(Settings.AM_DERIVATIVE);
+    }
+    public static boolean isAmVolR() {
+        return Settings.getSwitch(Settings.AMVOLR);
+    }
 }

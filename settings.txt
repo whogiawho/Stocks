@@ -1,12 +1,11 @@
 stockCode=512880
-currentDate=20210319
+currentDate=20210506
 
 
-currentDateCloseQuotationTime=60544bf0
-currentDateLastRawTradeDetailTime=60544c2c
+currentDateCloseQuotationTime=609393f0
+currentDateLastRawTradeDetailTime=6093942c
 
 
-#PriceDecimalFormat=#.##
 OnlyLongTradeSession=true
 
 
@@ -57,6 +56,10 @@ MaxGrowthRate=1.0
 BufferingTradeResult=true
 MaxOutPrice=false
 
+AmDer.Png=false
+AvgAm.Png=true
+AmVolR.Png=false
+
 AmDerivative=false
 AmDer.R2Threshold=0.5
 #group0
@@ -73,6 +76,9 @@ AvgAm.MinimumSkipSd=60
 AvgAm.BackwardSd=1170
 AvgAm.Interval=1
 
+AmVolR=true
+AmVolR.BackwardSd=1200
+AmVolR.Interval=1
 
 #0 - jyzq
 #1 - zxzq
