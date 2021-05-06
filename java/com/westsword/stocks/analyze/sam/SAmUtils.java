@@ -20,6 +20,7 @@ import java.util.*;
 import org.apache.commons.math3.stat.regression.*;
 
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.am.derivative.*;
 import com.westsword.stocks.base.time.*;
 
 public class SAmUtils {

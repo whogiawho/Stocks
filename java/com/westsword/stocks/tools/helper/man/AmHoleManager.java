@@ -20,6 +20,7 @@ package com.westsword.stocks.tools.helper.man;
 import java.util.*;
 
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.am.derivative.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.Task;
 import com.westsword.stocks.base.TaskManager;

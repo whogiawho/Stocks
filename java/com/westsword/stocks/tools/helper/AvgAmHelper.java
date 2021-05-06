@@ -20,6 +20,7 @@ import java.util.*;
 import org.apache.commons.cli.*;
 
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.am.average.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 import com.westsword.stocks.base.Utils;
@@ -100,7 +101,7 @@ public class AvgAmHelper {
         System.err.println("       -b sdbw       ; at most sdbw shall be looked backward; default 1170");
         System.err.println("       -m mindist    ; default 60");
         System.err.println("       -i interval   ; default 1");
-        System.err.println("       -e step       ; list amderivatives every step sd, and only effective when no hms;");
+        System.err.println("       -e step       ; list avgam every step sd, and only effective when no hms;");
         System.exit(-1);
     }
 
@@ -123,7 +124,7 @@ public class AvgAmHelper {
         options.addOption("b", true,  "at most sdtime shall be looked backward when calculating derivatives");
         options.addOption("m", true,  "minimum skipped sd distance from current time");
         options.addOption("i", true,  "the step to get am derivative");
-        options.addOption("e", true,  "list amderivatives every step sd");
+        options.addOption("e", true,  "list avgam every step sd");
 
         return options;
     }

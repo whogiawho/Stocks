@@ -32,6 +32,7 @@ import com.westsword.stocks.base.ckpt.*;
 import com.westsword.stocks.base.utils.*;
 
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.am.derivative.*;
 import com.westsword.stocks.qr.*;
 import com.westsword.stocks.tools.helper.*;
 import com.westsword.stocks.tools.helper.man.*;

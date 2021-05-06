@@ -21,6 +21,7 @@ import java.util.*;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.am.average.*;
 import com.westsword.stocks.base.*;
 import com.westsword.stocks.session.*;
 import com.westsword.stocks.base.time.*;

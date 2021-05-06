@@ -14,12 +14,13 @@
  /* Written by whogiawho <whogiawho@gmail.com>. */
 
 
-package com.westsword.stocks.am;
+package com.westsword.stocks.am.derivative;
  
 import java.util.*;
 import org.apache.commons.cli.*;
 import org.apache.commons.math3.stat.regression.*;
 
+import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.utils.*;
 

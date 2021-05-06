@@ -14,11 +14,12 @@
  /* Written by whogiawho <whogiawho@gmail.com>. */
 
 
-package com.westsword.stocks.am;
+package com.westsword.stocks.am.average;
  
 import java.util.*;
 import org.apache.commons.cli.*;
 
+import com.westsword.stocks.am.*;
 import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;

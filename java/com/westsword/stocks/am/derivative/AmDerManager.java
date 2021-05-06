@@ -14,7 +14,7 @@
  /* Written by whogiawho <whogiawho@gmail.com>. */
  
  
-package com.westsword.stocks.am;
+package com.westsword.stocks.am.derivative;
 
 
 import java.util.*;
@@ -24,14 +24,36 @@ import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 
-public class AvgAmManager extends TaskManager {
+public class AmDerManager extends TaskManager {
     private TreeSet<Long> mHexTpSet; 
+    private CopyManager mCopyMan; 
 
-    public AvgAmManager() {
+    public AmDerManager(boolean bStartCopyManagerThread) {
         super();
         mHexTpSet = new TreeSet<Long>();
+
+        mCopyMan = new CopyManager();
+        if(bStartCopyManagerThread)
+            mCopyMan.start();
+    }
+    public AmDerManager() {
+        this(true);
     }
 
+    public void stopCopyManager() {
+        mCopyMan.stopIt();
+        mCopyMan.interrupt();
+    }
+    //for AmDerivativeHelper
+    public void runWOCopy(String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt, 
+            double r2Threshold, int sdbw, int minSkippedSD, int interval) {
+        maxThreadsCheck();
+
+        AmDerTask t = new AmDerTask(this, stockCode, r, prevAmrMap, sdt, 
+                r2Threshold, sdbw, minSkippedSD, interval);
+        t.setPriority(Thread.MAX_PRIORITY);
+        t.start();
+    }
     //for AmUtils
     public void run(String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt) {
         String hms = Time.getTimeHMS(r.hexTimePoint, false);
@@ -47,24 +69,28 @@ public class AvgAmManager extends TaskManager {
         //System.err.format("%s: add %x(%s)\n", Utils.getCallerName(getClass()), r.hexTimePoint, hms);
         mHexTpSet.add(r.hexTimePoint);
 
-        AvgAmTask t = new AvgAmTask(this, stockCode, r, prevAmrMap, sdt);
+        AmDerTask t = new AmDerTask(this, stockCode, r, prevAmrMap, sdt);
+        t.setCopyManager(mCopyMan);
         t.setPriority(Thread.MAX_PRIORITY);
         t.start();
     }
 
-    public static class AvgAmTask extends Task {
+    public static class AmDerTask extends Task {
         private String stockCode;
         private AmRecord r;
         private TreeMap<Integer, AmRecord> prevAmrMap;
         private SdTime1 sdt;
 
+        private double r2Threshold;
         private int sdbw;
         private int minSkippedSD;
         private int interval;
 
-        public AvgAmTask(AvgAmManager ahm, 
+        private CopyManager copyMan;
+
+        public AmDerTask(AmDerManager ahm, 
                 String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt,
-                int sdbw, int minSkippedSD, int interval) {
+                double r2Threshold, int sdbw, int minSkippedSD, int interval) {
             super(ahm);
 
             this.stockCode = stockCode;
@@ -72,43 +98,54 @@ public class AvgAmManager extends TaskManager {
             this.prevAmrMap = prevAmrMap;
             this.sdt = sdt;
 
+            this.r2Threshold = r2Threshold;
             this.sdbw = sdbw;
             this.minSkippedSD = minSkippedSD;
             this.interval = interval;
 
+            this.copyMan = null;
         }
-        public AvgAmTask(AvgAmManager ahm, 
+        public AmDerTask(AmDerManager ahm, 
                 String stockCode, AmRecord r, TreeMap<Integer, AmRecord> prevAmrMap, SdTime1 sdt) {
-            //get sdbw&minSkippedSD&interval from settings.txt
+            //get r2Threshold&sdbw&minSkippedSD from settings.txt
             this(ahm, stockCode, r, prevAmrMap, sdt,
-                    Settings.getAvgAmBackwardSd(),
-                    Settings.getAvgAmMinimumSkipSd(),
-                    Settings.getAvgAmInterval());
+                    Settings.getAmDerR2Threshold(),
+                    Settings.getAmDerBackwardSd(),
+                    Settings.getAmDerMinimumSkipSd(),
+                    Settings.getAmDerInterval());
         }
 
+        public void setCopyManager(CopyManager copyMan) {
+            this.copyMan = copyMan;
+        }
         @Override
         public void runTask() {
             //convert r.hexTimePoint to hms
             String tradeDate = Time.getTimeYMD(r.hexTimePoint, false);
             String hms = Time.getTimeHMS(r.hexTimePoint, false);
-            //get sAvgAmFile
-            String sAvgAmFile = StockPaths.getAvgAmFile(stockCode, tradeDate, hms);
+            //get sDerivativeFile
+            String sDerivativeFile = StockPaths.getDerivativeFile(stockCode, tradeDate, hms);
 
             //make derivative file for r 
-            makeAvgAmFile(r, sAvgAmFile, prevAmrMap, sdt);
+            makeAmDerivativeFile(r, sDerivativeFile, prevAmrMap, sdt);
 
             //call cscript 
-            ThreadMakeAvgAm.run(stockCode, tradeDate, hms);
+            ThreadMakeAmDer.run(stockCode, tradeDate, hms);
+            //copy this png file to the amrate file
+            String sSrcPng = StockPaths.getDerivativePngFile(stockCode, tradeDate, hms);
+            String sDstPng = StockPaths.getAmRatePngFile(stockCode, tradeDate);
+            if(copyMan!=null) 
+                copyMan.requestCopy(sSrcPng, sDstPng);
         }
 
-        private void makeAvgAmFile(AmRecord r, String sAvgAmFile, 
+        private void makeAmDerivativeFile(AmRecord r, String sDerivativeFile, 
                 TreeMap<Integer, AmRecord> amrMap, SdTime1 sdt) {
             //get sd from r.timeIndex
             int sd = r.timeIndex;
 
-            //call AvgAmUtils.listAvgAm
-            AvgAmUtils.listAvgAm(sd, sdbw, minSkippedSD, interval,
-                    amrMap, false, sAvgAmFile);
+            //call AmDerUtils.listSingleSd
+            AmDerUtils.listSingleSd(sd, r2Threshold, sdbw, minSkippedSD, interval,
+                    amrMap, false, sDerivativeFile);
         }
     }
 }

@@ -21,6 +21,7 @@ import org.apache.commons.cli.*;
 import org.apache.commons.math3.stat.regression.*;
 
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.am.derivative.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 import com.westsword.stocks.base.Utils;

@@ -21,6 +21,7 @@ import org.apache.commons.cli.*;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.am.average.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 
