@@ -68,6 +68,7 @@ splitRawTradeDetailsJar="$rootDir\\build\\jar\\splitrawtradedetails.jar"
 . bin/sam.sh
 . bin/pvtable.sh
 . bin/avgam.sh
+. bin/amvolr.sh
 
 
 

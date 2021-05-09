@@ -51,27 +51,36 @@ function divide {
 function mul {
     local f0=$1
     local f1=$2
+    local scale=$3
+
+    [[ -z $scale ]] && scale=3
 
     local result=
-    result=`echo "$f0 * $f1"|bc`
+    result=`echo "scale=$scale; $f0 * $f1"|bc`
 
     echo $result
 }
 function add {
     local f0=$1
     local f1=$2
+    local scale=$3
+
+    [[ -z $scale ]] && scale=3
 
     local result=
-    result=`echo "$f0 + $f1"|bc`
+    result=`echo "scale=$scale; $f0 + $f1"|bc`
 
     echo $result
 }
 function substract {
     local f0=$1
     local f1=$2
+    local scale=$3
+
+    [[ -z $scale ]] && scale=3
 
     local result=
-    result=`echo "$f0 - $f1"|bc`
+    result=`echo "scale=$scale; $f0 - $f1"|bc`
 
     echo $result
 }

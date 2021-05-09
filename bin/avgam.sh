@@ -174,7 +174,8 @@ function openTmpAvgAmPng {
 
     [[ -z $bwsd ]] && bwsd=1170
 
-    JPEGView.exe "$dailyDir\\$stockCode\\$tradeDate\\avgamTxt\\${tradeDate}_${hms}_${bwsd}_avgam.png" &
+    local avgamtxtDir="$dailyDir\\$stockCode\\$tradeDate\\avgamTxt"
+    JPEGView.exe "$avgamtxtDir\\${tradeDate}_${hms}_${bwsd}_avgam.png" &
 }
 
 function openAvgAmPng {
