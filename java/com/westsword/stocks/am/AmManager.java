@@ -111,9 +111,14 @@ public class AmManager {
     public double getCloseQuotationPrice(String tradeDate) {
         return getUpPrice(tradeDate, AStockSdTime.getCloseQuotationTime());
     }
-    //[0] - outPrice for Long 
-    //[1] - outPrice for Short 
-    public double[] getExtremePrice(String startDate, String startHMS, String endDate, String endHMS) {
+    //return value
+    //[0] - outPrice for Long(max)
+    //[1] - outPrice for Short(min)
+    //lOutTime
+    //[0] - outTime for Long(max)
+    //[1] - outTime for Short(min)
+    public double[] getExtremePrice(String startDate, String startHMS, String endDate, String endHMS, 
+            long[] lOutTime) {
         NavigableMap<Integer, AmRecord> map0 = getItemMap(startDate, startHMS, endDate, endHMS);
 
         double[] v = new double[2];
@@ -121,13 +126,22 @@ public class AmManager {
         for(Integer key: map0.keySet()) {
             AmRecord r = map0.get(key);
 
-            if(r.downPrice > v[0])
+            if(r.downPrice > v[0]) {
                 v[0] = r.downPrice;
-            if(r.upPrice < v[1])
+                if(lOutTime!=null)
+                    lOutTime[0] = r.hexTimePoint;
+            }
+            if(r.upPrice < v[1]) {
                 v[1] = r.upPrice;
+                if(lOutTime!=null)
+                    lOutTime[1] = r.hexTimePoint;
+            }
         }
 
         return v;
+    }
+    public double[] getExtremePrice(String startDate, String startHMS, String endDate, String endHMS) {
+        return getExtremePrice(startDate, startHMS, endDate, endHMS, null);
     }
 
     public double getInPrice(int tradeType, long inTime) {

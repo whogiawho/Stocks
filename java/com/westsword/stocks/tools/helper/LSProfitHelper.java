@@ -51,11 +51,29 @@ public class LSProfitHelper {
         //System.out.format("start=%s,%s end=%s,%s\n", tradeDate, hms, endDate, endHMS);
 
         AmManager amm = new AmManager(stockCode, tradeDate, endDate);
+
+        boolean bPrintOutTime = getOutTimeSwitch(cmd);
+        if(!bPrintOutTime) {
+            onlyProfit(tradeDate, hms, endDate, endHMS, amm);
+        } else {
+            profitWithOutTime(tradeDate, hms, endDate, endHMS, amm);
+        }
+    }
+    private static void onlyProfit(String tradeDate, String hms, String endDate, String endHMS, AmManager amm) {
         double[] v = amm.getExtremePrice(tradeDate, hms, endDate, endHMS);
         double lInPrice = amm.getUpPrice(tradeDate, hms);
         double sInPrice = amm.getDownPrice(tradeDate, hms);
 
         System.out.format("%8.3f %8.3f\n", v[0]-lInPrice, sInPrice-v[1]);
+    }
+    private static void profitWithOutTime(String tradeDate, String hms, String endDate, String endHMS, AmManager amm) {
+        long[] lOutTime = new long[2];
+        double[] v = amm.getExtremePrice(tradeDate, hms, endDate, endHMS, lOutTime);
+        double lInPrice = amm.getUpPrice(tradeDate, hms);
+        double sInPrice = amm.getDownPrice(tradeDate, hms);
+
+        System.out.format("%8.3f %8.3f %x %x\n", 
+                v[0]-lInPrice, sInPrice-v[1], lOutTime[0], lOutTime[1]);
     }
 
     public static String[] getEndDateHMS(String tradeDate, String hms, CommandLine cmd, 
@@ -83,10 +101,11 @@ public class LSProfitHelper {
         return sRet;
     }
     private static void usage() {
-        System.err.println("usage: java AnalyzeTools getlsprofit [-ms] stockCode tradeDate hms");
+        System.err.println("usage: java AnalyzeTools getlsprofit [-mst] stockCode tradeDate hms");
         System.err.println("  for<stockCode,tradeDate,hms> within maxCycle get its L&S maxProfit");
         System.err.println("       -m maxCycle        ; default 1 day");
         System.err.println("       -s sdtime          ; default 60");
+        System.err.println("       -t                 ; print outTime; default off");
 
              String line = "  -m&-s are exclusive! at least one must be set";
         line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);
@@ -112,6 +131,7 @@ public class LSProfitHelper {
         Options options = new Options();
         options.addOption("m", true,  "maxCycle to get L&S maxProfit; default 1");
         options.addOption("s", true,  "sdtime to get L&S maxProfit; default 60");
+        options.addOption("t", false, "print outTime");
 
         return options;
     }
@@ -120,5 +140,8 @@ public class LSProfitHelper {
     }
     public static int getMaxSdt(CommandLine cmd, int defaultSdt) {
         return CmdLineUtils.getInteger(cmd, "s", defaultSdt);
+    }
+    public static boolean getOutTimeSwitch(CommandLine cmd) {
+        return CmdLineUtils.getBoolean(cmd, "t", false);
     }
 }
