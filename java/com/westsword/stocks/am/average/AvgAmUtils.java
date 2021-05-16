@@ -69,7 +69,6 @@ public class AvgAmUtils {
         int i=0;
         for(int dist=sdbw; dist>=minDist; dist-=interval) {
             int start=sd-dist;
-            int end=sd;
             long startAm = amrMap.get(amrMap.floorKey(start)).am;
             double avgAm = (endAm-startAm)/dist;
             avgams[i++] = avgAm;
@@ -85,7 +84,6 @@ public class AvgAmUtils {
         long endAm = amrMap.get(sd).am;
         for(int dist=sdbw; dist>=minDist; dist-=interval) {
             int start=sd-dist;
-            int end=sd;
             long startAm = amrMap.get(amrMap.floorKey(start)).am;
             double avgAm = (endAm-startAm)/dist;
 

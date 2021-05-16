@@ -51,6 +51,8 @@ public class AvgAmTable extends Table {
             if(bEval) {
                 //check2OpenSession
                 if(mTsMan!=null&&aatr.tSwitch==1) {
+                    System.out.format("%s: running check2OpenSession!\n", 
+                            Utils.getCallerName(getClass()));
                     TSRecord r = aatr.toTSRecord();
                     mTsMan.check2OpenSession(r, daa.ar, mName);
                     aatr.setSessionOpened(r.getSessionOpened());

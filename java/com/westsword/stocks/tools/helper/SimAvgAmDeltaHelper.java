@@ -165,7 +165,7 @@ public class SimAvgAmDeltaHelper {
         System.err.println("       the correls are saved to the dir.res when using -f or");
         System.err.println("         printed with [stockCode,tradeDate,hms]");
         System.err.println("       -f avgamdeltaFile   ; the file generated from avgamdelta");
-        System.err.println("       -d dir              ; the dir where the avgamdelta files are");
+        System.err.println("       -d dir              ; the dir where the avgam files of avgamdelta are");
 
              String line = "       both -f&-d must be enabled!";
         line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);

@@ -69,6 +69,8 @@ public class Utils {
     }
     //mkdir path if not exist
     public static void mkDir(String path) {
+        //System.out.format("%s: path=%s\n", "mkDir", path);
+
         File f = new File(path);
         if (!f.exists()) {
             f.mkdirs();

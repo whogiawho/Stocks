@@ -317,7 +317,7 @@ public class Settings extends FileLoader {
     public static boolean isAmDerOn() {
         return Settings.getSwitch(Settings.AM_DERIVATIVE);
     }
-    public static boolean isAmVolR() {
+    public static boolean isAmVolROn() {
         return Settings.getSwitch(Settings.AMVOLR);
     }
 }
