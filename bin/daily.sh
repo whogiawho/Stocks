@@ -28,9 +28,9 @@ function doDailyTask {
     routinesAfterCloseQuotation $stockCode $tradeDate skipRA
 
     write2CheckAllTable $stockCode $tradeDate
-
-    avgamPredictByLast20m $stockCode $tradeDate
     write2AvgAmTable $stockCode $tradeDate
+
+    #avgamPredictByLast20m $stockCode $tradeDate
 }
 function continueIfRawTradeDetailsReady {
     local stockCode=$1

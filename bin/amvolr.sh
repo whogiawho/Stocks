@@ -57,3 +57,32 @@ function openTmpAmVolRPng {
     JPEGView.exe "$amvolrtxtDir\\${tradeDate}_${hms}_${bwsd}_amvolr.png" &
 }
 
+
+function getMaxCorrel {
+    local stockCode=$1
+    local tradeDate0=$2
+    local hms0=$3
+    local tradeDate1=$4
+    local hms1=$5
+
+    local fTmp=`mktemp`
+    local i=
+    local correl=
+    for i in `seq 10 10 10800`; 
+    do 
+        correl=`java -jar $analyzetoolsJar amvolrcorrel -b$i $stockCode $tradeDate0 $hms0 $tradeDate1 $hms1 2>/dev/null` 
+        printf "%8s %8s\n" $i $correl; 
+    done > $fTmp
+
+    local line=`cat $fTmp|grep -v NaN|sort -nk2,2|tail -n1`
+    printf "%s %s %s %s %s\n" $tradeDate0 $hms0 $tradeDate1 $hms1 "$line"
+
+    rm -rf $fTmp
+}
+
+function addAmVolR {
+    local fList=$1
+    local sDir=$2
+
+
+}

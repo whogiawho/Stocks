@@ -310,9 +310,13 @@ function beep {
 function lnDirFiles {
     local srcDir=$1
     local dstDir=$2
+    local bDescend=$3
+
+    local lsOption=
+    [[ ! -z $bDescend ]] && lsOption="-r"
 
     local i
-    for i in `ls $srcDir`; 
+    for i in `ls $lsOption $srcDir`; 
     do 
         cmd /C "mklink $dstDir\\$i ..\\$srcDir\\$i"; 
     done
