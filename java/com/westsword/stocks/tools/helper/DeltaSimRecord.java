@@ -18,17 +18,19 @@ package com.westsword.stocks.tools.helper;
 
 import java.util.*;
 
-public class AvgAmRecord {
+public class DeltaSimRecord {
     public String stockCode;
     public String tradeDate;
     public String hms;
-    public double correl0;           //delta correl with previous sd
     public double upPrice;
     public double downPrice;
 
-    public double correl1;
 
-    public AvgAmRecord(String[] fields) {
+    public double correl0;           //delta correl with previous sd, dcCorrel
+    public double correl1;           //scCorrel
+
+
+    public DeltaSimRecord(String[] fields) {
         stockCode = fields[0];
         tradeDate = fields[1];
         hms = fields[2];
@@ -42,9 +44,9 @@ public class AvgAmRecord {
             correl1=Double.NaN;
     }
 
-    public static ArrayList<AvgAmRecord> getList(String sAvgAmDeltaFile) {
-        AvgAmRecordLoader l = new AvgAmRecordLoader();
-        ArrayList<AvgAmRecord> aarList = new ArrayList<AvgAmRecord>();
+    public static ArrayList<DeltaSimRecord> getList(String sAvgAmDeltaFile) {
+        DeltaSimRecordLoader l = new DeltaSimRecordLoader();
+        ArrayList<DeltaSimRecord> aarList = new ArrayList<DeltaSimRecord>();
         l.load(sAvgAmDeltaFile, aarList);
 
         return aarList;

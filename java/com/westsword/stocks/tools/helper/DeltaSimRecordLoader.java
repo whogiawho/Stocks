@@ -20,8 +20,8 @@ import java.util.*;
 
 import com.westsword.stocks.base.utils.*;
 
-public class AvgAmRecordLoader extends FileLoader {
-    private ArrayList<AvgAmRecord> mList = null;
+public class DeltaSimRecordLoader extends FileLoader {
+    private ArrayList<DeltaSimRecord> mList = null;
 
     public boolean onLineRead(String line, int count) {
         if(line.matches("^ *#.*")||line.matches("^ *$"))
@@ -29,13 +29,13 @@ public class AvgAmRecordLoader extends FileLoader {
 
         String[] fields=line.split(" +");
         if(mList != null) {
-            AvgAmRecord r = new AvgAmRecord(fields);
+            DeltaSimRecord r = new DeltaSimRecord(fields);
             mList.add(r);
         }
 
         return true;
     }
-    public void load(String sAvgAmDeltaFile, ArrayList<AvgAmRecord> list) {
+    public void load(String sAvgAmDeltaFile, ArrayList<DeltaSimRecord> list) {
         mList = list;
         load(sAvgAmDeltaFile);
         mList = null;
