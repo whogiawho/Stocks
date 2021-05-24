@@ -237,6 +237,7 @@ public class Settings extends FileLoader {
     public final static int CHECK_2_SUBMIT_SESSION = 7;
     public final static int AVGAM = 8;
     public final static int AMVOLR = 9;
+    public final static int AVGPR = 10;
     public final static String[] booleanKeys = {
         "noPerformanceLog",
         "switchOfRawData",
@@ -248,8 +249,10 @@ public class Settings extends FileLoader {
         "Check2SumitSession",
         "AvgAm",
         "AmVolR",
+        "AvgPr",
     };
     public final static Boolean[] booleanValues = {
+        null,
         null,
         null,
         null,
@@ -310,6 +313,16 @@ public class Settings extends FileLoader {
     public static boolean getAmVolRPng() {
         return getBoolean("AmVolR.Png");
     }
+    //avgpr
+    public static int getAvgPrBackwardSd() {
+        return getInteger("AvgPr.BackwardSd");
+    }
+    public static int getAvgPrInterval() {
+        return getInteger("AvgPr.Interval");
+    }
+    public static boolean getAvgPrPng() {
+        return getBoolean("AvgPr.Png");
+    }
 
     public static boolean isAvgAmOn() {
         return Settings.getSwitch(Settings.AVGAM);
@@ -319,5 +332,8 @@ public class Settings extends FileLoader {
     }
     public static boolean isAmVolROn() {
         return Settings.getSwitch(Settings.AMVOLR);
+    }
+    public static boolean isAvgPrOn() {
+        return Settings.getSwitch(Settings.AVGPR);
     }
 }

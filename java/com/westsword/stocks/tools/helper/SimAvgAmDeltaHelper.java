@@ -67,7 +67,7 @@ public class SimAvgAmDeltaHelper {
         String sDir = CmdLineUtils.getString(cmd, "d", null);
         String sAvgAm0 = sDir+"\\"+tradeDate+"."+hms+".txt";
 
-        ArrayList<AvgAmRecord> aarList = AvgAmRecord.getList(sAvgAmDeltaFile);
+        ArrayList<DeltaSimRecord> aarList = DeltaSimRecord.getList(sAvgAmDeltaFile);
         //System.out.format("aarList.size=%d\n", aarList.size());
 
 
@@ -79,7 +79,7 @@ public class SimAvgAmDeltaHelper {
         PearsonsCorrelation pc = new PearsonsCorrelation();
         ArrayList<String> sList1 = new ArrayList<String>();
         for(int i=0; i<aarList.size(); i++) {
-            AvgAmRecord r = aarList.get(i);
+            DeltaSimRecord r = aarList.get(i);
             String sAvgAm1 = sDir+"\\"+r.tradeDate+"."+r.hms+".txt";
             sList1.clear();
             cl.load(sList1, sAvgAm1, 1);
@@ -94,10 +94,10 @@ public class SimAvgAmDeltaHelper {
                     r.stockCode, r.tradeDate, r.hms, r.correl0, r.upPrice, r.downPrice, correl);
         }
     }
-    private static double[][] getAvgAmDeltaMatrix(ArrayList<AvgAmRecord> aarList, String sDir) {
+    private static double[][] getAvgAmDeltaMatrix(ArrayList<DeltaSimRecord> aarList, String sDir) {
         int cols = aarList.size();
 
-        AvgAmRecord r = aarList.get(0);
+        DeltaSimRecord r = aarList.get(0);
         String sAvgAm = sDir+"\\"+r.tradeDate+"."+r.hms+".txt";
         ColLoader cl = new ColLoader();
         ArrayList<String> sList0 = new ArrayList<String>();
@@ -124,7 +124,7 @@ public class SimAvgAmDeltaHelper {
         String sResDir = sDir+".res";
         Utils.mkDir(sResDir);
 
-        ArrayList<AvgAmRecord> aarList = AvgAmRecord.getList(sAvgAmDeltaFile);
+        ArrayList<DeltaSimRecord> aarList = DeltaSimRecord.getList(sAvgAmDeltaFile);
         double[][] m = getAvgAmDeltaMatrix(aarList, sDir);
         System.out.format("m.rows=%d m.cols=%d\n", m.length, m[0].length);
 
@@ -144,13 +144,13 @@ public class SimAvgAmDeltaHelper {
             e.printStackTrace();
         }
     }
-    private static void write2Files(double[][] cm, String sResDir, ArrayList<AvgAmRecord> aarList) {
+    private static void write2Files(double[][] cm, String sResDir, ArrayList<DeltaSimRecord> aarList) {
         for(int i=0; i<cm.length; i++) {
-            AvgAmRecord r0 = aarList.get(i);
+            DeltaSimRecord r0 = aarList.get(i);
             String sResFile = sResDir + "\\" + r0.tradeDate + "." + r0.hms + ".correl";
             String line = "";
             for(int j=0; j<cm[i].length; j++) {
-                AvgAmRecord r = aarList.get(j);
+                DeltaSimRecord r = aarList.get(j);
                 line += String.format("%s %s %s %8.3f %8.3f %8.3f %8.3f\n", 
                         r.stockCode, r.tradeDate, r.hms, r.correl0, r.upPrice, r.downPrice, cm[i][j]);
             }

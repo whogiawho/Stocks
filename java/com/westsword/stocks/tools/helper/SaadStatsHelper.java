@@ -80,9 +80,9 @@ public class SaadStatsHelper {
         String sFormat = "%s %s %s " + 
             "%8.3f %8.3f %8.3f %8.3f " +  
             "%8.3f %8.3f\n"; 
-        ArrayList<AvgAmRecord> aarList = AvgAmRecord.getList(sAvgAm0);
+        ArrayList<DeltaSimRecord> aarList = DeltaSimRecord.getList(sAvgAm0);
         for(int i=0; i<aarList.size(); i++) {
-            AvgAmRecord r = aarList.get(i);
+            DeltaSimRecord r = aarList.get(i);
             String sMatchedTradeDate = r.tradeDate;
             String sMatchedHMS = r.hms;
             String[] sRet = LSProfitHelper.getEndDateHMS(sMatchedTradeDate, sMatchedHMS, cmd, tradeDates, sdt);
@@ -118,9 +118,9 @@ public class SaadStatsHelper {
     }
     private static void handleAll(CommandLine cmd) {
         String sAvgAmDeltaFile = CmdLineUtils.getString(cmd, "f", null);
-        ArrayList<AvgAmRecord> aarList = AvgAmRecord.getList(sAvgAmDeltaFile);
+        ArrayList<DeltaSimRecord> aarList = DeltaSimRecord.getList(sAvgAmDeltaFile);
         for(int i=0; i<aarList.size(); i++) {
-            AvgAmRecord r = aarList.get(i);
+            DeltaSimRecord r = aarList.get(i);
             String stockCode = r.stockCode;
             String tradeDate = r.tradeDate;
             String hms = r.hms;

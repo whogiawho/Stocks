@@ -262,6 +262,38 @@ public class StockPaths {
         return getAvgAmDir(stockCode, tradeDate) + hms + ".txt";
     }
 
+    public static String getAmVolRPngDir() {
+        return getAmVolRPngDir(Settings.getStockCode(), Settings.getTradeDate());
+    }
+    public static String getAmVolRPngDir(String stockCode, String tradeDate) {
+        return getDailyDir(stockCode, tradeDate) + sSep + "amvolrPng" + sSep; 
+    }
+    public static String getAmVolRPngFile(String stockCode, String tradeDate, String hms) {
+        return getAmVolRPngDir(stockCode, tradeDate) + hms + ".png"; 
+    }
+    public static String getAmVolRDir(String stockCode, String tradeDate) {
+        return getDailyDir(stockCode, tradeDate) + sSep + "amvolr" + sSep; 
+    }
+    public static String getAmVolRFile(String stockCode, String tradeDate, String hms) {
+        return getAmVolRDir(stockCode, tradeDate) + hms + ".txt";
+    }
+
+    public static String getAvgPrPngDir() {
+        return getAvgPrPngDir(Settings.getStockCode(), Settings.getTradeDate());
+    }
+    public static String getAvgPrPngDir(String stockCode, String tradeDate) {
+        return getDailyDir(stockCode, tradeDate) + sSep + "avgprPng" + sSep; 
+    }
+    public static String getAvgPrPngFile(String stockCode, String tradeDate, String hms) {
+        return getAvgPrPngDir(stockCode, tradeDate) + hms + ".png"; 
+    }
+    public static String getAvgPrDir(String stockCode, String tradeDate) {
+        return getDailyDir(stockCode, tradeDate) + sSep + "avgpr" + sSep; 
+    }
+    public static String getAvgPrFile(String stockCode, String tradeDate, String hms) {
+        return getAvgPrDir(stockCode, tradeDate) + hms + ".txt";
+    }
+
     public static String getAmDerivativeFile(String stockCode, String tradeDate) {
         return getDailyDir(stockCode, tradeDate) + sSep + "amderivative.txt"; 
     }
@@ -274,6 +306,12 @@ public class StockPaths {
 
 
 
+    public static String getMakeAvgPrPngVbs() {
+        return getMakeAmDerPngVbs();
+    }
+    public static String getMakeAmVolRPngVbs() {
+        return getMakeAmDerPngVbs();
+    }
     public static String getMakeAvgAmPngVbs() {
         return getMakeAmDerPngVbs();
     }
