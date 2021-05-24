@@ -300,3 +300,5 @@ function prepareFiles {
     local prevTradeDate=`getPrevTradeDate $stockCode $tradeDate`
     cp "$rootDir\\$stockCode\\$prevTradeDate\\analysis.txt" "$currentDir"
 }
+
+

@@ -80,6 +80,23 @@ function getMaxCorrel {
     rm -rf $fTmp
 }
 
+function amvolrCorrel {
+    local stockCode=$1
+    local tradeDate0=$2
+    local hms0=$3
+    local tradeDate1=$4
+    local hms1=$5
+    local bwsd=$6
+
+    [[ -z $bwsd ]] && bwsd=1200
+
+    local options="-b$bwsd"
+    local correl=
+    correl=`java -jar $analyzetoolsJar amvolrcorrel $options $stockCode $tradeDate0 $hms0 $tradeDate1 $hms1 2>/dev/null`
+
+    echo $correl
+}
+
 function addAmVolR {
     local fList=$1
     local sDir=$2

@@ -96,6 +96,8 @@ function _nextAACkpt {
     local hms=$3
     local interval=$4               #optional
 
+    [[ -z $interval ]] && interval=1
+
     local nextHMS=`sed -n "/$hms/ {n;p}" "$dataRoot\\aackpti$interval.txt"`
     [[ -z $nextHMS ]] && {
         nextHMS=`head -n1 "$dataRoot\\aackpti$interval.txt"`
@@ -127,6 +129,22 @@ function fileCorrel {
     JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar filecorrel $sdbwOption $sFile0 $sFile1 $idxCol 2>/dev/null; 
 }
 function avgamCorrel {
+    local stockCode=$1
+    local tradeDate0=$2
+    local hms0=$3
+    local tradeDate1=$4
+    local hms1=$5
+    local bwsd=$6
+
+    [[ -z $bwsd ]] && bwsd=1170
+
+    local options="-b$bwsd"
+    local correl=
+    correl=`java -jar $analyzetoolsJar avgamcorrel $options $stockCode $tradeDate0 $hms0 $tradeDate1 $hms1 2>/dev/null`
+
+    echo $correl
+}
+function _avgamCorrel {
     local stockCode=$1
     local tradeDate0=$2
     local hms0=$3

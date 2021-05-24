@@ -54,3 +54,11 @@ function deltaYMDHMS {
     local hexTp=`rgetAbs $stockCode $nextAbs`
     convertHex2Time $hexTp y
 }
+
+function rgetYMDHMS { 
+    local stockCode=$1
+    local sd=$2
+
+    local hexTp=`rgetAbs $stockCode $sd`
+    convertHex2Time $hexTp y|sed "s/,/ /g"
+}
