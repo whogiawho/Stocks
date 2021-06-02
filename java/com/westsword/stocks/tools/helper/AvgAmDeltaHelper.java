@@ -134,9 +134,9 @@ public class AvgAmDeltaHelper {
         Options options = new Options();
         options.addOption("s", true,  "startDate");
         options.addOption("e", true,  "endDate");
-        options.addOption("b", true,  "at most sdtime shall be looked backward when calculating derivatives");
+        options.addOption("b", true,  "at most sdtime shall be looked backward when calculating avgam delta");
         options.addOption("m", true,  "minimum skipped sd distance from current time");
-        options.addOption("i", true,  "the step to get am derivative");
+        options.addOption("i", true,  "the step to get avgam delta");
 
         return options;
     }

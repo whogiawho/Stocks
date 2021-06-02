@@ -43,9 +43,11 @@ public class AvgAmUtils {
         return CmdLineUtils.getInteger(cmd, "e", Default_Step);
     }
 
+
     public static double[] getAvgAm(String stockCode, String tradeDate, String hms, 
-            SdTime1 sdt, int sdbw, int minSkippedSD, int interval) {
-        AmManager amm = AmManager.get(stockCode, tradeDate, hms, sdbw, null);
+            SdTime1 sdt, int sdbw, int minSkippedSD, int interval, AmManager amm) {
+        if(amm==null)
+            amm = AmManager.get(stockCode, tradeDate, hms, sdbw, null);
         long tp = Time.getSpecificTime(tradeDate, hms);
         int sd = sdt.getAbs(tp);
         double[] avgam = AvgAmUtils.getAvgAm(sd, sdbw, minSkippedSD, interval, amm.getAmRecordMap());
@@ -53,13 +55,21 @@ public class AvgAmUtils {
         return avgam;
     }
     public static double[] getAvgAm(String stockCode, String tradeDate, String hms, 
-            SdTime1 sdt, CommandLine cmd) {
+            SdTime1 sdt, int sdbw, int minSkippedSD, int interval) {
+        return getAvgAm(stockCode, tradeDate, hms, sdt, sdbw, minSkippedSD, interval, null);
+    }
+    public static double[] getAvgAm(String stockCode, String tradeDate, String hms, 
+            SdTime1 sdt, CommandLine cmd, AmManager amm) {
         int sdbw = getBackwardSd(cmd);
         int minSkippedSD = getMinimumSkipSd(cmd);
         int interval = getInterval(cmd);
 
         return getAvgAm(stockCode, tradeDate, hms,
-                sdt, sdbw, minSkippedSD, interval);
+                sdt, sdbw, minSkippedSD, interval, amm);
+    }
+    public static double[] getAvgAm(String stockCode, String tradeDate, String hms, 
+            SdTime1 sdt, CommandLine cmd) {
+        return getAvgAm(stockCode, tradeDate, hms, sdt, cmd, null);
     }
     public static double[] getAvgAm(int sd, int sdbw, int minDist, int interval, 
             TreeMap<Integer, AmRecord> amrMap) {

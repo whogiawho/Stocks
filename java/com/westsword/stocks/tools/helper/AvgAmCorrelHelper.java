@@ -62,12 +62,14 @@ public class AvgAmCorrelHelper {
         String endDate = CmdLineUtils.getString(cmd, "e", tradeDates.lastDate());
         int startSd = sdt.getAbs(startDate, sdt.getCallAuctionEndTime());
         int endSd = sdt.getAbs(endDate, sdt.getCloseQuotationTime());
+        int sdbw = AvgAmUtils.getBackwardSd(cmd);
+        AmManager amm = AmManager.get(stockCode, sdbw, null, startDate, endDate);
 
         AACMan aacm = new AACMan();
         //part0
         double[] avgam0 = AvgAmUtils.getAvgAm(stockCode, tradeDate0, hms0, sdt, cmd);
         for(int sd=startSd; sd<=endSd; sd++) {
-            aacm.run(avgam0, stockCode, sdt, sd, cmd);
+            aacm.run(avgam0, stockCode, sdt, sd, cmd, amm);
         }
     }
     private static void handleSingle(String stockCode, SdTime1 sdt, CommandLine cmd, 
@@ -126,10 +128,10 @@ public class AvgAmCorrelHelper {
 
 
     public static class AACMan extends TaskManager {
-        public void run(double[] avgam0, String stockCode, SdTime1 sdt, int sd, CommandLine cmd) {
+        public void run(double[] avgam0, String stockCode, SdTime1 sdt, int sd, CommandLine cmd, AmManager amm) {
             maxThreadsCheck();
 
-            Thread t = new AACTask(this, avgam0, stockCode, sdt, sd, cmd);
+            Thread t = new AACTask(this, avgam0, stockCode, sdt, sd, cmd, amm);
             t.setPriority(Thread.MAX_PRIORITY);
             t.start();
         }
@@ -140,8 +142,10 @@ public class AvgAmCorrelHelper {
         private SdTime1 sdt;
         private int sd;
         private CommandLine cmd;
+        private AmManager amm;
 
-        public AACTask(AACMan aacm, double[] avgam0, String stockCode, SdTime1 sdt, int sd, CommandLine cmd) {
+        public AACTask(AACMan aacm, double[] avgam0, 
+                String stockCode, SdTime1 sdt, int sd, CommandLine cmd, AmManager amm) {
             super(aacm);
 
             this.avgam0 = avgam0;
@@ -149,6 +153,7 @@ public class AvgAmCorrelHelper {
             this.sdt = sdt; 
             this.sd = sd;
             this.cmd = cmd;
+            this.amm = amm;
         }
         @Override
         public void runTask() {
@@ -157,7 +162,7 @@ public class AvgAmCorrelHelper {
             String tradeDate1 = Time.getTimeYMD(hexTp, false);
             String hms1 = Time.getTimeHMS(hexTp, false);
 
-            double[] avgam1 = AvgAmUtils.getAvgAm(stockCode, tradeDate1, hms1, sdt, cmd);
+            double[] avgam1 = AvgAmUtils.getAvgAm(stockCode, tradeDate1, hms1, sdt, cmd, amm);
             double correl = pc.correlation(avgam0, avgam1);
 
             System.out.format("%s %s %s %8.3f\n", 

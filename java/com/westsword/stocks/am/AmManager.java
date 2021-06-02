@@ -631,6 +631,31 @@ public class AmManager {
         
         return new PearsonsCorrelation().correlation(x, y);
     }
+
+
+
+
+    //sds between startDate,092500 and endDate,150000 should all be considered
+    public static AmManager get(String stockCode, int sdbw, StockDates stockDates, 
+            String startDate, String endDate) {
+        SdTime1 sdt = new SdTime1(stockCode);
+        int sd = sdt.getAbs(startDate, AStockSdTime.getCallAuctionEndTime());
+        int sSd = sd - sdbw;
+        long sTp = sdt.rgetAbs(sSd);
+        String sDate = Time.getTimeYMD(sTp, false);
+
+        //considering nextDate
+        if(stockDates!=null && stockDates.nextDate(endDate)!=null)
+            endDate = stockDates.nextDate(endDate);
+
+        String[] sTradates = new TradeDates(stockCode, sDate, endDate).getAllDates();
+        //System.out.format("sTradates=%s\n", Arrays.toString(sTradates));
+
+        AmManager amm = new AmManager(stockCode, sTradates);
+
+        return amm;
+    }
+    //only the sd at tradeDate,hms is considered
     public static AmManager get(String stockCode, String tradeDate, String hms, int sdbw, StockDates stockDates) {
         SdTime1 sdt = new SdTime1(stockCode);
         int sd = sdt.getAbs(tradeDate, hms);
