@@ -6,7 +6,7 @@ function getLSProfit {
     local hms=$3
     local option=$4
 
-    JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar getlsprofit -$option $stockCode $tradeDate $hms 2>/dev/null
+    JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar getlsprofit $option $stockCode $tradeDate $hms 2>/dev/null
 }
 
 function getOpenQuotationPrice {

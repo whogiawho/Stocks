@@ -70,7 +70,7 @@ function _avgamPredictByLast20m {
     local a b c
     awk '$3>threshold' threshold=$threshold $sInFile |grep -v NaN|grep -v $tradeDate|while read a b c; 
     do 
-        local line=`getLSProfit $stockCode $a $b m1`; 
+        local line=`getLSProfit $stockCode $a $b -m1`; 
         local nd=`getNextTradeDate $stockCode $a`; 
         local correl=`avgamCorrel $stockCode $nd 092500 $a 150000`; 
         local cp=`getCloseQuotationPrice $stockCode $a`; 
@@ -167,7 +167,7 @@ function makeTmpAvgAmPng {
     local minDist=$6                          #optional
     local bSaveTxt=$7                         #optional
 
-    [[ -z $interval ]] && interval=60
+    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1170
     [[ -z $minDist ]] && minDist=60
 
@@ -234,7 +234,7 @@ function makeAvgAmPng {
     local bwsd=$5                             #optional
     local minDist=$6                          #optional
 
-    [[ -z $interval ]] && interval=60
+    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1170
     [[ -z $minDist ]] && minDist=60
 
@@ -254,7 +254,7 @@ function makeAvgAm {
     local bwsd=$5                             #optional
     local minDist=$6                          #optional
 
-    [[ -z $interval ]] && interval=60
+    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1170
     [[ -z $minDist ]] && minDist=60
 
@@ -272,7 +272,7 @@ function makeAvgAmTxt {
     local bwsd=$6                             #optional
     local minDist=$7                          #optional
 
-    [[ -z $interval ]] && interval=60
+    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1170
     [[ -z $minDist ]] && minDist=60
 
@@ -556,10 +556,34 @@ function sAvgAm {
 
     local a b
     awk '$2>0.9' $fTmp|grep -v NaN |while read a b; do 
-        local line=`getLSProfit $stockCode $a $hms $option 2>/dev/null`; 
+        local line=`getLSProfit $stockCode $a $hms "$option" 2>/dev/null`; 
         printf "%s %s %s %s %s\n" $stockCode $tradeDate $hms $a "$line"; 
     done
 
     rm -rf $fTmp
+}
+
+
+function makeAvgAmFromDelta {
+    local fDelta=$1        #in
+    local avgamDir=$2      #out
+
+    [[ ! -e $avgamDir ]] && mkdir $avgamDir
+
+    local a b c d
+    while read a b c d
+    do
+        java -jar $analyzetoolsJar listavgams $a $b $c 2>/dev/null >$avgamDir/$b.$c.txt
+    done <$fDelta
+}
+
+#$avgamDir.res - out
+function makeAvgAmRes {
+    local fDelta=$1        #in
+    local avgamDir=$2      #in
+
+    fDelta=`getWindowPathOfFile $fDelta`
+    avgamDir=`getWindowPathOfFile $avgamDir`
+    java -jar $analyzetoolsJar simavgamdelta -f"$fDelta" -d"$avgamDir" 2>/dev/null
 }
 

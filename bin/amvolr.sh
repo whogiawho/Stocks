@@ -15,7 +15,7 @@ function makeTmpAmVolRPng {
     local bwsd=$5                             #optional
     local bSaveTxt=$6                         #optional
 
-    [[ -z $interval ]] && interval=60
+    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1200
 
     local amvolrtxtDir="$dailyDir\\$stockCode\\$tradeDate\\amvolrTxt"
@@ -39,7 +39,7 @@ function makeAmVolRTxt {
     local interval=$5                         #optional 
     local bwsd=$6                             #optional
 
-    [[ -z $interval ]] && interval=60
+    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1200
 
     java -jar $analyzetoolsJar listamvolr -b$bwsd -i${interval} $stockCode $tradeDate $hms \
@@ -102,4 +102,89 @@ function addAmVolR {
     local sDir=$2
 
 
+}
+
+
+
+function _makeAmVolRRes {
+    local fDelta=$1        #in
+    local amvolrDir=$2     #in
+
+    fDelta=`getWindowPathOfFile $fDelta`
+    amvolrDir=`getWindowPathOfFile $amvolrDir`
+    local a b c d
+    local max=10
+    local cnt=0
+    local i=
+    while read a b c d
+    do
+        JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar simamvolrdelta \
+            -f"$fDelta" -d"$amvolrDir" $a,$b,$c \
+            >"$amvolrDir.res\\$b.$c.correl" 2>/dev/null &
+        cnt=$((cnt+1))
+        [[ $cnt -ge $max ]] && {
+            wait
+            cnt=0
+        }
+    done <$fDelta
+}
+
+function makeAmVolRFromDelta {
+    local stockCode=$1     #in
+    local fDelta=$2        #in
+    local amvolrDir=$3     #out
+    local options=$4       #in
+
+    [[ ! -e $amvolrDir ]] && mkdir $amvolrDir
+
+    fDelta=`getWindowPathOfFile $fDelta`
+    amvolrDir=`getWindowPathOfFile $amvolrDir`
+    java -jar $analyzetoolsJar listamvolr $options -f"$fDelta" -d"$amvolrDir" $stockCode 
+}
+#$amvolrDir.res - out
+function makeAmVolRRes {
+    local fDelta=$1        #in
+    local amvolrDir=$2     #in
+
+    fDelta=`getWindowPathOfFile $fDelta`
+    amvolrDir=`getWindowPathOfFile $amvolrDir`
+    java -jar $analyzetoolsJar simamvolrdelta -f"$fDelta" -d"$amvolrDir" 2>/dev/null
+}
+function makeAmVolRStats {
+    local fDelta=$1        #in
+    local amvolrResDir=$2  #in
+    local amvolrStats=$3   #out
+    local options=$4       #in
+
+    fDelta=`getWindowPathOfFile $fDelta`
+    amvolrResDir=`getWindowPathOfFile $amvolrResDir`
+    java -jar $analyzetoolsJar saadstats $options -f"$fDelta" -d"$amvolrResDir"  |tee $amvolrStats
+}
+
+function makeAmVolRm0m1m10Stats {
+    local rawStats=$1      #in
+    local amvolrResDir=$2  #in
+    local tradeType=$3     #in
+
+    [[ -z $tradeType ]] && tradeType=5
+
+    amvolrResDir=`getWindowPathOfFile $amvolrResDir`
+    local colStats colSS
+    [[ $tradeType == $UP ]] && {
+        colStats=7
+        colSS=8
+    } || {
+        colStats=8
+        colSS=9
+    }
+
+    local a b c d e f g h
+    awk '$7>0.009&&$4>3' $rawStats |sort -nk$colStats,$colStats|while read a b c d e f g h; 
+    do 
+        minmaxm0=`java -jar $analyzetoolsJar saadstats -d"$amvolrResDir" -m0 -h0.90 $a,$b,$c 2>/dev/null| \
+            sort -nk$colSS,$colSS|head -n1|awk "{print \\$colSS}" colSS=$colSS`; 
+        minmaxm1=`java -jar $analyzetoolsJar saadstats -d"$amvolrResDir" -m1 -h0.90 $a,$b,$c 2>/dev/null| \
+            sort -nk$colSS,$colSS|head -n1|awk "{print \\$colSS}" colSS=$colSS`; 
+        printf "%s %s %s %4s %8s %8s %8s\n" $a $b $c $d "$g" $minmaxm0 $minmaxm1; 
+    done
 }
