@@ -20,6 +20,7 @@ import java.util.*;
 import org.apache.commons.cli.*;
 
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 
@@ -27,24 +28,65 @@ public class LSProfitHelper {
     public static void get(String args[]) {
         CommandLine cmd = getCommandLine(args);
         String[] newArgs = cmd.getArgs();
-        if(newArgs.length!=3) {
-            usage();
-        }
-        //both set is not allowed
-        if(cmd.hasOption("s")&&cmd.hasOption("m")) {
-            usage();
-        }
-        //none set is now allowed
-        if(!cmd.hasOption("s")&&!cmd.hasOption("m")) {
-            usage();
-        }
+        checkOptions(newArgs, cmd);
 
         String stockCode = newArgs[0];
         String tradeDate = newArgs[1];
         String hms = newArgs[2];
+
+        if(cmd.hasOption("m")||cmd.hasOption("s")) {
+            getExtremePrice(stockCode, tradeDate, hms, cmd);
+        } else {
+            getExitTime(stockCode, tradeDate, hms, cmd);
+        }
+    }
+    private static void checkOptions(String[] newArgs, CommandLine cmd) {
+        if(newArgs.length!=3) {
+            usage();
+        }
+
+        int cnt = 0;
+
+        boolean sSet = cmd.hasOption("s");
+        boolean mSet = cmd.hasOption("m");
+        boolean pSet = cmd.hasOption("p");
+
+        cnt = sSet? cnt+1: cnt;
+        cnt = mSet? cnt+1: cnt;
+        cnt = pSet? cnt+1: cnt;
+
+        if(cnt!=1)
+            usage();
+    }
+
+    private static void getExitTime(String stockCode, String tradeDate, String hms, CommandLine cmd) {
+        TradeDates tradeDates = new TradeDates(stockCode);
+        AmManager amm = new AmManager(stockCode, tradeDate);
+
+        //long
+        long inTp = Time.getSpecificTime(tradeDate, hms);
+        String nextTradeDateN = tradeDates.lastDate();
+        double targetRate = getTargetRate(cmd);
+        int sTDistance = 0;
+        StockDates stockDates = new StockDates(stockCode);
+        int tradeType = Stock.TRADE_TYPE_LONG;
+        AmRecord outItemL = amm.getTradeResult(inTp, nextTradeDateN, targetRate, 
+                sTDistance, tradeType, stockDates, null);
+        long outTpL = outItemL!=null? outItemL.hexTimePoint: -1;
+        
+
+        //short
+        tradeType = Stock.TRADE_TYPE_SHORT;
+        AmRecord outItemS = amm.getTradeResult(inTp, nextTradeDateN, targetRate, 
+                sTDistance, tradeType, stockDates, null);
+        long outTpS = outItemL!=null? outItemS.hexTimePoint: -1;
+
+        //System.out.format("targetRate=%-8.3f nextTradeDateN=%s\n", targetRate, nextTradeDateN);
+        System.out.format("%8x %8x\n", outTpL, outTpS);
+    }
+    private static void getExtremePrice(String stockCode, String tradeDate, String hms, CommandLine cmd) {
         TradeDates tradeDates = new TradeDates(stockCode);
         SdTime1 sdt = new SdTime1(stockCode);
-
         String[] sRet = getEndDateHMS(tradeDate, hms, cmd, tradeDates, sdt);
         String endDate = sRet[0];
         String endHMS = sRet[1];
@@ -101,13 +143,15 @@ public class LSProfitHelper {
         return sRet;
     }
     private static void usage() {
-        System.err.println("usage: java AnalyzeTools getlsprofit [-mst] stockCode tradeDate hms");
-        System.err.println("  for<stockCode,tradeDate,hms> within maxCycle get its L&S maxProfit");
+        System.err.println("usage: java AnalyzeTools getlsprofit [-mstp] stockCode tradeDate hms");
+        System.err.println("  for<stockCode,tradeDate,hms> within maxCycle get its L&S maxProfit, or");
+        System.err.println("    to get targetRate the least sdtime must be waited for or the exit time");
         System.err.println("       -m maxCycle        ; default 1 day");
         System.err.println("       -s sdtime          ; default 60");
         System.err.println("       -t                 ; print outTime; default off");
+        System.err.println("       -p targetRate      ; the targetRate to achieve");
 
-             String line = "  -m&-s are exclusive! at least one must be set";
+             String line = "  -m&-s&-p are mutually exclusive! at least one must be set";
         line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);
         System.err.println(line);
 
@@ -132,6 +176,7 @@ public class LSProfitHelper {
         options.addOption("m", true,  "maxCycle to get L&S maxProfit; default 1");
         options.addOption("s", true,  "sdtime to get L&S maxProfit; default 60");
         options.addOption("t", false, "print outTime");
+        options.addOption("p", true,  "delta profit");
 
         return options;
     }
@@ -143,5 +188,8 @@ public class LSProfitHelper {
     }
     public static boolean getOutTimeSwitch(CommandLine cmd) {
         return CmdLineUtils.getBoolean(cmd, "t", false);
+    }
+    public static double getTargetRate(CommandLine cmd) {
+        return CmdLineUtils.getDouble(cmd, "p", 0);
     }
 }

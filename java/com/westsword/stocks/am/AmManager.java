@@ -343,7 +343,7 @@ public class AmManager {
         AmRecord outItem = _getTradeResult(inTime, nextTradeDateN, targetRate,
                 sTDistance, tradeType, stockDates, out);
 
-        if(Buffering_TradeResult)
+        if(Buffering_TradeResult && out!=null)
             mTrBufMap.put(inTime, new TRBufR(outItem, out[0], out[1], out[2]));
 
         return outItem;
