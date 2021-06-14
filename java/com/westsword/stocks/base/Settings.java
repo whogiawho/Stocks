@@ -307,6 +307,9 @@ public class Settings extends FileLoader {
     public static int getAmVolRBackwardSd() {
         return getInteger("AmVolR.BackwardSd");
     }
+    public static int getAmVolRMinimumSkipSd() {
+        return getInteger("AmVolR.MinimumSkipSd");
+    }
     public static int getAmVolRInterval() {
         return getInteger("AmVolR.Interval");
     }
@@ -316,6 +319,9 @@ public class Settings extends FileLoader {
     //avgpr
     public static int getAvgPrBackwardSd() {
         return getInteger("AvgPr.BackwardSd");
+    }
+    public static int getAvgPrMinimumSkipSd() {
+        return getInteger("AvgPr.MinimumSkipSd");
     }
     public static int getAvgPrInterval() {
         return getInteger("AvgPr.Interval");

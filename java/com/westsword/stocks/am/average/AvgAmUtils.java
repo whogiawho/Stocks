@@ -29,6 +29,9 @@ public class AvgAmUtils {
     public final static int Default_Minimum_Skipped_SD = 60;
     public final static int Default_Interval = 1;
     public final static int Default_Step = 1;
+    public final static String Default_AmVolRDeltaFile = "e:\\cygwin64\\tmp\512880\\avgam\\default.delta";
+    public final static String Default_AmVolROutDir = "e:\\cygwin64\\tmp\512880\\avgam";
+    public final static double Default_Threshold = 0.8;
 
     public static int getBackwardSd(CommandLine cmd) {
         return CmdLineUtils.getInteger(cmd, "b", Default_Backward_SD);
@@ -41,6 +44,15 @@ public class AvgAmUtils {
     }
     public static int getStep(CommandLine cmd) {
         return CmdLineUtils.getInteger(cmd, "e", Default_Step);
+    }
+    public static String getAvgAmDeltaFile(CommandLine cmd) {
+        return CmdLineUtils.getString(cmd, "f", Default_AmVolRDeltaFile);
+    }
+    public static String getAvgAmOutDir(CommandLine cmd) {
+        return CmdLineUtils.getString(cmd, "d", Default_AmVolROutDir);
+    }
+    public static double getThreshold(CommandLine cmd) {
+        return CmdLineUtils.getDouble(cmd, "h", Default_Threshold);
     }
 
 

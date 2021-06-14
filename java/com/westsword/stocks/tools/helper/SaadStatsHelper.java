@@ -20,6 +20,7 @@ import java.util.*;
 import org.apache.commons.cli.*;
 
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
 
@@ -67,6 +68,10 @@ public class SaadStatsHelper {
 
     private static void handleSingle(String stockCode, String tradeDate, String hms, 
             CommandLine cmd, boolean bStats) {
+        handleSingle(stockCode, tradeDate, hms, cmd, bStats, null);
+    }
+    private static void handleSingle(String stockCode, String tradeDate, String hms, 
+            CommandLine cmd, boolean bStats, AmManager amm) {
         String sDir = CmdLineUtils.getString(cmd, "d", null);
         double threshold = CmdLineUtils.getDouble(cmd, "h", 0.9);
 
@@ -74,6 +79,7 @@ public class SaadStatsHelper {
         TradeDates tradeDates = new TradeDates(stockCode);
         SdTime1 sdt = new SdTime1(stockCode);
 
+        AmManager ramm = amm;
         double minmaxLProfit = Double.POSITIVE_INFINITY;
         double minmaxSProfit = Double.POSITIVE_INFINITY;
         int count=0, lCnt=0, sCnt=0;
@@ -91,10 +97,11 @@ public class SaadStatsHelper {
 
             if(r.correl1>=threshold) {
                 //System.out.format("start=%s,%s end=%s,%s\n", sMatchedTradeDate, sMatchedHMS, endDate, endHMS);
-                AmManager amm = new AmManager(stockCode, sMatchedTradeDate, endDate);
-                double[] v = amm.getExtremePrice(sMatchedTradeDate, sMatchedHMS, endDate, endHMS);
-                double lInPrice = amm.getUpPrice(sMatchedTradeDate, sMatchedHMS);
-                double sInPrice = amm.getDownPrice(sMatchedTradeDate, sMatchedHMS);
+                if(amm==null)
+                    ramm = new AmManager(stockCode, sMatchedTradeDate, endDate);
+                double[] v = ramm.getExtremePrice(sMatchedTradeDate, sMatchedHMS, endDate, endHMS);
+                double lInPrice = ramm.getUpPrice(sMatchedTradeDate, sMatchedHMS);
+                double sInPrice = ramm.getDownPrice(sMatchedTradeDate, sMatchedHMS);
                 double lProfit = v[0]-lInPrice;
                 double sProfit = sInPrice-v[1];
                 lCnt = lProfit>0? lCnt+1 : lCnt;
@@ -108,6 +115,9 @@ public class SaadStatsHelper {
                             r.correl0, r.upPrice, r.downPrice, r.correl1, 
                             lProfit, sProfit);
             }
+
+            //if both minmaxLProfit and minmaxSProfit are <=0
+            //there is no need to try those left DeltaSimRecord when bStats==true
         }
         if(bStats) {
             double lWinRate = (double)lCnt/count;
@@ -119,15 +129,59 @@ public class SaadStatsHelper {
     private static void handleAll(CommandLine cmd) {
         String sAvgAmDeltaFile = CmdLineUtils.getString(cmd, "f", null);
         ArrayList<DeltaSimRecord> aarList = DeltaSimRecord.getList(sAvgAmDeltaFile);
+
+        //get AmManager
+        AmManager amm = null;
+        if(aarList.size()!=0) {
+            String stockCode = aarList.get(0).stockCode;
+            amm = new AmManager(stockCode);
+        }
+
+        SSMan ssm = new SSMan();
         for(int i=0; i<aarList.size(); i++) {
             DeltaSimRecord r = aarList.get(i);
             String stockCode = r.stockCode;
             String tradeDate = r.tradeDate;
             String hms = r.hms;
 
-            handleSingle(stockCode, tradeDate, hms, cmd, true);
+            ssm.run(stockCode, tradeDate, hms, cmd, true, amm);
         }
     }
+    public static class SSMan extends TaskManager {
+        public void run(String stockCode, String tradeDate, String hms, CommandLine cmd, 
+                boolean bStats, AmManager amm) {
+            maxThreadsCheck();
+
+            Thread t = new SSTask(this, stockCode, tradeDate, hms, cmd, bStats, amm);
+            t.setPriority(Thread.MAX_PRIORITY);
+            t.start();
+        }
+    }
+    public static class SSTask extends Task {
+        private String stockCode;
+        private String tradeDate;
+        private String hms;
+        private CommandLine cmd;
+        private boolean bStats;
+        private AmManager amm;
+
+        public SSTask(SSMan ssm, String stockCode, String tradeDate, String hms, CommandLine cmd, 
+                boolean bStats, AmManager amm) {
+            super(ssm);
+
+            this.stockCode = stockCode;
+            this.tradeDate = tradeDate;
+            this.hms = hms;
+            this.cmd = cmd;
+            this.bStats = bStats;
+            this.amm = amm;
+        }
+        @Override
+        public void runTask() {
+            handleSingle(stockCode, tradeDate, hms, cmd, bStats, amm);
+        }
+    }
+
 
 
     private static void usage() {
@@ -175,4 +229,7 @@ public class SaadStatsHelper {
 
         return options;
     }
+
+
+
 }

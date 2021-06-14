@@ -29,33 +29,80 @@ public class AvgAmHelper {
     public static void list(String args[]) {
         CommandLine cmd = getCommandLine(args);
         String[] newArgs = cmd.getArgs();
-        if(newArgs.length!=3 && newArgs.length!=2) {
+        if(newArgs.length!=1 && newArgs.length!=3 && newArgs.length!=2) {
             usage();
         }
 
-        String stockCode = newArgs[0];
-        String tradeDate = newArgs[1];
-        String hms = null;
-        if(newArgs.length==3) {
-            hms = newArgs[2];
-        }
+        if(newArgs.length == 1) {
+            String stockCode = newArgs[0];
+            String sAvgAmDeltaFile = null;
+            String sAvgAmOutDir = null;
+            sAvgAmDeltaFile = AvgAmUtils.getAvgAmDeltaFile(cmd);
+            sAvgAmOutDir = AvgAmUtils.getAvgAmOutDir(cmd);
+            Utils.resetDir(sAvgAmOutDir);
 
-        
-        if(hms!=null) {
-            handleSingleHMS(stockCode, tradeDate, hms, cmd);
+            handleSingleFile(stockCode, sAvgAmDeltaFile, sAvgAmOutDir, cmd);
         } else {
-            //mkdir derivative
-            Utils.resetDir(StockPaths.getAvgAmDir(stockCode, tradeDate));
-            Utils.resetDir(StockPaths.getAvgAmPngDir(stockCode, tradeDate));
+            String stockCode = newArgs[0];
+            String tradeDate = newArgs[1];
+            String hms = null;
+            if(newArgs.length==3) {
+                hms = newArgs[2];
+            }
+            if(hms!=null) {
+                handleSingleHMS(stockCode, tradeDate, hms, cmd);
+            } else {
+                //mkdir avgam 
+                Utils.resetDir(StockPaths.getAvgAmDir(stockCode, tradeDate));
+                Utils.resetDir(StockPaths.getAvgAmPngDir(stockCode, tradeDate));
 
-            //make am derivatives for all sds of tradeDate
-            handleAllHMS(stockCode, tradeDate, cmd);
+                //make avgam for all sds of tradeDate
+                handleSingleTradeDate(stockCode, tradeDate, cmd);
+            }
         }
     }
 
 
+    public static void handleSingleFile(String stockCode, String sAvgAmDeltaFile, String sAvgAmOutDir, 
+            CommandLine cmd) {
+        AmManager amm = new AmManager(stockCode);
 
-    public static void handleAllHMS(String stockCode, String tradeDate, CommandLine cmd) {
+        ArrayList<DeltaSimRecord> avrrList = DeltaSimRecord.getList(sAvgAmDeltaFile);
+        for(int i=0; i<avrrList.size(); i++) {
+            DeltaSimRecord dsr = avrrList.get(i);
+            if(!stockCode.equals(dsr.stockCode)) {
+                System.err.format("invalid item: %s %s %s\n", dsr.stockCode, dsr.tradeDate, dsr.hms);
+                continue;
+            }
+
+            stockCode = dsr.stockCode;
+            String tradeDate = dsr.tradeDate;
+            String hms = dsr.hms;
+            String sAvgAmFile = sAvgAmOutDir + "\\" + tradeDate + "." + hms + ".txt";
+
+            handleSingleHMS(stockCode, tradeDate, hms, cmd, amm, sAvgAmFile);
+        }
+    }
+    public static void handleSingleHMS(String stockCode, String tradeDate, String hms, CommandLine cmd, 
+            AmManager amm, String sAvgAmFile) {
+        int sdbw = AvgAmUtils.getBackwardSd(cmd);
+        int minSkippedSD = AvgAmUtils.getMinimumSkipSd(cmd);
+        int interval = AvgAmUtils.getInterval(cmd);
+
+        if(amm == null)
+            amm = AmManager.get(stockCode, tradeDate, hms, sdbw, null);
+
+        SdTime1 sdt = new SdTime1(stockCode);
+        long tp = Time.getSpecificTime(tradeDate, hms);
+        int sd = sdt.getAbs(tp);
+        System.err.format("%s_%s tp=%x, sd=%d am=%d\n", tradeDate, hms, tp, sd, amm.getAm(sd));
+
+        AvgAmUtils.listAvgAm(sd, sdbw, minSkippedSD, interval,
+                amm.getAmRecordMap(), false, sAvgAmFile);
+    }
+
+
+    public static void handleSingleTradeDate(String stockCode, String tradeDate, CommandLine cmd) {
         int sdbw = AvgAmUtils.getBackwardSd(cmd);
         int minSkippedSD = AvgAmUtils.getMinimumSkipSd(cmd);
         int interval = AvgAmUtils.getInterval(cmd);
@@ -96,12 +143,18 @@ public class AvgAmHelper {
 
 
     private static void usage() {
-        System.err.println("usage: java AnalyzeTools listavgams [-bmie] stockCode tradeDate [hms]");
+        System.err.println("usage: java AnalyzeTools listavgams [-bmie] [stockCode] [tradeDate] [hms]");
+        System.err.println("       3 kinds are considered:");
+        System.err.println("         stockCode tradeDate hms");
+        System.err.println("         stockCode tradeDate");
+        System.err.println("         stockCode -f fSTH -d sOutDir");
         System.err.println("       only print but not write to file when hms is specified");
         System.err.println("       -b sdbw       ; at most sdbw shall be looked backward; default 1170");
         System.err.println("       -m mindist    ; default 60");
         System.err.println("       -i interval   ; default 1");
         System.err.println("       -e step       ; list avgam every step sd, and only effective when no hms;");
+        System.err.println("       -f fSTH       ; a avgamdelta file listing all [stockCode,tradeDate,hms]");
+        System.err.println("       -d sOutDir    ; a dir storing all avgam for all items of fSTH");
         System.exit(-1);
     }
 
@@ -125,6 +178,8 @@ public class AvgAmHelper {
         options.addOption("m", true,  "minimum skipped sd distance from current time");
         options.addOption("i", true,  "the step to get am derivative");
         options.addOption("e", true,  "list avgam every step sd");
+        options.addOption("f", true,  "the avgamdelta file");
+        options.addOption("d", true,  "a dir");
 
         return options;
     }

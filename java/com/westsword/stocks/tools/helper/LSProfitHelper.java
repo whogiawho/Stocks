@@ -79,7 +79,7 @@ public class LSProfitHelper {
         tradeType = Stock.TRADE_TYPE_SHORT;
         AmRecord outItemS = amm.getTradeResult(inTp, nextTradeDateN, targetRate, 
                 sTDistance, tradeType, stockDates, null);
-        long outTpS = outItemL!=null? outItemS.hexTimePoint: -1;
+        long outTpS = outItemS!=null? outItemS.hexTimePoint: -1;
 
         //System.out.format("targetRate=%-8.3f nextTradeDateN=%s\n", targetRate, nextTradeDateN);
         System.out.format("%8x %8x\n", outTpL, outTpS);

@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import com.westsword.stocks.am.*;
+import com.westsword.stocks.am.average.*;
 import com.westsword.stocks.base.Utils;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.*;
@@ -66,6 +67,7 @@ public class SimAvgAmDeltaHelper {
         String sAvgAmDeltaFile = CmdLineUtils.getString(cmd, "f", null);
         String sDir = CmdLineUtils.getString(cmd, "d", null);
         String sAvgAm0 = sDir+"\\"+tradeDate+"."+hms+".txt";
+        double threshold = AvgAmUtils.getThreshold(cmd);
 
         ArrayList<DeltaSimRecord> aarList = DeltaSimRecord.getList(sAvgAmDeltaFile);
         //System.out.format("aarList.size=%d\n", aarList.size());
@@ -90,8 +92,9 @@ public class SimAvgAmDeltaHelper {
             double[] y = Utils.toDoubleArray(sList1, size1-sdbw, size1);
             double correl = pc.correlation(x, y);
 
-            System.out.format("%s %s %s %8.3f %8.3f %8.3f %8.3f\n", 
-                    r.stockCode, r.tradeDate, r.hms, r.correl0, r.upPrice, r.downPrice, correl);
+            if(correl>=threshold)
+                System.out.format("%s %s %s %8.3f %8.3f %8.3f %8.3f\n", 
+                        r.stockCode, r.tradeDate, r.hms, r.correl0, r.upPrice, r.downPrice, correl);
         }
     }
     private static double[][] getAvgAmDeltaMatrix(ArrayList<DeltaSimRecord> aarList, String sDir) {
@@ -112,7 +115,11 @@ public class SimAvgAmDeltaHelper {
             cl.load(sList0, sAvgAm, 1);
 
             for(int j=0; j<rows; j++) {
-                m[j][i] = Double.valueOf(sList0.get(j));
+                try {
+                    m[j][i] = Double.valueOf(sList0.get(j));
+                } catch (Exception e) {
+                    System.out.format("sAvgAm=%s j=%d\n", sAvgAm, j);
+                }
             }
         }
 
@@ -123,6 +130,7 @@ public class SimAvgAmDeltaHelper {
         String sDir = CmdLineUtils.getString(cmd, "d", null);
         String sResDir = sDir+".res";
         Utils.mkDir(sResDir);
+        double threshold = AvgAmUtils.getThreshold(cmd);
 
         ArrayList<DeltaSimRecord> aarList = DeltaSimRecord.getList(sAvgAmDeltaFile);
         double[][] m = getAvgAmDeltaMatrix(aarList, sDir);
@@ -137,22 +145,24 @@ public class SimAvgAmDeltaHelper {
             System.out.format("cm.rows=%d cm.cols=%d\n", cm.length, cm[0].length);
 
             //write to files
-            write2Files(cm, sResDir, aarList);
+            write2Files(cm, sResDir, aarList, threshold);
         } catch(EngineException e) {
             e.printStackTrace();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
-    private static void write2Files(double[][] cm, String sResDir, ArrayList<DeltaSimRecord> aarList) {
+    private static void write2Files(double[][] cm, String sResDir, ArrayList<DeltaSimRecord> aarList, 
+            double threshold) {
         for(int i=0; i<cm.length; i++) {
             DeltaSimRecord r0 = aarList.get(i);
             String sResFile = sResDir + "\\" + r0.tradeDate + "." + r0.hms + ".correl";
             String line = "";
             for(int j=0; j<cm[i].length; j++) {
                 DeltaSimRecord r = aarList.get(j);
-                line += String.format("%s %s %s %8.3f %8.3f %8.3f %8.3f\n", 
-                        r.stockCode, r.tradeDate, r.hms, r.correl0, r.upPrice, r.downPrice, cm[i][j]);
+                if(cm[i][j]>=threshold)
+                    line += String.format("%s %s %s %8.3f %8.3f %8.3f %8.3f\n", 
+                            r.stockCode, r.tradeDate, r.hms, r.correl0, r.upPrice, r.downPrice, cm[i][j]);
             }
             Utils.append2File(sResFile, line, false);
         }
@@ -166,6 +176,7 @@ public class SimAvgAmDeltaHelper {
         System.err.println("         printed with [stockCode,tradeDate,hms]");
         System.err.println("       -f avgamdeltaFile   ; the file generated from avgamdelta");
         System.err.println("       -d dir              ; the dir where the avgam files of avgamdelta are");
+        System.err.println("       -h threshold        ; only those whose threshold above are listed");
 
              String line = "       both -f&-d must be enabled!";
         line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);
@@ -192,6 +203,7 @@ public class SimAvgAmDeltaHelper {
         Options options = new Options();
         options.addOption("f", true,  "the file generated from avgamdelta");
         options.addOption("d", true,  "the dir where the avgamdelta files are");
+        options.addOption("h", true,  "a threshold to filter item");
 
         return options;
     }
