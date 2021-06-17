@@ -134,11 +134,8 @@ function avgamCorrel {
     local hms0=$3
     local tradeDate1=$4
     local hms1=$5
-    local bwsd=$6
+    local options=$6
 
-    [[ -z $bwsd ]] && bwsd=1170
-
-    local options="-b$bwsd"
     local correl=
     correl=`java -jar $analyzetoolsJar avgamcorrel $options $stockCode $tradeDate0 $hms0 $tradeDate1 $hms1 2>/dev/null`
 
@@ -189,6 +186,7 @@ function openTmpAvgAmPng {
     local tradeDate=$2
     local hms=$3
     local bwsd=$4                             #optional
+    local minDist=$5                          #optional
 
     [[ -z $bwsd ]] && bwsd=1170
 
@@ -372,8 +370,6 @@ function listMatchedAvgAm {
         done; 
     done
 }
-
-
 function trackAACkpt {
     local stockCode=$1
     local tradeDate=$2
@@ -461,7 +457,6 @@ function colorCorrel {
     echo $correl
     return $rVal
 }
-
 function listAvgAmSeries {
     local stockCode=$1
     local year=$2
@@ -491,12 +486,6 @@ function listAvgAmRange {
         done
     done
 }
-
-
-
-
-
-
 function rangeAvgAmCorrel {
     local stockCode=$1
     local startDate=$2
@@ -565,18 +554,17 @@ function sAvgAm {
 
 
 function makeAvgAmFromDelta {
-    local fDelta=$1        #in
-    local avgamDir=$2      #out
+    local stockCode=$1     #in
+    local fDelta=$2        #in
+    local avgamDir=$3      #out
+    local options=$4       #in
 
     [[ ! -e $avgamDir ]] && mkdir $avgamDir
 
-    local a b c d
-    while read a b c d
-    do
-        java -jar $analyzetoolsJar listavgams $a $b $c 2>/dev/null >$avgamDir/$b.$c.txt
-    done <$fDelta
+    fDelta=`getWindowPathOfFile $fDelta`
+    avgamDir=`getWindowPathOfFile $avgamDir`
+    java -jar $analyzetoolsJar listavgams $options -f"$fDelta" -d"$avgamDir" $stockCode 
 }
-
 #$avgamDir.res - out
 function makeAvgAmRes {
     local fDelta=$1        #in
@@ -585,5 +573,49 @@ function makeAvgAmRes {
     fDelta=`getWindowPathOfFile $fDelta`
     avgamDir=`getWindowPathOfFile $avgamDir`
     java -jar $analyzetoolsJar simavgamdelta -f"$fDelta" -d"$avgamDir" 2>/dev/null
+}
+
+
+function avgamInstance {
+    local stockCode=$1
+    local bwsd=$2
+    local minDist=$3
+    local interval=$4
+    local dc=$5
+    local sc=$6
+
+    [[ -z $bwsd ]] && bwsd=1170
+    [[ -z $minDist ]] && minDist=1
+    [[ -z $interval ]] && interval=1
+    [[ -z $dc ]] && dc=0.85
+    [[ -z $sc ]] && sc=0.90
+
+    #make full.delta
+    local startDate=`getTradeDateList $stockCode y|head -n2|tail -n1`
+    local endDate=`getTradeDateList $stockCode y|tail -n1`
+    local instanceRootDir=/tmp/$stockCode/avgam/b${bwsd}md${minDist}i${interval}dc${dc}sc${sc}
+    local sFull=$instanceRootDir/full.delta
+    java -jar $analyzetoolsJar avgamdelta -s$startDate -e$endDate \
+        -b$bwsd -m$minDist -i$interval $stockCode >$sFull
+
+    #make name.delta${dc}
+    local name=20201
+    local yearPattern=" 202[01].... "
+    local postfix=`echo $dc|sed "s/0\.//g"|printf "%02d\n"`
+    local sNameDelta=$instanceRootDir/$name.$postfix
+    awk "\$4<$dc" $sFull | grep "$yearPattern" >$sNameDelta
+    #check if lines of sNameDelta<17000
+
+    local options="-b$bwsd -m$minDist -i$interval"
+    local avgamDir=$instanceRootDir/$name
+    makeAvgAmFromDelta $stockCode $sNameDelta $avgamDir "$options"
+
+    makeAvgAmRes $sNameDelta $avgamDir
+
+    local mc=10
+    local statsOptions="-m$mc"
+    local avgamResDir=$instanceRootDir/$name.res
+    local fStats=$instanceRootDir/$name.m10.stats
+    makeAvgAmStats $sNameDelta $avgamResDir $fStats "$statsOptions"
 }
 

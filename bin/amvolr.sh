@@ -56,6 +56,19 @@ function openTmpAmVolRPng {
     local amvolrtxtDir="$dailyDir\\$stockCode\\$tradeDate\\amvolrTxt"
     JPEGView.exe "$amvolrtxtDir\\${tradeDate}_${hms}_${bwsd}_amvolr.png" &
 }
+function amvolrCorrel {
+    local stockCode=$1
+    local tradeDate0=$2
+    local hms0=$3
+    local tradeDate1=$4
+    local hms1=$5
+    local options=$6
+
+    local correl=
+    correl=`java -jar $analyzetoolsJar amvolrcorrel $options $stockCode $tradeDate0 $hms0 $tradeDate1 $hms1 2>/dev/null`
+
+    echo $correl
+}
 
 
 function getMaxCorrel {
@@ -80,22 +93,6 @@ function getMaxCorrel {
     rm -rf $fTmp
 }
 
-function amvolrCorrel {
-    local stockCode=$1
-    local tradeDate0=$2
-    local hms0=$3
-    local tradeDate1=$4
-    local hms1=$5
-    local bwsd=$6
-
-    [[ -z $bwsd ]] && bwsd=1200
-
-    local options="-b$bwsd"
-    local correl=
-    correl=`java -jar $analyzetoolsJar amvolrcorrel $options $stockCode $tradeDate0 $hms0 $tradeDate1 $hms1 2>/dev/null`
-
-    echo $correl
-}
 
 function addAmVolR {
     local fList=$1
@@ -150,41 +147,4 @@ function makeAmVolRRes {
     amvolrDir=`getWindowPathOfFile $amvolrDir`
     java -jar $analyzetoolsJar simamvolrdelta -f"$fDelta" -d"$amvolrDir" 2>/dev/null
 }
-function makeAmVolRStats {
-    local fDelta=$1        #in
-    local amvolrResDir=$2  #in
-    local amvolrStats=$3   #out
-    local options=$4       #in
 
-    fDelta=`getWindowPathOfFile $fDelta`
-    amvolrResDir=`getWindowPathOfFile $amvolrResDir`
-    java -jar $analyzetoolsJar saadstats $options -f"$fDelta" -d"$amvolrResDir"  |tee $amvolrStats
-}
-
-function makeAmVolRm0m1m10Stats {
-    local rawStats=$1      #in
-    local amvolrResDir=$2  #in
-    local tradeType=$3     #in
-
-    [[ -z $tradeType ]] && tradeType=5
-
-    amvolrResDir=`getWindowPathOfFile $amvolrResDir`
-    local colStats colSS
-    [[ $tradeType == $UP ]] && {
-        colStats=7
-        colSS=8
-    } || {
-        colStats=8
-        colSS=9
-    }
-
-    local a b c d e f g h
-    awk '$7>0.009&&$4>3' $rawStats |sort -nk$colStats,$colStats|while read a b c d e f g h; 
-    do 
-        minmaxm0=`java -jar $analyzetoolsJar saadstats -d"$amvolrResDir" -m0 -h0.90 $a,$b,$c 2>/dev/null| \
-            sort -nk$colSS,$colSS|head -n1|awk "{print \\$colSS}" colSS=$colSS`; 
-        minmaxm1=`java -jar $analyzetoolsJar saadstats -d"$amvolrResDir" -m1 -h0.90 $a,$b,$c 2>/dev/null| \
-            sort -nk$colSS,$colSS|head -n1|awk "{print \\$colSS}" colSS=$colSS`; 
-        printf "%s %s %s %4s %8s %8s %8s\n" $a $b $c $d "$g" $minmaxm0 $minmaxm1; 
-    done
-}
