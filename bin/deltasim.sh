@@ -37,7 +37,7 @@ function makem0m1m10Stats {
 
     resDir=`getWindowPathOfFile $resDir`
     local colStats colSS
-    [[ $tradeType == $UP ]] && {
+    [[ $tradeType == $LONG ]] && {
         colStats=7
         colSS=8
     } || {
@@ -50,7 +50,7 @@ function makem0m1m10Stats {
     do 
         local minmaxm10 minmaxm0 minmaxm1
 
-        [[ $tradeType == $UP ]] && minmaxm10=$g || minmaxm10=$h
+        [[ $tradeType == $LONG ]] && minmaxm10=$g || minmaxm10=$h
         minmaxm0=`java -jar $analyzetoolsJar saadstats -d"$resDir" -m0 -h0.90 $a,$b,$c 2>/dev/null| \
             sort -nk$colSS,$colSS|head -n1|awk "{print \\$colSS}" colSS=$colSS`; 
         minmaxm1=`java -jar $analyzetoolsJar saadstats -d"$resDir" -m1 -h0.90 $a,$b,$c 2>/dev/null| \
@@ -75,4 +75,48 @@ function makeAmVolRm0m1m10Stats {
 }
 
 
+function emulateDSS {
+    local fDSS=$1
+    local tradeType=$2
 
+    local col=
+    [[ $tradeType == $LONG ]] && {
+        col=8
+    } || {
+        col=9
+    }
+    local minmaxProfit=`sort -nk$col,$col $fDSS|head -n1|awk '{print \$col}' col=$col`
+    echo minmaxProfit=$minmaxProfit
+    local targetRate=`add 1 $minmaxProfit`
+    local options="-p$targetRate"
+
+    local prevLongOutTp prevShortOutTp
+    local stockCode tradeDate hms dc inUp inDp sc maxDelta minDelta
+    while read stockCode tradeDate hms dc inUp inDp sc maxDelta minDelta
+    do
+        #convert stockCode,tradeDate,hms to inTp 
+        local inTp=`convertTime2Hex $tradeDate $hms`
+        [[ $tradeType == $LONG && ! -z $prevLongOutTp ]] && {
+            #compare $prevLongOutTp with inTp 
+            [[ 0x$inTp -lt 0x$prevLongOutTp ]] && continue
+            true
+        } || { 
+            [[ $tradeType == $SHORT && ! -z $prevShortOutTp ]] && {
+                #compare $prevShortOutTp with inTp 
+                [[ 0x$inTp -lt 0x$prevShortOutTp ]] && continue
+            }
+            true
+        }
+
+        local outPrice=
+        [[ $tradeType == $LONG ]] && outPrice=`add $inUp $minmaxProfit` || {
+            outPrice=`substract $inDp $minmaxProfit`
+        }
+
+        local line=`getLSProfit $stockCode $tradeDate $hms "$options"`
+        prevLongOutTp=${line% *}
+        prevShortOutTp=${line#* }
+        printf "%s %s %s %8s %8s %8s %8s %8s %8s %8s\n" \
+            $stockCode $tradeDate $hms $dc $inUp $inDp $outPrice $sc $maxDelta $minDelta
+    done <$fDSS
+}
