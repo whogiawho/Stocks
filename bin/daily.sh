@@ -76,7 +76,7 @@ function routinesAfterCloseQuotation {
     dailyMakeAvgamPngs $stockCode $tradeDate $tradeDate 
     dailyMakeTmpAvgamPngs $stockCode $tradeDate
     #150000
-    makeAvgAmPng $stockCode $tradeDate 150000 1
+    makeAvgAmPng $stockCode $tradeDate 150000
 
     #make pvtable
     makePVTable $stockCode $tradeDate

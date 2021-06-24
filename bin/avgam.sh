@@ -159,14 +159,14 @@ function makeTmpAvgAmPng {
     local stockCode=$1
     local tradeDate=$2
     local hms=$3
-    local interval=$4                         #optional
-    local bwsd=$5                             #optional
-    local minDist=$6                          #optional
+    local bwsd=$4                             #optional
+    local minDist=$5                          #optional
+    local interval=$6                         #optional
     local bSaveTxt=$7                         #optional
 
-    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1170
     [[ -z $minDist ]] && minDist=60
+    [[ -z $interval ]] && interval=1
 
     local avgamtxtDir="$dailyDir\\$stockCode\\$tradeDate\\avgamTxt"
     [[ ! -e "$avgamtxtDir" ]] && {
@@ -174,7 +174,7 @@ function makeTmpAvgAmPng {
     }
 
     local avgamTxt="$avgamtxtDir\\${tradeDate}_${hms}_${bwsd}_avgam.txt"
-    makeAvgAmTxt $stockCode $tradeDate $hms $avgamTxt $interval $bwsd $minDist
+    makeAvgAmTxt $stockCode $tradeDate $hms $avgamTxt $bwsd $minDist $interval
 
     local sPngFile="$avgamtxtDir\\${tradeDate}_${hms}_${bwsd}_avgam.png"
     makeAvgAmPngFromFile "$avgamTxt" "$sPngFile"
@@ -192,6 +192,17 @@ function openTmpAvgAmPng {
 
     local avgamtxtDir="$dailyDir\\$stockCode\\$tradeDate\\avgamTxt"
     JPEGView.exe "$avgamtxtDir\\${tradeDate}_${hms}_${bwsd}_avgam.png" &
+}
+function viewTmpAvgAmPng {
+    local stockCode=$1
+    local tradeDate=$2
+    local hms=$3
+    local bwsd=$4                             #optional
+    local minDist=$5                          #optional
+
+
+    makeTmpAvgAmPng $stockCode $tradeDate $hms $bwsd $minDist
+    openTmpAvgAmPng $stockCode $tradeDate $hms $bwsd $minDist
 }
 
 function openAvgAmPng {
@@ -228,15 +239,15 @@ function makeAvgAmPng {
     local stockCode=$1
     local tradeDate=$2
     local hms=$3
-    local interval=$4                         #optional
-    local bwsd=$5                             #optional
-    local minDist=$6                          #optional
+    local bwsd=$4                             #optional
+    local minDist=$5                          #optional
+    local interval=$6                         #optional
 
-    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1170
     [[ -z $minDist ]] && minDist=60
+    [[ -z $interval ]] && interval=1
 
-    makeAvgAm $stockCode $tradeDate $hms $interval $bwsd $minDist
+    makeAvgAm $stockCode $tradeDate $hms $bwsd $minDist $interval 
 
     local avgamPngDir="$dailyDir\\$stockCode\\$tradeDate\\avgamPng"
     local sPngFile="$avgamPngDir\\$hms.png"
@@ -248,13 +259,13 @@ function makeAvgAm {
     local stockCode=$1
     local tradeDate=$2
     local hms=$3
-    local interval=$4                         #optional 
-    local bwsd=$5                             #optional
-    local minDist=$6                          #optional
+    local bwsd=$4                             #optional
+    local minDist=$5                          #optional
+    local interval=$6                         #optional 
 
-    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1170
     [[ -z $minDist ]] && minDist=60
+    [[ -z $interval ]] && interval=1
 
     local avgamDir="$dailyDir\\$stockCode\\$tradeDate\\avgam"
     local outTxt="$avgamDir\\$hms.txt"
@@ -266,13 +277,13 @@ function makeAvgAmTxt {
     local tradeDate=$2
     local hms=$3
     local outTxt=$4
-    local interval=$5                         #optional 
-    local bwsd=$6                             #optional
-    local minDist=$7                          #optional
+    local bwsd=$5                             #optional
+    local minDist=$6                          #optional
+    local interval=$7                         #optional 
 
-    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1170
     [[ -z $minDist ]] && minDist=60
+    [[ -z $interval ]] && interval=1
 
     java -jar $analyzetoolsJar listavgams -b$bwsd -m$minDist -i${interval} $stockCode $tradeDate $hms \
         >"$outTxt" 2>/dev/null
@@ -295,33 +306,33 @@ function makeAvgAmPngFromFile {
 function dailyMakeTmpAvgamPngs {
     local stockCode=$1
     local tradeDate=$2
-    local interval=$3
-    local bwsd=$4
-    local minDist=$5
+    local bwsd=$3
+    local minDist=$4
+    local interval=$5
 
-    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1170
     [[ -z $minDist ]] && minDist=60
+    [[ -z $interval ]] && interval=1
 
     local options="-b$bwsd -m$minDist -i$interval -s$tradeDate -e$tradeDate"
     local a b c d
     java -jar $analyzetoolsJar avgamdelta $options $stockCode 2>/dev/null|awk '$4<0.85'|while read a b c d; 
     do 
-        makeTmpAvgAmPng $a $b $c $interval $bwsd $minDist y; 
+        makeTmpAvgAmPng $a $b $c $bwsd $minDist $interval y; 
     done
 }
 function dailyMakeAvgamPngs {
     local stockCode=$1
     local sDate=$2
     local eDate=$3
-    local interval=$4               #optional
-    local bwsd=$5                   #optional
-    local minDist=$6                #optional
+    local bwsd=$4                   #optional
+    local minDist=$5                #optional
+    local interval=$6               #optional
     local step=$7                   #optional
 
-    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1170
     [[ -z $minDist ]] && minDist=60
+    [[ -z $interval ]] && interval=1
     [[ -z $step ]] && step=60
 
     local tradeDates=`getTradeDateList $stockCode`
@@ -336,7 +347,7 @@ function dailyMakeAvgamPngs {
     for i in `getTradeDateRange $stockCode $sDate $eDate`
     do
         setupCfgFile $stockCode $i
-        java -jar $analyzetoolsJar listavgams -b$bwsd -m60 -i1 -e$step $stockCode $i
+        java -jar $analyzetoolsJar listavgams -b$bwsd -m$minDist -i1 -e$step $stockCode $i
 
         makeAvgAmPngs $stockCode $i
     done
@@ -374,14 +385,14 @@ function trackAACkpt {
     local stockCode=$1
     local tradeDate=$2
     local ckptInterval=$3                     #optional
-    local interval=$4                         #optional 
-    local bwsd=$5                             #optional
-    local minDist=$6                          #optional
+    local bwsd=$4                             #optional
+    local minDist=$5                          #optional
+    local interval=$6                         #optional 
 
     [[ -z $ckptInterval ]] && ckptInterval=60
-    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1170
     [[ -z $minDist ]] && minDist=60
+    [[ -z $interval ]] && interval=1
 
     local avgamDir="$dailyDir\\$stockCode\\$tradeDate\\avgam"
     [[ ! -e $avgamDir ]] && mkdir -p $avgamDir
@@ -409,7 +420,7 @@ function trackAACkpt {
 
             local outTxt="$avgamDir\\$currentHMS.txt"
             #makeAvgAmTxt for aackptTp
-            makeAvgAmTxt $stockCode $currentAACkpt $outTxt $interval $bwsd $minDist
+            makeAvgAmTxt $stockCode $currentAACkpt $outTxt $bwsd $minDist $interval
             #make png
             local sPngFile="$avgamPngDir\\${currentHMS}.png"
             (cscript.exe "$rootDir\\vbs\\makeAmDerivativePng.vbs" "$outTxt" "$sPngFile" 2>/dev/null|grep -v Micro &)
@@ -510,14 +521,15 @@ function rangeAvgAmCorrel {
     done
 }
 function sAvgAmFromQr {
-    local fQr=$1
-    local option=$2
+    local stockCode=$1
+    local fQr=$2
+    local option=$3
 
     local max=10
     local cnt=0
     local a b c
     cat $fQr|sed "s/_/ /g"|while read a b c; do 
-        sAvgAm 512880 $a $b $option &
+        sAvgAm $stockCode $a $b $option &
 
         cnt=$((cnt+1))
         echo cnt=$cnt
@@ -559,22 +571,23 @@ function makeAvgAmFromDelta {
     local avgamDir=$3      #out
     local options=$4       #in
 
-    [[ ! -e $avgamDir ]] && mkdir $avgamDir
+    [[ ! -e $avgamDir ]] && mkdir -p $avgamDir
 
     fDelta=`getWindowPathOfFile $fDelta`
     avgamDir=`getWindowPathOfFile $avgamDir`
     java -jar $analyzetoolsJar listavgams $options -f"$fDelta" -d"$avgamDir" $stockCode 
 }
+#w matlab by options="-m", or w/o matlab by options w/o "-m"
 #$avgamDir.res - out
 function makeAvgAmRes {
     local fDelta=$1        #in
     local avgamDir=$2      #in
+    local options=$3       #in
 
     fDelta=`getWindowPathOfFile $fDelta`
     avgamDir=`getWindowPathOfFile $avgamDir`
-    java -jar $analyzetoolsJar simavgamdelta -f"$fDelta" -d"$avgamDir" 2>/dev/null
+    java -jar $analyzetoolsJar simavgamdelta $options -f"$fDelta" -d"$avgamDir" 2>/dev/null
 }
-
 
 function avgamInstance {
     local stockCode=$1
@@ -590,10 +603,12 @@ function avgamInstance {
     [[ -z $dc ]] && dc=0.85
     [[ -z $sc ]] && sc=0.90
 
+    local instanceRootDir=/tmp/$stockCode/avgam/b${bwsd}md${minDist}i${interval}dc${dc}sc${sc}
+    [[ ! -e $instanceRootDir ]] && mkdir -p $instanceRootDir
+
     #make full.delta
     local startDate=`getTradeDateList $stockCode y|head -n2|tail -n1`
     local endDate=`getTradeDateList $stockCode y|tail -n1`
-    local instanceRootDir=/tmp/$stockCode/avgam/b${bwsd}md${minDist}i${interval}dc${dc}sc${sc}
     local sFull=$instanceRootDir/full.delta
     java -jar $analyzetoolsJar avgamdelta -s$startDate -e$endDate \
         -b$bwsd -m$minDist -i$interval $stockCode >$sFull
@@ -601,10 +616,16 @@ function avgamInstance {
     #make name.delta${dc}
     local name=20201
     local yearPattern=" 202[01].... "
-    local postfix=`echo $dc|sed "s/0\.//g"|printf "%02d\n"`
-    local sNameDelta=$instanceRootDir/$name.$postfix
+    local postfix=`echo $dc|sed "s/0\.//g"`
+    postfix=`printf "%02d\n" $postfix`
+    local sNameDelta=$instanceRootDir/$name.delta$postfix
     awk "\$4<$dc" $sFull | grep "$yearPattern" >$sNameDelta
-    #check if lines of sNameDelta<17000
+    #check if lines of sNameDelta<15000
+    local lines=`wc $sNameDelta|awk '{print $1}'`
+    [[ $lines -gt 15000 ]] && {
+        echo "lines of $sNameDelta=$lines"
+        return 1
+    }
 
     local options="-b$bwsd -m$minDist -i$interval"
     local avgamDir=$instanceRootDir/$name

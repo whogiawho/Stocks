@@ -11,8 +11,8 @@ function makeTmpAmVolRPng {
     local stockCode=$1
     local tradeDate=$2
     local hms=$3
-    local interval=$4                         #optional
-    local bwsd=$5                             #optional
+    local bwsd=$4                             #optional
+    local interval=$5                         #optional
     local bSaveTxt=$6                         #optional
 
     [[ -z $interval ]] && interval=1
