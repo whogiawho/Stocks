@@ -12,21 +12,24 @@ function makeTmpAmVolRPng {
     local tradeDate=$2
     local hms=$3
     local bwsd=$4                             #optional
-    local interval=$5                         #optional
-    local bSaveTxt=$6                         #optional
+    local minDist=$5                          #optional
+    local interval=$6                         #optional
+    local bSaveTxt=$7                         #optional
 
-    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1200
+    [[ -z $minDist ]] && minDist=60
+    [[ -z $interval ]] && interval=1
 
     local amvolrtxtDir="$dailyDir\\$stockCode\\$tradeDate\\amvolrTxt"
     [[ ! -e "$amvolrtxtDir" ]] && {
         mkdir -p "$amvolrtxtDir"
     }
 
-    local amvolrTxt="$amvolrtxtDir\\${tradeDate}_${hms}_${bwsd}_amvolr.txt"
-    makeAmVolRTxt $stockCode $tradeDate $hms $amvolrTxt $interval $bwsd 
+    local amvolrName=${hms}_${bwsd}_${minDist}_${interval}
+    local amvolrTxt="$amvolrtxtDir\\$amvolrName.txt"
+    makeAmVolRTxt $stockCode $tradeDate $hms $amvolrTxt $bwsd $minDist $interval 
 
-    local sPngFile="$amvolrtxtDir\\${tradeDate}_${hms}_${bwsd}_amvolr.png"
+    local sPngFile="$amvolrtxtDir\\$amvolrName.png"
     makeAmVolRFromFile "$amvolrTxt" "$sPngFile"
 
     [[ -z $bSaveTxt ]] && rm -rf $amvolrTxt
@@ -36,13 +39,15 @@ function makeAmVolRTxt {
     local tradeDate=$2
     local hms=$3
     local outTxt=$4
-    local interval=$5                         #optional 
-    local bwsd=$6                             #optional
+    local bwsd=$5                             #optional
+    local minDist=$6                          #optional
+    local interval=$7                         #optional 
 
-    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1200
+    [[ -z $minDist ]] && minDist=60
+    [[ -z $interval ]] && interval=1
 
-    java -jar $analyzetoolsJar listamvolr -b$bwsd -i${interval} $stockCode $tradeDate $hms \
+    java -jar $analyzetoolsJar listamvolr -b$bwsd -m$minDist -i$interval $stockCode $tradeDate $hms \
         >"$outTxt" 2>/dev/null
 }
 function openTmpAmVolRPng {
@@ -50,11 +55,17 @@ function openTmpAmVolRPng {
     local tradeDate=$2
     local hms=$3
     local bwsd=$4                             #optional
+    local minDist=$5                          #optional
+    local interval=$6                         #optional
 
     [[ -z $bwsd ]] && bwsd=1200
+    [[ -z $minDist ]] && minDist=60
+    [[ -z $interval ]] && interval=1
 
+    local amvolrName=${hms}_${bwsd}_${minDist}_${interval}
     local amvolrtxtDir="$dailyDir\\$stockCode\\$tradeDate\\amvolrTxt"
-    JPEGView.exe "$amvolrtxtDir\\${tradeDate}_${hms}_${bwsd}_amvolr.png" &
+    local amvolrPng="$amvolrtxtDir\\$amvolrName.png"
+    JPEGView.exe "$amvolrPng" &
 }
 function amvolrCorrel {
     local stockCode=$1

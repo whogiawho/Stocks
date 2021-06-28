@@ -28,7 +28,6 @@ function doDailyTask {
     routinesAfterCloseQuotation $stockCode $tradeDate skipRA
 
     write2CheckAllTable $stockCode $tradeDate
-    write2AvgAmTable $stockCode $tradeDate
 
     #avgamPredictByLast20m $stockCode $tradeDate
 }
@@ -80,6 +79,9 @@ function routinesAfterCloseQuotation {
 
     #make pvtable
     makePVTable $stockCode $tradeDate
+
+    #write to avgam
+    write2AvgAmTable $stockCode $tradeDate
 }
 #write today's avgamTable output to fAvgAmAllTable
 function write2AvgAmTable {

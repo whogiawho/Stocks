@@ -87,9 +87,14 @@ function emulateDSS {
     }
     local minmaxProfit=`sort -nk$col,$col $fDSS|head -n1|awk '{print \$col}' col=$col`
     echo minmaxProfit=$minmaxProfit
+    #return if minmaxProfit<=0
+    local bCmp=`le $minmaxProfit 0`
+    [[ $bCmp == 1 ]] && return
+
     local targetRate=`add 1 $minmaxProfit`
     local options="-p$targetRate"
 
+    local cnt=0
     local prevLongOutTp prevShortOutTp
     local stockCode tradeDate hms dc inUp inDp sc maxDelta minDelta
     while read stockCode tradeDate hms dc inUp inDp sc maxDelta minDelta
@@ -108,15 +113,47 @@ function emulateDSS {
             true
         }
 
-        local outPrice=
-        [[ $tradeType == $LONG ]] && outPrice=`add $inUp $minmaxProfit` || {
-            outPrice=`substract $inDp $minmaxProfit`
-        }
+        cnt=$((cnt+1))
 
         local line=`getLSProfit $stockCode $tradeDate $hms "$options"`
         prevLongOutTp=${line% *}
         prevShortOutTp=${line#* }
-        printf "%s %s %s %8s %8s %8s %8s %8s %8s %8s\n" \
-            $stockCode $tradeDate $hms $dc $inUp $inDp $outPrice $sc $maxDelta $minDelta
+        
+        local outPrice=`getOutPrice $tradeType $inUp $inDp $minmaxProfit`
+        local dateDist=`getTradeCycle $stockCode $tradeDate $tradeType $prevLongOutTp $prevShortOutTp`
+
+        local profitSum=`mul $minmaxProfit $cnt`
+        printf "%s %s %s %8s %8s %8s %8s %8s %8s %8s %4s %8s\n" \
+            $stockCode $tradeDate $hms $dc $inUp $inDp $outPrice $sc $maxDelta $minDelta $dateDist $profitSum
     done <$fDSS
+}
+function getOutPrice {
+    local tradeType=$1
+    local inUp=$2
+    local inDp=$3
+    local minmaxProfit=$4
+
+    local outPrice=
+    [[ $tradeType == $LONG ]] && outPrice=`add $inUp $minmaxProfit` || {
+        outPrice=`substract $inDp $minmaxProfit`
+    }
+
+    echo $outPrice
+}
+function getTradeCycle {
+    local stockCode=$1
+    local inDate=$2
+    local tradeType=$3
+    local longOutTp=$4
+    local shortOutTp=$5
+
+    local outDate=
+    [[ $tradeType == $LONG ]] && outDate=`convertHex2Time $longOutTp y` || {
+        outDate=`convertHex2Time $shortOutTp y`
+    }
+    outDate=${outDate%,*}
+    local dateDist=
+    dateDist=`getTradeDateDist $stockCode $inDate $outDate`
+
+    echo $dateDist
 }

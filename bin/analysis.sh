@@ -36,6 +36,18 @@ function viewTradeDateRange {
 
     cscript.exe "$rootDir\\vbs\\viewTradeDateRange.vbs" $stockCode $tradeDate $startHexTp $endHexTp $startHMS $endHMS
 }
+function _viewTradeDateRange {
+    local stockCode=$1
+    local tradeDate=$2
+    local endHMS=$3
+    local bwsd=$5                             #optional
+
+    [[ -z $bwsd ]] && bwsd=1170
+
+    local startHMS=`deltaHMS $stockCode $endHMS -$bwsd`
+
+    viewTradeDateRange $stockCode $tradeDate $startHMS $endHMS
+}
 
 
 

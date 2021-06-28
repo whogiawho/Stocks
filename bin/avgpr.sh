@@ -12,21 +12,24 @@ function makeTmpAvgPrPng {
     local tradeDate=$2
     local hms=$3
     local bwsd=$4                             #optional
-    local interval=$5                         #optional
-    local bSaveTxt=$6                         #optional
+    local minDist=$5                          #optional
+    local interval=$6                         #optional
+    local bSaveTxt=$7                         #optional
 
-    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1200
+    [[ -z $minDist ]] && minDist=60
+    [[ -z $interval ]] && interval=1
 
     local avgprtxtDir="$dailyDir\\$stockCode\\$tradeDate\\avgprTxt"
     [[ ! -e "$avgprtxtDir" ]] && {
         mkdir -p "$avgprtxtDir"
     }
 
-    local avgprTxt="$avgprtxtDir\\${tradeDate}_${hms}_${bwsd}_avgpr.txt"
-    makeAvgPrTxt $stockCode $tradeDate $hms $avgprTxt $interval $bwsd 
+    local avgprName=${hms}_${bwsd}_${minDist}_${interval}
+    local avgprTxt="$avgprtxtDir\\$avgprName.txt"
+    makeAvgPrTxt $stockCode $tradeDate $hms $avgprTxt $bwsd $minDist $interval
 
-    local sPngFile="$avgprtxtDir\\${tradeDate}_${hms}_${bwsd}_avgpr.png"
+    local sPngFile="$avgprtxtDir\\$avgprName.png"
     makeAvgPrFromFile "$avgprTxt" "$sPngFile"
 
     [[ -z $bSaveTxt ]] && rm -rf $avgprTxt
@@ -36,13 +39,15 @@ function makeAvgPrTxt {
     local tradeDate=$2
     local hms=$3
     local outTxt=$4
-    local interval=$5                         #optional 
-    local bwsd=$6                             #optional
+    local bwsd=$5                             #optional
+    local minDist=$6                          #optional
+    local interval=$7                         #optional 
 
-    [[ -z $interval ]] && interval=1
     [[ -z $bwsd ]] && bwsd=1200
+    [[ -z $minDist ]] && minDist=60
+    [[ -z $interval ]] && interval=1
 
-    java -jar $analyzetoolsJar listavgpr -b$bwsd -i${interval} $stockCode $tradeDate $hms \
+    java -jar $analyzetoolsJar listavgpr -b$bwsd -m$minDist -i$interval $stockCode $tradeDate $hms \
         >"$outTxt" 2>/dev/null
 }
 function openTmpAvgPrPng {
@@ -50,11 +55,17 @@ function openTmpAvgPrPng {
     local tradeDate=$2
     local hms=$3
     local bwsd=$4                             #optional
+    local minDist=$5                          #optional
+    local interval=$6                         #optional
 
     [[ -z $bwsd ]] && bwsd=1200
+    [[ -z $minDist ]] && minDist=60
+    [[ -z $interval ]] && interval=1
 
+    local avgprName=${hms}_${bwsd}_${minDist}_${interval}
     local avgprtxtDir="$dailyDir\\$stockCode\\$tradeDate\\avgprTxt"
-    JPEGView.exe "$avgprtxtDir\\${tradeDate}_${hms}_${bwsd}_avgpr.png" &
+    local avgprPng="$avgprtxtDir\\$avgprName.png"
+    JPEGView.exe "$avgprPng" &
 }
 
 

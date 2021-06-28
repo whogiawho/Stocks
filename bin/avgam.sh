@@ -79,44 +79,6 @@ function _avgamPredictByLast20m {
     done|sort -nk8,8
 }
 
-function prevAACkpt {
-    local stockCode=$1
-    local tradeDate=$2
-    local hms=$3
-    local interval=$4               #optional
-
-    local iOption=
-    [[ ! -z $interval ]] && iOption="-i $interval"
-
-    JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar nextaackpt -b $iOption $stockCode $tradeDate $hms 2>/dev/null
-}
-function _nextAACkpt {
-    local stockCode=$1
-    local tradeDate=$2
-    local hms=$3
-    local interval=$4               #optional
-
-    [[ -z $interval ]] && interval=1
-
-    local nextHMS=`sed -n "/$hms/ {n;p}" "$dataRoot\\aackpti$interval.txt"`
-    [[ -z $nextHMS ]] && {
-        nextHMS=`head -n1 "$dataRoot\\aackpti$interval.txt"`
-        tradeDate=`getNextTradeDate $stockCode $tradeDate`
-    }
-
-    echo $tradeDate $nextHMS
-}
-function nextAACkpt {
-    local stockCode=$1
-    local tradeDate=$2
-    local hms=$3
-    local interval=$4               #optional
-
-    local iOption=
-    [[ ! -z $interval ]] && iOption="-i $interval"
-
-    JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" java -jar $analyzetoolsJar nextaackpt $iOption $stockCode $tradeDate $hms 2>/dev/null
-}
 function fileCorrel {
     local sFile0=$1
     local sFile1=$2
@@ -155,6 +117,31 @@ function _avgamCorrel {
     echo $correl
 }
 
+function getTmpAvgAmPNPercent {
+    local stockCode=$1
+    local tradeDate=$2
+    local hms=$3
+    local bwsd=$4                             #optional
+    local minDist=$5                          #optional
+    local interval=$6                         #optional
+    local bSaveTxt=$7                         #optional
+
+    local avgamName=${hms}_${bwsd}_${minDist}_${interval}
+    local avgamtxtDir="$dailyDir\\$stockCode\\$tradeDate\\avgamTxt"
+    local avgamTxt="$avgamtxtDir\\$avgamName.txt"
+
+    [[ ! -e $avgamTxt ]] && {
+        makeAvgAmTxt $stockCode $tradeDate $hms $avgamTxt $bwsd $minDist $interval
+    }
+    local lines=`wc $avgamTxt|awk '{print $1}'`
+    local posLines=`awk '$2>0' $avgamTxt|wc|awk '{print $1}'`
+    local negLines=`awk '$2<0' $avgamTxt|wc|awk '{print $1}'`
+    local posR=`divide $posLines $lines`
+    local negR=`divide $negLines $lines`
+    [[ -z $bSaveTxt ]] && rm -rf $avgamTxt
+
+    echo $posR $negR
+}
 function makeTmpAvgAmPng {
     local stockCode=$1
     local tradeDate=$2
@@ -173,10 +160,11 @@ function makeTmpAvgAmPng {
         mkdir -p "$avgamtxtDir"
     }
 
-    local avgamTxt="$avgamtxtDir\\${tradeDate}_${hms}_${bwsd}_avgam.txt"
+    local avgamName=${hms}_${bwsd}_${minDist}_${interval}
+    local avgamTxt="$avgamtxtDir\\$avgamName.txt"
     makeAvgAmTxt $stockCode $tradeDate $hms $avgamTxt $bwsd $minDist $interval
 
-    local sPngFile="$avgamtxtDir\\${tradeDate}_${hms}_${bwsd}_avgam.png"
+    local sPngFile="$avgamtxtDir\\$avgamName.png"
     makeAvgAmPngFromFile "$avgamTxt" "$sPngFile"
 
     [[ -z $bSaveTxt ]] && rm -rf $avgamTxt
@@ -187,11 +175,16 @@ function openTmpAvgAmPng {
     local hms=$3
     local bwsd=$4                             #optional
     local minDist=$5                          #optional
+    local interval=$6                         #optional
 
     [[ -z $bwsd ]] && bwsd=1170
+    [[ -z $minDist ]] && minDist=60
+    [[ -z $interval ]] && interval=1
 
+    local avgamName=${hms}_${bwsd}_${minDist}_${interval}
     local avgamtxtDir="$dailyDir\\$stockCode\\$tradeDate\\avgamTxt"
-    JPEGView.exe "$avgamtxtDir\\${tradeDate}_${hms}_${bwsd}_avgam.png" &
+    local avgamPng="$avgamtxtDir\\$avgamName.png"
+    JPEGView.exe "$avgamPng" &
 }
 function viewTmpAvgAmPng {
     local stockCode=$1
@@ -199,10 +192,10 @@ function viewTmpAvgAmPng {
     local hms=$3
     local bwsd=$4                             #optional
     local minDist=$5                          #optional
+    local interval=$6                         #optional
 
-
-    makeTmpAvgAmPng $stockCode $tradeDate $hms $bwsd $minDist
-    openTmpAvgAmPng $stockCode $tradeDate $hms $bwsd $minDist
+    makeTmpAvgAmPng $stockCode $tradeDate $hms $bwsd $minDist $interval
+    openTmpAvgAmPng $stockCode $tradeDate $hms $bwsd $minDist $interval
 }
 
 function openAvgAmPng {
@@ -220,18 +213,6 @@ function openAvgAmPng {
 
     local avgamPngDir="$dailyDir\\$stockCode\\$tradeDate\\avgamPng"
     JPEGView.exe "$avgamPngDir\\$hms.png" &
-}
-function viewAvgAmRange {
-    local stockCode=$1
-    local tradeDate=$2
-    local hms=$3
-    local bwsd=$5                             #optional
-
-    [[ -z $bwsd ]] && bwsd=1170
-
-    local startHMS=`deltaHMS $stockCode $hms -$bwsd`
-
-    viewTradeDateRange $stockCode $tradeDate $startHMS $hms
 }
 
 
@@ -379,76 +360,6 @@ function listMatchedAvgAm {
             local bCmp=`ge $correl $threshold`; 
             [[ $bCmp == 1 ]] && printf "%s %s %8.3f\n" $j $i $correl; 
         done; 
-    done
-}
-function trackAACkpt {
-    local stockCode=$1
-    local tradeDate=$2
-    local ckptInterval=$3                     #optional
-    local bwsd=$4                             #optional
-    local minDist=$5                          #optional
-    local interval=$6                         #optional 
-
-    [[ -z $ckptInterval ]] && ckptInterval=60
-    [[ -z $bwsd ]] && bwsd=1170
-    [[ -z $minDist ]] && minDist=60
-    [[ -z $interval ]] && interval=1
-
-    local avgamDir="$dailyDir\\$stockCode\\$tradeDate\\avgam"
-    [[ ! -e $avgamDir ]] && mkdir -p $avgamDir
-    local avgamPngDir="$dailyDir\\$stockCode\\$tradeDate\\avgamPng"
-    [[ ! -e $avgamPngDir ]] && mkdir -p $avgamPngDir
-
-    #make sure analysisTxt exists
-    local analysisTxt="$dailyDir\\$stockCode\\$tradeDate\\analysis.txt"
-    while [[ 1 ]]
-    do
-        [[ ! -f $analysisTxt ]] && { sleep 1; continue; } || break;
-    done
-
-    local startAACkpt=092500
-    local prevAACkpt0=`prevAACkpt $stockCode $tradeDate $startAACkpt $ckptInterval`
-    local currentAACkpt="$tradeDate $startAACkpt"
-    local currentHMS=`echo $currentAACkpt|awk '{print $2}'`
-    local aackptTp=`convertTime2Hex $currentAACkpt`
-    while [[ 1 ]]
-    do
-        local line=`tail -n1 $analysisTxt`
-        local currentTp=`echo $line|awk '{print $1}'`
-        [[ ! -z $currentTp && 0x$currentTp -ge 0x$aackptTp ]] && {
-            #local time0=`currentHexTime`
-
-            local outTxt="$avgamDir\\$currentHMS.txt"
-            #makeAvgAmTxt for aackptTp
-            makeAvgAmTxt $stockCode $currentAACkpt $outTxt $bwsd $minDist $interval
-            #make png
-            local sPngFile="$avgamPngDir\\${currentHMS}.png"
-            (cscript.exe "$rootDir\\vbs\\makeAmDerivativePng.vbs" "$outTxt" "$sPngFile" 2>/dev/null|grep -v Micro &)
-
-            #get correl with prev aaCkpt
-            local correl0=`avgamCorrel $stockCode $currentAACkpt $prevAACkpt0`
-            correl0=`colorCorrel "$correl0" 0.75`
-            [[ $? == 0 ]] && { 
-                (beep 100 &)
-            }
-            local upPrice=`_getUpPrice $stockCode $currentAACkpt`
-            printf "%s %8s %8s\n" "$currentAACkpt" "$correl0" "$upPrice"
-
-            #set prev aaCkpt
-            prevAACkpt0="$currentAACkpt"
-            #set next aaCkpt
-            currentAACkpt=`_nextAACkpt $stockCode $currentAACkpt $ckptInterval`
-            echo $currentAACkpt|grep "150000" && break;
-            currentHMS=`echo $currentAACkpt|awk '{print $2}'`
-            aackptTp=`convertTime2Hex $currentAACkpt`
-            :
-
-            #local time1=`currentHexTime`
-            #echo "time0=$time0 time1=$time1 delta=$((0x$time1-0x$time0))"
-        } || {
-            #sleep 1
-            :
-        }
     done
 }
 function colorCorrel {
@@ -640,3 +551,17 @@ function avgamInstance {
     makeAvgAmStats $sNameDelta $avgamResDir $fStats "$statsOptions"
 }
 
+function emulateAvgAm {
+    local stockCode=$1
+    local tradeDate=$2
+    local hms=$3
+    local tradeType=$4
+    local options=$5
+
+    local fTmp=`mktemp`
+    java -jar $analyzetoolsJar saadstats $options $stockCode,$tradeDate,$hms 2>/dev/null >$fTmp
+
+    emulateDSS $fTmp $tradeType
+
+    rm -rf $fTmp
+}
