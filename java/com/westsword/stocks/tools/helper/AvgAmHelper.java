@@ -41,7 +41,7 @@ public class AvgAmHelper {
             sAvgAmOutDir = AvgAmUtils.getAvgAmOutDir(cmd);
             Utils.resetDir(sAvgAmOutDir);
 
-            handleSingleFile(stockCode, sAvgAmDeltaFile, sAvgAmOutDir, cmd);
+            handleFile(stockCode, sAvgAmDeltaFile, sAvgAmOutDir, cmd);
         } else {
             String stockCode = newArgs[0];
             String tradeDate = newArgs[1];
@@ -63,7 +63,7 @@ public class AvgAmHelper {
     }
 
 
-    public static void handleSingleFile(String stockCode, String sAvgAmDeltaFile, String sAvgAmOutDir, 
+    public static void handleFile(String stockCode, String sAvgAmDeltaFile, String sAvgAmOutDir, 
             CommandLine cmd) {
         AmManager amm = new AmManager(stockCode);
 

@@ -50,12 +50,40 @@ public class AvgAmCorrelHelper {
 
         if(newArgs.length==5) 
             handleSingle(stockCode, sdt, cmd, tradeDate0, hms0, tradeDate1, hms1);
-        else
-            handleAll(stockCode, sdt, cmd, tradeDate0, hms0);
+        else {
+            if(cmd.hasOption("f")) {
+                handleFile(stockCode, sdt, cmd, tradeDate0, hms0);
+            } else {                   //-s&-e
+                handleTradeDates(stockCode, sdt, cmd, tradeDate0, hms0);
+            }
+        }
     }
 
 
-    private static void handleAll(String stockCode, SdTime1 sdt, CommandLine cmd, 
+    private static void handleFile(String stockCode, SdTime1 sdt, CommandLine cmd, 
+            String tradeDate0, String hms0) {
+        AACMan aacm = new AACMan();
+        AmManager amm = new AmManager(stockCode);
+        double[] avgam0 = AvgAmUtils.getAvgAm(stockCode, tradeDate0, hms0, sdt, cmd);
+
+        String sAvgAmDeltaFile = AvgAmUtils.getAvgAmDeltaFile(cmd);
+        ArrayList<DeltaSimRecord> avrrList = DeltaSimRecord.getList(sAvgAmDeltaFile);
+        for(int i=0; i<avrrList.size(); i++) {
+            DeltaSimRecord dsr = avrrList.get(i);
+            if(!stockCode.equals(dsr.stockCode)) {
+                System.err.format("invalid item: %s %s %s\n", dsr.stockCode, dsr.tradeDate, dsr.hms);
+                continue;
+            }
+
+            stockCode = dsr.stockCode;
+            String tradeDate1 = dsr.tradeDate;
+            String hms1 = dsr.hms;
+            int sd = sdt.getAbs(tradeDate1, hms1);
+
+            aacm.run(avgam0, stockCode, sdt, sd, cmd, amm);
+        }
+    }
+    private static void handleTradeDates(String stockCode, SdTime1 sdt, CommandLine cmd, 
             String tradeDate0, String hms0) {
         TradeDates tradeDates = new TradeDates(stockCode);
         String startDate = CmdLineUtils.getString(cmd, "s", tradeDates.nextDate(tradeDates.firstDate()));
@@ -92,8 +120,9 @@ public class AvgAmCorrelHelper {
         System.err.println("       -i interval   ; default 1");
         System.err.println("       -s startDate  ; start of tradeDate");
         System.err.println("       -e endDate    ; end of tradeDate");
+        System.err.println("       -f fSTH       ; a avgamdelta file; exclusive to -s&-e");
 
-             String line = "       when -s&-e are on, [tradeDate1, hms1] is not effective; vice versa";
+             String line = "       when (-s&-e)|-f are on, [tradeDate1, hms1] is not effective; vice versa";
         line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);
         System.err.println(line);
 
@@ -120,6 +149,7 @@ public class AvgAmCorrelHelper {
         options.addOption("i", true,  "the step to get am derivative");
         options.addOption("s", true,  "startDate");
         options.addOption("e", true,  "endDate");
+        options.addOption("f", true,  "the avgamdelta file");
 
         return options;
     }
