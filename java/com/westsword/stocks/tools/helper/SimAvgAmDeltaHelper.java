@@ -56,7 +56,11 @@ public class SimAvgAmDeltaHelper {
             handleSingle(stockCode, tradeDate, hms, cmd);
         } else {
             //get avgam delta for all sds of tradeDate
-            handleAll(cmd);
+            boolean bMatlab = CmdLineUtils.getBoolean(cmd, "m", false);
+            if(bMatlab)
+                handleAllwMatlab(cmd);
+            else
+                handleAllwoMatlab(cmd);
         }
     }
 
@@ -125,7 +129,7 @@ public class SimAvgAmDeltaHelper {
 
         return m;
     }
-    private static void handleAll(CommandLine cmd) {
+    private static void handleAllwMatlab(CommandLine cmd) {
         String sAvgAmDeltaFile = CmdLineUtils.getString(cmd, "f", null);
         String sDir = CmdLineUtils.getString(cmd, "d", null);
         String sResDir = sDir+".res";
@@ -168,8 +172,43 @@ public class SimAvgAmDeltaHelper {
         }
     }
 
+    private static void handleAllwoMatlab(CommandLine cmd) {
+        String sAvgAmDeltaFile = CmdLineUtils.getString(cmd, "f", null);
+        String sDir = CmdLineUtils.getString(cmd, "d", null);
+        String sResDir = sDir+".res";
+        Utils.mkDir(sResDir);
+        double threshold = AvgAmUtils.getThreshold(cmd);
+
+        ArrayList<DeltaSimRecord> aarList = DeltaSimRecord.getList(sAvgAmDeltaFile);
+        double[][] m = getAvgAmDeltaMatrix(aarList, sDir);
+        System.out.format("m.rows=%d m.cols=%d\n", m.length, m[0].length);
+
+        _write2Files(m, sResDir, aarList, threshold);
+    }
+    private static void _write2Files(double[][] m, String sResDir, ArrayList<DeltaSimRecord> aarList, 
+            double threshold) {
+        PearsonsCorrelation pc = new PearsonsCorrelation();
+        for(int i=0; i<aarList.size(); i++) {
+            DeltaSimRecord r0 = aarList.get(i);
+            String sResFile = sResDir + "\\" + r0.tradeDate + "." + r0.hms + ".correl";
+
+            double[] col0 = Utils.getCol(m, i);
+            String line = "";
+            for(int j=0; j<aarList.size(); j++) {
+                double[] col1 = Utils.getCol(m, j);
+                DeltaSimRecord r1 = aarList.get(j);
+
+                double correl = pc.correlation(col0, col1);
+                if(correl>=threshold)
+                    line += String.format("%s %s %s %8.3f %8.3f %8.3f %8.3f\n", 
+                            r1.stockCode, r1.tradeDate, r1.hms, r1.correl0, r1.upPrice, r1.downPrice, correl);
+            }
+            Utils.append2File(sResFile, line, false);
+        }
+    }
+
     private static void usage() {
-        System.err.println("usage: java AnalyzeTools simavgamdelta [-fd] [stockCode,tradeDate,hms]");
+        System.err.println("usage: java AnalyzeTools simavgamdelta [-fdhm] [stockCode,tradeDate,hms]");
         System.err.println("       loop avgamdeltaFile to get correls with each other or");
         System.err.println("         with a specified [stockCode,tradeDate,hms]");
         System.err.println("       the correls are saved to the dir.res when using -f or");
@@ -177,6 +216,8 @@ public class SimAvgAmDeltaHelper {
         System.err.println("       -f avgamdeltaFile   ; the file generated from avgamdelta");
         System.err.println("       -d dir              ; the dir where the avgam files of avgamdelta are");
         System.err.println("       -h threshold        ; only those whose threshold above are listed");
+        System.err.println("       -m                  ; switch to enable matlab");
+        System.err.println("                             effect only with a [stockCode,tradeDate,hms]");
 
              String line = "       both -f&-d must be enabled!";
         line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);
@@ -204,6 +245,7 @@ public class SimAvgAmDeltaHelper {
         options.addOption("f", true,  "the file generated from avgamdelta");
         options.addOption("d", true,  "the dir where the avgamdelta files are");
         options.addOption("h", true,  "a threshold to filter item");
+        options.addOption("m", false, "switch to enable matlab");
 
         return options;
     }
