@@ -29,6 +29,7 @@ public class AvgPrUtils {
     public final static int Default_Minimum_Skipped_SD = 1;
     public final static int Default_Interval = 1;
     public final static int Default_Step = 1;
+    public final static double Default_Threshold = 0.8;
 
     public static int getBackwardSd(CommandLine cmd) {
         return CmdLineUtils.getInteger(cmd, "b", Default_Backward_SD);
@@ -41,6 +42,9 @@ public class AvgPrUtils {
     }
     public static int getStep(CommandLine cmd) {
         return CmdLineUtils.getInteger(cmd, "e", Default_Step);
+    }
+    public static double getThreshold(CommandLine cmd) {
+        return CmdLineUtils.getDouble(cmd, "h", Default_Threshold);
     }
 
 
