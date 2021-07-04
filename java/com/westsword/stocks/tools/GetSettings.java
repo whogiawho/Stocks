@@ -252,6 +252,19 @@ public class GetSettings{
 
         System.out.format("qrSize=%d\n", qrm.getQRSize());
     }
+    public static void testRealNumberError(String stockCode, String sOut, String sIn, String sTargetRate) {
+        double d0 = Double.valueOf(sOut);
+        System.out.format("d0=%-8.3f d0=%f\n", d0, d0);
+
+        double inPrice = Double.valueOf(sIn);
+        int tradeType = Stock.TRADE_TYPE_LONG;
+        double targetRate = Double.valueOf(sTargetRate);
+        double targetProfit = Trade.getTargetProfit(targetRate, inPrice);
+        double outPrice = Utils.getOutPrice(inPrice, targetProfit, tradeType);
+
+        System.out.format("outPrice=%-8.3f outPrice=%f\n", outPrice, outPrice);
+        System.out.format("d0(%f)<outPrice(%f) %b\n", d0, outPrice, d0<outPrice);
+    }
     public static void testSplit(String stockCode) {
         System.out.format("\n testSplit: \n");
 
@@ -886,7 +899,9 @@ public class GetSettings{
         //testTradeDatesList(stockCode);
         //testSSTable(stockCode);
         //testAvgAmTable("512880");
-        testBeep(stockCode);
+        //testBeep(stockCode);
+        testRealNumberError(stockCode, "0.969", "0.931", "1.038");
+        testRealNumberError(stockCode, "1.293", "1.255", "1.038");
 
         //testSettings();       
         //testMisc();       
