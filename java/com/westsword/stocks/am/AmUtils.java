@@ -21,6 +21,7 @@ import java.util.*;
 import com.westsword.stocks.base.*;
 import com.westsword.stocks.base.time.*;
 import com.westsword.stocks.base.utils.StockPaths;
+import com.westsword.stocks.am.avrate.*;
 import com.westsword.stocks.am.average.*;
 import com.westsword.stocks.am.derivative.*;
 import com.westsword.stocks.analyze.RawTradeDetails;
@@ -43,6 +44,16 @@ public class AmUtils {
             mAam = new AvgAmManager();
         else
             mAam = null;
+        //
+        if(Settings.getAmVolRPng())
+            mAvrm = new AmVolRManager();
+        else
+            mAvrm = null;
+
+        if(Settings.getAvgPrPng())
+            mApm = new AvgPrManager();
+        else
+            mApm = null;
     }
     public AmUtils(String stockCode) {
         this(stockCode, true);
@@ -154,6 +165,10 @@ public class AmUtils {
                         mAdm.run(mStockCode, r, cMap, mSdTime);
                     if(mAam!=null)
                         mAam.run(mStockCode, r, cMap, mSdTime);
+                    if(mAvrm!=null)
+                        mAvrm.run(mStockCode, r, cMap, mSdTime);
+                    if(mApm!=null)
+                        mApm.run(mStockCode, r, cMap, mSdTime);
                 }
                 r.append2File(sAnalysisFile);
             }
@@ -194,6 +209,8 @@ public class AmUtils {
     private SdTime1 mSdTime;
     private AmDerManager mAdm;
     private AvgAmManager mAam;
+    private AmVolRManager mAvrm;
+    private AvgPrManager mApm;;
 
     public static class TrackExtreme {
         public double maxUP;

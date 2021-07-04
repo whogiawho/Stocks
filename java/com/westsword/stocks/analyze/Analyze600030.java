@@ -126,12 +126,28 @@ public class Analyze600030 {
             mPrevAmRecordMap = null;
             mPrevAmRecordMap4CAC = null;
         }
+
         //mkdir derivative&derivativePng
-        Utils.mkDir(StockPaths.getDerivativeDir(stockCode, tradeDate));
-        Utils.mkDir(StockPaths.getDerivativePngDir(stockCode, tradeDate));
+        if(Settings.getAmDerPng()) {
+            Utils.mkDir(StockPaths.getDerivativeDir(stockCode, tradeDate));
+            Utils.mkDir(StockPaths.getDerivativePngDir(stockCode, tradeDate));
+        }
         //mkdir avgam&avgamPng
-        Utils.mkDir(StockPaths.getAvgAmDir(stockCode, tradeDate));
-        Utils.mkDir(StockPaths.getAvgAmPngDir(stockCode, tradeDate));
+        if(Settings.getAvgAmPng()) {
+            Utils.mkDir(StockPaths.getAvgAmDir(stockCode, tradeDate));
+            Utils.mkDir(StockPaths.getAvgAmPngDir(stockCode, tradeDate));
+        }
+        //mkdir amvolr&amvolrPng
+        if(Settings.getAmVolRPng()) {
+            Utils.mkDir(StockPaths.getAmVolRDir(stockCode, tradeDate));
+            Utils.mkDir(StockPaths.getAmVolRPngDir(stockCode, tradeDate));
+        }
+        //mkdir avgpr&avgprPng
+        if(Settings.getAvgPrPng()) {
+            Utils.mkDir(StockPaths.getAvgPrDir(stockCode, tradeDate));
+            Utils.mkDir(StockPaths.getAvgPrPngDir(stockCode, tradeDate));
+        }
+
 
         System.out.format("%s: quitted!\n", Utils.getCallerName(getClass()));
     }
