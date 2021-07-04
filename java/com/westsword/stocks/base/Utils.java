@@ -380,4 +380,14 @@ public class Utils {
 
         return array;
     }
+
+    public static double[] getCol(double[][] m, int idxCol) {
+        double[] col = new double[m.length];
+
+        for(int i=0; i<m.length; i++) {
+            col[i] = m[i][idxCol];
+        }
+        return col;
+    }
+
 }

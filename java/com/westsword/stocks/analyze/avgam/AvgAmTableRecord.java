@@ -100,8 +100,9 @@ public class AvgAmTableRecord {
 
         double inPrice = r.getInPrice(tradeType);
         double targetProfit = Trade.getTargetProfit(targetRate, inPrice);
-        String line = String.format("%-10s %s %s %s %8.3f %8.3f %8.3f %8d", 
-                sTableName, stockCode, tradeDate, hms, sCorrel, inPrice, targetProfit, tradeCount);
+        String sFormat = "%-10s %s %s %s %4s %8.3f %8.3f %8.3f %8d";
+        String line = String.format(sFormat, 
+                sTableName, stockCode, tradeDate, hms, sMaxCycle, sCorrel, inPrice, targetProfit, tradeCount);
         if(tradeType==Stock.TRADE_TYPE_LONG)
             line = AnsiColor.getColorString(line, AnsiColor.ANSI_RED);
         else
